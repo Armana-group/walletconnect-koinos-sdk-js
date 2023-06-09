@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>walletconnect-koinos-sdk-js</title>
+</head>
+
+<body>
+  <div id="app">
+    <button id="connect-button">Connect Wallet</button><button id="disconnect-button">Disconnect Wallet</button>
+    <br />
+    <textarea id="accounts-info" style="min-height: 170px;min-width: 590px;"></textarea>
+    <br />
+    <input id="message" placeholder="Type a message to sign"></input>
+    <br />
+    <button id="sign-message-button">Sign message</button>
+    <input id="message-signature" disabled style="min-width: 500px;"></input>
+  </div>
+  <script type="module" src="./demo/demo.ts"></script>
+</body>
+
+</html>
