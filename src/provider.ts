@@ -13,7 +13,7 @@ export function generateProvider(
         chainId,
         topic,
         request: {
-          method: Methods.WaitForTransaction,
+          method: Methods.JsonRpcCall,
           params: {
             method,
             params,

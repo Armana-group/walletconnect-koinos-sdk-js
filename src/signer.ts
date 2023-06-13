@@ -93,8 +93,14 @@ export function generateSigner(
     sendTransaction: async (
       transaction: interfaces.TransactionJson,
       options?: interfaces.SendTransactionOptions
-    ): Promise<interfaces.TransactionJsonWait> => {
-      const result = await web3Modal.request<interfaces.TransactionJsonWait>({
+    ): Promise<{
+      receipt: interfaces.TransactionReceipt;
+      transaction: interfaces.TransactionJsonWait;
+    }> => {
+      const result = await web3Modal.request<{
+        receipt: interfaces.TransactionReceipt;
+        transaction: interfaces.TransactionJsonWait;
+      }>({
         chainId,
         topic,
         request: {
@@ -107,7 +113,7 @@ export function generateSigner(
         },
       });
 
-      result.wait = async (
+      result.transaction.wait = async (
         type: "byTransactionId" | "byBlock" = "byBlock",
         timeout = 60000
       ) => {
@@ -120,7 +126,7 @@ export function generateSigner(
           request: {
             method: Methods.WaitForTransaction,
             params: {
-              transactionId: result.id,
+              transactionId: result.transaction.id,
               type,
               timeout,
             },
