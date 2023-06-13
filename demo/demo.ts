@@ -1,5 +1,5 @@
 import { Contract, utils } from "koilib";
-import { ChainIds, LogLevel, Methods, WalletConnectKoinos } from "../";
+import { ChainIds, LogLevel, Methods, WalletConnectKoinos } from "../src";
 
 const connectButton = document.getElementById(
   "connect-button"

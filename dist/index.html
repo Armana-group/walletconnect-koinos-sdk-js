@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>walletconnect-koinos-sdk-js</title>
+  <script type="module" crossorigin src="/walletconnect-koinos-sdk-js/assets/index-13cf9bb8.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <button id="connect-button">Connect Wallet</button><button id="disconnect-button">Disconnect Wallet</button>
+    <br>
+    <textarea id="accounts-info" style="min-height: 170px;min-width: 350px;"></textarea>
+    <br>
+    <br>
+    <label for="message">Message</label>
+    <input id="message" placeholder="Type a message to sign"></input>
+    <br>
+    <button id="sign-message-button">Sign message</button>
+    <input id="message-signature" disabled style="min-width: 700px;"></input>
+    <br>
+    <br>
+    <label for="amount">tKoin amount to send</label>
+    <input id="amount" placeholder="0.001"></input>
+    <br>
+    <label for="to">Recipient</label>
+    <input id="to" placeholder="1A..."></input>
+    <br>
+    <button id="sign-transaction-button">Sign transaction</button><button id="sign-send-transaction-button">Sign and send transaction</button>
+    <br>
+    <textarea id="signed-transaction" style="min-height: 400px;min-width: 700px;"></textarea>
+  </div>
+  
+</body>
+
+</html>
