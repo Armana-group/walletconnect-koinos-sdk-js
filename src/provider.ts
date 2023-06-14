@@ -1,6 +1,6 @@
-import { Web3ModalSign } from "@web3modal/sign-html";
-import { Provider, interfaces } from "koilib";
-import { Methods } from ".";
+import { Web3ModalSign } from '@web3modal/sign-html'
+import { Provider, interfaces } from 'koilib'
+import { Methods } from '.'
 
 export function generateProvider(
   chainId: string,
@@ -16,12 +16,12 @@ export function generateProvider(
           method: Methods.JsonRpcCall,
           params: {
             method,
-            params,
-          },
-        },
-      });
+            params
+          }
+        }
+      })
 
-      return result;
+      return result
     },
 
     async getNonce(address: string): Promise<number> {
@@ -31,12 +31,12 @@ export function generateProvider(
         request: {
           method: Methods.GetNonce,
           params: {
-            address,
-          },
-        },
-      });
+            address
+          }
+        }
+      })
 
-      return result;
+      return result
     },
 
     async getNextNonce(address: string): Promise<string> {
@@ -46,12 +46,12 @@ export function generateProvider(
         request: {
           method: Methods.GetNextNonce,
           params: {
-            address,
-          },
-        },
-      });
+            address
+          }
+        }
+      })
 
-      return result;
+      return result
     },
 
     async getAccountRc(address: string): Promise<string> {
@@ -61,51 +61,51 @@ export function generateProvider(
         request: {
           method: Methods.GetAccountRc,
           params: {
-            address,
-          },
-        },
-      });
+            address
+          }
+        }
+      })
 
-      return result;
+      return result
     },
 
     async getTransactionsById(transactionIds: string[]): Promise<{
       transactions: {
-        transaction: interfaces.TransactionJson;
-        containing_blocks: string[];
-      }[];
+        transaction: interfaces.TransactionJson
+        containing_blocks: string[]
+      }[]
     }> {
       const result = await web3Modal.request<{
         transactions: {
-          transaction: interfaces.TransactionJson;
-          containing_blocks: string[];
-        }[];
+          transaction: interfaces.TransactionJson
+          containing_blocks: string[]
+        }[]
       }>({
         chainId,
         topic,
         request: {
           method: Methods.GetTransactionsById,
           params: {
-            transactionIds,
-          },
-        },
-      });
+            transactionIds
+          }
+        }
+      })
 
-      return result;
+      return result
     },
 
     async getBlocksById(blockIds: string[]): Promise<{
       block_items: {
-        block_id: string;
-        block_height: string;
-        block: interfaces.BlockJson;
-      }[];
+        block_id: string
+        block_height: string
+        block: interfaces.BlockJson
+      }[]
     }> {
       const result = await web3Modal.request<{
         block_items: {
-          block_id: string;
-          block_height: string;
-          block: interfaces.BlockJson;
+          block_id: string
+          block_height: string
+          block: interfaces.BlockJson
         }[]
       }>({
         chainId,
@@ -113,43 +113,43 @@ export function generateProvider(
         request: {
           method: Methods.GetBlocksById,
           params: {
-            blockIds,
-          },
-        },
-      });
+            blockIds
+          }
+        }
+      })
 
-      return result;
+      return result
     },
 
     async getHeadInfo(): Promise<{
-      head_block_time: string;
+      head_block_time: string
       head_topology: {
-        id: string;
-        height: string;
-        previous: string;
-      };
-      head_state_merkle_root: string;
-      last_irreversible_block: string;
+        id: string
+        height: string
+        previous: string
+      }
+      head_state_merkle_root: string
+      last_irreversible_block: string
     }> {
       const result = await web3Modal.request<{
-        head_block_time: string;
+        head_block_time: string
         head_topology: {
-          id: string;
-          height: string;
-          previous: string;
-        };
-        head_state_merkle_root: string;
-        last_irreversible_block: string;
+          id: string
+          height: string
+          previous: string
+        }
+        head_state_merkle_root: string
+        last_irreversible_block: string
       }>({
         chainId,
         topic,
         request: {
           method: Methods.GetHeadInfo,
-          params: {},
-        },
-      });
+          params: {}
+        }
+      })
 
-      return result;
+      return result
     },
 
     async getChainId(): Promise<string> {
@@ -158,11 +158,11 @@ export function generateProvider(
         topic,
         request: {
           method: Methods.GetChainId,
-          params: {},
-        },
-      });
+          params: {}
+        }
+      })
 
-      return result;
+      return result
     },
 
     async getBlocks(
@@ -171,22 +171,24 @@ export function generateProvider(
       idRef?: string
     ): Promise<
       {
-        block_id: string;
-        block_height: string;
-        block: interfaces.BlockJson;
+        block_id: string
+        block_height: string
+        block: interfaces.BlockJson
         block_receipt: {
-          [x: string]: unknown;
-        };
+          [x: string]: unknown
+        }
       }[]
     > {
-      const result = await web3Modal.request<{
-        block_id: string;
-        block_height: string;
-        block: interfaces.BlockJson;
-        block_receipt: {
-          [x: string]: unknown;
-        };
-      }[]>({
+      const result = await web3Modal.request<
+        {
+          block_id: string
+          block_height: string
+          block: interfaces.BlockJson
+          block_receipt: {
+            [x: string]: unknown
+          }
+        }[]
+      >({
         chainId,
         topic,
         request: {
@@ -194,51 +196,51 @@ export function generateProvider(
           params: {
             height,
             numBlocks,
-            idRef,
-          },
-        },
-      });
+            idRef
+          }
+        }
+      })
 
-      return result;
+      return result
     },
 
     async getBlock(height: number): Promise<{
-      block_id: string;
-      block_height: string;
-      block: interfaces.BlockJson;
+      block_id: string
+      block_height: string
+      block: interfaces.BlockJson
       block_receipt: {
-        [x: string]: unknown;
-      };
+        [x: string]: unknown
+      }
     }> {
       const result = await web3Modal.request<{
-        block_id: string;
-        block_height: string;
-        block: interfaces.BlockJson;
+        block_id: string
+        block_height: string
+        block: interfaces.BlockJson
         block_receipt: {
-          [x: string]: unknown;
-        };
+          [x: string]: unknown
+        }
       }>({
         chainId,
         topic,
         request: {
           method: Methods.GetBlock,
           params: {
-            height,
-          },
-        },
-      });
+            height
+          }
+        }
+      })
 
-      return result;
+      return result
     },
 
     async wait(
       transactionId: string,
-      type: "byTransactionId" | "byBlock" = "byBlock",
+      type: 'byTransactionId' | 'byBlock' = 'byBlock',
       timeout = 30000
     ): Promise<{ blockId: string; blockNumber?: number }> {
       const waitResult = await web3Modal.request<{
-        blockId: string;
-        blockNumber?: number;
+        blockId: string
+        blockNumber?: number
       }>({
         chainId,
         topic,
@@ -247,12 +249,12 @@ export function generateProvider(
           params: {
             transactionId,
             type,
-            timeout,
-          },
-        },
-      });
+            timeout
+          }
+        }
+      })
 
-      return waitResult;
+      return waitResult
     },
 
     async sendTransaction(
@@ -266,18 +268,18 @@ export function generateProvider(
           method: Methods.SendTransaction,
           params: {
             transaction,
-            broadcast,
-          },
-        },
-      });
+            broadcast
+          }
+        }
+      })
 
       result.wait = async (
-        type: "byTransactionId" | "byBlock" = "byBlock",
+        type: 'byTransactionId' | 'byBlock' = 'byBlock',
         timeout = 60000
-      ) => {
+      ): Promise<{ blockId: string; blockNumber?: number | undefined }> => {
         const waitResult = await web3Modal.request<{
-          blockId: string;
-          blockNumber?: number;
+          blockId: string
+          blockNumber?: number
         }>({
           chainId,
           topic,
@@ -286,55 +288,51 @@ export function generateProvider(
             params: {
               transactionId: result.id,
               type,
-              timeout,
-            },
-          },
-        });
+              timeout
+            }
+          }
+        })
 
-        return waitResult;
-      };
+        return waitResult
+      }
 
-      return result;
+      return result
     },
 
-    async readContract(
-      operation: interfaces.CallContractOperationJson
-    ): Promise<{
-      result: string;
-      logs: string;
+    async readContract(operation: interfaces.CallContractOperationJson): Promise<{
+      result: string
+      logs: string
     }> {
       const result = await web3Modal.request<{
-        result: string;
-        logs: string;
+        result: string
+        logs: string
       }>({
         chainId,
         topic,
         request: {
           method: Methods.ReadContract,
           params: {
-            operation,
-          },
-        },
-      });
+            operation
+          }
+        }
+      })
 
-      return result;
+      return result
     },
 
-    async submitBlock(
-      block: interfaces.BlockJson
-    ): Promise<Record<string, never>> {
+    async submitBlock(block: interfaces.BlockJson): Promise<Record<string, never>> {
       const result = await web3Modal.request<Record<string, never>>({
         chainId,
         topic,
         request: {
           method: Methods.SubmitBlock,
           params: {
-            block,
-          },
-        },
-      });
+            block
+          }
+        }
+      })
 
-      return result;
-    },
-  } as Provider;
+      return result
+    }
+  } as Provider
 }

@@ -6,10 +6,10 @@ Library to easily interact with WalletConnect compatible Koinos wallets.
 
 ```sh
 # with npm
-npm install
+npm install @armana/walletconnect-koinos-sdk-js
 
 # with yarn
-yarn add
+yarn add @armana/walletconnect-koinos-sdk-js
 ```
 
 ## Read a Koin balance:
@@ -17,7 +17,7 @@ yarn add
 ### Using as a CommonJS library
 
 ```ts
-import { ChainIds, Methods, WalletConnectKoinos } from
+import { ChainIds, Methods, WalletConnectKoinos } from "@armana/walletconnect-koinos-sdk-js"
 import { Contract, utils } from "koilib"
 
 (async () => {
@@ -81,7 +81,7 @@ import { Contract, utils } from "koilib"
 <html>
   <script src="https://cdn.jsdelivr.net/gh/joticajulian/koilib@latest/dist/koinos.js"></script>
   <script type="module">
-    import { ChainIds, Methods, WalletConnectKoinos } from "";
+    import { ChainIds, Methods, WalletConnectKoinos } from "@armana/walletconnect-koinos-sdk-js";
 
     // Get your projectId by creating a free WalletConnect cloud project at https://cloud.walletconnect.com
     const projectId = "..."
@@ -142,7 +142,7 @@ import { Contract, utils } from "koilib"
 ### Using as a CommonJS library
 
 ```ts
-import { ChainIds, Methods, WalletConnectKoinos } from "";
+import { ChainIds, Methods, WalletConnectKoinos } from "@armana/walletconnect-koinos-sdk-js";
 import { Contract, utils } from "koilib";
 
 (async () => {
@@ -211,7 +211,7 @@ import { Contract, utils } from "koilib";
 <html>
   <script src="https://cdn.jsdelivr.net/gh/joticajulian/koilib@latest/dist/koinos.js"></script>
   <script type="module">
-    import { ChainIds, Methods, WalletConnectKoinos } from "";
+    import { ChainIds, Methods, WalletConnectKoinos } from "@armana/walletconnect-koinos-sdk-js";
 
     // Get your projectId by creating a free WalletConnect cloud project at https://cloud.walletconnect.com
     const projectId = "..."
