@@ -81,7 +81,7 @@ import { Contract, utils } from "koilib"
 <html>
   <script type="module">
     import * as koilib from 'https://cdn.jsdelivr.net/npm/koilib@5.5.6/dist/koinos.min.js'
-    import { ChainIds, Methods, WalletConnectKoinos } from 'https://cdn.jsdelivr.net/npm/@armana/walletconnect-koinos-sdk-js@0.0.1/dist/walletconnect-koinos-sdk-js.js'
+    import { ChainIds, Methods, WalletConnectKoinos } from 'https://cdn.jsdelivr.net/npm/@armana/walletconnect-koinos-sdk-js@0.0.2/dist/walletconnect-koinos-sdk-js.js'
 
     // Get your projectId by creating a free WalletConnect cloud project at https://cloud.walletconnect.com
     const projectId = "..."
@@ -211,7 +211,7 @@ import { Contract, utils } from "koilib";
 <html>
   <script type="module">
     import * as koilib from 'https://cdn.jsdelivr.net/npm/koilib@5.5.6/dist/koinos.min.js'
-    import { ChainIds, Methods, WalletConnectKoinos } from 'https://cdn.jsdelivr.net/npm/@armana/walletconnect-koinos-sdk-js@0.0.1/dist/walletconnect-koinos-sdk-js.js'
+    import { ChainIds, Methods, WalletConnectKoinos } from 'https://cdn.jsdelivr.net/npm/@armana/walletconnect-koinos-sdk-js@0.0.2/dist/walletconnect-koinos-sdk-js.js'
 
     // Get your projectId by creating a free WalletConnect cloud project at https://cloud.walletconnect.com
     const projectId = "..."
