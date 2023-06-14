@@ -79,9 +79,9 @@ import { Contract, utils } from "koilib"
 
 ```html
 <html>
-  <script src="https://cdn.jsdelivr.net/gh/joticajulian/koilib@latest/dist/koinos.js"></script>
   <script type="module">
-    import { ChainIds, Methods, WalletConnectKoinos } from "@armana/walletconnect-koinos-sdk-js";
+    import * as koilib from 'https://cdn.jsdelivr.net/npm/koilib@5.5.6/dist/koinos.min.js'
+    import { ChainIds, Methods, WalletConnectKoinos } from 'https://cdn.jsdelivr.net/npm/@armana/walletconnect-koinos-sdk-js@0.0.1/dist/walletconnect-koinos-sdk-js.js'
 
     // Get your projectId by creating a free WalletConnect cloud project at https://cloud.walletconnect.com
     const projectId = "..."
@@ -118,7 +118,7 @@ import { Contract, utils } from "koilib"
     const provider = walletConnectKoinos.getProvider()
 
     // get Koin balance on Mainnet
-    const koin = new Contract({
+    const koin = new koilib.Contract({
       // Mainnet
       // id: "15DJN4a8SgrbGhhGksSBASiSYjGnMU8dGL",
       // Harbinger Testnet
@@ -132,7 +132,7 @@ import { Contract, utils } from "koilib"
       owner: accounts[0],
     })
 
-    console.info(`Balance of account ${accounts[0].address} is ${utils.formatUnits(value, 8)} Koin`)
+    console.info(`Balance of account ${accounts[0].address} is ${koilib.utils.formatUnits(value, 8)} Koin`)
   </script>
 </html>
 ```
@@ -209,9 +209,9 @@ import { Contract, utils } from "koilib";
 
 ```html
 <html>
-  <script src="https://cdn.jsdelivr.net/gh/joticajulian/koilib@latest/dist/koinos.js"></script>
   <script type="module">
-    import { ChainIds, Methods, WalletConnectKoinos } from "@armana/walletconnect-koinos-sdk-js";
+    import * as koilib from 'https://cdn.jsdelivr.net/npm/koilib@5.5.6/dist/koinos.min.js'
+    import { ChainIds, Methods, WalletConnectKoinos } from 'https://cdn.jsdelivr.net/npm/@armana/walletconnect-koinos-sdk-js@0.0.1/dist/walletconnect-koinos-sdk-js.js'
 
     // Get your projectId by creating a free WalletConnect cloud project at https://cloud.walletconnect.com
     const projectId = "..."
@@ -249,7 +249,7 @@ import { Contract, utils } from "koilib";
 
     const signer = walletConnectKoinos.getSigner(accounts[0]);
 
-    const koin = new Contract({
+    const koin = new koilib.Contract({
       // Mainnet
       // id: "15DJN4a8SgrbGhhGksSBASiSYjGnMU8dGL",
       // Harbinger Testnet
@@ -262,7 +262,7 @@ import { Contract, utils } from "koilib";
     const { transaction, receipt } = await koin.functions.transfer({
       from: signer.getAddress(),
       to: "TO_ADDR",
-      value: utils.parseUnits("0.00000001", 8),
+      value: koilib.utils.parseUnits("0.00000001", 8),
     });
 
     console.info("transfer receipt:", receipt);
