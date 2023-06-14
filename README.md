@@ -2,6 +2,8 @@
 
 Library to easily interact with WalletConnect compatible Koinos wallets.
 
+Test the SDK out at https://armana-group.github.io/walletconnect-koinos-sdk-js/
+
 ## Installation:
 
 ```sh
