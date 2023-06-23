@@ -26,12 +26,12 @@ export function generateSigner(
           method: Methods.SignHash,
           params: {
             address,
-            hash: utils.encodeBase64url(hash)
+            hash: utils.encodeBase64(hash)
           }
         }
       })
 
-      return utils.decodeBase64url(result)
+      return utils.decodeBase64(result)
     },
 
     signMessage: async (message: string): Promise<Uint8Array> => {
@@ -47,7 +47,7 @@ export function generateSigner(
         }
       })
 
-      return utils.decodeBase64url(result)
+      return utils.decodeBase64(result)
     },
 
     prepareTransaction: async (
