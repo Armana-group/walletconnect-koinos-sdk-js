@@ -1,4 +1,4 @@
-import { Contract, utils } from 'koilib'
+import { Contract, Provider, utils } from 'koilib'
 import { ChainIds, LogLevel, Methods, WalletConnectKoinos } from '../src'
 
 const connectButton = document.getElementById('connect-button') as HTMLButtonElement
@@ -19,10 +19,6 @@ const toInput = document.getElementById('to') as HTMLInputElement
 
 const signTransactionButton = document.getElementById(
   'sign-transaction-button'
-) as HTMLButtonElement
-
-const signSendTransactionButton = document.getElementById(
-  'sign-send-transaction-button'
 ) as HTMLButtonElement
 
 const signedTransaction = document.getElementById('signed-transaction') as HTMLTextAreaElement
@@ -58,13 +54,7 @@ async function onConnect(): Promise<void> {
     connectButton.disabled = true
     accounts = await walletConnectKoinos.connect(
       [ChainIds.Harbinger],
-      [
-        Methods.SignMessage,
-        Methods.SignTransaction,
-        Methods.SignAndSendTransaction,
-        Methods.PrepareTransaction,
-        Methods.WaitForTransaction
-      ]
+      [Methods.SignMessage, Methods.SignTransaction]
     )
     console.info(accounts)
     accountsInfo.value = JSON.stringify(accounts, null, 2)
@@ -105,7 +95,8 @@ async function onSignMessage(): Promise<void> {
 async function onSignTransaction(): Promise<void> {
   try {
     signTransactionButton.disabled = true
-    const signer = walletConnectKoinos.getSigner(accounts[0])
+    const provider = new Provider('https://harbinger-api.koinos.io')
+    const signer = walletConnectKoinos.getSigner(accounts[0], provider)
 
     // get Koin balance
     const koin = new Contract({
@@ -135,38 +126,7 @@ async function onSignTransaction(): Promise<void> {
   }
 }
 
-async function onSignAndSendTransaction(): Promise<void> {
-  try {
-    signSendTransactionButton.disabled = true
-    const signer = walletConnectKoinos.getSigner(accounts[0])
-
-    const koin = new Contract({
-      // Harbinger Testnet Koin contract
-      id: '19JntSm8pSNETT9aHTwAUHC5RMoaSmgZPJ',
-      abi: utils.tokenAbi,
-      signer
-    })
-
-    const result = await koin.functions.transfer({
-      from: signer.getAddress(),
-      to: toInput.value,
-      value: utils.parseUnits(amountInput.value, 8)
-    })
-
-    await result.transaction?.wait()
-
-    signedTransaction.value = JSON.stringify(result, null, 2)
-    alert(`successfully sent ${amountInput.value} tKoin to ${toInput.value}`)
-  } catch (err) {
-    console.error(err)
-    alert((err as Error).message)
-  } finally {
-    signSendTransactionButton.disabled = false
-  }
-}
-
 connectButton.addEventListener('click', onConnect)
 disconnectButton.addEventListener('click', onDisconnect)
 signMessageButton.addEventListener('click', onSignMessage)
 signTransactionButton.addEventListener('click', onSignTransaction)
-signSendTransactionButton.addEventListener('click', onSignAndSendTransaction)

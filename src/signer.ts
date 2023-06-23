@@ -1,16 +1,19 @@
-import { Signer, utils, interfaces } from 'koilib'
-import { generateProvider } from './provider'
+import { Signer, utils, interfaces, Provider } from 'koilib'
 import { Web3ModalSign } from '@web3modal/sign-html'
 import { Methods } from './index'
+import { generateProvider } from './provider'
 
 export function generateSigner(
   address: string,
   chainId: string,
   topic: string,
-  web3Modal: Web3ModalSign
+  web3Modal: Web3ModalSign,
+  provider?: Provider
 ): Signer {
+  const finalProvider = provider || generateProvider(chainId, topic, web3Modal)
+
   return {
-    provider: generateProvider(chainId, topic, web3Modal),
+    provider: finalProvider,
 
     getAddress: () => address,
 
@@ -53,19 +56,33 @@ export function generateSigner(
     prepareTransaction: async (
       transaction: interfaces.TransactionJson
     ): Promise<interfaces.TransactionJson> => {
-      const result = await web3Modal.request<interfaces.TransactionJson>({
-        chainId,
-        topic,
-        request: {
-          method: Methods.PrepareTransaction,
-          params: {
-            address,
-            transaction
+      if (provider) {
+        const dummySigner = Signer.fromSeed('dummy_signer')
+        dummySigner.provider = provider
+
+        if (!transaction.header?.payer) {
+          transaction.header = {
+            ...transaction.header,
+            payer: address
           }
         }
-      })
 
-      return result
+        return dummySigner.prepareTransaction(transaction)
+      } else {
+        const result = await web3Modal.request<interfaces.TransactionJson>({
+          chainId,
+          topic,
+          request: {
+            method: Methods.PrepareTransaction,
+            params: {
+              address,
+              transaction
+            }
+          }
+        })
+
+        return result
+      }
     },
 
     signTransaction: async (

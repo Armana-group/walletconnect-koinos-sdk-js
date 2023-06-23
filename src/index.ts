@@ -153,14 +153,15 @@ export class WalletConnectKoinos {
     return this.accounts
   }
 
-  getSigner(address: string, chainId?: ChainIds): Signer {
+  getSigner(address: string, provider?: Provider, chainId?: ChainIds): Signer {
     const finalChainId = chainId || this.chainId
     if (!finalChainId) {
       throw new Error(
         'You must provide a chain id because none or several are present in this session.'
       )
     }
-    return generateSigner(address, finalChainId, this.topic, this.web3Modal)
+
+    return generateSigner(address, finalChainId, this.topic, this.web3Modal, provider)
   }
 
   getProvider(chainId?: ChainIds): Provider {
