@@ -1,21 +1,24 @@
-import { Signer, utils, interfaces } from "koilib";
+import { Signer, utils, interfaces, Provider } from 'koilib'
+import { Web3ModalSign } from '@web3modal/sign-html'
+import { Methods } from './index'
 import { generateProvider } from './provider'
-import { Web3ModalSign } from "@web3modal/sign-html";
-import { Methods } from "./index";
 
 export function generateSigner(
   address: string,
   chainId: string,
   topic: string,
-  web3Modal: Web3ModalSign
+  web3Modal: Web3ModalSign,
+  provider?: Provider
 ): Signer {
+  const finalProvider = provider || generateProvider(chainId, topic, web3Modal)
+
   return {
-    provider: generateProvider(chainId, topic, web3Modal),
+    provider: finalProvider,
 
     getAddress: () => address,
 
     getPrivateKey: (): string => {
-      throw new Error("not implemented");
+      throw new Error('not implemented')
     },
 
     signHash: async (hash: Uint8Array): Promise<Uint8Array> => {
@@ -26,12 +29,12 @@ export function generateSigner(
           method: Methods.SignHash,
           params: {
             address,
-            hash: utils.encodeBase64url(hash),
-          },
-        },
-      });
+            hash: utils.encodeBase64(hash)
+          }
+        }
+      })
 
-      return utils.decodeBase64url(result);
+      return utils.decodeBase64(result)
     },
 
     signMessage: async (message: string): Promise<Uint8Array> => {
@@ -42,35 +45,49 @@ export function generateSigner(
           method: Methods.SignMessage,
           params: {
             address,
-            message,
-          },
-        },
-      });
+            message
+          }
+        }
+      })
 
-      return utils.decodeBase64url(result);
+      return utils.decodeBase64(result)
     },
 
     prepareTransaction: async (
       transaction: interfaces.TransactionJson
     ): Promise<interfaces.TransactionJson> => {
-      const result = await web3Modal.request<interfaces.TransactionJson>({
-        chainId,
-        topic,
-        request: {
-          method: Methods.PrepareTransaction,
-          params: {
-            address,
-            transaction,
-          },
-        },
-      });
+      if (provider) {
+        const dummySigner = Signer.fromSeed('dummy_signer')
+        dummySigner.provider = provider
 
-      return result;
+        if (!transaction.header?.payer) {
+          transaction.header = {
+            ...transaction.header,
+            payer: address
+          }
+        }
+
+        return dummySigner.prepareTransaction(transaction)
+      } else {
+        const result = await web3Modal.request<interfaces.TransactionJson>({
+          chainId,
+          topic,
+          request: {
+            method: Methods.PrepareTransaction,
+            params: {
+              address,
+              transaction
+            }
+          }
+        })
+
+        return result
+      }
     },
 
     signTransaction: async (
       transaction: interfaces.TransactionJson,
-      abis?: interfaces.SendTransactionOptions["abis"]
+      abis?: interfaces.SendTransactionOptions['abis']
     ): Promise<interfaces.TransactionJson> => {
       const result = await web3Modal.request<interfaces.TransactionJson>({
         chainId,
@@ -81,25 +98,25 @@ export function generateSigner(
             address,
             transaction,
             options: {
-              abis,
-            },
-          },
-        },
-      });
+              abis
+            }
+          }
+        }
+      })
 
-      return result;
+      return result
     },
 
     sendTransaction: async (
       transaction: interfaces.TransactionJson,
       options?: interfaces.SendTransactionOptions
     ): Promise<{
-      receipt: interfaces.TransactionReceipt;
-      transaction: interfaces.TransactionJsonWait;
+      receipt: interfaces.TransactionReceipt
+      transaction: interfaces.TransactionJsonWait
     }> => {
       const result = await web3Modal.request<{
-        receipt: interfaces.TransactionReceipt;
-        transaction: interfaces.TransactionJsonWait;
+        receipt: interfaces.TransactionReceipt
+        transaction: interfaces.TransactionJsonWait
       }>({
         chainId,
         topic,
@@ -108,18 +125,21 @@ export function generateSigner(
           params: {
             address,
             transaction,
-            options,
-          },
-        },
-      });
+            options
+          }
+        }
+      })
 
       result.transaction.wait = async (
-        type: "byTransactionId" | "byBlock" = "byBlock",
+        type: 'byTransactionId' | 'byBlock' = 'byBlock',
         timeout = 60000
-      ) => {
+      ): Promise<{
+        blockId: string
+        blockNumber?: number
+      }> => {
         const waitResult = await web3Modal.request<{
-          blockId: string;
-          blockNumber?: number;
+          blockId: string
+          blockNumber?: number
         }>({
           chainId,
           topic,
@@ -128,23 +148,23 @@ export function generateSigner(
             params: {
               transactionId: result.transaction.id,
               type,
-              timeout,
-            },
-          },
-        });
+              timeout
+            }
+          }
+        })
 
-        return waitResult;
-      };
+        return waitResult
+      }
 
-      return result;
+      return result
     },
 
     prepareBlock: (): Promise<interfaces.BlockJson> => {
-      throw new Error("not implemented");
+      throw new Error('not implemented')
     },
 
     signBlock: (): Promise<interfaces.BlockJson> => {
-      throw new Error("not implemented");
-    },
-  } as unknown as Signer;
+      throw new Error('not implemented')
+    }
+  } as unknown as Signer
 }
