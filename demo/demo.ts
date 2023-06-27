@@ -39,7 +39,20 @@ const walletConnectKoinos = new WalletConnectKoinos(
     },
     modalOptions: {
       explorerRecommendedWalletIds: 'NONE',
-      enableExplorer: false
+      enableExplorer: false,
+      walletImages: {
+        portal: 'https://portal.armana.io/favicon.png'
+      },
+      mobileWallets: [
+        {
+          id: 'portal',
+          name: 'Portal',
+          links: {
+            native: 'portal://',
+            universal: 'https://portal.armana.io'
+          }
+        }
+      ]
     }
   },
   {
