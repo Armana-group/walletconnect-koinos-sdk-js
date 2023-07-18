@@ -114,7 +114,7 @@ async function onSignTransaction(): Promise<void> {
     // get Koin balance
     const koin = new Contract({
       // Harbinger Testnet Koin contract
-      id: '19JntSm8pSNETT9aHTwAUHC5RMoaSmgZPJ',
+      id: '1FaSvLjQJsCJKq5ybmGsMMQs8RQYyVv8ju',
       abi: utils.tokenAbi,
       signer
     })
