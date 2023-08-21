@@ -91,10 +91,12 @@ async function onDisconnect(): Promise<void> {
   }
 }
 
-function getNetworkSelection() {
-  const networkSelection = (document.querySelector('input[name="network"]:checked') as HTMLInputElement)?.value
+function getNetworkSelection(): ChainIds {
+  const networkSelection = (
+    document.querySelector('input[name="network"]:checked') as HTMLInputElement
+  )?.value
   console.log(networkSelection)
-  
+
   return networkSelection === 'testnet' ? ChainIds.Harbinger : ChainIds.Mainnet
 }
 
@@ -118,12 +120,16 @@ async function onSignTransaction(): Promise<void> {
   try {
     signTransactionButton.disabled = true
     const network = getNetworkSelection()
-    const jsonRPCUrl = network === ChainIds.Harbinger ? 'https://harbinger-api.koinos.io' : 'https://api.koinos.io'
-    
+    const jsonRPCUrl =
+      network === ChainIds.Harbinger ? 'https://harbinger-api.koinos.io' : 'https://api.koinos.io'
+
     const provider = new Provider(jsonRPCUrl)
     const signer = walletConnectKoinos.getSigner(accounts[0], provider, network)
 
-    const koinContractId = network === ChainIds.Harbinger ? '1FaSvLjQJsCJKq5ybmGsMMQs8RQYyVv8ju' : '15DJN4a8SgrbGhhGksSBASiSYjGnMU8dGL'
+    const koinContractId =
+      network === ChainIds.Harbinger
+        ? '1FaSvLjQJsCJKq5ybmGsMMQs8RQYyVv8ju'
+        : '15DJN4a8SgrbGhhGksSBASiSYjGnMU8dGL'
     console.log(network)
     // get Koin balance
     const koin = new Contract({
