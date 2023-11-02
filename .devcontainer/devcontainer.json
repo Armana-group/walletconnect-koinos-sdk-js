@@ -22,5 +22,12 @@
 	"initializeCommand": "if [ \"${CODESPACES}\" != \"true\" ]; then umask 177 && touch ~/.npmrc; fi",
 	"mounts": [
     "source=${localEnv:HOME}/.npmrc,target=/home/node/.npmrc,type=bind"
-  ]
+],
+"customizations": {
+	"vscode": {
+		"extensions": [
+			"esbenp.prettier-vscode"
+		]
+	}
+}
 }
