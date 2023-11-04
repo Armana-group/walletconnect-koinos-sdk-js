@@ -1,24 +1,16 @@
 {
   "name": "@armana/walletconnect-koinos-sdk-js",
-  "version": "0.0.5",
+  "version": "0.0.10",
   "license": "MIT",
-  "type": "module",
   "files": [
     "dist"
   ],
-  "main": "./dist/walletconnect-koinos-sdk-js.umd.cjs",
-  "module": "./dist/walletconnect-koinos-sdk-js.js",
+  "main": "./dist/walletconnect-koinos-sdk-js.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/walletconnect-koinos-sdk-js.js"
-      },
-      "require": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/walletconnect-koinos-sdk-js.umd.cjs"
-      }
+      "require": "./dist/walletconnect-koinos-sdk-js.js",
+      "import": "./dist/walletconnect-koinos-sdk-js.js"
     }
   },
   "scripts": {
