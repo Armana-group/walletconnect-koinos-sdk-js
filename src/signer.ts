@@ -1,5 +1,5 @@
 import { Signer, utils, interfaces, Provider } from 'koilib'
-import { Web3ModalSign } from '@web3modal/sign-html'
+import { WalletConnectModalSign } from '@walletconnect/modal-sign-html'
 import { Methods } from './index'
 import { generateProvider } from './provider'
 
@@ -7,7 +7,7 @@ export function generateSigner(
   address: string,
   chainId: string,
   topic: string,
-  web3Modal: Web3ModalSign,
+  web3Modal: WalletConnectModalSign,
   provider?: Provider
 ): Signer {
   const finalProvider = provider || generateProvider(chainId, topic, web3Modal)

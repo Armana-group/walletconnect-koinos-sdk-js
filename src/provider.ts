@@ -1,11 +1,11 @@
-import { Web3ModalSign } from '@web3modal/sign-html'
+import { WalletConnectModalSign } from '@walletconnect/modal-sign-html'
 import { Provider, interfaces } from 'koilib'
 import { Methods } from '.'
 
 export function generateProvider(
   chainId: string,
   topic: string,
-  web3Modal: Web3ModalSign
+  web3Modal: WalletConnectModalSign
 ): Provider {
   return {
     async call<T = unknown>(method: string, params: unknown): Promise<T> {

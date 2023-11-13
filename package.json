@@ -1,18 +1,13 @@
 {
   "name": "@armana/walletconnect-koinos-sdk-js",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "license": "MIT",
   "files": [
     "dist"
   ],
   "main": "./dist/walletconnect-koinos-sdk-js.js",
+  "module": "./dist/walletconnect-koinos-sdk-js.mjs",
   "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "require": "./dist/walletconnect-koinos-sdk-js.js",
-      "import": "./dist/walletconnect-koinos-sdk-js.js"
-    }
-  },
   "scripts": {
     "dev": "vite | vite build --watch",
     "build:watch": "vite build --watch",
@@ -34,8 +29,8 @@
     "vite": "^4.3.9"
   },
   "dependencies": {
-    "@walletconnect/utils": "^2.8.0",
-    "@web3modal/sign-html": "^2.4.5",
+    "@walletconnect/modal-sign-html": "^2.6.2",
+    "@walletconnect/utils": "^2.10.4",
     "koilib": "^5.5.6",
     "vite-plugin-dts": "^2.3.0"
   }
