@@ -1,4 +1,7 @@
-import { Web3ModalSign, Web3ModalSignOptions } from '@web3modal/sign-html'
+import {
+  WalletConnectModalSign,
+  WalletConnectModalSignOptions
+} from '@walletconnect/modal-sign-html'
 import { getSdkError } from '@walletconnect/utils'
 import { generateSigner } from './signer'
 import { generateProvider } from './provider'
@@ -6,7 +9,7 @@ import { Provider, Signer } from 'koilib'
 
 export enum ChainIds {
   Mainnet = 'koinos:EiBZK_GGVP0H_fXVAM3j6EAuz3-B-l3e',
-  Harbinger = 'koinos:EiAAKqFi-puoXnuJTdn7qBGGJa8yd-dc'
+  Harbinger = 'koinos:EiBncD4pKRIQWco_WRqo5Q-xnXR7JuO3'
 }
 
 export enum Methods {
@@ -41,7 +44,7 @@ export type Options = {
 }
 
 export class WalletConnectKoinos {
-  public web3Modal: Web3ModalSign
+  public web3Modal: WalletConnectModalSign
   private topic = ''
   private chainId: string | undefined
   private accounts: string[] = []
@@ -49,11 +52,11 @@ export class WalletConnectKoinos {
     logLevel: LogLevel.none
   }
 
-  constructor(web3ModalSignOptions: Web3ModalSignOptions, options?: Options) {
+  constructor(WalletConnectModalSignOptions: WalletConnectModalSignOptions, options?: Options) {
     if (options) {
       this.options = options
     }
-    this.web3Modal = new Web3ModalSign(web3ModalSignOptions)
+    this.web3Modal = new WalletConnectModalSign(WalletConnectModalSignOptions)
 
     this.web3Modal.onSessionDelete((ev) => this.onSessionDelete(ev))
   }
