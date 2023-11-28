@@ -9,7 +9,7 @@ import { Provider, Signer } from 'koilib'
 
 export enum ChainIds {
   Mainnet = 'koinos:EiBZK_GGVP0H_fXVAM3j6EAuz3-B-l3e',
-  Harbinger = 'koinos:EiAAKqFi-puoXnuJTdn7qBGGJa8yd-dc'
+  Harbinger = 'koinos:EiBncD4pKRIQWco_WRqo5Q-xnXR7JuO3'
 }
 
 export enum Methods {
