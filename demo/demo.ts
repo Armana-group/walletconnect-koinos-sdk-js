@@ -32,26 +32,14 @@ const walletConnectKoinos = new WalletConnectKoinos(
   {
     projectId,
     metadata: {
-      name: 'Web3Modal',
-      description: 'Web3Modal',
-      url: 'web3modal.com',
-      icons: ['https://walletconnect.com/_next/static/media/logo_mark.84dd8525.svg']
+      name: 'Armana Test App',
+      description: 'Armana Test App',
+      url: 'https://portal.armana.io/',
+      icons: ['https://portal.armana.io/favicon.png']
     },
     modalOptions: {
-      explorerRecommendedWalletIds: 'NONE',
-      enableExplorer: false,
-      walletImages: {
-        portal: 'https://portal.armana.io/favicon.png'
-      },
-      mobileWallets: [
-        {
-          id: 'portal',
-          name: 'Portal',
-          links: {
-            native: 'portal://',
-            universal: 'https://portal.armana.io'
-          }
-        }
+      explorerRecommendedWalletIds: [
+        '4e21a70acc8f11aa35f87733de2fbada29a2dd08e9011d34d92522fb8ad0e3d2'
       ]
     }
   },
