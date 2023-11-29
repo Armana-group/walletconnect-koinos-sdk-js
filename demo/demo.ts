@@ -54,7 +54,7 @@ async function onConnect(): Promise<void> {
   try {
     connectButton.disabled = true
     accounts = await walletConnectKoinos.connect(
-      [ChainIds.Harbinger, ChainIds.Mainnet],
+      [getNetworkSelection()],
       [Methods.SignMessage, Methods.SignTransaction]
     )
     console.info(accounts)
