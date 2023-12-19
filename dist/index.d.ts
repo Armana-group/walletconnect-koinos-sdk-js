@@ -1,5 +1,5 @@
-import { WalletConnectModalSign, WalletConnectModalSignOptions } from '@walletconnect/modal-sign-html';
-import { Provider, Signer } from 'koilib';
+export { WebWalletConnectKoinos } from './WebWalletConnectKoinos';
+export { NodeWalletConnectKoinos } from './NodeWalletConnectKoinos';
 export declare enum ChainIds {
     Mainnet = "koinos:EiBZK_GGVP0H_fXVAM3j6EAuz3-B-l3e",
     Harbinger = "koinos:EiBncD4pKRIQWco_WRqo5Q-xnXR7JuO3"
@@ -31,22 +31,5 @@ export declare enum LogLevel {
 }
 export type Options = {
     logLevel?: LogLevel;
+    autoDisconnect?: boolean;
 };
-export declare class WalletConnectKoinos {
-    web3Modal: WalletConnectModalSign;
-    private topic;
-    private chainId;
-    private accounts;
-    private options;
-    constructor(WalletConnectModalSignOptions: WalletConnectModalSignOptions, options?: Options);
-    close(): void;
-    onSessionDelete(data: {
-        id: number;
-        topic: string;
-    }): Promise<void>;
-    connect(chains: ChainIds[], methods: Methods[]): Promise<string[]>;
-    disconnect(): Promise<void>;
-    getAccounts(): string[];
-    getSigner(address: string, provider?: Provider, chainId?: ChainIds): Signer;
-    getProvider(chainId?: ChainIds): Provider;
-}

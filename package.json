@@ -1,6 +1,6 @@
 {
   "name": "@armana/walletconnect-koinos-sdk-js",
-  "version": "0.0.12",
+  "version": "0.1.0",
   "license": "MIT",
   "files": [
     "dist"
@@ -21,15 +21,19 @@
     "@types/node": "^20.2.5",
     "@typescript-eslint/eslint-plugin": "^5.59.11",
     "@typescript-eslint/parser": "^5.59.11",
+    "dotenv": "^16.3.1",
     "eslint": "^8.42.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
     "prettier": "^2.8.8",
+    "tsx": "^4.6.2",
     "typescript": "^5.0.2",
     "vite": "^4.3.9"
   },
   "dependencies": {
+    "@walletconnect/keyvaluestorage": "^1.1.1",
     "@walletconnect/modal-sign-html": "^2.6.2",
+    "@walletconnect/sign-client": "^2.10.6",
     "@walletconnect/utils": "^2.10.4",
     "koilib": "^5.5.6",
     "vite-plugin-dts": "^2.3.0"

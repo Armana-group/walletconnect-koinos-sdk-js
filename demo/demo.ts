@@ -1,5 +1,5 @@
 import { Contract, Provider, utils } from 'koilib'
-import { ChainIds, LogLevel, Methods, WalletConnectKoinos } from '../src'
+import { ChainIds, LogLevel, Methods, WebWalletConnectKoinos } from '../src'
 
 const connectButton = document.getElementById('connect-button') as HTMLButtonElement
 
@@ -28,7 +28,7 @@ if (!projectId) {
   throw new Error('You need to provide VITE_WALLET_CONNECT_PROJECT_ID env variable')
 }
 
-const walletConnectKoinos = new WalletConnectKoinos(
+const walletConnectKoinos = new WebWalletConnectKoinos(
   {
     projectId,
     metadata: {

@@ -19,7 +19,7 @@ yarn add @armana/walletconnect-koinos-sdk-js
 ### Using as a CommonJS library
 
 ```ts
-import { ChainIds, Methods, WalletConnectKoinos } from "@armana/walletconnect-koinos-sdk-js"
+import { ChainIds, Methods, WebWalletConnectKoinos } from "@armana/walletconnect-koinos-sdk-js"
 import { Contract, utils } from "koilib"
 
 (async () => {
@@ -27,7 +27,7 @@ import { Contract, utils } from "koilib"
   const projectId = "..."
 
   // create WalletConnectKoinos
-  const walletConnectKoinos = new WalletConnectKoinos(
+  const walletConnectKoinos = new WebWalletConnectKoinos(
     {
       projectId,
       // your application information
@@ -83,13 +83,13 @@ import { Contract, utils } from "koilib"
 <html>
   <script type="module">
     import * as koilib from 'https://cdn.jsdelivr.net/npm/koilib@5.5.6/dist/koinos.min.js'
-    import { ChainIds, Methods, WalletConnectKoinos } from 'https://cdn.jsdelivr.net/npm/@armana/walletconnect-koinos-sdk-js@latest/dist/walletconnect-koinos-sdk-js.mjs'
+    import { ChainIds, Methods, WebWalletConnectKoinos } from 'https://cdn.jsdelivr.net/npm/@armana/walletconnect-koinos-sdk-js@latest/dist/walletconnect-koinos-sdk-js.mjs'
 
     // Get your projectId by creating a free WalletConnect cloud project at https://cloud.walletconnect.com
     const projectId = "..."
 
     // create WalletConnectKoinos
-    const walletConnectKoinos = new WalletConnectKoinos(
+    const walletConnectKoinos = new WebWalletConnectKoinos(
       {
         projectId,
         // your application information
@@ -144,15 +144,15 @@ import { Contract, utils } from "koilib"
 ### Using as a CommonJS library
 
 ```ts
-import { ChainIds, Methods, WalletConnectKoinos } from "@armana/walletconnect-koinos-sdk-js";
+import { ChainIds, Methods, WebWalletConnectKoinos } from "@armana/walletconnect-koinos-sdk-js";
 import { Contract, utils } from "koilib";
 
 (async () => {
   // Get your projectId by creating a free WalletConnect cloud project at https://cloud.walletconnect.com
   const projectId = "..."
 
-  // create WalletConnectKoinos
-  const walletConnectKoinos = new WalletConnectKoinos(
+  // create WebWalletConnectKoinos
+  const walletConnectKoinos = new WebWalletConnectKoinos(
     {
       projectId,
       // your application information
@@ -213,13 +213,13 @@ import { Contract, utils } from "koilib";
 <html>
   <script type="module">
     import * as koilib from 'https://cdn.jsdelivr.net/npm/koilib@5.5.6/dist/koinos.min.js'
-    import { ChainIds, Methods, WalletConnectKoinos } from 'https://cdn.jsdelivr.net/npm/@armana/walletconnect-koinos-sdk-js@latest/dist/walletconnect-koinos-sdk-js.mjs'
+    import { ChainIds, Methods, WebWalletConnectKoinos } from 'https://cdn.jsdelivr.net/npm/@armana/walletconnect-koinos-sdk-js@latest/dist/walletconnect-koinos-sdk-js.mjs'
 
     // Get your projectId by creating a free WalletConnect cloud project at https://cloud.walletconnect.com
     const projectId = "..."
 
     // create WalletConnectKoinos
-    const walletConnectKoinos = new WalletConnectKoinos(
+    const walletConnectKoinos = new WebWalletConnectKoinos(
       {
         projectId,
         // your application information
@@ -273,4 +273,48 @@ import { Contract, utils } from "koilib";
     console.info("transfer successful");
   </script>
 </html>
+```
+
+### Using NodeJS
+
+```ts
+import { ChainIds, Methods, NodeWalletConnectKoinos } from '@armana/walletconnect-koinos-sdk-js'
+require('dotenv').config({ path: __dirname + '/../.env.local' })
+
+async function main(): Promise<void> {
+  const nodeWalletConnectKoinos = new NodeWalletConnectKoinos()
+  try {
+    await nodeWalletConnectKoinos.init({
+      projectId: process.env.VITE_WALLET_CONNECT_PROJECT_ID,
+      metadata: {
+        name: 'Web3Modal',
+        description: 'Web3Modal',
+        url: 'web3modal.com',
+        icons: ['https://walletconnect.com/_next/static/media/logo_mark.84dd8525.svg']
+      }
+    })
+
+    const accounts = await nodeWalletConnectKoinos.connect(
+      [ChainIds.Harbinger],
+      [Methods.SignMessage, Methods.SignTransaction]
+    )
+
+    console.log('accounts', accounts)
+
+    if (accounts.length) {
+      const signer = nodeWalletConnectKoinos.getSigner(accounts[0])
+
+      const signature = await signer.signMessage('Hello, Koinos!')
+      console.log(signature)
+    }
+  } catch (error) {
+    console.log(error)
+  } finally {
+    console.log('closing connection...')
+
+    await nodeWalletConnectKoinos.close()
+  }
+}
+
+main().catch((error) => console.log(error))
 ```

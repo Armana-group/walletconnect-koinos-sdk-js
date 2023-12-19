@@ -1,16 +1,16 @@
 import { Signer, utils, interfaces, Provider } from 'koilib'
-import { WalletConnectModalSign } from '@walletconnect/modal-sign-html'
 import { Methods } from './index'
 import { generateProvider } from './provider'
+import { ISignClient } from '@walletconnect/types'
 
 export function generateSigner(
   address: string,
   chainId: string,
   topic: string,
-  web3Modal: WalletConnectModalSign,
+  signClient: ISignClient,
   provider?: Provider
 ): Signer {
-  const finalProvider = provider || generateProvider(chainId, topic, web3Modal)
+  const finalProvider = provider || generateProvider(chainId, topic, signClient)
 
   return {
     provider: finalProvider,
@@ -22,7 +22,7 @@ export function generateSigner(
     },
 
     signHash: async (hash: Uint8Array): Promise<Uint8Array> => {
-      const result = await web3Modal.request<string>({
+      const result = await signClient.request<string>({
         chainId,
         topic,
         request: {
@@ -38,7 +38,7 @@ export function generateSigner(
     },
 
     signMessage: async (message: string): Promise<Uint8Array> => {
-      const result = await web3Modal.request<string>({
+      const result = await signClient.request<string>({
         chainId,
         topic,
         request: {
@@ -69,7 +69,7 @@ export function generateSigner(
 
         return dummySigner.prepareTransaction(transaction)
       } else {
-        const result = await web3Modal.request<interfaces.TransactionJson>({
+        const result = await signClient.request<interfaces.TransactionJson>({
           chainId,
           topic,
           request: {
@@ -89,7 +89,7 @@ export function generateSigner(
       transaction: interfaces.TransactionJson,
       abis?: interfaces.SendTransactionOptions['abis']
     ): Promise<interfaces.TransactionJson> => {
-      const result = await web3Modal.request<interfaces.TransactionJson>({
+      const result = await signClient.request<interfaces.TransactionJson>({
         chainId,
         topic,
         request: {
@@ -114,7 +114,7 @@ export function generateSigner(
       receipt: interfaces.TransactionReceipt
       transaction: interfaces.TransactionJsonWait
     }> => {
-      const result = await web3Modal.request<{
+      const result = await signClient.request<{
         receipt: interfaces.TransactionReceipt
         transaction: interfaces.TransactionJsonWait
       }>({
@@ -137,7 +137,7 @@ export function generateSigner(
         blockId: string
         blockNumber?: number
       }> => {
-        const waitResult = await web3Modal.request<{
+        const waitResult = await signClient.request<{
           blockId: string
           blockNumber?: number
         }>({

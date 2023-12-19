@@ -1,3 +1,3 @@
-import { WalletConnectModalSign } from '@walletconnect/modal-sign-html';
 import { Provider } from 'koilib';
-export declare function generateProvider(chainId: string, topic: string, web3Modal: WalletConnectModalSign): Provider;
+import { ISignClient } from '@walletconnect/types';
+export declare function generateProvider(chainId: string, topic: string, signClient: ISignClient): Provider;

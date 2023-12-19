@@ -1,15 +1,15 @@
-import { WalletConnectModalSign } from '@walletconnect/modal-sign-html'
 import { Provider, interfaces } from 'koilib'
 import { Methods } from '.'
+import { ISignClient } from '@walletconnect/types'
 
 export function generateProvider(
   chainId: string,
   topic: string,
-  web3Modal: WalletConnectModalSign
+  signClient: ISignClient
 ): Provider {
   return {
     async call<T = unknown>(method: string, params: unknown): Promise<T> {
-      const result = await web3Modal.request<T>({
+      const result = await signClient.request<T>({
         chainId,
         topic,
         request: {
@@ -25,7 +25,7 @@ export function generateProvider(
     },
 
     async getNonce(address: string): Promise<number> {
-      const result = await web3Modal.request<number>({
+      const result = await signClient.request<number>({
         chainId,
         topic,
         request: {
@@ -40,7 +40,7 @@ export function generateProvider(
     },
 
     async getNextNonce(address: string): Promise<string> {
-      const result = await web3Modal.request<string>({
+      const result = await signClient.request<string>({
         chainId,
         topic,
         request: {
@@ -55,7 +55,7 @@ export function generateProvider(
     },
 
     async getAccountRc(address: string): Promise<string> {
-      const result = await web3Modal.request<string>({
+      const result = await signClient.request<string>({
         chainId,
         topic,
         request: {
@@ -75,7 +75,7 @@ export function generateProvider(
         containing_blocks: string[]
       }[]
     }> {
-      const result = await web3Modal.request<{
+      const result = await signClient.request<{
         transactions: {
           transaction: interfaces.TransactionJson
           containing_blocks: string[]
@@ -101,7 +101,7 @@ export function generateProvider(
         block: interfaces.BlockJson
       }[]
     }> {
-      const result = await web3Modal.request<{
+      const result = await signClient.request<{
         block_items: {
           block_id: string
           block_height: string
@@ -131,7 +131,7 @@ export function generateProvider(
       head_state_merkle_root: string
       last_irreversible_block: string
     }> {
-      const result = await web3Modal.request<{
+      const result = await signClient.request<{
         head_block_time: string
         head_topology: {
           id: string
@@ -153,7 +153,7 @@ export function generateProvider(
     },
 
     async getChainId(): Promise<string> {
-      const result = await web3Modal.request<string>({
+      const result = await signClient.request<string>({
         chainId,
         topic,
         request: {
@@ -179,7 +179,7 @@ export function generateProvider(
         }
       }[]
     > {
-      const result = await web3Modal.request<
+      const result = await signClient.request<
         {
           block_id: string
           block_height: string
@@ -212,7 +212,7 @@ export function generateProvider(
         [x: string]: unknown
       }
     }> {
-      const result = await web3Modal.request<{
+      const result = await signClient.request<{
         block_id: string
         block_height: string
         block: interfaces.BlockJson
@@ -238,7 +238,7 @@ export function generateProvider(
       type: 'byTransactionId' | 'byBlock' = 'byBlock',
       timeout = 30000
     ): Promise<{ blockId: string; blockNumber?: number }> {
-      const waitResult = await web3Modal.request<{
+      const waitResult = await signClient.request<{
         blockId: string
         blockNumber?: number
       }>({
@@ -261,7 +261,7 @@ export function generateProvider(
       transaction: interfaces.TransactionJson,
       broadcast = true
     ): Promise<interfaces.TransactionJson> {
-      const result = await web3Modal.request<interfaces.TransactionJsonWait>({
+      const result = await signClient.request<interfaces.TransactionJsonWait>({
         chainId,
         topic,
         request: {
@@ -277,7 +277,7 @@ export function generateProvider(
         type: 'byTransactionId' | 'byBlock' = 'byBlock',
         timeout = 60000
       ): Promise<{ blockId: string; blockNumber?: number | undefined }> => {
-        const waitResult = await web3Modal.request<{
+        const waitResult = await signClient.request<{
           blockId: string
           blockNumber?: number
         }>({
@@ -303,7 +303,7 @@ export function generateProvider(
       result: string
       logs: string
     }> {
-      const result = await web3Modal.request<{
+      const result = await signClient.request<{
         result: string
         logs: string
       }>({
@@ -321,7 +321,7 @@ export function generateProvider(
     },
 
     async submitBlock(block: interfaces.BlockJson): Promise<Record<string, never>> {
-      const result = await web3Modal.request<Record<string, never>>({
+      const result = await signClient.request<Record<string, never>>({
         chainId,
         topic,
         request: {
