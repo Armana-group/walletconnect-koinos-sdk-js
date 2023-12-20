@@ -1,6 +1,9 @@
 import { resolve } from 'path'
 import { defineConfig } from 'vite'
 import dts from 'vite-plugin-dts'
+import { builtinModules } from 'node:module'
+
+const external = [...builtinModules, ...builtinModules.map((m) => `node:${m}`)]
 
 export default defineConfig({
   server: {
@@ -14,7 +17,7 @@ export default defineConfig({
       formats: ['cjs', 'es']
     },
     rollupOptions: {
-      external: [],
+      external,
       output: {
         globals: {}
       }

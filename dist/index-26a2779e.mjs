@@ -1,9 +1,11 @@
 var Va = Object.defineProperty;
 var Ha = (fe, e, ye) => e in fe ? Va(fe, e, { enumerable: !0, configurable: !0, writable: !0, value: ye }) : fe[e] = ye;
 var Ai = (fe, e, ye) => (Ha(fe, typeof e != "symbol" ? e + "" : e, ye), ye);
+import c$5, { EventEmitter as EventEmitter$1 } from "events";
+import require$$1 from "crypto";
 const t = Symbol(), s = Object.getPrototypeOf, c$4 = /* @__PURE__ */ new WeakMap(), l$4 = (fe) => fe && (c$4.has(fe) ? c$4.get(fe) : s(fe) === Object.prototype || s(fe) === Array.prototype), y$7 = (fe) => l$4(fe) && fe[t] || null, h$a = (fe, e = !0) => {
   c$4.set(fe, e);
-}, isObject = (fe) => typeof fe == "object" && fe !== null, proxyStateMap = /* @__PURE__ */ new WeakMap(), refSet = /* @__PURE__ */ new WeakSet(), buildProxyFunction = (fe = Object.is, e = (gr, ve) => new Proxy(gr, ve), ye = (gr) => isObject(gr) && !refSet.has(gr) && (Array.isArray(gr) || !(Symbol.iterator in gr)) && !(gr instanceof WeakMap) && !(gr instanceof WeakSet) && !(gr instanceof Error) && !(gr instanceof Number) && !(gr instanceof Date) && !(gr instanceof String) && !(gr instanceof RegExp) && !(gr instanceof ArrayBuffer), me = (gr) => {
+}, isObject = (fe) => typeof fe == "object" && fe !== null, proxyStateMap = /* @__PURE__ */ new WeakMap(), refSet = /* @__PURE__ */ new WeakSet(), buildProxyFunction = (fe = Object.is, e = (gr, we) => new Proxy(gr, we), ye = (gr) => isObject(gr) && !refSet.has(gr) && (Array.isArray(gr) || !(Symbol.iterator in gr)) && !(gr instanceof WeakMap) && !(gr instanceof WeakSet) && !(gr instanceof Error) && !(gr instanceof Number) && !(gr instanceof Date) && !(gr instanceof String) && !(gr instanceof RegExp) && !(gr instanceof ArrayBuffer), me = (gr) => {
   switch (gr.status) {
     case "fulfilled":
       return gr.value;
@@ -12,12 +14,12 @@ const t = Symbol(), s = Object.getPrototypeOf, c$4 = /* @__PURE__ */ new WeakMap
     default:
       throw gr;
   }
-}, be = /* @__PURE__ */ new WeakMap(), we = (gr, ve, Se = me) => {
+}, be = /* @__PURE__ */ new WeakMap(), ve = (gr, we, Se = me) => {
   const $r = be.get(gr);
-  if (($r == null ? void 0 : $r[0]) === ve)
+  if (($r == null ? void 0 : $r[0]) === we)
     return $r[1];
   const Fr = Array.isArray(gr) ? [] : Object.create(Object.getPrototypeOf(gr));
-  return h$a(Fr, !0), be.set(gr, [ve, Fr]), Reflect.ownKeys(gr).forEach((Br) => {
+  return h$a(Fr, !0), be.set(gr, [we, Fr]), Reflect.ownKeys(gr).forEach((Br) => {
     if (Object.getOwnPropertyDescriptor(Fr, Br))
       return;
     const Vr = Reflect.get(gr, Br), oo = {
@@ -35,7 +37,7 @@ const t = Symbol(), s = Object.getPrototypeOf, c$4 = /* @__PURE__ */ new WeakMap
       const [so, kr] = proxyStateMap.get(
         Vr
       );
-      oo.value = we(
+      oo.value = ve(
         so,
         kr(),
         Se
@@ -46,9 +48,9 @@ const t = Symbol(), s = Object.getPrototypeOf, c$4 = /* @__PURE__ */ new WeakMap
 }, Ee = /* @__PURE__ */ new WeakMap(), Oe = [1, 1], xe = (gr) => {
   if (!isObject(gr))
     throw new Error("object required");
-  const ve = Ee.get(gr);
-  if (ve)
-    return ve;
+  const we = Ee.get(gr);
+  if (we)
+    return we;
   let Se = Oe[0];
   const $r = /* @__PURE__ */ new Set(), Fr = (no, Xr = ++Oe[0]) => {
     Se !== Xr && (Se = Xr, $r.forEach((to) => to(no, Xr)));
@@ -108,7 +110,7 @@ const t = Symbol(), s = Object.getPrototypeOf, c$4 = /* @__PURE__ */ new WeakMap
   const Lr = [
     Yr,
     Vr,
-    we,
+    ve,
     Hr
   ];
   return proxyStateMap.set(Mr, Lr), Reflect.ownKeys(gr).forEach((no) => {
@@ -130,7 +132,7 @@ const t = Symbol(), s = Object.getPrototypeOf, c$4 = /* @__PURE__ */ new WeakMap
   ye,
   me,
   be,
-  we,
+  ve,
   Ee,
   Oe
 ], [defaultProxyFunction] = buildProxyFunction();
@@ -140,15 +142,15 @@ function proxy(fe = {}) {
 function subscribe(fe, e, ye) {
   const me = proxyStateMap.get(fe);
   let be;
-  const we = [], Ee = me[3];
+  const ve = [], Ee = me[3];
   let Oe = !1;
-  const gr = Ee((ve) => {
-    if (we.push(ve), ye) {
-      e(we.splice(0));
+  const gr = Ee((we) => {
+    if (ve.push(we), ye) {
+      e(ve.splice(0));
       return;
     }
     be || (be = Promise.resolve().then(() => {
-      be = void 0, Oe && e(we.splice(0));
+      be = void 0, Oe && e(ve.splice(0));
     }));
   });
   return Oe = !0, () => {
@@ -156,8 +158,8 @@ function subscribe(fe, e, ye) {
   };
 }
 function snapshot(fe, e) {
-  const ye = proxyStateMap.get(fe), [me, be, we] = ye;
-  return we(me, be(), e);
+  const ye = proxyStateMap.get(fe), [me, be, ve] = ye;
+  return ve(me, be(), e);
 }
 const o$1 = proxy({ history: ["ConnectWallet"], view: "ConnectWallet", data: void 0 }), T$3 = { state: o$1, subscribe(fe) {
   return subscribe(o$1, () => fe(o$1));
@@ -237,7 +239,7 @@ const o$1 = proxy({ history: ["ConnectWallet"], view: "ConnectWallet", data: voi
   if (!e)
     throw new Error('Missing "Wallet" view data');
   return e;
-} }, _$7 = typeof location < "u" && (location.hostname.includes("localhost") || location.protocol.includes("https")), r$1 = proxy({ enabled: _$7, userSessionId: "", events: [], connectedWalletId: void 0 }), R$4 = { state: r$1, subscribe(fe) {
+} }, _$7 = typeof location < "u" && (location.hostname.includes("localhost") || location.protocol.includes("https")), r$1 = proxy({ enabled: _$7, userSessionId: "", events: [], connectedWalletId: void 0 }), R$3 = { state: r$1, subscribe(fe) {
   return subscribe(r$1.events, () => fe(snapshot(r$1.events[r$1.events.length - 1])));
 }, initialize() {
   r$1.enabled && typeof (crypto == null ? void 0 : crypto.randomUUID) < "u" && (r$1.userSessionId = crypto.randomUUID());
@@ -278,7 +280,7 @@ const o$1 = proxy({ history: ["ConnectWallet"], view: "ConnectWallet", data: voi
   return subscribe(W$3, () => fe(W$3));
 }, setConfig(fe) {
   var e, ye;
-  R$4.initialize(), p$6.setChains(fe.chains), p$6.setIsAuth(!!fe.enableAuthMode), p$6.setIsCustomMobile(!!((e = fe.mobileWallets) != null && e.length)), p$6.setIsCustomDesktop(!!((ye = fe.desktopWallets) != null && ye.length)), a$4.setModalVersionInStorage(), Object.assign(W$3, fe);
+  R$3.initialize(), p$6.setChains(fe.chains), p$6.setIsAuth(!!fe.enableAuthMode), p$6.setIsCustomMobile(!!((e = fe.mobileWallets) != null && e.length)), p$6.setIsCustomDesktop(!!((ye = fe.desktopWallets) != null && ye.length)), a$4.setModalVersionInStorage(), Object.assign(W$3, fe);
 } };
 var V$4 = Object.defineProperty, D$8 = Object.getOwnPropertySymbols, H$5 = Object.prototype.hasOwnProperty, B$4 = Object.prototype.propertyIsEnumerable, M$3 = (fe, e, ye) => e in fe ? V$4(fe, e, { enumerable: !0, configurable: !0, writable: !0, value: ye }) : fe[e] = ye, K$4 = (fe, e) => {
   for (var ye in e || (e = {}))
@@ -291,8 +293,8 @@ var V$4 = Object.defineProperty, D$8 = Object.getOwnPropertySymbols, H$5 = Objec
 const L$2 = "https://explorer-api.walletconnect.com", E$6 = "wcm", O$6 = "js-2.6.2";
 async function w$7(fe, e) {
   const ye = K$4({ sdkType: E$6, sdkVersion: O$6 }, e), me = new URL(fe, L$2);
-  return me.searchParams.append("projectId", y$6.state.projectId), Object.entries(ye).forEach(([be, we]) => {
-    we && me.searchParams.append(be, String(we));
+  return me.searchParams.append("projectId", y$6.state.projectId), Object.entries(ye).forEach(([be, ve]) => {
+    ve && me.searchParams.append(be, String(ve));
   }), (await fetch(me)).json();
 }
 const m$4 = { async getDesktopListings(fe) {
@@ -322,12 +324,12 @@ const N$7 = a$4.isMobile(), d$3 = proxy({ wallets: { listings: [], total: 0, pag
     return d$3.recomendedWallets;
   if (a$4.isArray(fe)) {
     const ye = { recommendedIds: fe.join(",") }, { listings: me } = await m$4.getAllListings(ye), be = Object.values(me);
-    be.sort((we, Ee) => {
-      const Oe = fe.indexOf(we.id), xe = fe.indexOf(Ee.id);
+    be.sort((ve, Ee) => {
+      const Oe = fe.indexOf(ve.id), xe = fe.indexOf(Ee.id);
       return Oe - xe;
     }), d$3.recomendedWallets = be;
   } else {
-    const { chains: ye, isAuth: me } = p$6.state, be = ye == null ? void 0 : ye.join(","), we = a$4.isArray(e), Ee = { page: 1, sdks: me ? "auth_v1" : void 0, entries: a$4.RECOMMENDED_WALLET_AMOUNT, chains: be, version: 2, excludedIds: we ? e.join(",") : void 0 }, { listings: Oe } = N$7 ? await m$4.getMobileListings(Ee) : await m$4.getDesktopListings(Ee);
+    const { chains: ye, isAuth: me } = p$6.state, be = ye == null ? void 0 : ye.join(","), ve = a$4.isArray(e), Ee = { page: 1, sdks: me ? "auth_v1" : void 0, entries: a$4.RECOMMENDED_WALLET_AMOUNT, chains: be, version: 2, excludedIds: ve ? e.join(",") : void 0 }, { listings: Oe } = N$7 ? await m$4.getMobileListings(Ee) : await m$4.getDesktopListings(Ee);
     d$3.recomendedWallets = Object.values(Oe);
   }
   return d$3.recomendedWallets;
@@ -336,8 +338,8 @@ const N$7 = a$4.isMobile(), d$3 = proxy({ wallets: { listings: [], total: 0, pag
   if (me === "ALL")
     return d$3.wallets;
   be.length ? e.excludedIds = be.map((Se) => Se.id).join(",") : a$4.isArray(ye) && (e.excludedIds = ye.join(",")), a$4.isArray(me) && (e.excludedIds = [e.excludedIds, me].filter(Boolean).join(",")), p$6.state.isAuth && (e.sdks = "auth_v1");
-  const { page: we, search: Ee } = fe, { listings: Oe, total: xe } = N$7 ? await m$4.getMobileListings(e) : await m$4.getDesktopListings(e), gr = Object.values(Oe), ve = Ee ? "search" : "wallets";
-  return d$3[ve] = { listings: [...d$3[ve].listings, ...gr], total: xe, page: we ?? 1 }, { listings: gr, total: xe };
+  const { page: ve, search: Ee } = fe, { listings: Oe, total: xe } = N$7 ? await m$4.getMobileListings(e) : await m$4.getDesktopListings(e), gr = Object.values(Oe), we = Ee ? "search" : "wallets";
+  return d$3[we] = { listings: [...d$3[we].listings, ...gr], total: xe, page: ve ?? 1 }, { listings: gr, total: xe };
 }, getWalletImageUrl(fe) {
   return m$4.getWalletImageUrl(fe);
 }, getAssetImageUrl(fe) {
@@ -353,8 +355,8 @@ const N$7 = a$4.isMobile(), d$3 = proxy({ wallets: { listings: [], total: 0, pag
       I$1.open = !0, e();
     else {
       const be = setInterval(() => {
-        const we = p$6.state;
-        we.isUiLoaded && we.isDataLoaded && (clearInterval(be), I$1.open = !0, e());
+        const ve = p$6.state;
+        ve.isUiLoaded && ve.isDataLoaded && (clearInterval(be), I$1.open = !0, e());
       }, 200);
     }
   });
@@ -390,269 +392,13 @@ let d$2 = class {
   }
   async initUi() {
     if (typeof window < "u") {
-      await import("./index-d33325a2.mjs");
+      await import("./index-8193ad37.mjs");
       const e = document.createElement("wcm-modal");
       document.body.insertAdjacentElement("beforeend", e), p$6.setIsUiLoaded(!0);
     }
   }
 };
-var commonjsGlobal = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : typeof global < "u" ? global : typeof self < "u" ? self : {};
-function getDefaultExportFromCjs(fe) {
-  return fe && fe.__esModule && Object.prototype.hasOwnProperty.call(fe, "default") ? fe.default : fe;
-}
-function getAugmentedNamespace(fe) {
-  if (fe.__esModule)
-    return fe;
-  var e = fe.default;
-  if (typeof e == "function") {
-    var ye = function me() {
-      if (this instanceof me) {
-        var be = [null];
-        be.push.apply(be, arguments);
-        var we = Function.bind.apply(e, be);
-        return new we();
-      }
-      return e.apply(this, arguments);
-    };
-    ye.prototype = e.prototype;
-  } else
-    ye = {};
-  return Object.defineProperty(ye, "__esModule", { value: !0 }), Object.keys(fe).forEach(function(me) {
-    var be = Object.getOwnPropertyDescriptor(fe, me);
-    Object.defineProperty(ye, me, be.get ? be : {
-      enumerable: !0,
-      get: function() {
-        return fe[me];
-      }
-    });
-  }), ye;
-}
-var events = { exports: {} }, R$3 = typeof Reflect == "object" ? Reflect : null, ReflectApply = R$3 && typeof R$3.apply == "function" ? R$3.apply : function(e, ye, me) {
-  return Function.prototype.apply.call(e, ye, me);
-}, ReflectOwnKeys;
-R$3 && typeof R$3.ownKeys == "function" ? ReflectOwnKeys = R$3.ownKeys : Object.getOwnPropertySymbols ? ReflectOwnKeys = function(e) {
-  return Object.getOwnPropertyNames(e).concat(Object.getOwnPropertySymbols(e));
-} : ReflectOwnKeys = function(e) {
-  return Object.getOwnPropertyNames(e);
-};
-function ProcessEmitWarning(fe) {
-  console && console.warn && console.warn(fe);
-}
-var NumberIsNaN = Number.isNaN || function(e) {
-  return e !== e;
-};
-function EventEmitter$1() {
-  EventEmitter$1.init.call(this);
-}
-events.exports = EventEmitter$1;
-events.exports.once = once;
-EventEmitter$1.EventEmitter = EventEmitter$1;
-EventEmitter$1.prototype._events = void 0;
-EventEmitter$1.prototype._eventsCount = 0;
-EventEmitter$1.prototype._maxListeners = void 0;
-var defaultMaxListeners = 10;
-function checkListener(fe) {
-  if (typeof fe != "function")
-    throw new TypeError('The "listener" argument must be of type Function. Received type ' + typeof fe);
-}
-Object.defineProperty(EventEmitter$1, "defaultMaxListeners", {
-  enumerable: !0,
-  get: function() {
-    return defaultMaxListeners;
-  },
-  set: function(fe) {
-    if (typeof fe != "number" || fe < 0 || NumberIsNaN(fe))
-      throw new RangeError('The value of "defaultMaxListeners" is out of range. It must be a non-negative number. Received ' + fe + ".");
-    defaultMaxListeners = fe;
-  }
-});
-EventEmitter$1.init = function() {
-  (this._events === void 0 || this._events === Object.getPrototypeOf(this)._events) && (this._events = /* @__PURE__ */ Object.create(null), this._eventsCount = 0), this._maxListeners = this._maxListeners || void 0;
-};
-EventEmitter$1.prototype.setMaxListeners = function(e) {
-  if (typeof e != "number" || e < 0 || NumberIsNaN(e))
-    throw new RangeError('The value of "n" is out of range. It must be a non-negative number. Received ' + e + ".");
-  return this._maxListeners = e, this;
-};
-function _getMaxListeners(fe) {
-  return fe._maxListeners === void 0 ? EventEmitter$1.defaultMaxListeners : fe._maxListeners;
-}
-EventEmitter$1.prototype.getMaxListeners = function() {
-  return _getMaxListeners(this);
-};
-EventEmitter$1.prototype.emit = function(e) {
-  for (var ye = [], me = 1; me < arguments.length; me++)
-    ye.push(arguments[me]);
-  var be = e === "error", we = this._events;
-  if (we !== void 0)
-    be = be && we.error === void 0;
-  else if (!be)
-    return !1;
-  if (be) {
-    var Ee;
-    if (ye.length > 0 && (Ee = ye[0]), Ee instanceof Error)
-      throw Ee;
-    var Oe = new Error("Unhandled error." + (Ee ? " (" + Ee.message + ")" : ""));
-    throw Oe.context = Ee, Oe;
-  }
-  var xe = we[e];
-  if (xe === void 0)
-    return !1;
-  if (typeof xe == "function")
-    ReflectApply(xe, this, ye);
-  else
-    for (var gr = xe.length, ve = arrayClone(xe, gr), me = 0; me < gr; ++me)
-      ReflectApply(ve[me], this, ye);
-  return !0;
-};
-function _addListener(fe, e, ye, me) {
-  var be, we, Ee;
-  if (checkListener(ye), we = fe._events, we === void 0 ? (we = fe._events = /* @__PURE__ */ Object.create(null), fe._eventsCount = 0) : (we.newListener !== void 0 && (fe.emit(
-    "newListener",
-    e,
-    ye.listener ? ye.listener : ye
-  ), we = fe._events), Ee = we[e]), Ee === void 0)
-    Ee = we[e] = ye, ++fe._eventsCount;
-  else if (typeof Ee == "function" ? Ee = we[e] = me ? [ye, Ee] : [Ee, ye] : me ? Ee.unshift(ye) : Ee.push(ye), be = _getMaxListeners(fe), be > 0 && Ee.length > be && !Ee.warned) {
-    Ee.warned = !0;
-    var Oe = new Error("Possible EventEmitter memory leak detected. " + Ee.length + " " + String(e) + " listeners added. Use emitter.setMaxListeners() to increase limit");
-    Oe.name = "MaxListenersExceededWarning", Oe.emitter = fe, Oe.type = e, Oe.count = Ee.length, ProcessEmitWarning(Oe);
-  }
-  return fe;
-}
-EventEmitter$1.prototype.addListener = function(e, ye) {
-  return _addListener(this, e, ye, !1);
-};
-EventEmitter$1.prototype.on = EventEmitter$1.prototype.addListener;
-EventEmitter$1.prototype.prependListener = function(e, ye) {
-  return _addListener(this, e, ye, !0);
-};
-function onceWrapper() {
-  if (!this.fired)
-    return this.target.removeListener(this.type, this.wrapFn), this.fired = !0, arguments.length === 0 ? this.listener.call(this.target) : this.listener.apply(this.target, arguments);
-}
-function _onceWrap(fe, e, ye) {
-  var me = { fired: !1, wrapFn: void 0, target: fe, type: e, listener: ye }, be = onceWrapper.bind(me);
-  return be.listener = ye, me.wrapFn = be, be;
-}
-EventEmitter$1.prototype.once = function(e, ye) {
-  return checkListener(ye), this.on(e, _onceWrap(this, e, ye)), this;
-};
-EventEmitter$1.prototype.prependOnceListener = function(e, ye) {
-  return checkListener(ye), this.prependListener(e, _onceWrap(this, e, ye)), this;
-};
-EventEmitter$1.prototype.removeListener = function(e, ye) {
-  var me, be, we, Ee, Oe;
-  if (checkListener(ye), be = this._events, be === void 0)
-    return this;
-  if (me = be[e], me === void 0)
-    return this;
-  if (me === ye || me.listener === ye)
-    --this._eventsCount === 0 ? this._events = /* @__PURE__ */ Object.create(null) : (delete be[e], be.removeListener && this.emit("removeListener", e, me.listener || ye));
-  else if (typeof me != "function") {
-    for (we = -1, Ee = me.length - 1; Ee >= 0; Ee--)
-      if (me[Ee] === ye || me[Ee].listener === ye) {
-        Oe = me[Ee].listener, we = Ee;
-        break;
-      }
-    if (we < 0)
-      return this;
-    we === 0 ? me.shift() : spliceOne(me, we), me.length === 1 && (be[e] = me[0]), be.removeListener !== void 0 && this.emit("removeListener", e, Oe || ye);
-  }
-  return this;
-};
-EventEmitter$1.prototype.off = EventEmitter$1.prototype.removeListener;
-EventEmitter$1.prototype.removeAllListeners = function(e) {
-  var ye, me, be;
-  if (me = this._events, me === void 0)
-    return this;
-  if (me.removeListener === void 0)
-    return arguments.length === 0 ? (this._events = /* @__PURE__ */ Object.create(null), this._eventsCount = 0) : me[e] !== void 0 && (--this._eventsCount === 0 ? this._events = /* @__PURE__ */ Object.create(null) : delete me[e]), this;
-  if (arguments.length === 0) {
-    var we = Object.keys(me), Ee;
-    for (be = 0; be < we.length; ++be)
-      Ee = we[be], Ee !== "removeListener" && this.removeAllListeners(Ee);
-    return this.removeAllListeners("removeListener"), this._events = /* @__PURE__ */ Object.create(null), this._eventsCount = 0, this;
-  }
-  if (ye = me[e], typeof ye == "function")
-    this.removeListener(e, ye);
-  else if (ye !== void 0)
-    for (be = ye.length - 1; be >= 0; be--)
-      this.removeListener(e, ye[be]);
-  return this;
-};
-function _listeners(fe, e, ye) {
-  var me = fe._events;
-  if (me === void 0)
-    return [];
-  var be = me[e];
-  return be === void 0 ? [] : typeof be == "function" ? ye ? [be.listener || be] : [be] : ye ? unwrapListeners(be) : arrayClone(be, be.length);
-}
-EventEmitter$1.prototype.listeners = function(e) {
-  return _listeners(this, e, !0);
-};
-EventEmitter$1.prototype.rawListeners = function(e) {
-  return _listeners(this, e, !1);
-};
-EventEmitter$1.listenerCount = function(fe, e) {
-  return typeof fe.listenerCount == "function" ? fe.listenerCount(e) : listenerCount.call(fe, e);
-};
-EventEmitter$1.prototype.listenerCount = listenerCount;
-function listenerCount(fe) {
-  var e = this._events;
-  if (e !== void 0) {
-    var ye = e[fe];
-    if (typeof ye == "function")
-      return 1;
-    if (ye !== void 0)
-      return ye.length;
-  }
-  return 0;
-}
-EventEmitter$1.prototype.eventNames = function() {
-  return this._eventsCount > 0 ? ReflectOwnKeys(this._events) : [];
-};
-function arrayClone(fe, e) {
-  for (var ye = new Array(e), me = 0; me < e; ++me)
-    ye[me] = fe[me];
-  return ye;
-}
-function spliceOne(fe, e) {
-  for (; e + 1 < fe.length; e++)
-    fe[e] = fe[e + 1];
-  fe.pop();
-}
-function unwrapListeners(fe) {
-  for (var e = new Array(fe.length), ye = 0; ye < e.length; ++ye)
-    e[ye] = fe[ye].listener || fe[ye];
-  return e;
-}
-function once(fe, e) {
-  return new Promise(function(ye, me) {
-    function be(Ee) {
-      fe.removeListener(e, we), me(Ee);
-    }
-    function we() {
-      typeof fe.removeListener == "function" && fe.removeListener("error", be), ye([].slice.call(arguments));
-    }
-    eventTargetAgnosticAddListener(fe, e, we, { once: !0 }), e !== "error" && addErrorHandlerIfEventEmitter(fe, be, { once: !0 });
-  });
-}
-function addErrorHandlerIfEventEmitter(fe, e, ye) {
-  typeof fe.on == "function" && eventTargetAgnosticAddListener(fe, "error", e, ye);
-}
-function eventTargetAgnosticAddListener(fe, e, ye, me) {
-  if (typeof fe.on == "function")
-    me.once ? fe.once(e, ye) : fe.on(e, ye);
-  else if (typeof fe.addEventListener == "function")
-    fe.addEventListener(e, function be(we) {
-      me.once && fe.removeEventListener(e, be), ye(we);
-    });
-  else
-    throw new TypeError('The "emitter" argument must be of type EventEmitter. Received type ' + typeof fe);
-}
-var eventsExports = events.exports;
-const Ye$2 = /* @__PURE__ */ getDefaultExportFromCjs(eventsExports), suspectProtoRx = /"(?:_|\\u0{2}5[Ff]){2}(?:p|\\u0{2}70)(?:r|\\u0{2}72)(?:o|\\u0{2}6[Ff])(?:t|\\u0{2}74)(?:o|\\u0{2}6[Ff])(?:_|\\u0{2}5[Ff]){2}"\s*:/, suspectConstructorRx = /"(?:c|\\u0063)(?:o|\\u006[Ff])(?:n|\\u006[Ee])(?:s|\\u0073)(?:t|\\u0074)(?:r|\\u0072)(?:u|\\u0075)(?:c|\\u0063)(?:t|\\u0074)(?:o|\\u006[Ff])(?:r|\\u0072)"\s*:/, JsonSigRx = /^\s*["[{]|^\s*-?\d{1,16}(\.\d{1,17})?([Ee][+-]?\d+)?\s*$/;
+const suspectProtoRx = /"(?:_|\\u0{2}5[Ff]){2}(?:p|\\u0{2}70)(?:r|\\u0{2}72)(?:o|\\u0{2}6[Ff])(?:t|\\u0{2}74)(?:o|\\u0{2}6[Ff])(?:_|\\u0{2}5[Ff]){2}"\s*:/, suspectConstructorRx = /"(?:c|\\u0063)(?:o|\\u006[Ff])(?:n|\\u006[Ee])(?:s|\\u0073)(?:t|\\u0074)(?:r|\\u0072)(?:u|\\u0075)(?:c|\\u0063)(?:t|\\u0074)(?:o|\\u006[Ff])(?:r|\\u0072)"\s*:/, JsonSigRx = /^\s*["[{]|^\s*-?\d{1,16}(\.\d{1,17})?([Ee][+-]?\d+)?\s*$/;
 function jsonParseTransform(fe, e) {
   if (fe === "__proto__" || fe === "constructor" && e && typeof e == "object" && "prototype" in e) {
     warnKeyDropped(fe);
@@ -803,31 +549,31 @@ function createStorage(fe = {}) {
     watchListeners: [],
     unwatch: {}
   }, ye = (gr) => {
-    for (const ve of e.mountpoints)
-      if (gr.startsWith(ve))
+    for (const we of e.mountpoints)
+      if (gr.startsWith(we))
         return {
-          base: ve,
-          relativeKey: gr.slice(ve.length),
-          driver: e.mounts[ve]
+          base: we,
+          relativeKey: gr.slice(we.length),
+          driver: e.mounts[we]
         };
     return {
       base: "",
       relativeKey: gr,
       driver: e.mounts[""]
     };
-  }, me = (gr, ve) => e.mountpoints.filter(
-    (Se) => Se.startsWith(gr) || ve && gr.startsWith(Se)
+  }, me = (gr, we) => e.mountpoints.filter(
+    (Se) => Se.startsWith(gr) || we && gr.startsWith(Se)
   ).map((Se) => ({
     relativeBase: gr.length > Se.length ? gr.slice(Se.length) : void 0,
     mountpoint: Se,
     driver: e.mounts[Se]
-  })), be = (gr, ve) => {
+  })), be = (gr, we) => {
     if (e.watching) {
-      ve = normalizeKey(ve);
+      we = normalizeKey(we);
       for (const Se of e.watchListeners)
-        Se(gr, ve);
+        Se(gr, we);
     }
-  }, we = async () => {
+  }, ve = async () => {
     if (!e.watching) {
       e.watching = !0;
       for (const gr in e.mounts)
@@ -843,7 +589,7 @@ function createStorage(fe = {}) {
         await e.unwatch[gr]();
       e.unwatch = {}, e.watching = !1;
     }
-  }, Oe = (gr, ve, Se) => {
+  }, Oe = (gr, we, Se) => {
     const $r = /* @__PURE__ */ new Map(), Fr = (Br) => {
       let Vr = $r.get(Br.base);
       return Vr || (Vr = {
@@ -853,7 +599,7 @@ function createStorage(fe = {}) {
       }, $r.set(Br.base, Vr)), Vr;
     };
     for (const Br of gr) {
-      const Vr = typeof Br == "string", oo = normalizeKey(Vr ? Br : Br.key), so = Vr ? void 0 : Br.value, kr = Vr || !Br.options ? ve : { ...ve, ...Br.options }, qr = ye(oo);
+      const Vr = typeof Br == "string", oo = normalizeKey(Vr ? Br : Br.key), so = Vr ? void 0 : Br.value, kr = Vr || !Br.options ? we : { ...we, ...Br.options }, qr = ye(oo);
       Fr(qr).items.push({
         key: oo,
         value: so,
@@ -866,26 +612,26 @@ function createStorage(fe = {}) {
     );
   }, xe = {
     // Item
-    hasItem(gr, ve = {}) {
+    hasItem(gr, we = {}) {
       gr = normalizeKey(gr);
       const { relativeKey: Se, driver: $r } = ye(gr);
-      return asyncCall($r.hasItem, Se, ve);
+      return asyncCall($r.hasItem, Se, we);
     },
-    getItem(gr, ve = {}) {
+    getItem(gr, we = {}) {
       gr = normalizeKey(gr);
       const { relativeKey: Se, driver: $r } = ye(gr);
-      return asyncCall($r.getItem, Se, ve).then(
+      return asyncCall($r.getItem, Se, we).then(
         (Fr) => destr(Fr)
       );
     },
-    getItems(gr, ve) {
-      return Oe(gr, ve, (Se) => Se.driver.getItems ? asyncCall(
+    getItems(gr, we) {
+      return Oe(gr, we, (Se) => Se.driver.getItems ? asyncCall(
         Se.driver.getItems,
         Se.items.map(($r) => ({
           key: $r.relativeKey,
           options: $r.options
         })),
-        ve
+        we
       ).then(
         ($r) => $r.map((Fr) => ({
           key: joinKeys(Se.base, Fr.key),
@@ -902,22 +648,22 @@ function createStorage(fe = {}) {
         })))
       ));
     },
-    getItemRaw(gr, ve = {}) {
+    getItemRaw(gr, we = {}) {
       gr = normalizeKey(gr);
       const { relativeKey: Se, driver: $r } = ye(gr);
-      return $r.getItemRaw ? asyncCall($r.getItemRaw, Se, ve) : asyncCall($r.getItem, Se, ve).then(
+      return $r.getItemRaw ? asyncCall($r.getItemRaw, Se, we) : asyncCall($r.getItem, Se, we).then(
         (Fr) => deserializeRaw(Fr)
       );
     },
-    async setItem(gr, ve, Se = {}) {
-      if (ve === void 0)
+    async setItem(gr, we, Se = {}) {
+      if (we === void 0)
         return xe.removeItem(gr);
       gr = normalizeKey(gr);
       const { relativeKey: $r, driver: Fr } = ye(gr);
-      Fr.setItem && (await asyncCall(Fr.setItem, $r, stringify(ve), Se), Fr.watch || be("update", gr));
+      Fr.setItem && (await asyncCall(Fr.setItem, $r, stringify(we), Se), Fr.watch || be("update", gr));
     },
-    async setItems(gr, ve) {
-      await Oe(gr, ve, async (Se) => {
+    async setItems(gr, we) {
+      await Oe(gr, we, async (Se) => {
         Se.driver.setItems && await asyncCall(
           Se.driver.setItems,
           Se.items.map(($r) => ({
@@ -925,7 +671,7 @@ function createStorage(fe = {}) {
             value: stringify($r.value),
             options: $r.options
           })),
-          ve
+          we
         ), Se.driver.setItem && await Promise.all(
           Se.items.map(($r) => asyncCall(
             Se.driver.setItem,
@@ -936,46 +682,46 @@ function createStorage(fe = {}) {
         );
       });
     },
-    async setItemRaw(gr, ve, Se = {}) {
-      if (ve === void 0)
+    async setItemRaw(gr, we, Se = {}) {
+      if (we === void 0)
         return xe.removeItem(gr, Se);
       gr = normalizeKey(gr);
       const { relativeKey: $r, driver: Fr } = ye(gr);
       if (Fr.setItemRaw)
-        await asyncCall(Fr.setItemRaw, $r, ve, Se);
+        await asyncCall(Fr.setItemRaw, $r, we, Se);
       else if (Fr.setItem)
-        await asyncCall(Fr.setItem, $r, serializeRaw(ve), Se);
+        await asyncCall(Fr.setItem, $r, serializeRaw(we), Se);
       else
         return;
       Fr.watch || be("update", gr);
     },
-    async removeItem(gr, ve = {}) {
-      typeof ve == "boolean" && (ve = { removeMeta: ve }), gr = normalizeKey(gr);
+    async removeItem(gr, we = {}) {
+      typeof we == "boolean" && (we = { removeMeta: we }), gr = normalizeKey(gr);
       const { relativeKey: Se, driver: $r } = ye(gr);
-      $r.removeItem && (await asyncCall($r.removeItem, Se, ve), (ve.removeMeta || ve.removeMata) && await asyncCall($r.removeItem, Se + "$", ve), $r.watch || be("remove", gr));
+      $r.removeItem && (await asyncCall($r.removeItem, Se, we), (we.removeMeta || we.removeMata) && await asyncCall($r.removeItem, Se + "$", we), $r.watch || be("remove", gr));
     },
     // Meta
-    async getMeta(gr, ve = {}) {
-      typeof ve == "boolean" && (ve = { nativeOnly: ve }), gr = normalizeKey(gr);
+    async getMeta(gr, we = {}) {
+      typeof we == "boolean" && (we = { nativeOnly: we }), gr = normalizeKey(gr);
       const { relativeKey: Se, driver: $r } = ye(gr), Fr = /* @__PURE__ */ Object.create(null);
-      if ($r.getMeta && Object.assign(Fr, await asyncCall($r.getMeta, Se, ve)), !ve.nativeOnly) {
+      if ($r.getMeta && Object.assign(Fr, await asyncCall($r.getMeta, Se, we)), !we.nativeOnly) {
         const Br = await asyncCall(
           $r.getItem,
           Se + "$",
-          ve
+          we
         ).then((Vr) => destr(Vr));
         Br && typeof Br == "object" && (typeof Br.atime == "string" && (Br.atime = new Date(Br.atime)), typeof Br.mtime == "string" && (Br.mtime = new Date(Br.mtime)), Object.assign(Fr, Br));
       }
       return Fr;
     },
-    setMeta(gr, ve, Se = {}) {
-      return this.setItem(gr + "$", ve, Se);
+    setMeta(gr, we, Se = {}) {
+      return this.setItem(gr + "$", we, Se);
     },
-    removeMeta(gr, ve = {}) {
-      return this.removeItem(gr + "$", ve);
+    removeMeta(gr, we = {}) {
+      return this.removeItem(gr + "$", we);
     },
     // Keys
-    async getKeys(gr, ve = {}) {
+    async getKeys(gr, we = {}) {
       gr = normalizeBaseKey(gr);
       const Se = me(gr, !0);
       let $r = [];
@@ -984,7 +730,7 @@ function createStorage(fe = {}) {
         const oo = (await asyncCall(
           Br.driver.getKeys,
           Br.relativeBase,
-          ve
+          we
         )).map((so) => Br.mountpoint + normalizeKey(so)).filter((so) => !$r.some((kr) => so.startsWith(kr)));
         Fr.push(...oo), $r = [
           Br.mountpoint,
@@ -994,15 +740,15 @@ function createStorage(fe = {}) {
       return gr ? Fr.filter((Br) => Br.startsWith(gr) && !Br.endsWith("$")) : Fr.filter((Br) => !Br.endsWith("$"));
     },
     // Utils
-    async clear(gr, ve = {}) {
+    async clear(gr, we = {}) {
       gr = normalizeBaseKey(gr), await Promise.all(
         me(gr, !1).map(async (Se) => {
           if (Se.driver.clear)
-            return asyncCall(Se.driver.clear, Se.relativeBase, ve);
+            return asyncCall(Se.driver.clear, Se.relativeBase, we);
           if (Se.driver.removeItem) {
-            const $r = await Se.driver.getKeys(Se.relativeBase || "", ve);
+            const $r = await Se.driver.getKeys(Se.relativeBase || "", we);
             return Promise.all(
-              $r.map((Fr) => Se.driver.removeItem(Fr, ve))
+              $r.map((Fr) => Se.driver.removeItem(Fr, we))
             );
           }
         })
@@ -1014,9 +760,9 @@ function createStorage(fe = {}) {
       );
     },
     async watch(gr) {
-      return await we(), e.watchListeners.push(gr), async () => {
+      return await ve(), e.watchListeners.push(gr), async () => {
         e.watchListeners = e.watchListeners.filter(
-          (ve) => ve !== gr
+          (we) => we !== gr
         ), e.watchListeners.length === 0 && await Ee();
       };
     },
@@ -1024,26 +770,26 @@ function createStorage(fe = {}) {
       e.watchListeners = [], await Ee();
     },
     // Mount
-    mount(gr, ve) {
+    mount(gr, we) {
       if (gr = normalizeBaseKey(gr), gr && e.mounts[gr])
         throw new Error(`already mounted at ${gr}`);
-      return gr && (e.mountpoints.push(gr), e.mountpoints.sort((Se, $r) => $r.length - Se.length)), e.mounts[gr] = ve, e.watching && Promise.resolve(watch$2(ve, be, gr)).then((Se) => {
+      return gr && (e.mountpoints.push(gr), e.mountpoints.sort((Se, $r) => $r.length - Se.length)), e.mounts[gr] = we, e.watching && Promise.resolve(watch$2(we, be, gr)).then((Se) => {
         e.unwatch[gr] = Se;
       }).catch(console.error), xe;
     },
-    async unmount(gr, ve = !0) {
-      gr = normalizeBaseKey(gr), !(!gr || !e.mounts[gr]) && (e.watching && gr in e.unwatch && (e.unwatch[gr](), delete e.unwatch[gr]), ve && await dispose(e.mounts[gr]), e.mountpoints = e.mountpoints.filter((Se) => Se !== gr), delete e.mounts[gr]);
+    async unmount(gr, we = !0) {
+      gr = normalizeBaseKey(gr), !(!gr || !e.mounts[gr]) && (e.watching && gr in e.unwatch && (e.unwatch[gr](), delete e.unwatch[gr]), we && await dispose(e.mounts[gr]), e.mountpoints = e.mountpoints.filter((Se) => Se !== gr), delete e.mounts[gr]);
     },
     getMount(gr = "") {
       gr = normalizeKey(gr) + ":";
-      const ve = ye(gr);
+      const we = ye(gr);
       return {
-        driver: ve.driver,
-        base: ve.base
+        driver: we.driver,
+        base: we.base
       };
     },
-    getMounts(gr = "", ve = {}) {
-      return gr = normalizeKey(gr), me(gr, ve.parents).map(($r) => ({
+    getMounts(gr = "", we = {}) {
+      return gr = normalizeKey(gr), me(gr, we.parents).map(($r) => ({
         driver: $r.driver,
         base: $r.mountpoint
       }));
@@ -1067,7 +813,7 @@ function createStore(fe, e) {
   const ye = indexedDB.open(fe);
   ye.onupgradeneeded = () => ye.result.createObjectStore(e);
   const me = promisifyRequest(ye);
-  return (be, we) => me.then((Ee) => we(Ee.transaction(e, be).objectStore(e)));
+  return (be, ve) => me.then((Ee) => ve(Ee.transaction(e, be).objectStore(e)));
 }
 let defaultGetStoreFunc;
 function defaultGetStore() {
@@ -1122,8 +868,8 @@ var z$3 = (fe = {}) => {
     return !(typeof await get(ye(be), me) > "u");
   }, async getItem(be) {
     return await get(ye(be), me) ?? null;
-  }, setItem(be, we) {
-    return set(ye(be), we, me);
+  }, setItem(be, ve) {
+    return set(ye(be), ve, me);
   }, removeItem(be) {
     return del(ye(be), me);
   }, getKeys() {
@@ -1209,14 +955,14 @@ const N$6 = "wc_storage_version", y$5 = 1, O$5 = async (fe, e, ye) => {
     ye(e);
     return;
   }
-  const we = await fe.getKeys();
-  if (!we.length) {
+  const ve = await fe.getKeys();
+  if (!ve.length) {
     ye(e);
     return;
   }
   const Ee = [];
-  for (; we.length; ) {
-    const Oe = we.shift();
+  for (; ve.length; ) {
+    const Oe = ve.shift();
     if (!Oe)
       continue;
     const xe = Oe.toLowerCase();
@@ -1268,6 +1014,37 @@ let h$9 = class {
     });
   }
 };
+var commonjsGlobal = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : typeof global < "u" ? global : typeof self < "u" ? self : {};
+function getDefaultExportFromCjs(fe) {
+  return fe && fe.__esModule && Object.prototype.hasOwnProperty.call(fe, "default") ? fe.default : fe;
+}
+function getAugmentedNamespace(fe) {
+  if (fe.__esModule)
+    return fe;
+  var e = fe.default;
+  if (typeof e == "function") {
+    var ye = function me() {
+      if (this instanceof me) {
+        var be = [null];
+        be.push.apply(be, arguments);
+        var ve = Function.bind.apply(e, be);
+        return new ve();
+      }
+      return e.apply(this, arguments);
+    };
+    ye.prototype = e.prototype;
+  } else
+    ye = {};
+  return Object.defineProperty(ye, "__esModule", { value: !0 }), Object.keys(fe).forEach(function(me) {
+    var be = Object.getOwnPropertyDescriptor(fe, me);
+    Object.defineProperty(ye, me, be.get ? be : {
+      enumerable: !0,
+      get: function() {
+        return fe[me];
+      }
+    });
+  }), ye;
+}
 var cjs$5 = {}, tslib = { exports: {} };
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -1284,7 +1061,7 @@ OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 PERFORMANCE OF THIS SOFTWARE.
 ***************************************************************************** */
 (function(fe) {
-  var e, ye, me, be, we, Ee, Oe, xe, gr, ve, Se, $r, Fr, Br, Vr, oo, so, kr, qr, Hr, Yr, Ur, Mr;
+  var e, ye, me, be, ve, Ee, Oe, xe, gr, we, Se, $r, Fr, Br, Vr, oo, so, kr, qr, Hr, Yr, Ur, Mr;
   (function(Lr) {
     var no = typeof commonjsGlobal == "object" ? commonjsGlobal : typeof self == "object" ? self : typeof this == "object" ? this : {};
     Lr(Xr(no, Xr(fe.exports)));
@@ -1329,7 +1106,7 @@ PERFORMANCE OF THIS SOFTWARE.
         for (var vo = Xr.length - 1; vo >= 0; vo--)
           (fo = Xr[vo]) && (Jr = (Wr < 3 ? fo(Jr) : Wr > 3 ? fo(to, ao, Jr) : fo(to, ao)) || Jr);
       return Wr > 3 && Jr && Object.defineProperty(to, ao, Jr), Jr;
-    }, we = function(Xr, to) {
+    }, ve = function(Xr, to) {
       return function(ao, bo) {
         to(ao, bo, Xr);
       };
@@ -1431,7 +1208,7 @@ PERFORMANCE OF THIS SOFTWARE.
     }, gr = function(Xr, to) {
       for (var ao in Xr)
         ao !== "default" && !to.hasOwnProperty(ao) && (to[ao] = Xr[ao]);
-    }, ve = function(Xr) {
+    }, we = function(Xr) {
       var to = typeof Symbol == "function" && Symbol.iterator, ao = to && Xr[to], bo = 0;
       if (ao)
         return ao.call(Xr);
@@ -1481,31 +1258,31 @@ PERFORMANCE OF THIS SOFTWARE.
       return Wr = {}, fo("next"), fo("throw"), fo("return"), Wr[Symbol.asyncIterator] = function() {
         return this;
       }, Wr;
-      function fo(Do) {
-        bo[Do] && (Wr[Do] = function(go) {
+      function fo(Io) {
+        bo[Io] && (Wr[Io] = function(go) {
           return new Promise(function(No, Po) {
-            Jr.push([Do, go, No, Po]) > 1 || vo(Do, go);
+            Jr.push([Io, go, No, Po]) > 1 || vo(Io, go);
           });
         });
       }
-      function vo(Do, go) {
+      function vo(Io, go) {
         try {
-          mo(bo[Do](go));
+          mo(bo[Io](go));
         } catch (No) {
           Oo(Jr[0][3], No);
         }
       }
-      function mo(Do) {
-        Do.value instanceof Br ? Promise.resolve(Do.value.v).then(po, yo) : Oo(Jr[0][2], Do);
+      function mo(Io) {
+        Io.value instanceof Br ? Promise.resolve(Io.value.v).then(po, yo) : Oo(Jr[0][2], Io);
       }
-      function po(Do) {
-        vo("next", Do);
+      function po(Io) {
+        vo("next", Io);
       }
-      function yo(Do) {
-        vo("throw", Do);
+      function yo(Io) {
+        vo("throw", Io);
       }
-      function Oo(Do, go) {
-        Do(go), Jr.shift(), Jr.length && vo(Jr[0][0], Jr[0][1]);
+      function Oo(Io, go) {
+        Io(go), Jr.shift(), Jr.length && vo(Jr[0][0], Jr[0][1]);
       }
     }, oo = function(Xr) {
       var to, ao;
@@ -1523,7 +1300,7 @@ PERFORMANCE OF THIS SOFTWARE.
       if (!Symbol.asyncIterator)
         throw new TypeError("Symbol.asyncIterator is not defined.");
       var to = Xr[Symbol.asyncIterator], ao;
-      return to ? to.call(Xr) : (Xr = typeof ve == "function" ? ve(Xr) : Xr[Symbol.iterator](), ao = {}, bo("next"), bo("throw"), bo("return"), ao[Symbol.asyncIterator] = function() {
+      return to ? to.call(Xr) : (Xr = typeof we == "function" ? we(Xr) : Xr[Symbol.iterator](), ao = {}, bo("next"), bo("throw"), bo("return"), ao[Symbol.asyncIterator] = function() {
         return this;
       }, ao);
       function bo(Jr) {
@@ -1558,7 +1335,7 @@ PERFORMANCE OF THIS SOFTWARE.
       if (!to.has(Xr))
         throw new TypeError("attempted to set private field on non-instance");
       return to.set(Xr, ao), ao;
-    }, Lr("__extends", e), Lr("__assign", ye), Lr("__rest", me), Lr("__decorate", be), Lr("__param", we), Lr("__metadata", Ee), Lr("__awaiter", Oe), Lr("__generator", xe), Lr("__exportStar", gr), Lr("__createBinding", Mr), Lr("__values", ve), Lr("__read", Se), Lr("__spread", $r), Lr("__spreadArrays", Fr), Lr("__await", Br), Lr("__asyncGenerator", Vr), Lr("__asyncDelegator", oo), Lr("__asyncValues", so), Lr("__makeTemplateObject", kr), Lr("__importStar", qr), Lr("__importDefault", Hr), Lr("__classPrivateFieldGet", Yr), Lr("__classPrivateFieldSet", Ur);
+    }, Lr("__extends", e), Lr("__assign", ye), Lr("__rest", me), Lr("__decorate", be), Lr("__param", ve), Lr("__metadata", Ee), Lr("__awaiter", Oe), Lr("__generator", xe), Lr("__exportStar", gr), Lr("__createBinding", Mr), Lr("__values", we), Lr("__read", Se), Lr("__spread", $r), Lr("__spreadArrays", Fr), Lr("__await", Br), Lr("__asyncGenerator", Vr), Lr("__asyncDelegator", oo), Lr("__asyncValues", so), Lr("__makeTemplateObject", kr), Lr("__importStar", qr), Lr("__importDefault", Hr), Lr("__classPrivateFieldGet", Yr), Lr("__classPrivateFieldSet", Ur);
   });
 })(tslib);
 var tslibExports = tslib.exports, heartbeat$2 = {}, cjs$4 = {}, utils$3 = {}, delay = {}, hasRequiredDelay;
@@ -1676,13 +1453,13 @@ let IEvents$1 = class {
 const esm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   IEvents: IEvents$1
-}, Symbol.toStringTag, { value: "Module" })), require$$0$1 = /* @__PURE__ */ getAugmentedNamespace(esm);
+}, Symbol.toStringTag, { value: "Module" })), require$$0 = /* @__PURE__ */ getAugmentedNamespace(esm);
 var hasRequiredHeartbeat$2;
 function requireHeartbeat$2() {
   if (hasRequiredHeartbeat$2)
     return heartbeat$1;
   hasRequiredHeartbeat$2 = 1, Object.defineProperty(heartbeat$1, "__esModule", { value: !0 }), heartbeat$1.IHeartBeat = void 0;
-  const fe = require$$0$1;
+  const fe = require$$0;
   class e extends fe.IEvents {
     constructor(me) {
       super();
@@ -1717,14 +1494,14 @@ function requireHeartbeat() {
   if (hasRequiredHeartbeat)
     return heartbeat$2;
   hasRequiredHeartbeat = 1, Object.defineProperty(heartbeat$2, "__esModule", { value: !0 }), heartbeat$2.HeartBeat = void 0;
-  const fe = tslibExports, e = eventsExports, ye = cjs$4, me = requireTypes$1(), be = requireConstants$1();
-  class we extends me.IHeartBeat {
+  const fe = tslibExports, e = c$5, ye = cjs$4, me = requireTypes$1(), be = requireConstants$1();
+  class ve extends me.IHeartBeat {
     constructor(Oe) {
       super(Oe), this.events = new e.EventEmitter(), this.interval = be.HEARTBEAT_INTERVAL, this.interval = (Oe == null ? void 0 : Oe.interval) || be.HEARTBEAT_INTERVAL;
     }
     static init(Oe) {
       return fe.__awaiter(this, void 0, void 0, function* () {
-        const xe = new we(Oe);
+        const xe = new ve(Oe);
         return yield xe.init(), xe;
       });
     }
@@ -1757,7 +1534,7 @@ function requireHeartbeat() {
       this.events.emit(be.HEARTBEAT_EVENTS.pulse);
     }
   }
-  return heartbeat$2.HeartBeat = we, heartbeat$2;
+  return heartbeat$2.HeartBeat = ve, heartbeat$2;
 }
 (function(fe) {
   Object.defineProperty(fe, "__esModule", { value: !0 });
@@ -1778,40 +1555,40 @@ function requireQuickFormatUnescaped() {
   }
   quickFormatUnescaped = e;
   function e(ye, me, be) {
-    var we = be && be.stringify || fe, Ee = 1;
+    var ve = be && be.stringify || fe, Ee = 1;
     if (typeof ye == "object" && ye !== null) {
       var Oe = me.length + Ee;
       if (Oe === 1)
         return ye;
       var xe = new Array(Oe);
-      xe[0] = we(ye);
+      xe[0] = ve(ye);
       for (var gr = 1; gr < Oe; gr++)
-        xe[gr] = we(me[gr]);
+        xe[gr] = ve(me[gr]);
       return xe.join(" ");
     }
     if (typeof ye != "string")
       return ye;
-    var ve = me.length;
-    if (ve === 0)
+    var we = me.length;
+    if (we === 0)
       return ye;
     for (var Se = "", $r = 1 - Ee, Fr = -1, Br = ye && ye.length || 0, Vr = 0; Vr < Br; ) {
       if (ye.charCodeAt(Vr) === 37 && Vr + 1 < Br) {
         switch (Fr = Fr > -1 ? Fr : 0, ye.charCodeAt(Vr + 1)) {
           case 100:
           case 102:
-            if ($r >= ve || me[$r] == null)
+            if ($r >= we || me[$r] == null)
               break;
             Fr < Vr && (Se += ye.slice(Fr, Vr)), Se += Number(me[$r]), Fr = Vr + 2, Vr++;
             break;
           case 105:
-            if ($r >= ve || me[$r] == null)
+            if ($r >= we || me[$r] == null)
               break;
             Fr < Vr && (Se += ye.slice(Fr, Vr)), Se += Math.floor(Number(me[$r])), Fr = Vr + 2, Vr++;
             break;
           case 79:
           case 111:
           case 106:
-            if ($r >= ve || me[$r] === void 0)
+            if ($r >= we || me[$r] === void 0)
               break;
             Fr < Vr && (Se += ye.slice(Fr, Vr));
             var oo = typeof me[$r];
@@ -1823,10 +1600,10 @@ function requireQuickFormatUnescaped() {
               Se += me[$r].name || "<anonymous>", Fr = Vr + 2, Vr++;
               break;
             }
-            Se += we(me[$r]), Fr = Vr + 2, Vr++;
+            Se += ve(me[$r]), Fr = Vr + 2, Vr++;
             break;
           case 115:
-            if ($r >= ve)
+            if ($r >= we)
               break;
             Fr < Vr && (Se += ye.slice(Fr, Vr)), Se += String(me[$r]), Fr = Vr + 2, Vr++;
             break;
@@ -1900,15 +1677,15 @@ function requireBrowser() {
     function mo(yo) {
       if (yo !== "silent" && !this.levels.values[yo])
         throw Error("unknown level " + yo);
-      this._level = yo, we(Jr, Wr, "error", "log"), we(Jr, Wr, "fatal", "error"), we(Jr, Wr, "warn", "error"), we(Jr, Wr, "info", "log"), we(Jr, Wr, "debug", "log"), we(Jr, Wr, "trace", "log");
+      this._level = yo, ve(Jr, Wr, "error", "log"), ve(Jr, Wr, "fatal", "error"), ve(Jr, Wr, "warn", "error"), ve(Jr, Wr, "info", "log"), ve(Jr, Wr, "debug", "log"), ve(Jr, Wr, "trace", "log");
     }
     function po(yo, Oo) {
       if (!yo)
         throw new Error("missing bindings for child Pino");
       Oo = Oo || {}, Xr && yo.serializers && (Oo.serializers = yo.serializers);
-      const Do = Oo.serializers;
-      if (Xr && Do) {
-        var go = Object.assign({}, no, Do), No = Ur.browser.serialize === !0 ? Object.keys(go) : Xr;
+      const Io = Oo.serializers;
+      if (Xr && Io) {
+        var go = Object.assign({}, no, Io), No = Ur.browser.serialize === !0 ? Object.keys(go) : Xr;
         delete yo.serializers, xe([yo], No, go, this._stdErrSerialize);
       }
       function Po(Bo) {
@@ -1938,7 +1715,7 @@ function requireBrowser() {
       60: "fatal"
     }
   }, be.stdSerializers = ye, be.stdTimeFunctions = Object.assign({}, { nullTime: so, epochTime: kr, unixTime: qr, isoTime: Hr });
-  function we(Ur, Mr, Lr, no) {
+  function ve(Ur, Mr, Lr, no) {
     const Xr = Object.getPrototypeOf(Mr);
     Mr[Lr] = Mr.levelVal > Mr.levels.values[Lr] ? oo : Xr[Lr] ? Xr[Lr] : e[Lr] || e[no] || oo, Ee(Ur, Mr, Lr);
   }
@@ -1952,7 +1729,7 @@ function requireBrowser() {
           const Jr = Ur.transmit.level || Mr.level, fo = be.levels.values[Jr], vo = be.levels.values[Lr];
           if (vo < fo)
             return;
-          ve(this, {
+          we(this, {
             ts: to,
             methodLevel: Lr,
             methodValue: vo,
@@ -1997,7 +1774,7 @@ function requireBrowser() {
       return Ur[Lr].apply(this, no);
     };
   }
-  function ve(Ur, Mr, Lr) {
+  function we(Ur, Mr, Lr) {
     const no = Mr.send, Xr = Mr.ts, to = Mr.methodLevel, ao = Mr.methodValue, bo = Mr.val, Wr = Ur._logEvent.bindings;
     xe(
       Lr,
@@ -2095,14 +1872,14 @@ function requireUtils() {
     return typeof Oe.bindings > "u" ? gr = ye(Oe, xe) : gr = Oe.bindings().context || "", gr;
   }
   utils$2.getLoggerContext = be;
-  function we(Oe, xe, gr = fe.PINO_CUSTOM_CONTEXT_KEY) {
-    const ve = be(Oe, gr);
-    return ve.trim() ? `${ve}/${xe}` : xe;
+  function ve(Oe, xe, gr = fe.PINO_CUSTOM_CONTEXT_KEY) {
+    const we = be(Oe, gr);
+    return we.trim() ? `${we}/${xe}` : xe;
   }
-  utils$2.formatChildLoggerContext = we;
+  utils$2.formatChildLoggerContext = ve;
   function Ee(Oe, xe, gr = fe.PINO_CUSTOM_CONTEXT_KEY) {
-    const ve = we(Oe, xe, gr), Se = Oe.child({ context: ve });
-    return me(Se, ve, gr);
+    const we = ve(Oe, xe, gr), Se = Oe.child({ context: we });
+    return me(Se, we, gr);
   }
   return utils$2.generateChildLogger = Ee, utils$2;
 }
@@ -2189,17 +1966,13 @@ function wipe(fe) {
   return fe;
 }
 wipe$1.wipe = wipe;
-const __viteBrowserExternal = {}, __viteBrowserExternal$1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  default: __viteBrowserExternal
-}, Symbol.toStringTag, { value: "Module" })), require$$0 = /* @__PURE__ */ getAugmentedNamespace(__viteBrowserExternal$1);
 Object.defineProperty(node, "__esModule", { value: !0 });
 node.NodeRandomSource = void 0;
 const wipe_1$3 = wipe$1;
 class NodeRandomSource {
   constructor() {
     if (this.isAvailable = !1, this.isInstantiated = !1, typeof commonjsRequire < "u") {
-      const e = require$$0;
+      const e = require$$1;
       e && e.randomBytes && (this._crypto = e, this.isAvailable = !0, this.isInstantiated = !0);
     }
   }
@@ -2241,8 +2014,8 @@ var binary = {}, int = {};
 (function(fe) {
   Object.defineProperty(fe, "__esModule", { value: !0 });
   function e(Oe, xe) {
-    var gr = Oe >>> 16 & 65535, ve = Oe & 65535, Se = xe >>> 16 & 65535, $r = xe & 65535;
-    return ve * $r + (gr * $r + ve * Se << 16 >>> 0) | 0;
+    var gr = Oe >>> 16 & 65535, we = Oe & 65535, Se = xe >>> 16 & 65535, $r = xe & 65535;
+    return we * $r + (gr * $r + we * Se << 16 >>> 0) | 0;
   }
   fe.mul = Math.imul || e;
   function ye(Oe, xe) {
@@ -2257,10 +2030,10 @@ var binary = {}, int = {};
     return Oe << xe | Oe >>> 32 - xe;
   }
   fe.rotl = be;
-  function we(Oe, xe) {
+  function ve(Oe, xe) {
     return Oe << 32 - xe | Oe >>> xe;
   }
-  fe.rotr = we;
+  fe.rotr = ve;
   function Ee(Oe) {
     return typeof Oe == "number" && isFinite(Oe) && Math.floor(Oe) === Oe;
   }
@@ -2361,8 +2134,8 @@ function readUintBE$1(fe, e, ye) {
     throw new Error("readUintBE supports only bitLengths divisible by 8");
   if (fe / 8 > e.length - ye)
     throw new Error("readUintBE: array is too short for the given bitLength");
-  for (var me = 0, be = 1, we = fe / 8 + ye - 1; we >= ye; we--)
-    me += e[we] * be, be *= 256;
+  for (var me = 0, be = 1, ve = fe / 8 + ye - 1; ve >= ye; ve--)
+    me += e[ve] * be, be *= 256;
   return me;
 }
 binary.readUintBE = readUintBE$1;
@@ -2371,8 +2144,8 @@ function readUintLE$1(fe, e, ye) {
     throw new Error("readUintLE supports only bitLengths divisible by 8");
   if (fe / 8 > e.length - ye)
     throw new Error("readUintLE: array is too short for the given bitLength");
-  for (var me = 0, be = 1, we = ye; we < ye + fe / 8; we++)
-    me += e[we] * be, be *= 256;
+  for (var me = 0, be = 1, ve = ye; ve < ye + fe / 8; ve++)
+    me += e[ve] * be, be *= 256;
   return me;
 }
 binary.readUintLE = readUintLE$1;
@@ -2381,8 +2154,8 @@ function writeUintBE$1(fe, e, ye, me) {
     throw new Error("writeUintBE supports only bitLengths divisible by 8");
   if (!int_1.isSafeInteger(e))
     throw new Error("writeUintBE value must be an integer");
-  for (var be = 1, we = fe / 8 + me - 1; we >= me; we--)
-    ye[we] = e / be & 255, be *= 256;
+  for (var be = 1, ve = fe / 8 + me - 1; ve >= me; ve--)
+    ye[ve] = e / be & 255, be *= 256;
   return ye;
 }
 binary.writeUintBE = writeUintBE$1;
@@ -2391,8 +2164,8 @@ function writeUintLE$1(fe, e, ye, me) {
     throw new Error("writeUintLE supports only bitLengths divisible by 8");
   if (!int_1.isSafeInteger(e))
     throw new Error("writeUintLE value must be an integer");
-  for (var be = 1, we = me; we < me + fe / 8; we++)
-    ye[we] = e / be & 255, be *= 256;
+  for (var be = 1, ve = me; ve < me + fe / 8; ve++)
+    ye[ve] = e / be & 255, be *= 256;
   return ye;
 }
 binary.writeUintLE = writeUintLE$1;
@@ -2448,37 +2221,37 @@ binary.writeFloat64LE = writeFloat64LE;
   Object.defineProperty(fe, "__esModule", { value: !0 }), fe.randomStringForEntropy = fe.randomString = fe.randomUint32 = fe.randomBytes = fe.defaultRandomSource = void 0;
   const e = system, ye = binary, me = wipe$1;
   fe.defaultRandomSource = new e.SystemRandomSource();
-  function be(gr, ve = fe.defaultRandomSource) {
-    return ve.randomBytes(gr);
+  function be(gr, we = fe.defaultRandomSource) {
+    return we.randomBytes(gr);
   }
   fe.randomBytes = be;
-  function we(gr = fe.defaultRandomSource) {
-    const ve = be(4, gr), Se = (0, ye.readUint32LE)(ve);
-    return (0, me.wipe)(ve), Se;
+  function ve(gr = fe.defaultRandomSource) {
+    const we = be(4, gr), Se = (0, ye.readUint32LE)(we);
+    return (0, me.wipe)(we), Se;
   }
-  fe.randomUint32 = we;
+  fe.randomUint32 = ve;
   const Ee = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-  function Oe(gr, ve = Ee, Se = fe.defaultRandomSource) {
-    if (ve.length < 2)
+  function Oe(gr, we = Ee, Se = fe.defaultRandomSource) {
+    if (we.length < 2)
       throw new Error("randomString charset is too short");
-    if (ve.length > 256)
+    if (we.length > 256)
       throw new Error("randomString charset is too long");
     let $r = "";
-    const Fr = ve.length, Br = 256 - 256 % Fr;
+    const Fr = we.length, Br = 256 - 256 % Fr;
     for (; gr > 0; ) {
       const Vr = be(Math.ceil(gr * 256 / Br), Se);
       for (let oo = 0; oo < Vr.length && gr > 0; oo++) {
         const so = Vr[oo];
-        so < Br && ($r += ve.charAt(so % Fr), gr--);
+        so < Br && ($r += we.charAt(so % Fr), gr--);
       }
       (0, me.wipe)(Vr);
     }
     return $r;
   }
   fe.randomString = Oe;
-  function xe(gr, ve = Ee, Se = fe.defaultRandomSource) {
-    const $r = Math.ceil(gr / (Math.log(ve.length) / Math.LN2));
-    return Oe($r, ve, Se);
+  function xe(gr, we = Ee, Se = fe.defaultRandomSource) {
+    const $r = Math.ceil(gr / (Math.log(we.length) / Math.LN2));
+    return Oe($r, we, Se);
   }
   fe.randomStringForEntropy = xe;
 })(random);
@@ -2502,22 +2275,22 @@ var sha512 = {};
       }, Oe.prototype.update = function(xe, gr) {
         if (gr === void 0 && (gr = xe.length), this._finished)
           throw new Error("SHA512: can't update because hash was finished.");
-        var ve = 0;
+        var we = 0;
         if (this._bytesHashed += gr, this._bufferLength > 0) {
           for (; this._bufferLength < fe.BLOCK_SIZE && gr > 0; )
-            this._buffer[this._bufferLength++] = xe[ve++], gr--;
-          this._bufferLength === this.blockSize && (we(this._tempHi, this._tempLo, this._stateHi, this._stateLo, this._buffer, 0, this.blockSize), this._bufferLength = 0);
+            this._buffer[this._bufferLength++] = xe[we++], gr--;
+          this._bufferLength === this.blockSize && (ve(this._tempHi, this._tempLo, this._stateHi, this._stateLo, this._buffer, 0, this.blockSize), this._bufferLength = 0);
         }
-        for (gr >= this.blockSize && (ve = we(this._tempHi, this._tempLo, this._stateHi, this._stateLo, xe, ve, gr), gr %= this.blockSize); gr > 0; )
-          this._buffer[this._bufferLength++] = xe[ve++], gr--;
+        for (gr >= this.blockSize && (we = ve(this._tempHi, this._tempLo, this._stateHi, this._stateLo, xe, we, gr), gr %= this.blockSize); gr > 0; )
+          this._buffer[this._bufferLength++] = xe[we++], gr--;
         return this;
       }, Oe.prototype.finish = function(xe) {
         if (!this._finished) {
-          var gr = this._bytesHashed, ve = this._bufferLength, Se = gr / 536870912 | 0, $r = gr << 3, Fr = gr % 128 < 112 ? 128 : 256;
-          this._buffer[ve] = 128;
-          for (var Br = ve + 1; Br < Fr - 8; Br++)
+          var gr = this._bytesHashed, we = this._bufferLength, Se = gr / 536870912 | 0, $r = gr << 3, Fr = gr % 128 < 112 ? 128 : 256;
+          this._buffer[we] = 128;
+          for (var Br = we + 1; Br < Fr - 8; Br++)
             this._buffer[Br] = 0;
-          e.writeUint32BE(Se, this._buffer, Fr - 8), e.writeUint32BE($r, this._buffer, Fr - 4), we(this._tempHi, this._tempLo, this._stateHi, this._stateLo, this._buffer, 0, Fr), this._finished = !0;
+          e.writeUint32BE(Se, this._buffer, Fr - 8), e.writeUint32BE($r, this._buffer, Fr - 4), ve(this._tempHi, this._tempLo, this._stateHi, this._stateLo, this._buffer, 0, Fr), this._finished = !0;
         }
         for (var Br = 0; Br < this.digestLength / 8; Br++)
           e.writeUint32BE(this._stateHi[Br], xe, Br * 8), e.writeUint32BE(this._stateLo[Br], xe, Br * 8 + 4);
@@ -2705,19 +2478,19 @@ var sha512 = {};
     1816402316,
     1246189591
   ]);
-  function we(Oe, xe, gr, ve, Se, $r, Fr) {
-    for (var Br = gr[0], Vr = gr[1], oo = gr[2], so = gr[3], kr = gr[4], qr = gr[5], Hr = gr[6], Yr = gr[7], Ur = ve[0], Mr = ve[1], Lr = ve[2], no = ve[3], Xr = ve[4], to = ve[5], ao = ve[6], bo = ve[7], Wr, Jr, fo, vo, mo, po, yo, Oo; Fr >= 128; ) {
-      for (var Do = 0; Do < 16; Do++) {
-        var go = 8 * Do + $r;
-        Oe[Do] = e.readUint32BE(Se, go), xe[Do] = e.readUint32BE(Se, go + 4);
+  function ve(Oe, xe, gr, we, Se, $r, Fr) {
+    for (var Br = gr[0], Vr = gr[1], oo = gr[2], so = gr[3], kr = gr[4], qr = gr[5], Hr = gr[6], Yr = gr[7], Ur = we[0], Mr = we[1], Lr = we[2], no = we[3], Xr = we[4], to = we[5], ao = we[6], bo = we[7], Wr, Jr, fo, vo, mo, po, yo, Oo; Fr >= 128; ) {
+      for (var Io = 0; Io < 16; Io++) {
+        var go = 8 * Io + $r;
+        Oe[Io] = e.readUint32BE(Se, go), xe[Io] = e.readUint32BE(Se, go + 4);
       }
-      for (var Do = 0; Do < 80; Do++) {
+      for (var Io = 0; Io < 80; Io++) {
         var No = Br, Po = Vr, Bo = oo, ho = so, co = kr, Qr = qr, jr = Hr, Zr = Yr, wo = Ur, Eo = Mr, Ao = Lr, Co = no, Uo = Xr, ko = to, si = ao, ui = bo;
-        if (Wr = Yr, Jr = bo, mo = Jr & 65535, po = Jr >>> 16, yo = Wr & 65535, Oo = Wr >>> 16, Wr = (kr >>> 14 | Xr << 32 - 14) ^ (kr >>> 18 | Xr << 32 - 18) ^ (Xr >>> 41 - 32 | kr << 32 - (41 - 32)), Jr = (Xr >>> 14 | kr << 32 - 14) ^ (Xr >>> 18 | kr << 32 - 18) ^ (kr >>> 41 - 32 | Xr << 32 - (41 - 32)), mo += Jr & 65535, po += Jr >>> 16, yo += Wr & 65535, Oo += Wr >>> 16, Wr = kr & qr ^ ~kr & Hr, Jr = Xr & to ^ ~Xr & ao, mo += Jr & 65535, po += Jr >>> 16, yo += Wr & 65535, Oo += Wr >>> 16, Wr = be[Do * 2], Jr = be[Do * 2 + 1], mo += Jr & 65535, po += Jr >>> 16, yo += Wr & 65535, Oo += Wr >>> 16, Wr = Oe[Do % 16], Jr = xe[Do % 16], mo += Jr & 65535, po += Jr >>> 16, yo += Wr & 65535, Oo += Wr >>> 16, po += mo >>> 16, yo += po >>> 16, Oo += yo >>> 16, fo = yo & 65535 | Oo << 16, vo = mo & 65535 | po << 16, Wr = fo, Jr = vo, mo = Jr & 65535, po = Jr >>> 16, yo = Wr & 65535, Oo = Wr >>> 16, Wr = (Br >>> 28 | Ur << 32 - 28) ^ (Ur >>> 34 - 32 | Br << 32 - (34 - 32)) ^ (Ur >>> 39 - 32 | Br << 32 - (39 - 32)), Jr = (Ur >>> 28 | Br << 32 - 28) ^ (Br >>> 34 - 32 | Ur << 32 - (34 - 32)) ^ (Br >>> 39 - 32 | Ur << 32 - (39 - 32)), mo += Jr & 65535, po += Jr >>> 16, yo += Wr & 65535, Oo += Wr >>> 16, Wr = Br & Vr ^ Br & oo ^ Vr & oo, Jr = Ur & Mr ^ Ur & Lr ^ Mr & Lr, mo += Jr & 65535, po += Jr >>> 16, yo += Wr & 65535, Oo += Wr >>> 16, po += mo >>> 16, yo += po >>> 16, Oo += yo >>> 16, Zr = yo & 65535 | Oo << 16, ui = mo & 65535 | po << 16, Wr = ho, Jr = Co, mo = Jr & 65535, po = Jr >>> 16, yo = Wr & 65535, Oo = Wr >>> 16, Wr = fo, Jr = vo, mo += Jr & 65535, po += Jr >>> 16, yo += Wr & 65535, Oo += Wr >>> 16, po += mo >>> 16, yo += po >>> 16, Oo += yo >>> 16, ho = yo & 65535 | Oo << 16, Co = mo & 65535 | po << 16, Vr = No, oo = Po, so = Bo, kr = ho, qr = co, Hr = Qr, Yr = jr, Br = Zr, Mr = wo, Lr = Eo, no = Ao, Xr = Co, to = Uo, ao = ko, bo = si, Ur = ui, Do % 16 === 15)
+        if (Wr = Yr, Jr = bo, mo = Jr & 65535, po = Jr >>> 16, yo = Wr & 65535, Oo = Wr >>> 16, Wr = (kr >>> 14 | Xr << 32 - 14) ^ (kr >>> 18 | Xr << 32 - 18) ^ (Xr >>> 41 - 32 | kr << 32 - (41 - 32)), Jr = (Xr >>> 14 | kr << 32 - 14) ^ (Xr >>> 18 | kr << 32 - 18) ^ (kr >>> 41 - 32 | Xr << 32 - (41 - 32)), mo += Jr & 65535, po += Jr >>> 16, yo += Wr & 65535, Oo += Wr >>> 16, Wr = kr & qr ^ ~kr & Hr, Jr = Xr & to ^ ~Xr & ao, mo += Jr & 65535, po += Jr >>> 16, yo += Wr & 65535, Oo += Wr >>> 16, Wr = be[Io * 2], Jr = be[Io * 2 + 1], mo += Jr & 65535, po += Jr >>> 16, yo += Wr & 65535, Oo += Wr >>> 16, Wr = Oe[Io % 16], Jr = xe[Io % 16], mo += Jr & 65535, po += Jr >>> 16, yo += Wr & 65535, Oo += Wr >>> 16, po += mo >>> 16, yo += po >>> 16, Oo += yo >>> 16, fo = yo & 65535 | Oo << 16, vo = mo & 65535 | po << 16, Wr = fo, Jr = vo, mo = Jr & 65535, po = Jr >>> 16, yo = Wr & 65535, Oo = Wr >>> 16, Wr = (Br >>> 28 | Ur << 32 - 28) ^ (Ur >>> 34 - 32 | Br << 32 - (34 - 32)) ^ (Ur >>> 39 - 32 | Br << 32 - (39 - 32)), Jr = (Ur >>> 28 | Br << 32 - 28) ^ (Br >>> 34 - 32 | Ur << 32 - (34 - 32)) ^ (Br >>> 39 - 32 | Ur << 32 - (39 - 32)), mo += Jr & 65535, po += Jr >>> 16, yo += Wr & 65535, Oo += Wr >>> 16, Wr = Br & Vr ^ Br & oo ^ Vr & oo, Jr = Ur & Mr ^ Ur & Lr ^ Mr & Lr, mo += Jr & 65535, po += Jr >>> 16, yo += Wr & 65535, Oo += Wr >>> 16, po += mo >>> 16, yo += po >>> 16, Oo += yo >>> 16, Zr = yo & 65535 | Oo << 16, ui = mo & 65535 | po << 16, Wr = ho, Jr = Co, mo = Jr & 65535, po = Jr >>> 16, yo = Wr & 65535, Oo = Wr >>> 16, Wr = fo, Jr = vo, mo += Jr & 65535, po += Jr >>> 16, yo += Wr & 65535, Oo += Wr >>> 16, po += mo >>> 16, yo += po >>> 16, Oo += yo >>> 16, ho = yo & 65535 | Oo << 16, Co = mo & 65535 | po << 16, Vr = No, oo = Po, so = Bo, kr = ho, qr = co, Hr = Qr, Yr = jr, Br = Zr, Mr = wo, Lr = Eo, no = Ao, Xr = Co, to = Uo, ao = ko, bo = si, Ur = ui, Io % 16 === 15)
           for (var go = 0; go < 16; go++)
             Wr = Oe[go], Jr = xe[go], mo = Jr & 65535, po = Jr >>> 16, yo = Wr & 65535, Oo = Wr >>> 16, Wr = Oe[(go + 9) % 16], Jr = xe[(go + 9) % 16], mo += Jr & 65535, po += Jr >>> 16, yo += Wr & 65535, Oo += Wr >>> 16, fo = Oe[(go + 1) % 16], vo = xe[(go + 1) % 16], Wr = (fo >>> 1 | vo << 32 - 1) ^ (fo >>> 8 | vo << 32 - 8) ^ fo >>> 7, Jr = (vo >>> 1 | fo << 32 - 1) ^ (vo >>> 8 | fo << 32 - 8) ^ (vo >>> 7 | fo << 32 - 7), mo += Jr & 65535, po += Jr >>> 16, yo += Wr & 65535, Oo += Wr >>> 16, fo = Oe[(go + 14) % 16], vo = xe[(go + 14) % 16], Wr = (fo >>> 19 | vo << 32 - 19) ^ (vo >>> 61 - 32 | fo << 32 - (61 - 32)) ^ fo >>> 6, Jr = (vo >>> 19 | fo << 32 - 19) ^ (fo >>> 61 - 32 | vo << 32 - (61 - 32)) ^ (vo >>> 6 | fo << 32 - 6), mo += Jr & 65535, po += Jr >>> 16, yo += Wr & 65535, Oo += Wr >>> 16, po += mo >>> 16, yo += po >>> 16, Oo += yo >>> 16, Oe[go] = yo & 65535 | Oo << 16, xe[go] = mo & 65535 | po << 16;
       }
-      Wr = Br, Jr = Ur, mo = Jr & 65535, po = Jr >>> 16, yo = Wr & 65535, Oo = Wr >>> 16, Wr = gr[0], Jr = ve[0], mo += Jr & 65535, po += Jr >>> 16, yo += Wr & 65535, Oo += Wr >>> 16, po += mo >>> 16, yo += po >>> 16, Oo += yo >>> 16, gr[0] = Br = yo & 65535 | Oo << 16, ve[0] = Ur = mo & 65535 | po << 16, Wr = Vr, Jr = Mr, mo = Jr & 65535, po = Jr >>> 16, yo = Wr & 65535, Oo = Wr >>> 16, Wr = gr[1], Jr = ve[1], mo += Jr & 65535, po += Jr >>> 16, yo += Wr & 65535, Oo += Wr >>> 16, po += mo >>> 16, yo += po >>> 16, Oo += yo >>> 16, gr[1] = Vr = yo & 65535 | Oo << 16, ve[1] = Mr = mo & 65535 | po << 16, Wr = oo, Jr = Lr, mo = Jr & 65535, po = Jr >>> 16, yo = Wr & 65535, Oo = Wr >>> 16, Wr = gr[2], Jr = ve[2], mo += Jr & 65535, po += Jr >>> 16, yo += Wr & 65535, Oo += Wr >>> 16, po += mo >>> 16, yo += po >>> 16, Oo += yo >>> 16, gr[2] = oo = yo & 65535 | Oo << 16, ve[2] = Lr = mo & 65535 | po << 16, Wr = so, Jr = no, mo = Jr & 65535, po = Jr >>> 16, yo = Wr & 65535, Oo = Wr >>> 16, Wr = gr[3], Jr = ve[3], mo += Jr & 65535, po += Jr >>> 16, yo += Wr & 65535, Oo += Wr >>> 16, po += mo >>> 16, yo += po >>> 16, Oo += yo >>> 16, gr[3] = so = yo & 65535 | Oo << 16, ve[3] = no = mo & 65535 | po << 16, Wr = kr, Jr = Xr, mo = Jr & 65535, po = Jr >>> 16, yo = Wr & 65535, Oo = Wr >>> 16, Wr = gr[4], Jr = ve[4], mo += Jr & 65535, po += Jr >>> 16, yo += Wr & 65535, Oo += Wr >>> 16, po += mo >>> 16, yo += po >>> 16, Oo += yo >>> 16, gr[4] = kr = yo & 65535 | Oo << 16, ve[4] = Xr = mo & 65535 | po << 16, Wr = qr, Jr = to, mo = Jr & 65535, po = Jr >>> 16, yo = Wr & 65535, Oo = Wr >>> 16, Wr = gr[5], Jr = ve[5], mo += Jr & 65535, po += Jr >>> 16, yo += Wr & 65535, Oo += Wr >>> 16, po += mo >>> 16, yo += po >>> 16, Oo += yo >>> 16, gr[5] = qr = yo & 65535 | Oo << 16, ve[5] = to = mo & 65535 | po << 16, Wr = Hr, Jr = ao, mo = Jr & 65535, po = Jr >>> 16, yo = Wr & 65535, Oo = Wr >>> 16, Wr = gr[6], Jr = ve[6], mo += Jr & 65535, po += Jr >>> 16, yo += Wr & 65535, Oo += Wr >>> 16, po += mo >>> 16, yo += po >>> 16, Oo += yo >>> 16, gr[6] = Hr = yo & 65535 | Oo << 16, ve[6] = ao = mo & 65535 | po << 16, Wr = Yr, Jr = bo, mo = Jr & 65535, po = Jr >>> 16, yo = Wr & 65535, Oo = Wr >>> 16, Wr = gr[7], Jr = ve[7], mo += Jr & 65535, po += Jr >>> 16, yo += Wr & 65535, Oo += Wr >>> 16, po += mo >>> 16, yo += po >>> 16, Oo += yo >>> 16, gr[7] = Yr = yo & 65535 | Oo << 16, ve[7] = bo = mo & 65535 | po << 16, $r += 128, Fr -= 128;
+      Wr = Br, Jr = Ur, mo = Jr & 65535, po = Jr >>> 16, yo = Wr & 65535, Oo = Wr >>> 16, Wr = gr[0], Jr = we[0], mo += Jr & 65535, po += Jr >>> 16, yo += Wr & 65535, Oo += Wr >>> 16, po += mo >>> 16, yo += po >>> 16, Oo += yo >>> 16, gr[0] = Br = yo & 65535 | Oo << 16, we[0] = Ur = mo & 65535 | po << 16, Wr = Vr, Jr = Mr, mo = Jr & 65535, po = Jr >>> 16, yo = Wr & 65535, Oo = Wr >>> 16, Wr = gr[1], Jr = we[1], mo += Jr & 65535, po += Jr >>> 16, yo += Wr & 65535, Oo += Wr >>> 16, po += mo >>> 16, yo += po >>> 16, Oo += yo >>> 16, gr[1] = Vr = yo & 65535 | Oo << 16, we[1] = Mr = mo & 65535 | po << 16, Wr = oo, Jr = Lr, mo = Jr & 65535, po = Jr >>> 16, yo = Wr & 65535, Oo = Wr >>> 16, Wr = gr[2], Jr = we[2], mo += Jr & 65535, po += Jr >>> 16, yo += Wr & 65535, Oo += Wr >>> 16, po += mo >>> 16, yo += po >>> 16, Oo += yo >>> 16, gr[2] = oo = yo & 65535 | Oo << 16, we[2] = Lr = mo & 65535 | po << 16, Wr = so, Jr = no, mo = Jr & 65535, po = Jr >>> 16, yo = Wr & 65535, Oo = Wr >>> 16, Wr = gr[3], Jr = we[3], mo += Jr & 65535, po += Jr >>> 16, yo += Wr & 65535, Oo += Wr >>> 16, po += mo >>> 16, yo += po >>> 16, Oo += yo >>> 16, gr[3] = so = yo & 65535 | Oo << 16, we[3] = no = mo & 65535 | po << 16, Wr = kr, Jr = Xr, mo = Jr & 65535, po = Jr >>> 16, yo = Wr & 65535, Oo = Wr >>> 16, Wr = gr[4], Jr = we[4], mo += Jr & 65535, po += Jr >>> 16, yo += Wr & 65535, Oo += Wr >>> 16, po += mo >>> 16, yo += po >>> 16, Oo += yo >>> 16, gr[4] = kr = yo & 65535 | Oo << 16, we[4] = Xr = mo & 65535 | po << 16, Wr = qr, Jr = to, mo = Jr & 65535, po = Jr >>> 16, yo = Wr & 65535, Oo = Wr >>> 16, Wr = gr[5], Jr = we[5], mo += Jr & 65535, po += Jr >>> 16, yo += Wr & 65535, Oo += Wr >>> 16, po += mo >>> 16, yo += po >>> 16, Oo += yo >>> 16, gr[5] = qr = yo & 65535 | Oo << 16, we[5] = to = mo & 65535 | po << 16, Wr = Hr, Jr = ao, mo = Jr & 65535, po = Jr >>> 16, yo = Wr & 65535, Oo = Wr >>> 16, Wr = gr[6], Jr = we[6], mo += Jr & 65535, po += Jr >>> 16, yo += Wr & 65535, Oo += Wr >>> 16, po += mo >>> 16, yo += po >>> 16, Oo += yo >>> 16, gr[6] = Hr = yo & 65535 | Oo << 16, we[6] = ao = mo & 65535 | po << 16, Wr = Yr, Jr = bo, mo = Jr & 65535, po = Jr >>> 16, yo = Wr & 65535, Oo = Wr >>> 16, Wr = gr[7], Jr = we[7], mo += Jr & 65535, po += Jr >>> 16, yo += Wr & 65535, Oo += Wr >>> 16, po += mo >>> 16, yo += po >>> 16, Oo += yo >>> 16, gr[7] = Yr = yo & 65535 | Oo << 16, we[7] = bo = mo & 65535 | po << 16, $r += 128, Fr -= 128;
     }
     return $r;
   }
@@ -2740,8 +2513,8 @@ var sha512 = {};
         co[Qr] = ho[Qr];
     return co;
   }
-  const we = new Uint8Array(32);
-  we[0] = 9;
+  const ve = new Uint8Array(32);
+  ve[0] = 9;
   const Ee = be(), Oe = be([1]), xe = be([
     30883,
     4953,
@@ -2776,7 +2549,7 @@ var sha512 = {};
     22239,
     55772,
     9222
-  ]), ve = be([
+  ]), we = be([
     54554,
     36645,
     11616,
@@ -2891,8 +2664,8 @@ var sha512 = {};
       ho[jr] = co[jr] - Qr[jr];
   }
   function Mr(ho, co, Qr) {
-    let jr, Zr, wo = 0, Eo = 0, Ao = 0, Co = 0, Uo = 0, ko = 0, si = 0, ui = 0, Go = 0, Xo = 0, Zo = 0, Ko = 0, Jo = 0, Ho = 0, Vo = 0, Wo = 0, Yo = 0, ei = 0, zo = 0, oi = 0, ti = 0, ri = 0, ni = 0, ii = 0, wi = 0, Si = 0, $i = 0, bi = 0, Ii = 0, Ni = 0, fi = 0, ai = Qr[0], li = Qr[1], io = Qr[2], Gr = Qr[3], ro = Qr[4], lo = Qr[5], _o = Qr[6], So = Qr[7], $o = Qr[8], Ro = Qr[9], Fo = Qr[10], Io = Qr[11], xo = Qr[12], jo = Qr[13], Lo = Qr[14], Qo = Qr[15];
-    jr = co[0], wo += jr * ai, Eo += jr * li, Ao += jr * io, Co += jr * Gr, Uo += jr * ro, ko += jr * lo, si += jr * _o, ui += jr * So, Go += jr * $o, Xo += jr * Ro, Zo += jr * Fo, Ko += jr * Io, Jo += jr * xo, Ho += jr * jo, Vo += jr * Lo, Wo += jr * Qo, jr = co[1], Eo += jr * ai, Ao += jr * li, Co += jr * io, Uo += jr * Gr, ko += jr * ro, si += jr * lo, ui += jr * _o, Go += jr * So, Xo += jr * $o, Zo += jr * Ro, Ko += jr * Fo, Jo += jr * Io, Ho += jr * xo, Vo += jr * jo, Wo += jr * Lo, Yo += jr * Qo, jr = co[2], Ao += jr * ai, Co += jr * li, Uo += jr * io, ko += jr * Gr, si += jr * ro, ui += jr * lo, Go += jr * _o, Xo += jr * So, Zo += jr * $o, Ko += jr * Ro, Jo += jr * Fo, Ho += jr * Io, Vo += jr * xo, Wo += jr * jo, Yo += jr * Lo, ei += jr * Qo, jr = co[3], Co += jr * ai, Uo += jr * li, ko += jr * io, si += jr * Gr, ui += jr * ro, Go += jr * lo, Xo += jr * _o, Zo += jr * So, Ko += jr * $o, Jo += jr * Ro, Ho += jr * Fo, Vo += jr * Io, Wo += jr * xo, Yo += jr * jo, ei += jr * Lo, zo += jr * Qo, jr = co[4], Uo += jr * ai, ko += jr * li, si += jr * io, ui += jr * Gr, Go += jr * ro, Xo += jr * lo, Zo += jr * _o, Ko += jr * So, Jo += jr * $o, Ho += jr * Ro, Vo += jr * Fo, Wo += jr * Io, Yo += jr * xo, ei += jr * jo, zo += jr * Lo, oi += jr * Qo, jr = co[5], ko += jr * ai, si += jr * li, ui += jr * io, Go += jr * Gr, Xo += jr * ro, Zo += jr * lo, Ko += jr * _o, Jo += jr * So, Ho += jr * $o, Vo += jr * Ro, Wo += jr * Fo, Yo += jr * Io, ei += jr * xo, zo += jr * jo, oi += jr * Lo, ti += jr * Qo, jr = co[6], si += jr * ai, ui += jr * li, Go += jr * io, Xo += jr * Gr, Zo += jr * ro, Ko += jr * lo, Jo += jr * _o, Ho += jr * So, Vo += jr * $o, Wo += jr * Ro, Yo += jr * Fo, ei += jr * Io, zo += jr * xo, oi += jr * jo, ti += jr * Lo, ri += jr * Qo, jr = co[7], ui += jr * ai, Go += jr * li, Xo += jr * io, Zo += jr * Gr, Ko += jr * ro, Jo += jr * lo, Ho += jr * _o, Vo += jr * So, Wo += jr * $o, Yo += jr * Ro, ei += jr * Fo, zo += jr * Io, oi += jr * xo, ti += jr * jo, ri += jr * Lo, ni += jr * Qo, jr = co[8], Go += jr * ai, Xo += jr * li, Zo += jr * io, Ko += jr * Gr, Jo += jr * ro, Ho += jr * lo, Vo += jr * _o, Wo += jr * So, Yo += jr * $o, ei += jr * Ro, zo += jr * Fo, oi += jr * Io, ti += jr * xo, ri += jr * jo, ni += jr * Lo, ii += jr * Qo, jr = co[9], Xo += jr * ai, Zo += jr * li, Ko += jr * io, Jo += jr * Gr, Ho += jr * ro, Vo += jr * lo, Wo += jr * _o, Yo += jr * So, ei += jr * $o, zo += jr * Ro, oi += jr * Fo, ti += jr * Io, ri += jr * xo, ni += jr * jo, ii += jr * Lo, wi += jr * Qo, jr = co[10], Zo += jr * ai, Ko += jr * li, Jo += jr * io, Ho += jr * Gr, Vo += jr * ro, Wo += jr * lo, Yo += jr * _o, ei += jr * So, zo += jr * $o, oi += jr * Ro, ti += jr * Fo, ri += jr * Io, ni += jr * xo, ii += jr * jo, wi += jr * Lo, Si += jr * Qo, jr = co[11], Ko += jr * ai, Jo += jr * li, Ho += jr * io, Vo += jr * Gr, Wo += jr * ro, Yo += jr * lo, ei += jr * _o, zo += jr * So, oi += jr * $o, ti += jr * Ro, ri += jr * Fo, ni += jr * Io, ii += jr * xo, wi += jr * jo, Si += jr * Lo, $i += jr * Qo, jr = co[12], Jo += jr * ai, Ho += jr * li, Vo += jr * io, Wo += jr * Gr, Yo += jr * ro, ei += jr * lo, zo += jr * _o, oi += jr * So, ti += jr * $o, ri += jr * Ro, ni += jr * Fo, ii += jr * Io, wi += jr * xo, Si += jr * jo, $i += jr * Lo, bi += jr * Qo, jr = co[13], Ho += jr * ai, Vo += jr * li, Wo += jr * io, Yo += jr * Gr, ei += jr * ro, zo += jr * lo, oi += jr * _o, ti += jr * So, ri += jr * $o, ni += jr * Ro, ii += jr * Fo, wi += jr * Io, Si += jr * xo, $i += jr * jo, bi += jr * Lo, Ii += jr * Qo, jr = co[14], Vo += jr * ai, Wo += jr * li, Yo += jr * io, ei += jr * Gr, zo += jr * ro, oi += jr * lo, ti += jr * _o, ri += jr * So, ni += jr * $o, ii += jr * Ro, wi += jr * Fo, Si += jr * Io, $i += jr * xo, bi += jr * jo, Ii += jr * Lo, Ni += jr * Qo, jr = co[15], Wo += jr * ai, Yo += jr * li, ei += jr * io, zo += jr * Gr, oi += jr * ro, ti += jr * lo, ri += jr * _o, ni += jr * So, ii += jr * $o, wi += jr * Ro, Si += jr * Fo, $i += jr * Io, bi += jr * xo, Ii += jr * jo, Ni += jr * Lo, fi += jr * Qo, wo += 38 * Yo, Eo += 38 * ei, Ao += 38 * zo, Co += 38 * oi, Uo += 38 * ti, ko += 38 * ri, si += 38 * ni, ui += 38 * ii, Go += 38 * wi, Xo += 38 * Si, Zo += 38 * $i, Ko += 38 * bi, Jo += 38 * Ii, Ho += 38 * Ni, Vo += 38 * fi, Zr = 1, jr = wo + Zr + 65535, Zr = Math.floor(jr / 65536), wo = jr - Zr * 65536, jr = Eo + Zr + 65535, Zr = Math.floor(jr / 65536), Eo = jr - Zr * 65536, jr = Ao + Zr + 65535, Zr = Math.floor(jr / 65536), Ao = jr - Zr * 65536, jr = Co + Zr + 65535, Zr = Math.floor(jr / 65536), Co = jr - Zr * 65536, jr = Uo + Zr + 65535, Zr = Math.floor(jr / 65536), Uo = jr - Zr * 65536, jr = ko + Zr + 65535, Zr = Math.floor(jr / 65536), ko = jr - Zr * 65536, jr = si + Zr + 65535, Zr = Math.floor(jr / 65536), si = jr - Zr * 65536, jr = ui + Zr + 65535, Zr = Math.floor(jr / 65536), ui = jr - Zr * 65536, jr = Go + Zr + 65535, Zr = Math.floor(jr / 65536), Go = jr - Zr * 65536, jr = Xo + Zr + 65535, Zr = Math.floor(jr / 65536), Xo = jr - Zr * 65536, jr = Zo + Zr + 65535, Zr = Math.floor(jr / 65536), Zo = jr - Zr * 65536, jr = Ko + Zr + 65535, Zr = Math.floor(jr / 65536), Ko = jr - Zr * 65536, jr = Jo + Zr + 65535, Zr = Math.floor(jr / 65536), Jo = jr - Zr * 65536, jr = Ho + Zr + 65535, Zr = Math.floor(jr / 65536), Ho = jr - Zr * 65536, jr = Vo + Zr + 65535, Zr = Math.floor(jr / 65536), Vo = jr - Zr * 65536, jr = Wo + Zr + 65535, Zr = Math.floor(jr / 65536), Wo = jr - Zr * 65536, wo += Zr - 1 + 37 * (Zr - 1), Zr = 1, jr = wo + Zr + 65535, Zr = Math.floor(jr / 65536), wo = jr - Zr * 65536, jr = Eo + Zr + 65535, Zr = Math.floor(jr / 65536), Eo = jr - Zr * 65536, jr = Ao + Zr + 65535, Zr = Math.floor(jr / 65536), Ao = jr - Zr * 65536, jr = Co + Zr + 65535, Zr = Math.floor(jr / 65536), Co = jr - Zr * 65536, jr = Uo + Zr + 65535, Zr = Math.floor(jr / 65536), Uo = jr - Zr * 65536, jr = ko + Zr + 65535, Zr = Math.floor(jr / 65536), ko = jr - Zr * 65536, jr = si + Zr + 65535, Zr = Math.floor(jr / 65536), si = jr - Zr * 65536, jr = ui + Zr + 65535, Zr = Math.floor(jr / 65536), ui = jr - Zr * 65536, jr = Go + Zr + 65535, Zr = Math.floor(jr / 65536), Go = jr - Zr * 65536, jr = Xo + Zr + 65535, Zr = Math.floor(jr / 65536), Xo = jr - Zr * 65536, jr = Zo + Zr + 65535, Zr = Math.floor(jr / 65536), Zo = jr - Zr * 65536, jr = Ko + Zr + 65535, Zr = Math.floor(jr / 65536), Ko = jr - Zr * 65536, jr = Jo + Zr + 65535, Zr = Math.floor(jr / 65536), Jo = jr - Zr * 65536, jr = Ho + Zr + 65535, Zr = Math.floor(jr / 65536), Ho = jr - Zr * 65536, jr = Vo + Zr + 65535, Zr = Math.floor(jr / 65536), Vo = jr - Zr * 65536, jr = Wo + Zr + 65535, Zr = Math.floor(jr / 65536), Wo = jr - Zr * 65536, wo += Zr - 1 + 37 * (Zr - 1), ho[0] = wo, ho[1] = Eo, ho[2] = Ao, ho[3] = Co, ho[4] = Uo, ho[5] = ko, ho[6] = si, ho[7] = ui, ho[8] = Go, ho[9] = Xo, ho[10] = Zo, ho[11] = Ko, ho[12] = Jo, ho[13] = Ho, ho[14] = Vo, ho[15] = Wo;
+    let jr, Zr, wo = 0, Eo = 0, Ao = 0, Co = 0, Uo = 0, ko = 0, si = 0, ui = 0, Go = 0, Xo = 0, Zo = 0, Ko = 0, Jo = 0, Ho = 0, Vo = 0, Wo = 0, Yo = 0, ei = 0, zo = 0, oi = 0, ti = 0, ri = 0, ni = 0, ii = 0, wi = 0, Si = 0, $i = 0, bi = 0, Di = 0, Ni = 0, fi = 0, ai = Qr[0], li = Qr[1], io = Qr[2], Gr = Qr[3], ro = Qr[4], lo = Qr[5], _o = Qr[6], So = Qr[7], $o = Qr[8], Ro = Qr[9], Fo = Qr[10], Do = Qr[11], xo = Qr[12], jo = Qr[13], Lo = Qr[14], Qo = Qr[15];
+    jr = co[0], wo += jr * ai, Eo += jr * li, Ao += jr * io, Co += jr * Gr, Uo += jr * ro, ko += jr * lo, si += jr * _o, ui += jr * So, Go += jr * $o, Xo += jr * Ro, Zo += jr * Fo, Ko += jr * Do, Jo += jr * xo, Ho += jr * jo, Vo += jr * Lo, Wo += jr * Qo, jr = co[1], Eo += jr * ai, Ao += jr * li, Co += jr * io, Uo += jr * Gr, ko += jr * ro, si += jr * lo, ui += jr * _o, Go += jr * So, Xo += jr * $o, Zo += jr * Ro, Ko += jr * Fo, Jo += jr * Do, Ho += jr * xo, Vo += jr * jo, Wo += jr * Lo, Yo += jr * Qo, jr = co[2], Ao += jr * ai, Co += jr * li, Uo += jr * io, ko += jr * Gr, si += jr * ro, ui += jr * lo, Go += jr * _o, Xo += jr * So, Zo += jr * $o, Ko += jr * Ro, Jo += jr * Fo, Ho += jr * Do, Vo += jr * xo, Wo += jr * jo, Yo += jr * Lo, ei += jr * Qo, jr = co[3], Co += jr * ai, Uo += jr * li, ko += jr * io, si += jr * Gr, ui += jr * ro, Go += jr * lo, Xo += jr * _o, Zo += jr * So, Ko += jr * $o, Jo += jr * Ro, Ho += jr * Fo, Vo += jr * Do, Wo += jr * xo, Yo += jr * jo, ei += jr * Lo, zo += jr * Qo, jr = co[4], Uo += jr * ai, ko += jr * li, si += jr * io, ui += jr * Gr, Go += jr * ro, Xo += jr * lo, Zo += jr * _o, Ko += jr * So, Jo += jr * $o, Ho += jr * Ro, Vo += jr * Fo, Wo += jr * Do, Yo += jr * xo, ei += jr * jo, zo += jr * Lo, oi += jr * Qo, jr = co[5], ko += jr * ai, si += jr * li, ui += jr * io, Go += jr * Gr, Xo += jr * ro, Zo += jr * lo, Ko += jr * _o, Jo += jr * So, Ho += jr * $o, Vo += jr * Ro, Wo += jr * Fo, Yo += jr * Do, ei += jr * xo, zo += jr * jo, oi += jr * Lo, ti += jr * Qo, jr = co[6], si += jr * ai, ui += jr * li, Go += jr * io, Xo += jr * Gr, Zo += jr * ro, Ko += jr * lo, Jo += jr * _o, Ho += jr * So, Vo += jr * $o, Wo += jr * Ro, Yo += jr * Fo, ei += jr * Do, zo += jr * xo, oi += jr * jo, ti += jr * Lo, ri += jr * Qo, jr = co[7], ui += jr * ai, Go += jr * li, Xo += jr * io, Zo += jr * Gr, Ko += jr * ro, Jo += jr * lo, Ho += jr * _o, Vo += jr * So, Wo += jr * $o, Yo += jr * Ro, ei += jr * Fo, zo += jr * Do, oi += jr * xo, ti += jr * jo, ri += jr * Lo, ni += jr * Qo, jr = co[8], Go += jr * ai, Xo += jr * li, Zo += jr * io, Ko += jr * Gr, Jo += jr * ro, Ho += jr * lo, Vo += jr * _o, Wo += jr * So, Yo += jr * $o, ei += jr * Ro, zo += jr * Fo, oi += jr * Do, ti += jr * xo, ri += jr * jo, ni += jr * Lo, ii += jr * Qo, jr = co[9], Xo += jr * ai, Zo += jr * li, Ko += jr * io, Jo += jr * Gr, Ho += jr * ro, Vo += jr * lo, Wo += jr * _o, Yo += jr * So, ei += jr * $o, zo += jr * Ro, oi += jr * Fo, ti += jr * Do, ri += jr * xo, ni += jr * jo, ii += jr * Lo, wi += jr * Qo, jr = co[10], Zo += jr * ai, Ko += jr * li, Jo += jr * io, Ho += jr * Gr, Vo += jr * ro, Wo += jr * lo, Yo += jr * _o, ei += jr * So, zo += jr * $o, oi += jr * Ro, ti += jr * Fo, ri += jr * Do, ni += jr * xo, ii += jr * jo, wi += jr * Lo, Si += jr * Qo, jr = co[11], Ko += jr * ai, Jo += jr * li, Ho += jr * io, Vo += jr * Gr, Wo += jr * ro, Yo += jr * lo, ei += jr * _o, zo += jr * So, oi += jr * $o, ti += jr * Ro, ri += jr * Fo, ni += jr * Do, ii += jr * xo, wi += jr * jo, Si += jr * Lo, $i += jr * Qo, jr = co[12], Jo += jr * ai, Ho += jr * li, Vo += jr * io, Wo += jr * Gr, Yo += jr * ro, ei += jr * lo, zo += jr * _o, oi += jr * So, ti += jr * $o, ri += jr * Ro, ni += jr * Fo, ii += jr * Do, wi += jr * xo, Si += jr * jo, $i += jr * Lo, bi += jr * Qo, jr = co[13], Ho += jr * ai, Vo += jr * li, Wo += jr * io, Yo += jr * Gr, ei += jr * ro, zo += jr * lo, oi += jr * _o, ti += jr * So, ri += jr * $o, ni += jr * Ro, ii += jr * Fo, wi += jr * Do, Si += jr * xo, $i += jr * jo, bi += jr * Lo, Di += jr * Qo, jr = co[14], Vo += jr * ai, Wo += jr * li, Yo += jr * io, ei += jr * Gr, zo += jr * ro, oi += jr * lo, ti += jr * _o, ri += jr * So, ni += jr * $o, ii += jr * Ro, wi += jr * Fo, Si += jr * Do, $i += jr * xo, bi += jr * jo, Di += jr * Lo, Ni += jr * Qo, jr = co[15], Wo += jr * ai, Yo += jr * li, ei += jr * io, zo += jr * Gr, oi += jr * ro, ti += jr * lo, ri += jr * _o, ni += jr * So, ii += jr * $o, wi += jr * Ro, Si += jr * Fo, $i += jr * Do, bi += jr * xo, Di += jr * jo, Ni += jr * Lo, fi += jr * Qo, wo += 38 * Yo, Eo += 38 * ei, Ao += 38 * zo, Co += 38 * oi, Uo += 38 * ti, ko += 38 * ri, si += 38 * ni, ui += 38 * ii, Go += 38 * wi, Xo += 38 * Si, Zo += 38 * $i, Ko += 38 * bi, Jo += 38 * Di, Ho += 38 * Ni, Vo += 38 * fi, Zr = 1, jr = wo + Zr + 65535, Zr = Math.floor(jr / 65536), wo = jr - Zr * 65536, jr = Eo + Zr + 65535, Zr = Math.floor(jr / 65536), Eo = jr - Zr * 65536, jr = Ao + Zr + 65535, Zr = Math.floor(jr / 65536), Ao = jr - Zr * 65536, jr = Co + Zr + 65535, Zr = Math.floor(jr / 65536), Co = jr - Zr * 65536, jr = Uo + Zr + 65535, Zr = Math.floor(jr / 65536), Uo = jr - Zr * 65536, jr = ko + Zr + 65535, Zr = Math.floor(jr / 65536), ko = jr - Zr * 65536, jr = si + Zr + 65535, Zr = Math.floor(jr / 65536), si = jr - Zr * 65536, jr = ui + Zr + 65535, Zr = Math.floor(jr / 65536), ui = jr - Zr * 65536, jr = Go + Zr + 65535, Zr = Math.floor(jr / 65536), Go = jr - Zr * 65536, jr = Xo + Zr + 65535, Zr = Math.floor(jr / 65536), Xo = jr - Zr * 65536, jr = Zo + Zr + 65535, Zr = Math.floor(jr / 65536), Zo = jr - Zr * 65536, jr = Ko + Zr + 65535, Zr = Math.floor(jr / 65536), Ko = jr - Zr * 65536, jr = Jo + Zr + 65535, Zr = Math.floor(jr / 65536), Jo = jr - Zr * 65536, jr = Ho + Zr + 65535, Zr = Math.floor(jr / 65536), Ho = jr - Zr * 65536, jr = Vo + Zr + 65535, Zr = Math.floor(jr / 65536), Vo = jr - Zr * 65536, jr = Wo + Zr + 65535, Zr = Math.floor(jr / 65536), Wo = jr - Zr * 65536, wo += Zr - 1 + 37 * (Zr - 1), Zr = 1, jr = wo + Zr + 65535, Zr = Math.floor(jr / 65536), wo = jr - Zr * 65536, jr = Eo + Zr + 65535, Zr = Math.floor(jr / 65536), Eo = jr - Zr * 65536, jr = Ao + Zr + 65535, Zr = Math.floor(jr / 65536), Ao = jr - Zr * 65536, jr = Co + Zr + 65535, Zr = Math.floor(jr / 65536), Co = jr - Zr * 65536, jr = Uo + Zr + 65535, Zr = Math.floor(jr / 65536), Uo = jr - Zr * 65536, jr = ko + Zr + 65535, Zr = Math.floor(jr / 65536), ko = jr - Zr * 65536, jr = si + Zr + 65535, Zr = Math.floor(jr / 65536), si = jr - Zr * 65536, jr = ui + Zr + 65535, Zr = Math.floor(jr / 65536), ui = jr - Zr * 65536, jr = Go + Zr + 65535, Zr = Math.floor(jr / 65536), Go = jr - Zr * 65536, jr = Xo + Zr + 65535, Zr = Math.floor(jr / 65536), Xo = jr - Zr * 65536, jr = Zo + Zr + 65535, Zr = Math.floor(jr / 65536), Zo = jr - Zr * 65536, jr = Ko + Zr + 65535, Zr = Math.floor(jr / 65536), Ko = jr - Zr * 65536, jr = Jo + Zr + 65535, Zr = Math.floor(jr / 65536), Jo = jr - Zr * 65536, jr = Ho + Zr + 65535, Zr = Math.floor(jr / 65536), Ho = jr - Zr * 65536, jr = Vo + Zr + 65535, Zr = Math.floor(jr / 65536), Vo = jr - Zr * 65536, jr = Wo + Zr + 65535, Zr = Math.floor(jr / 65536), Wo = jr - Zr * 65536, wo += Zr - 1 + 37 * (Zr - 1), ho[0] = wo, ho[1] = Eo, ho[2] = Ao, ho[3] = Co, ho[4] = Uo, ho[5] = ko, ho[6] = si, ho[7] = ui, ho[8] = Go, ho[9] = Xo, ho[10] = Zo, ho[11] = Ko, ho[12] = Jo, ho[13] = Ho, ho[14] = Vo, ho[15] = Wo;
   }
   function Lr(ho, co) {
     Mr(ho, co, co);
@@ -2938,7 +2711,7 @@ var sha512 = {};
   }
   function Jr(ho, co) {
     const Qr = [be(), be(), be(), be()];
-    Fr(Qr[0], ve), Fr(Qr[1], Se), Fr(Qr[2], Oe), Mr(Qr[3], ve, Se), Wr(ho, Qr, co);
+    Fr(Qr[0], we), Fr(Qr[1], Se), Fr(Qr[2], Oe), Mr(Qr[3], we, Se), Wr(ho, Qr, co);
   }
   function fo(ho) {
     if (ho.length !== fe.SEED_LENGTH)
@@ -3021,7 +2794,7 @@ var sha512 = {};
       ho[Qr] = 0;
     yo(ho, co);
   }
-  function Do(ho, co) {
+  function Io(ho, co) {
     const Qr = new Float64Array(64), jr = [be(), be(), be(), be()], Zr = (0, ye.hash)(ho.subarray(0, 32));
     Zr[0] &= 248, Zr[31] &= 127, Zr[31] |= 64;
     const wo = new Uint8Array(64);
@@ -3039,7 +2812,7 @@ var sha512 = {};
         Qr[Uo + ko] += Co[Uo] * Zr[ko];
     return yo(wo.subarray(32), Qr), wo;
   }
-  fe.sign = Do;
+  fe.sign = Io;
   function go(ho, co) {
     const Qr = be(), jr = be(), Zr = be(), wo = be(), Eo = be(), Ao = be(), Co = be();
     return Fr(ho[2], Oe), Hr(ho[1], co), Lr(Zr, ho[1]), Mr(wo, Zr, xe), Ur(Zr, Zr, ho[2]), Yr(wo, ho[2], wo), Lr(Eo, wo), Lr(Ao, Eo), Mr(Co, Ao, Eo), Mr(Qr, Co, Zr), Mr(Qr, Qr, wo), Xr(Qr, Qr), Mr(Qr, Qr, Zr), Mr(Qr, Qr, wo), Mr(Qr, Qr, wo), Mr(ho[0], Qr, wo), Lr(jr, ho[0]), Mr(jr, jr, wo), kr(jr, Zr) && Mr(ho[0], ho[0], $r), Lr(jr, ho[0]), Mr(jr, jr, wo), kr(jr, Zr) ? -1 : (qr(ho[0]) === co[31] >> 7 && Ur(ho[0], Ee, ho[0]), Mr(ho[3], ho[0], ho[1]), 0);
@@ -3082,7 +2855,7 @@ function allocUnsafe(fe = 0) {
   return globalThis.Buffer != null && globalThis.Buffer.allocUnsafe != null ? asUint8Array(globalThis.Buffer.allocUnsafe(fe)) : new Uint8Array(fe);
 }
 function concat$1(fe, e) {
-  e || (e = fe.reduce((be, we) => be + we.length, 0));
+  e || (e = fe.reduce((be, ve) => be + ve.length, 0));
   const ye = allocUnsafe(e);
   let me = 0;
   for (const be of fe)
@@ -3095,12 +2868,12 @@ function base$2(fe, e) {
   for (var ye = new Uint8Array(256), me = 0; me < ye.length; me++)
     ye[me] = 255;
   for (var be = 0; be < fe.length; be++) {
-    var we = fe.charAt(be), Ee = we.charCodeAt(0);
+    var ve = fe.charAt(be), Ee = ve.charCodeAt(0);
     if (ye[Ee] !== 255)
-      throw new TypeError(we + " is ambiguous");
+      throw new TypeError(ve + " is ambiguous");
     ye[Ee] = be;
   }
-  var Oe = fe.length, xe = fe.charAt(0), gr = Math.log(Oe) / Math.log(256), ve = Math.log(256) / Math.log(Oe);
+  var Oe = fe.length, xe = fe.charAt(0), gr = Math.log(Oe) / Math.log(256), we = Math.log(256) / Math.log(Oe);
   function Se(Br) {
     if (Br instanceof Uint8Array || (ArrayBuffer.isView(Br) ? Br = new Uint8Array(Br.buffer, Br.byteOffset, Br.byteLength) : Array.isArray(Br) && (Br = Uint8Array.from(Br))), !(Br instanceof Uint8Array))
       throw new TypeError("Expected Uint8Array");
@@ -3108,7 +2881,7 @@ function base$2(fe, e) {
       return "";
     for (var Vr = 0, oo = 0, so = 0, kr = Br.length; so !== kr && Br[so] === 0; )
       so++, Vr++;
-    for (var qr = (kr - so) * ve + 1 >>> 0, Hr = new Uint8Array(qr); so !== kr; ) {
+    for (var qr = (kr - so) * we + 1 >>> 0, Hr = new Uint8Array(qr); so !== kr; ) {
       for (var Yr = Br[so], Ur = 0, Mr = qr - 1; (Yr !== 0 || Ur < oo) && Mr !== -1; Mr--, Ur++)
         Yr += 256 * Hr[Mr] >>> 0, Hr[Mr] = Yr % Oe >>> 0, Yr = Yr / Oe >>> 0;
       if (Yr !== 0)
@@ -3234,19 +3007,19 @@ const from = ({ name: fe, prefix: e, encode: ye, decode: me }) => new Codec(fe, 
     prefix: fe,
     name: e,
     encode: me,
-    decode: (we) => coerce(be(we))
+    decode: (ve) => coerce(be(ve))
   });
 }, decode$3 = (fe, e, ye, me) => {
   const be = {};
-  for (let ve = 0; ve < e.length; ++ve)
-    be[e[ve]] = ve;
-  let we = fe.length;
-  for (; fe[we - 1] === "="; )
-    --we;
-  const Ee = new Uint8Array(we * ye / 8 | 0);
+  for (let we = 0; we < e.length; ++we)
+    be[e[we]] = we;
+  let ve = fe.length;
+  for (; fe[ve - 1] === "="; )
+    --ve;
+  const Ee = new Uint8Array(ve * ye / 8 | 0);
   let Oe = 0, xe = 0, gr = 0;
-  for (let ve = 0; ve < we; ++ve) {
-    const Se = be[fe[ve]];
+  for (let we = 0; we < ve; ++we) {
+    const Se = be[fe[we]];
     if (Se === void 0)
       throw new SyntaxError(`Non-${me} character`);
     xe = xe << ye | Se, Oe += ye, Oe >= 8 && (Oe -= 8, Ee[gr++] = 255 & xe >> Oe);
@@ -3256,14 +3029,14 @@ const from = ({ name: fe, prefix: e, encode: ye, decode: me }) => new Codec(fe, 
   return Ee;
 }, encode$2 = (fe, e, ye) => {
   const me = e[e.length - 1] === "=", be = (1 << ye) - 1;
-  let we = "", Ee = 0, Oe = 0;
+  let ve = "", Ee = 0, Oe = 0;
   for (let xe = 0; xe < fe.length; ++xe)
     for (Oe = Oe << 8 | fe[xe], Ee += 8; Ee > ye; )
-      Ee -= ye, we += e[be & Oe >> Ee];
-  if (Ee && (we += e[be & Oe << ye - Ee]), me)
-    for (; we.length * ye & 7; )
-      we += "=";
-  return we;
+      Ee -= ye, ve += e[be & Oe >> Ee];
+  if (Ee && (ve += e[be & Oe << ye - Ee]), me)
+    for (; ve.length * ye & 7; )
+      ve += "=";
+  return ve;
 }, rfc4648$2 = ({ name: fe, prefix: e, bitsPerChar: ye, alphabet: me }) => from({
   prefix: e,
   name: fe,
@@ -3529,39 +3302,39 @@ function generateKeyPair(fe = random.randomBytes(KEY_PAIR_SEED_LENGTH)) {
   return ed25519.generateKeyPairFromSeed(fe);
 }
 async function signJWT(fe, e, ye, me, be = cjs$4.fromMiliseconds(Date.now())) {
-  const we = { alg: JWT_IRIDIUM_ALG, typ: JWT_IRIDIUM_TYP }, Ee = encodeIss(me.publicKey), Oe = be + ye, xe = { iss: Ee, sub: fe, aud: e, iat: be, exp: Oe }, gr = encodeData({ header: we, payload: xe }), ve = ed25519.sign(me.secretKey, gr);
-  return encodeJWT({ header: we, payload: xe, signature: ve });
+  const ve = { alg: JWT_IRIDIUM_ALG, typ: JWT_IRIDIUM_TYP }, Ee = encodeIss(me.publicKey), Oe = be + ye, xe = { iss: Ee, sub: fe, aud: e, iat: be, exp: Oe }, gr = encodeData({ header: ve, payload: xe }), we = ed25519.sign(me.secretKey, gr);
+  return encodeJWT({ header: ve, payload: xe, signature: we });
 }
 var chacha20poly1305 = {}, chacha = {};
 Object.defineProperty(chacha, "__esModule", { value: !0 });
 var binary_1 = binary, wipe_1$2 = wipe$1, ROUNDS = 20;
 function core(fe, e, ye) {
-  for (var me = 1634760805, be = 857760878, we = 2036477234, Ee = 1797285236, Oe = ye[3] << 24 | ye[2] << 16 | ye[1] << 8 | ye[0], xe = ye[7] << 24 | ye[6] << 16 | ye[5] << 8 | ye[4], gr = ye[11] << 24 | ye[10] << 16 | ye[9] << 8 | ye[8], ve = ye[15] << 24 | ye[14] << 16 | ye[13] << 8 | ye[12], Se = ye[19] << 24 | ye[18] << 16 | ye[17] << 8 | ye[16], $r = ye[23] << 24 | ye[22] << 16 | ye[21] << 8 | ye[20], Fr = ye[27] << 24 | ye[26] << 16 | ye[25] << 8 | ye[24], Br = ye[31] << 24 | ye[30] << 16 | ye[29] << 8 | ye[28], Vr = e[3] << 24 | e[2] << 16 | e[1] << 8 | e[0], oo = e[7] << 24 | e[6] << 16 | e[5] << 8 | e[4], so = e[11] << 24 | e[10] << 16 | e[9] << 8 | e[8], kr = e[15] << 24 | e[14] << 16 | e[13] << 8 | e[12], qr = me, Hr = be, Yr = we, Ur = Ee, Mr = Oe, Lr = xe, no = gr, Xr = ve, to = Se, ao = $r, bo = Fr, Wr = Br, Jr = Vr, fo = oo, vo = so, mo = kr, po = 0; po < ROUNDS; po += 2)
+  for (var me = 1634760805, be = 857760878, ve = 2036477234, Ee = 1797285236, Oe = ye[3] << 24 | ye[2] << 16 | ye[1] << 8 | ye[0], xe = ye[7] << 24 | ye[6] << 16 | ye[5] << 8 | ye[4], gr = ye[11] << 24 | ye[10] << 16 | ye[9] << 8 | ye[8], we = ye[15] << 24 | ye[14] << 16 | ye[13] << 8 | ye[12], Se = ye[19] << 24 | ye[18] << 16 | ye[17] << 8 | ye[16], $r = ye[23] << 24 | ye[22] << 16 | ye[21] << 8 | ye[20], Fr = ye[27] << 24 | ye[26] << 16 | ye[25] << 8 | ye[24], Br = ye[31] << 24 | ye[30] << 16 | ye[29] << 8 | ye[28], Vr = e[3] << 24 | e[2] << 16 | e[1] << 8 | e[0], oo = e[7] << 24 | e[6] << 16 | e[5] << 8 | e[4], so = e[11] << 24 | e[10] << 16 | e[9] << 8 | e[8], kr = e[15] << 24 | e[14] << 16 | e[13] << 8 | e[12], qr = me, Hr = be, Yr = ve, Ur = Ee, Mr = Oe, Lr = xe, no = gr, Xr = we, to = Se, ao = $r, bo = Fr, Wr = Br, Jr = Vr, fo = oo, vo = so, mo = kr, po = 0; po < ROUNDS; po += 2)
     qr = qr + Mr | 0, Jr ^= qr, Jr = Jr >>> 32 - 16 | Jr << 16, to = to + Jr | 0, Mr ^= to, Mr = Mr >>> 32 - 12 | Mr << 12, Hr = Hr + Lr | 0, fo ^= Hr, fo = fo >>> 32 - 16 | fo << 16, ao = ao + fo | 0, Lr ^= ao, Lr = Lr >>> 32 - 12 | Lr << 12, Yr = Yr + no | 0, vo ^= Yr, vo = vo >>> 32 - 16 | vo << 16, bo = bo + vo | 0, no ^= bo, no = no >>> 32 - 12 | no << 12, Ur = Ur + Xr | 0, mo ^= Ur, mo = mo >>> 32 - 16 | mo << 16, Wr = Wr + mo | 0, Xr ^= Wr, Xr = Xr >>> 32 - 12 | Xr << 12, Yr = Yr + no | 0, vo ^= Yr, vo = vo >>> 32 - 8 | vo << 8, bo = bo + vo | 0, no ^= bo, no = no >>> 32 - 7 | no << 7, Ur = Ur + Xr | 0, mo ^= Ur, mo = mo >>> 32 - 8 | mo << 8, Wr = Wr + mo | 0, Xr ^= Wr, Xr = Xr >>> 32 - 7 | Xr << 7, Hr = Hr + Lr | 0, fo ^= Hr, fo = fo >>> 32 - 8 | fo << 8, ao = ao + fo | 0, Lr ^= ao, Lr = Lr >>> 32 - 7 | Lr << 7, qr = qr + Mr | 0, Jr ^= qr, Jr = Jr >>> 32 - 8 | Jr << 8, to = to + Jr | 0, Mr ^= to, Mr = Mr >>> 32 - 7 | Mr << 7, qr = qr + Lr | 0, mo ^= qr, mo = mo >>> 32 - 16 | mo << 16, bo = bo + mo | 0, Lr ^= bo, Lr = Lr >>> 32 - 12 | Lr << 12, Hr = Hr + no | 0, Jr ^= Hr, Jr = Jr >>> 32 - 16 | Jr << 16, Wr = Wr + Jr | 0, no ^= Wr, no = no >>> 32 - 12 | no << 12, Yr = Yr + Xr | 0, fo ^= Yr, fo = fo >>> 32 - 16 | fo << 16, to = to + fo | 0, Xr ^= to, Xr = Xr >>> 32 - 12 | Xr << 12, Ur = Ur + Mr | 0, vo ^= Ur, vo = vo >>> 32 - 16 | vo << 16, ao = ao + vo | 0, Mr ^= ao, Mr = Mr >>> 32 - 12 | Mr << 12, Yr = Yr + Xr | 0, fo ^= Yr, fo = fo >>> 32 - 8 | fo << 8, to = to + fo | 0, Xr ^= to, Xr = Xr >>> 32 - 7 | Xr << 7, Ur = Ur + Mr | 0, vo ^= Ur, vo = vo >>> 32 - 8 | vo << 8, ao = ao + vo | 0, Mr ^= ao, Mr = Mr >>> 32 - 7 | Mr << 7, Hr = Hr + no | 0, Jr ^= Hr, Jr = Jr >>> 32 - 8 | Jr << 8, Wr = Wr + Jr | 0, no ^= Wr, no = no >>> 32 - 7 | no << 7, qr = qr + Lr | 0, mo ^= qr, mo = mo >>> 32 - 8 | mo << 8, bo = bo + mo | 0, Lr ^= bo, Lr = Lr >>> 32 - 7 | Lr << 7;
-  binary_1.writeUint32LE(qr + me | 0, fe, 0), binary_1.writeUint32LE(Hr + be | 0, fe, 4), binary_1.writeUint32LE(Yr + we | 0, fe, 8), binary_1.writeUint32LE(Ur + Ee | 0, fe, 12), binary_1.writeUint32LE(Mr + Oe | 0, fe, 16), binary_1.writeUint32LE(Lr + xe | 0, fe, 20), binary_1.writeUint32LE(no + gr | 0, fe, 24), binary_1.writeUint32LE(Xr + ve | 0, fe, 28), binary_1.writeUint32LE(to + Se | 0, fe, 32), binary_1.writeUint32LE(ao + $r | 0, fe, 36), binary_1.writeUint32LE(bo + Fr | 0, fe, 40), binary_1.writeUint32LE(Wr + Br | 0, fe, 44), binary_1.writeUint32LE(Jr + Vr | 0, fe, 48), binary_1.writeUint32LE(fo + oo | 0, fe, 52), binary_1.writeUint32LE(vo + so | 0, fe, 56), binary_1.writeUint32LE(mo + kr | 0, fe, 60);
+  binary_1.writeUint32LE(qr + me | 0, fe, 0), binary_1.writeUint32LE(Hr + be | 0, fe, 4), binary_1.writeUint32LE(Yr + ve | 0, fe, 8), binary_1.writeUint32LE(Ur + Ee | 0, fe, 12), binary_1.writeUint32LE(Mr + Oe | 0, fe, 16), binary_1.writeUint32LE(Lr + xe | 0, fe, 20), binary_1.writeUint32LE(no + gr | 0, fe, 24), binary_1.writeUint32LE(Xr + we | 0, fe, 28), binary_1.writeUint32LE(to + Se | 0, fe, 32), binary_1.writeUint32LE(ao + $r | 0, fe, 36), binary_1.writeUint32LE(bo + Fr | 0, fe, 40), binary_1.writeUint32LE(Wr + Br | 0, fe, 44), binary_1.writeUint32LE(Jr + Vr | 0, fe, 48), binary_1.writeUint32LE(fo + oo | 0, fe, 52), binary_1.writeUint32LE(vo + so | 0, fe, 56), binary_1.writeUint32LE(mo + kr | 0, fe, 60);
 }
 function streamXOR(fe, e, ye, me, be) {
   if (be === void 0 && (be = 0), fe.length !== 32)
     throw new Error("ChaCha: key size must be 32 bytes");
   if (me.length < ye.length)
     throw new Error("ChaCha: destination is shorter than source");
-  var we, Ee;
+  var ve, Ee;
   if (be === 0) {
     if (e.length !== 8 && e.length !== 12)
       throw new Error("ChaCha nonce must be 8 or 12 bytes");
-    we = new Uint8Array(16), Ee = we.length - e.length, we.set(e, Ee);
+    ve = new Uint8Array(16), Ee = ve.length - e.length, ve.set(e, Ee);
   } else {
     if (e.length !== 16)
       throw new Error("ChaCha nonce with counter must be 16 bytes");
-    we = e, Ee = be;
+    ve = e, Ee = be;
   }
   for (var Oe = new Uint8Array(64), xe = 0; xe < ye.length; xe += 64) {
-    core(Oe, we, fe);
+    core(Oe, ve, fe);
     for (var gr = xe; gr < xe + 64 && gr < ye.length; gr++)
       me[gr] = ye[gr] ^ Oe[gr - xe];
-    incrementCounter(we, 0, Ee);
+    incrementCounter(ve, 0, Ee);
   }
-  return wipe_1$2.wipe(Oe), be === 0 && wipe_1$2.wipe(we), me;
+  return wipe_1$2.wipe(Oe), be === 0 && wipe_1$2.wipe(ve), me;
 }
 chacha.streamXOR = streamXOR;
 function stream(fe, e, ye, me) {
@@ -3609,10 +3382,10 @@ constantTime.equal = equal;
         this._r[0] = xe & 8191;
         var gr = Oe[2] | Oe[3] << 8;
         this._r[1] = (xe >>> 13 | gr << 3) & 8191;
-        var ve = Oe[4] | Oe[5] << 8;
-        this._r[2] = (gr >>> 10 | ve << 6) & 7939;
+        var we = Oe[4] | Oe[5] << 8;
+        this._r[2] = (gr >>> 10 | we << 6) & 7939;
         var Se = Oe[6] | Oe[7] << 8;
-        this._r[3] = (ve >>> 7 | Se << 9) & 8191;
+        this._r[3] = (we >>> 7 | Se << 9) & 8191;
         var $r = Oe[8] | Oe[9] << 8;
         this._r[4] = (Se >>> 4 | $r << 12) & 255, this._r[5] = $r >>> 1 & 8190;
         var Fr = Oe[10] | Oe[11] << 8;
@@ -3623,7 +3396,7 @@ constantTime.equal = equal;
         this._r[8] = (Br >>> 8 | Vr << 8) & 8191, this._r[9] = Vr >>> 5 & 127, this._pad[0] = Oe[16] | Oe[17] << 8, this._pad[1] = Oe[18] | Oe[19] << 8, this._pad[2] = Oe[20] | Oe[21] << 8, this._pad[3] = Oe[22] | Oe[23] << 8, this._pad[4] = Oe[24] | Oe[25] << 8, this._pad[5] = Oe[26] | Oe[27] << 8, this._pad[6] = Oe[28] | Oe[29] << 8, this._pad[7] = Oe[30] | Oe[31] << 8;
       }
       return Ee.prototype._blocks = function(Oe, xe, gr) {
-        for (var ve = this._fin ? 0 : 2048, Se = this._h[0], $r = this._h[1], Fr = this._h[2], Br = this._h[3], Vr = this._h[4], oo = this._h[5], so = this._h[6], kr = this._h[7], qr = this._h[8], Hr = this._h[9], Yr = this._r[0], Ur = this._r[1], Mr = this._r[2], Lr = this._r[3], no = this._r[4], Xr = this._r[5], to = this._r[6], ao = this._r[7], bo = this._r[8], Wr = this._r[9]; gr >= 16; ) {
+        for (var we = this._fin ? 0 : 2048, Se = this._h[0], $r = this._h[1], Fr = this._h[2], Br = this._h[3], Vr = this._h[4], oo = this._h[5], so = this._h[6], kr = this._h[7], qr = this._h[8], Hr = this._h[9], Yr = this._r[0], Ur = this._r[1], Mr = this._r[2], Lr = this._r[3], no = this._r[4], Xr = this._r[5], to = this._r[6], ao = this._r[7], bo = this._r[8], Wr = this._r[9]; gr >= 16; ) {
           var Jr = Oe[xe + 0] | Oe[xe + 1] << 8;
           Se += Jr & 8191;
           var fo = Oe[xe + 2] | Oe[xe + 3] << 8;
@@ -3638,8 +3411,8 @@ constantTime.equal = equal;
           so += (po >>> 14 | yo << 2) & 8191;
           var Oo = Oe[xe + 12] | Oe[xe + 13] << 8;
           kr += (yo >>> 11 | Oo << 5) & 8191;
-          var Do = Oe[xe + 14] | Oe[xe + 15] << 8;
-          qr += (Oo >>> 8 | Do << 8) & 8191, Hr += Do >>> 5 | ve;
+          var Io = Oe[xe + 14] | Oe[xe + 15] << 8;
+          qr += (Oo >>> 8 | Io << 8) & 8191, Hr += Io >>> 5 | we;
           var go = 0, No = go;
           No += Se * Yr, No += $r * (5 * Wr), No += Fr * (5 * bo), No += Br * (5 * ao), No += Vr * (5 * to), go = No >>> 13, No &= 8191, No += oo * (5 * Xr), No += so * (5 * no), No += kr * (5 * Lr), No += qr * (5 * Mr), No += Hr * (5 * Ur), go += No >>> 13, No &= 8191;
           var Po = go;
@@ -3664,17 +3437,17 @@ constantTime.equal = equal;
         this._h[0] = Se, this._h[1] = $r, this._h[2] = Fr, this._h[3] = Br, this._h[4] = Vr, this._h[5] = oo, this._h[6] = so, this._h[7] = kr, this._h[8] = qr, this._h[9] = Hr;
       }, Ee.prototype.finish = function(Oe, xe) {
         xe === void 0 && (xe = 0);
-        var gr = new Uint16Array(10), ve, Se, $r, Fr;
+        var gr = new Uint16Array(10), we, Se, $r, Fr;
         if (this._leftover) {
           for (Fr = this._leftover, this._buffer[Fr++] = 1; Fr < 16; Fr++)
             this._buffer[Fr] = 0;
           this._fin = 1, this._blocks(this._buffer, 0, 16);
         }
-        for (ve = this._h[1] >>> 13, this._h[1] &= 8191, Fr = 2; Fr < 10; Fr++)
-          this._h[Fr] += ve, ve = this._h[Fr] >>> 13, this._h[Fr] &= 8191;
-        for (this._h[0] += ve * 5, ve = this._h[0] >>> 13, this._h[0] &= 8191, this._h[1] += ve, ve = this._h[1] >>> 13, this._h[1] &= 8191, this._h[2] += ve, gr[0] = this._h[0] + 5, ve = gr[0] >>> 13, gr[0] &= 8191, Fr = 1; Fr < 10; Fr++)
-          gr[Fr] = this._h[Fr] + ve, ve = gr[Fr] >>> 13, gr[Fr] &= 8191;
-        for (gr[9] -= 8192, Se = (ve ^ 1) - 1, Fr = 0; Fr < 10; Fr++)
+        for (we = this._h[1] >>> 13, this._h[1] &= 8191, Fr = 2; Fr < 10; Fr++)
+          this._h[Fr] += we, we = this._h[Fr] >>> 13, this._h[Fr] &= 8191;
+        for (this._h[0] += we * 5, we = this._h[0] >>> 13, this._h[0] &= 8191, this._h[1] += we, we = this._h[1] >>> 13, this._h[1] &= 8191, this._h[2] += we, gr[0] = this._h[0] + 5, we = gr[0] >>> 13, gr[0] &= 8191, Fr = 1; Fr < 10; Fr++)
+          gr[Fr] = this._h[Fr] + we, we = gr[Fr] >>> 13, gr[Fr] &= 8191;
+        for (gr[9] -= 8192, Se = (we ^ 1) - 1, Fr = 0; Fr < 10; Fr++)
           gr[Fr] &= Se;
         for (Se = ~Se, Fr = 0; Fr < 10; Fr++)
           this._h[Fr] = this._h[Fr] & Se | gr[Fr];
@@ -3682,16 +3455,16 @@ constantTime.equal = equal;
           $r = (this._h[Fr] + this._pad[Fr] | 0) + ($r >>> 16) | 0, this._h[Fr] = $r & 65535;
         return Oe[xe + 0] = this._h[0] >>> 0, Oe[xe + 1] = this._h[0] >>> 8, Oe[xe + 2] = this._h[1] >>> 0, Oe[xe + 3] = this._h[1] >>> 8, Oe[xe + 4] = this._h[2] >>> 0, Oe[xe + 5] = this._h[2] >>> 8, Oe[xe + 6] = this._h[3] >>> 0, Oe[xe + 7] = this._h[3] >>> 8, Oe[xe + 8] = this._h[4] >>> 0, Oe[xe + 9] = this._h[4] >>> 8, Oe[xe + 10] = this._h[5] >>> 0, Oe[xe + 11] = this._h[5] >>> 8, Oe[xe + 12] = this._h[6] >>> 0, Oe[xe + 13] = this._h[6] >>> 8, Oe[xe + 14] = this._h[7] >>> 0, Oe[xe + 15] = this._h[7] >>> 8, this._finished = !0, this;
       }, Ee.prototype.update = function(Oe) {
-        var xe = 0, gr = Oe.length, ve;
+        var xe = 0, gr = Oe.length, we;
         if (this._leftover) {
-          ve = 16 - this._leftover, ve > gr && (ve = gr);
-          for (var Se = 0; Se < ve; Se++)
+          we = 16 - this._leftover, we > gr && (we = gr);
+          for (var Se = 0; Se < we; Se++)
             this._buffer[this._leftover + Se] = Oe[xe + Se];
-          if (gr -= ve, xe += ve, this._leftover += ve, this._leftover < 16)
+          if (gr -= we, xe += we, this._leftover += we, this._leftover < 16)
             return this;
           this._blocks(this._buffer, 0, 16), this._leftover = 0;
         }
-        if (gr >= 16 && (ve = gr - gr % 16, this._blocks(Oe, xe, ve), xe += ve, gr -= ve), gr) {
+        if (gr >= 16 && (we = gr - gr % 16, this._blocks(Oe, xe, we), xe += we, gr -= we), gr) {
           for (var Se = 0; Se < gr; Se++)
             this._buffer[this._leftover + Se] = Oe[xe + Se];
           this._leftover += gr;
@@ -3715,14 +3488,14 @@ constantTime.equal = equal;
     return xe.clean(), gr;
   }
   fe.oneTimeAuth = be;
-  function we(Ee, Oe) {
+  function ve(Ee, Oe) {
     return Ee.length !== fe.DIGEST_LENGTH || Oe.length !== fe.DIGEST_LENGTH ? !1 : e.equal(Ee, Oe);
   }
-  fe.equal = we;
+  fe.equal = ve;
 })(poly1305);
 (function(fe) {
   Object.defineProperty(fe, "__esModule", { value: !0 });
-  var e = chacha, ye = poly1305, me = wipe$1, be = binary, we = constantTime;
+  var e = chacha, ye = poly1305, me = wipe$1, be = binary, ve = constantTime;
   fe.KEY_LENGTH = 32, fe.NONCE_LENGTH = 12, fe.TAG_LENGTH = 16;
   var Ee = new Uint8Array(16), Oe = (
     /** @class */
@@ -3732,45 +3505,45 @@ constantTime.equal = equal;
           throw new Error("ChaCha20Poly1305 needs 32-byte key");
         this._key = new Uint8Array(gr);
       }
-      return xe.prototype.seal = function(gr, ve, Se, $r) {
+      return xe.prototype.seal = function(gr, we, Se, $r) {
         if (gr.length > 16)
           throw new Error("ChaCha20Poly1305: incorrect nonce length");
         var Fr = new Uint8Array(16);
         Fr.set(gr, Fr.length - gr.length);
         var Br = new Uint8Array(32);
         e.stream(this._key, Fr, Br, 4);
-        var Vr = ve.length + this.tagLength, oo;
+        var Vr = we.length + this.tagLength, oo;
         if ($r) {
           if ($r.length !== Vr)
             throw new Error("ChaCha20Poly1305: incorrect destination length");
           oo = $r;
         } else
           oo = new Uint8Array(Vr);
-        return e.streamXOR(this._key, Fr, ve, oo, 4), this._authenticate(oo.subarray(oo.length - this.tagLength, oo.length), Br, oo.subarray(0, oo.length - this.tagLength), Se), me.wipe(Fr), oo;
-      }, xe.prototype.open = function(gr, ve, Se, $r) {
+        return e.streamXOR(this._key, Fr, we, oo, 4), this._authenticate(oo.subarray(oo.length - this.tagLength, oo.length), Br, oo.subarray(0, oo.length - this.tagLength), Se), me.wipe(Fr), oo;
+      }, xe.prototype.open = function(gr, we, Se, $r) {
         if (gr.length > 16)
           throw new Error("ChaCha20Poly1305: incorrect nonce length");
-        if (ve.length < this.tagLength)
+        if (we.length < this.tagLength)
           return null;
         var Fr = new Uint8Array(16);
         Fr.set(gr, Fr.length - gr.length);
         var Br = new Uint8Array(32);
         e.stream(this._key, Fr, Br, 4);
         var Vr = new Uint8Array(this.tagLength);
-        if (this._authenticate(Vr, Br, ve.subarray(0, ve.length - this.tagLength), Se), !we.equal(Vr, ve.subarray(ve.length - this.tagLength, ve.length)))
+        if (this._authenticate(Vr, Br, we.subarray(0, we.length - this.tagLength), Se), !ve.equal(Vr, we.subarray(we.length - this.tagLength, we.length)))
           return null;
-        var oo = ve.length - this.tagLength, so;
+        var oo = we.length - this.tagLength, so;
         if ($r) {
           if ($r.length !== oo)
             throw new Error("ChaCha20Poly1305: incorrect destination length");
           so = $r;
         } else
           so = new Uint8Array(oo);
-        return e.streamXOR(this._key, Fr, ve.subarray(0, ve.length - this.tagLength), so, 4), me.wipe(Fr), so;
+        return e.streamXOR(this._key, Fr, we.subarray(0, we.length - this.tagLength), so, 4), me.wipe(Fr), so;
       }, xe.prototype.clean = function() {
         return me.wipe(this._key), this;
-      }, xe.prototype._authenticate = function(gr, ve, Se, $r) {
-        var Fr = new ye.Poly1305(ve);
+      }, xe.prototype._authenticate = function(gr, we, Se, $r) {
+        var Fr = new ye.Poly1305(we);
         $r && (Fr.update($r), $r.length % 16 > 0 && Fr.update(Ee.subarray($r.length % 16))), Fr.update(Se), Se.length % 16 > 0 && Fr.update(Ee.subarray(Se.length % 16));
         var Br = new Uint8Array(8);
         $r && be.writeUint64LE($r.length, Br), Fr.update(Br), be.writeUint64LE(Se.length, Br), Fr.update(Br);
@@ -3846,8 +3619,8 @@ var hmac_1 = hmac$1, wipe_1 = wipe$1, HKDF = (
   function() {
     function fe(e, ye, me, be) {
       me === void 0 && (me = new Uint8Array(0)), this._counter = new Uint8Array(1), this._hash = e, this._info = be;
-      var we = hmac_1.hmac(this._hash, me, ye);
-      this._hmac = new hmac_1.HMAC(e, we), this._buffer = new Uint8Array(this._hmac.digestLength), this._bufpos = this._buffer.length;
+      var ve = hmac_1.hmac(this._hash, me, ye);
+      this._hmac = new hmac_1.HMAC(e, ve), this._buffer = new Uint8Array(this._hmac.digestLength), this._bufpos = this._buffer.length;
     }
     return fe.prototype._fillBuffer = function() {
       this._counter[0]++;
@@ -3883,22 +3656,22 @@ var hmac_1 = hmac$1, wipe_1 = wipe$1, HKDF = (
       }, Oe.prototype.update = function(xe, gr) {
         if (gr === void 0 && (gr = xe.length), this._finished)
           throw new Error("SHA256: can't update because hash was finished.");
-        var ve = 0;
+        var we = 0;
         if (this._bytesHashed += gr, this._bufferLength > 0) {
           for (; this._bufferLength < this.blockSize && gr > 0; )
-            this._buffer[this._bufferLength++] = xe[ve++], gr--;
-          this._bufferLength === this.blockSize && (we(this._temp, this._state, this._buffer, 0, this.blockSize), this._bufferLength = 0);
+            this._buffer[this._bufferLength++] = xe[we++], gr--;
+          this._bufferLength === this.blockSize && (ve(this._temp, this._state, this._buffer, 0, this.blockSize), this._bufferLength = 0);
         }
-        for (gr >= this.blockSize && (ve = we(this._temp, this._state, xe, ve, gr), gr %= this.blockSize); gr > 0; )
-          this._buffer[this._bufferLength++] = xe[ve++], gr--;
+        for (gr >= this.blockSize && (we = ve(this._temp, this._state, xe, we, gr), gr %= this.blockSize); gr > 0; )
+          this._buffer[this._bufferLength++] = xe[we++], gr--;
         return this;
       }, Oe.prototype.finish = function(xe) {
         if (!this._finished) {
-          var gr = this._bytesHashed, ve = this._bufferLength, Se = gr / 536870912 | 0, $r = gr << 3, Fr = gr % 64 < 56 ? 64 : 128;
-          this._buffer[ve] = 128;
-          for (var Br = ve + 1; Br < Fr - 8; Br++)
+          var gr = this._bytesHashed, we = this._bufferLength, Se = gr / 536870912 | 0, $r = gr << 3, Fr = gr % 64 < 56 ? 64 : 128;
+          this._buffer[we] = 128;
+          for (var Br = we + 1; Br < Fr - 8; Br++)
             this._buffer[Br] = 0;
-          e.writeUint32BE(Se, this._buffer, Fr - 8), e.writeUint32BE($r, this._buffer, Fr - 4), we(this._temp, this._state, this._buffer, 0, Fr), this._finished = !0;
+          e.writeUint32BE(Se, this._buffer, Fr - 8), e.writeUint32BE($r, this._buffer, Fr - 4), ve(this._temp, this._state, this._buffer, 0, Fr), this._finished = !0;
         }
         for (var Br = 0; Br < this.digestLength / 4; Br++)
           e.writeUint32BE(this._state[Br], xe, Br * 4);
@@ -3989,10 +3762,10 @@ var hmac_1 = hmac$1, wipe_1 = wipe$1, HKDF = (
     3204031479,
     3329325298
   ]);
-  function we(Oe, xe, gr, ve, Se) {
+  function ve(Oe, xe, gr, we, Se) {
     for (; Se >= 64; ) {
       for (var $r = xe[0], Fr = xe[1], Br = xe[2], Vr = xe[3], oo = xe[4], so = xe[5], kr = xe[6], qr = xe[7], Hr = 0; Hr < 16; Hr++) {
-        var Yr = ve + Hr * 4;
+        var Yr = we + Hr * 4;
         Oe[Hr] = e.readUint32BE(gr, Yr);
       }
       for (var Hr = 16; Hr < 64; Hr++) {
@@ -4005,9 +3778,9 @@ var hmac_1 = hmac$1, wipe_1 = wipe$1, HKDF = (
         var Mr = (((oo >>> 6 | oo << 26) ^ (oo >>> 11 | oo << 21) ^ (oo >>> 25 | oo << 7)) + (oo & so ^ ~oo & kr) | 0) + (qr + (be[Hr] + Oe[Hr] | 0) | 0) | 0, Lr = (($r >>> 2 | $r << 32 - 2) ^ ($r >>> 13 | $r << 32 - 13) ^ ($r >>> 22 | $r << 32 - 22)) + ($r & Fr ^ $r & Br ^ Fr & Br) | 0;
         qr = kr, kr = so, so = oo, oo = Vr + Mr | 0, Vr = Br, Br = Fr, Fr = $r, $r = Mr + Lr | 0;
       }
-      xe[0] += $r, xe[1] += Fr, xe[2] += Br, xe[3] += Vr, xe[4] += oo, xe[5] += so, xe[6] += kr, xe[7] += qr, ve += 64, Se -= 64;
+      xe[0] += $r, xe[1] += Fr, xe[2] += Br, xe[3] += Vr, xe[4] += oo, xe[5] += so, xe[6] += kr, xe[7] += qr, we += 64, Se -= 64;
     }
-    return ve;
+    return we;
   }
   function Ee(Oe) {
     var xe = new me();
@@ -4031,7 +3804,7 @@ var x25519 = {};
   }
   const be = new Uint8Array(32);
   be[0] = 9;
-  const we = me([56129, 1]);
+  const ve = me([56129, 1]);
   function Ee(Hr) {
     let Yr = 1;
     for (let Ur = 0; Ur < 16; Ur++) {
@@ -4068,7 +3841,7 @@ var x25519 = {};
       Hr[Ur] = Yr[2 * Ur] + (Yr[2 * Ur + 1] << 8);
     Hr[15] &= 32767;
   }
-  function ve(Hr, Yr, Ur) {
+  function we(Hr, Yr, Ur) {
     for (let Mr = 0; Mr < 16; Mr++)
       Hr[Mr] = Yr[Mr] + Ur[Mr];
   }
@@ -4077,8 +3850,8 @@ var x25519 = {};
       Hr[Mr] = Yr[Mr] - Ur[Mr];
   }
   function $r(Hr, Yr, Ur) {
-    let Mr, Lr, no = 0, Xr = 0, to = 0, ao = 0, bo = 0, Wr = 0, Jr = 0, fo = 0, vo = 0, mo = 0, po = 0, yo = 0, Oo = 0, Do = 0, go = 0, No = 0, Po = 0, Bo = 0, ho = 0, co = 0, Qr = 0, jr = 0, Zr = 0, wo = 0, Eo = 0, Ao = 0, Co = 0, Uo = 0, ko = 0, si = 0, ui = 0, Go = Ur[0], Xo = Ur[1], Zo = Ur[2], Ko = Ur[3], Jo = Ur[4], Ho = Ur[5], Vo = Ur[6], Wo = Ur[7], Yo = Ur[8], ei = Ur[9], zo = Ur[10], oi = Ur[11], ti = Ur[12], ri = Ur[13], ni = Ur[14], ii = Ur[15];
-    Mr = Yr[0], no += Mr * Go, Xr += Mr * Xo, to += Mr * Zo, ao += Mr * Ko, bo += Mr * Jo, Wr += Mr * Ho, Jr += Mr * Vo, fo += Mr * Wo, vo += Mr * Yo, mo += Mr * ei, po += Mr * zo, yo += Mr * oi, Oo += Mr * ti, Do += Mr * ri, go += Mr * ni, No += Mr * ii, Mr = Yr[1], Xr += Mr * Go, to += Mr * Xo, ao += Mr * Zo, bo += Mr * Ko, Wr += Mr * Jo, Jr += Mr * Ho, fo += Mr * Vo, vo += Mr * Wo, mo += Mr * Yo, po += Mr * ei, yo += Mr * zo, Oo += Mr * oi, Do += Mr * ti, go += Mr * ri, No += Mr * ni, Po += Mr * ii, Mr = Yr[2], to += Mr * Go, ao += Mr * Xo, bo += Mr * Zo, Wr += Mr * Ko, Jr += Mr * Jo, fo += Mr * Ho, vo += Mr * Vo, mo += Mr * Wo, po += Mr * Yo, yo += Mr * ei, Oo += Mr * zo, Do += Mr * oi, go += Mr * ti, No += Mr * ri, Po += Mr * ni, Bo += Mr * ii, Mr = Yr[3], ao += Mr * Go, bo += Mr * Xo, Wr += Mr * Zo, Jr += Mr * Ko, fo += Mr * Jo, vo += Mr * Ho, mo += Mr * Vo, po += Mr * Wo, yo += Mr * Yo, Oo += Mr * ei, Do += Mr * zo, go += Mr * oi, No += Mr * ti, Po += Mr * ri, Bo += Mr * ni, ho += Mr * ii, Mr = Yr[4], bo += Mr * Go, Wr += Mr * Xo, Jr += Mr * Zo, fo += Mr * Ko, vo += Mr * Jo, mo += Mr * Ho, po += Mr * Vo, yo += Mr * Wo, Oo += Mr * Yo, Do += Mr * ei, go += Mr * zo, No += Mr * oi, Po += Mr * ti, Bo += Mr * ri, ho += Mr * ni, co += Mr * ii, Mr = Yr[5], Wr += Mr * Go, Jr += Mr * Xo, fo += Mr * Zo, vo += Mr * Ko, mo += Mr * Jo, po += Mr * Ho, yo += Mr * Vo, Oo += Mr * Wo, Do += Mr * Yo, go += Mr * ei, No += Mr * zo, Po += Mr * oi, Bo += Mr * ti, ho += Mr * ri, co += Mr * ni, Qr += Mr * ii, Mr = Yr[6], Jr += Mr * Go, fo += Mr * Xo, vo += Mr * Zo, mo += Mr * Ko, po += Mr * Jo, yo += Mr * Ho, Oo += Mr * Vo, Do += Mr * Wo, go += Mr * Yo, No += Mr * ei, Po += Mr * zo, Bo += Mr * oi, ho += Mr * ti, co += Mr * ri, Qr += Mr * ni, jr += Mr * ii, Mr = Yr[7], fo += Mr * Go, vo += Mr * Xo, mo += Mr * Zo, po += Mr * Ko, yo += Mr * Jo, Oo += Mr * Ho, Do += Mr * Vo, go += Mr * Wo, No += Mr * Yo, Po += Mr * ei, Bo += Mr * zo, ho += Mr * oi, co += Mr * ti, Qr += Mr * ri, jr += Mr * ni, Zr += Mr * ii, Mr = Yr[8], vo += Mr * Go, mo += Mr * Xo, po += Mr * Zo, yo += Mr * Ko, Oo += Mr * Jo, Do += Mr * Ho, go += Mr * Vo, No += Mr * Wo, Po += Mr * Yo, Bo += Mr * ei, ho += Mr * zo, co += Mr * oi, Qr += Mr * ti, jr += Mr * ri, Zr += Mr * ni, wo += Mr * ii, Mr = Yr[9], mo += Mr * Go, po += Mr * Xo, yo += Mr * Zo, Oo += Mr * Ko, Do += Mr * Jo, go += Mr * Ho, No += Mr * Vo, Po += Mr * Wo, Bo += Mr * Yo, ho += Mr * ei, co += Mr * zo, Qr += Mr * oi, jr += Mr * ti, Zr += Mr * ri, wo += Mr * ni, Eo += Mr * ii, Mr = Yr[10], po += Mr * Go, yo += Mr * Xo, Oo += Mr * Zo, Do += Mr * Ko, go += Mr * Jo, No += Mr * Ho, Po += Mr * Vo, Bo += Mr * Wo, ho += Mr * Yo, co += Mr * ei, Qr += Mr * zo, jr += Mr * oi, Zr += Mr * ti, wo += Mr * ri, Eo += Mr * ni, Ao += Mr * ii, Mr = Yr[11], yo += Mr * Go, Oo += Mr * Xo, Do += Mr * Zo, go += Mr * Ko, No += Mr * Jo, Po += Mr * Ho, Bo += Mr * Vo, ho += Mr * Wo, co += Mr * Yo, Qr += Mr * ei, jr += Mr * zo, Zr += Mr * oi, wo += Mr * ti, Eo += Mr * ri, Ao += Mr * ni, Co += Mr * ii, Mr = Yr[12], Oo += Mr * Go, Do += Mr * Xo, go += Mr * Zo, No += Mr * Ko, Po += Mr * Jo, Bo += Mr * Ho, ho += Mr * Vo, co += Mr * Wo, Qr += Mr * Yo, jr += Mr * ei, Zr += Mr * zo, wo += Mr * oi, Eo += Mr * ti, Ao += Mr * ri, Co += Mr * ni, Uo += Mr * ii, Mr = Yr[13], Do += Mr * Go, go += Mr * Xo, No += Mr * Zo, Po += Mr * Ko, Bo += Mr * Jo, ho += Mr * Ho, co += Mr * Vo, Qr += Mr * Wo, jr += Mr * Yo, Zr += Mr * ei, wo += Mr * zo, Eo += Mr * oi, Ao += Mr * ti, Co += Mr * ri, Uo += Mr * ni, ko += Mr * ii, Mr = Yr[14], go += Mr * Go, No += Mr * Xo, Po += Mr * Zo, Bo += Mr * Ko, ho += Mr * Jo, co += Mr * Ho, Qr += Mr * Vo, jr += Mr * Wo, Zr += Mr * Yo, wo += Mr * ei, Eo += Mr * zo, Ao += Mr * oi, Co += Mr * ti, Uo += Mr * ri, ko += Mr * ni, si += Mr * ii, Mr = Yr[15], No += Mr * Go, Po += Mr * Xo, Bo += Mr * Zo, ho += Mr * Ko, co += Mr * Jo, Qr += Mr * Ho, jr += Mr * Vo, Zr += Mr * Wo, wo += Mr * Yo, Eo += Mr * ei, Ao += Mr * zo, Co += Mr * oi, Uo += Mr * ti, ko += Mr * ri, si += Mr * ni, ui += Mr * ii, no += 38 * Po, Xr += 38 * Bo, to += 38 * ho, ao += 38 * co, bo += 38 * Qr, Wr += 38 * jr, Jr += 38 * Zr, fo += 38 * wo, vo += 38 * Eo, mo += 38 * Ao, po += 38 * Co, yo += 38 * Uo, Oo += 38 * ko, Do += 38 * si, go += 38 * ui, Lr = 1, Mr = no + Lr + 65535, Lr = Math.floor(Mr / 65536), no = Mr - Lr * 65536, Mr = Xr + Lr + 65535, Lr = Math.floor(Mr / 65536), Xr = Mr - Lr * 65536, Mr = to + Lr + 65535, Lr = Math.floor(Mr / 65536), to = Mr - Lr * 65536, Mr = ao + Lr + 65535, Lr = Math.floor(Mr / 65536), ao = Mr - Lr * 65536, Mr = bo + Lr + 65535, Lr = Math.floor(Mr / 65536), bo = Mr - Lr * 65536, Mr = Wr + Lr + 65535, Lr = Math.floor(Mr / 65536), Wr = Mr - Lr * 65536, Mr = Jr + Lr + 65535, Lr = Math.floor(Mr / 65536), Jr = Mr - Lr * 65536, Mr = fo + Lr + 65535, Lr = Math.floor(Mr / 65536), fo = Mr - Lr * 65536, Mr = vo + Lr + 65535, Lr = Math.floor(Mr / 65536), vo = Mr - Lr * 65536, Mr = mo + Lr + 65535, Lr = Math.floor(Mr / 65536), mo = Mr - Lr * 65536, Mr = po + Lr + 65535, Lr = Math.floor(Mr / 65536), po = Mr - Lr * 65536, Mr = yo + Lr + 65535, Lr = Math.floor(Mr / 65536), yo = Mr - Lr * 65536, Mr = Oo + Lr + 65535, Lr = Math.floor(Mr / 65536), Oo = Mr - Lr * 65536, Mr = Do + Lr + 65535, Lr = Math.floor(Mr / 65536), Do = Mr - Lr * 65536, Mr = go + Lr + 65535, Lr = Math.floor(Mr / 65536), go = Mr - Lr * 65536, Mr = No + Lr + 65535, Lr = Math.floor(Mr / 65536), No = Mr - Lr * 65536, no += Lr - 1 + 37 * (Lr - 1), Lr = 1, Mr = no + Lr + 65535, Lr = Math.floor(Mr / 65536), no = Mr - Lr * 65536, Mr = Xr + Lr + 65535, Lr = Math.floor(Mr / 65536), Xr = Mr - Lr * 65536, Mr = to + Lr + 65535, Lr = Math.floor(Mr / 65536), to = Mr - Lr * 65536, Mr = ao + Lr + 65535, Lr = Math.floor(Mr / 65536), ao = Mr - Lr * 65536, Mr = bo + Lr + 65535, Lr = Math.floor(Mr / 65536), bo = Mr - Lr * 65536, Mr = Wr + Lr + 65535, Lr = Math.floor(Mr / 65536), Wr = Mr - Lr * 65536, Mr = Jr + Lr + 65535, Lr = Math.floor(Mr / 65536), Jr = Mr - Lr * 65536, Mr = fo + Lr + 65535, Lr = Math.floor(Mr / 65536), fo = Mr - Lr * 65536, Mr = vo + Lr + 65535, Lr = Math.floor(Mr / 65536), vo = Mr - Lr * 65536, Mr = mo + Lr + 65535, Lr = Math.floor(Mr / 65536), mo = Mr - Lr * 65536, Mr = po + Lr + 65535, Lr = Math.floor(Mr / 65536), po = Mr - Lr * 65536, Mr = yo + Lr + 65535, Lr = Math.floor(Mr / 65536), yo = Mr - Lr * 65536, Mr = Oo + Lr + 65535, Lr = Math.floor(Mr / 65536), Oo = Mr - Lr * 65536, Mr = Do + Lr + 65535, Lr = Math.floor(Mr / 65536), Do = Mr - Lr * 65536, Mr = go + Lr + 65535, Lr = Math.floor(Mr / 65536), go = Mr - Lr * 65536, Mr = No + Lr + 65535, Lr = Math.floor(Mr / 65536), No = Mr - Lr * 65536, no += Lr - 1 + 37 * (Lr - 1), Hr[0] = no, Hr[1] = Xr, Hr[2] = to, Hr[3] = ao, Hr[4] = bo, Hr[5] = Wr, Hr[6] = Jr, Hr[7] = fo, Hr[8] = vo, Hr[9] = mo, Hr[10] = po, Hr[11] = yo, Hr[12] = Oo, Hr[13] = Do, Hr[14] = go, Hr[15] = No;
+    let Mr, Lr, no = 0, Xr = 0, to = 0, ao = 0, bo = 0, Wr = 0, Jr = 0, fo = 0, vo = 0, mo = 0, po = 0, yo = 0, Oo = 0, Io = 0, go = 0, No = 0, Po = 0, Bo = 0, ho = 0, co = 0, Qr = 0, jr = 0, Zr = 0, wo = 0, Eo = 0, Ao = 0, Co = 0, Uo = 0, ko = 0, si = 0, ui = 0, Go = Ur[0], Xo = Ur[1], Zo = Ur[2], Ko = Ur[3], Jo = Ur[4], Ho = Ur[5], Vo = Ur[6], Wo = Ur[7], Yo = Ur[8], ei = Ur[9], zo = Ur[10], oi = Ur[11], ti = Ur[12], ri = Ur[13], ni = Ur[14], ii = Ur[15];
+    Mr = Yr[0], no += Mr * Go, Xr += Mr * Xo, to += Mr * Zo, ao += Mr * Ko, bo += Mr * Jo, Wr += Mr * Ho, Jr += Mr * Vo, fo += Mr * Wo, vo += Mr * Yo, mo += Mr * ei, po += Mr * zo, yo += Mr * oi, Oo += Mr * ti, Io += Mr * ri, go += Mr * ni, No += Mr * ii, Mr = Yr[1], Xr += Mr * Go, to += Mr * Xo, ao += Mr * Zo, bo += Mr * Ko, Wr += Mr * Jo, Jr += Mr * Ho, fo += Mr * Vo, vo += Mr * Wo, mo += Mr * Yo, po += Mr * ei, yo += Mr * zo, Oo += Mr * oi, Io += Mr * ti, go += Mr * ri, No += Mr * ni, Po += Mr * ii, Mr = Yr[2], to += Mr * Go, ao += Mr * Xo, bo += Mr * Zo, Wr += Mr * Ko, Jr += Mr * Jo, fo += Mr * Ho, vo += Mr * Vo, mo += Mr * Wo, po += Mr * Yo, yo += Mr * ei, Oo += Mr * zo, Io += Mr * oi, go += Mr * ti, No += Mr * ri, Po += Mr * ni, Bo += Mr * ii, Mr = Yr[3], ao += Mr * Go, bo += Mr * Xo, Wr += Mr * Zo, Jr += Mr * Ko, fo += Mr * Jo, vo += Mr * Ho, mo += Mr * Vo, po += Mr * Wo, yo += Mr * Yo, Oo += Mr * ei, Io += Mr * zo, go += Mr * oi, No += Mr * ti, Po += Mr * ri, Bo += Mr * ni, ho += Mr * ii, Mr = Yr[4], bo += Mr * Go, Wr += Mr * Xo, Jr += Mr * Zo, fo += Mr * Ko, vo += Mr * Jo, mo += Mr * Ho, po += Mr * Vo, yo += Mr * Wo, Oo += Mr * Yo, Io += Mr * ei, go += Mr * zo, No += Mr * oi, Po += Mr * ti, Bo += Mr * ri, ho += Mr * ni, co += Mr * ii, Mr = Yr[5], Wr += Mr * Go, Jr += Mr * Xo, fo += Mr * Zo, vo += Mr * Ko, mo += Mr * Jo, po += Mr * Ho, yo += Mr * Vo, Oo += Mr * Wo, Io += Mr * Yo, go += Mr * ei, No += Mr * zo, Po += Mr * oi, Bo += Mr * ti, ho += Mr * ri, co += Mr * ni, Qr += Mr * ii, Mr = Yr[6], Jr += Mr * Go, fo += Mr * Xo, vo += Mr * Zo, mo += Mr * Ko, po += Mr * Jo, yo += Mr * Ho, Oo += Mr * Vo, Io += Mr * Wo, go += Mr * Yo, No += Mr * ei, Po += Mr * zo, Bo += Mr * oi, ho += Mr * ti, co += Mr * ri, Qr += Mr * ni, jr += Mr * ii, Mr = Yr[7], fo += Mr * Go, vo += Mr * Xo, mo += Mr * Zo, po += Mr * Ko, yo += Mr * Jo, Oo += Mr * Ho, Io += Mr * Vo, go += Mr * Wo, No += Mr * Yo, Po += Mr * ei, Bo += Mr * zo, ho += Mr * oi, co += Mr * ti, Qr += Mr * ri, jr += Mr * ni, Zr += Mr * ii, Mr = Yr[8], vo += Mr * Go, mo += Mr * Xo, po += Mr * Zo, yo += Mr * Ko, Oo += Mr * Jo, Io += Mr * Ho, go += Mr * Vo, No += Mr * Wo, Po += Mr * Yo, Bo += Mr * ei, ho += Mr * zo, co += Mr * oi, Qr += Mr * ti, jr += Mr * ri, Zr += Mr * ni, wo += Mr * ii, Mr = Yr[9], mo += Mr * Go, po += Mr * Xo, yo += Mr * Zo, Oo += Mr * Ko, Io += Mr * Jo, go += Mr * Ho, No += Mr * Vo, Po += Mr * Wo, Bo += Mr * Yo, ho += Mr * ei, co += Mr * zo, Qr += Mr * oi, jr += Mr * ti, Zr += Mr * ri, wo += Mr * ni, Eo += Mr * ii, Mr = Yr[10], po += Mr * Go, yo += Mr * Xo, Oo += Mr * Zo, Io += Mr * Ko, go += Mr * Jo, No += Mr * Ho, Po += Mr * Vo, Bo += Mr * Wo, ho += Mr * Yo, co += Mr * ei, Qr += Mr * zo, jr += Mr * oi, Zr += Mr * ti, wo += Mr * ri, Eo += Mr * ni, Ao += Mr * ii, Mr = Yr[11], yo += Mr * Go, Oo += Mr * Xo, Io += Mr * Zo, go += Mr * Ko, No += Mr * Jo, Po += Mr * Ho, Bo += Mr * Vo, ho += Mr * Wo, co += Mr * Yo, Qr += Mr * ei, jr += Mr * zo, Zr += Mr * oi, wo += Mr * ti, Eo += Mr * ri, Ao += Mr * ni, Co += Mr * ii, Mr = Yr[12], Oo += Mr * Go, Io += Mr * Xo, go += Mr * Zo, No += Mr * Ko, Po += Mr * Jo, Bo += Mr * Ho, ho += Mr * Vo, co += Mr * Wo, Qr += Mr * Yo, jr += Mr * ei, Zr += Mr * zo, wo += Mr * oi, Eo += Mr * ti, Ao += Mr * ri, Co += Mr * ni, Uo += Mr * ii, Mr = Yr[13], Io += Mr * Go, go += Mr * Xo, No += Mr * Zo, Po += Mr * Ko, Bo += Mr * Jo, ho += Mr * Ho, co += Mr * Vo, Qr += Mr * Wo, jr += Mr * Yo, Zr += Mr * ei, wo += Mr * zo, Eo += Mr * oi, Ao += Mr * ti, Co += Mr * ri, Uo += Mr * ni, ko += Mr * ii, Mr = Yr[14], go += Mr * Go, No += Mr * Xo, Po += Mr * Zo, Bo += Mr * Ko, ho += Mr * Jo, co += Mr * Ho, Qr += Mr * Vo, jr += Mr * Wo, Zr += Mr * Yo, wo += Mr * ei, Eo += Mr * zo, Ao += Mr * oi, Co += Mr * ti, Uo += Mr * ri, ko += Mr * ni, si += Mr * ii, Mr = Yr[15], No += Mr * Go, Po += Mr * Xo, Bo += Mr * Zo, ho += Mr * Ko, co += Mr * Jo, Qr += Mr * Ho, jr += Mr * Vo, Zr += Mr * Wo, wo += Mr * Yo, Eo += Mr * ei, Ao += Mr * zo, Co += Mr * oi, Uo += Mr * ti, ko += Mr * ri, si += Mr * ni, ui += Mr * ii, no += 38 * Po, Xr += 38 * Bo, to += 38 * ho, ao += 38 * co, bo += 38 * Qr, Wr += 38 * jr, Jr += 38 * Zr, fo += 38 * wo, vo += 38 * Eo, mo += 38 * Ao, po += 38 * Co, yo += 38 * Uo, Oo += 38 * ko, Io += 38 * si, go += 38 * ui, Lr = 1, Mr = no + Lr + 65535, Lr = Math.floor(Mr / 65536), no = Mr - Lr * 65536, Mr = Xr + Lr + 65535, Lr = Math.floor(Mr / 65536), Xr = Mr - Lr * 65536, Mr = to + Lr + 65535, Lr = Math.floor(Mr / 65536), to = Mr - Lr * 65536, Mr = ao + Lr + 65535, Lr = Math.floor(Mr / 65536), ao = Mr - Lr * 65536, Mr = bo + Lr + 65535, Lr = Math.floor(Mr / 65536), bo = Mr - Lr * 65536, Mr = Wr + Lr + 65535, Lr = Math.floor(Mr / 65536), Wr = Mr - Lr * 65536, Mr = Jr + Lr + 65535, Lr = Math.floor(Mr / 65536), Jr = Mr - Lr * 65536, Mr = fo + Lr + 65535, Lr = Math.floor(Mr / 65536), fo = Mr - Lr * 65536, Mr = vo + Lr + 65535, Lr = Math.floor(Mr / 65536), vo = Mr - Lr * 65536, Mr = mo + Lr + 65535, Lr = Math.floor(Mr / 65536), mo = Mr - Lr * 65536, Mr = po + Lr + 65535, Lr = Math.floor(Mr / 65536), po = Mr - Lr * 65536, Mr = yo + Lr + 65535, Lr = Math.floor(Mr / 65536), yo = Mr - Lr * 65536, Mr = Oo + Lr + 65535, Lr = Math.floor(Mr / 65536), Oo = Mr - Lr * 65536, Mr = Io + Lr + 65535, Lr = Math.floor(Mr / 65536), Io = Mr - Lr * 65536, Mr = go + Lr + 65535, Lr = Math.floor(Mr / 65536), go = Mr - Lr * 65536, Mr = No + Lr + 65535, Lr = Math.floor(Mr / 65536), No = Mr - Lr * 65536, no += Lr - 1 + 37 * (Lr - 1), Lr = 1, Mr = no + Lr + 65535, Lr = Math.floor(Mr / 65536), no = Mr - Lr * 65536, Mr = Xr + Lr + 65535, Lr = Math.floor(Mr / 65536), Xr = Mr - Lr * 65536, Mr = to + Lr + 65535, Lr = Math.floor(Mr / 65536), to = Mr - Lr * 65536, Mr = ao + Lr + 65535, Lr = Math.floor(Mr / 65536), ao = Mr - Lr * 65536, Mr = bo + Lr + 65535, Lr = Math.floor(Mr / 65536), bo = Mr - Lr * 65536, Mr = Wr + Lr + 65535, Lr = Math.floor(Mr / 65536), Wr = Mr - Lr * 65536, Mr = Jr + Lr + 65535, Lr = Math.floor(Mr / 65536), Jr = Mr - Lr * 65536, Mr = fo + Lr + 65535, Lr = Math.floor(Mr / 65536), fo = Mr - Lr * 65536, Mr = vo + Lr + 65535, Lr = Math.floor(Mr / 65536), vo = Mr - Lr * 65536, Mr = mo + Lr + 65535, Lr = Math.floor(Mr / 65536), mo = Mr - Lr * 65536, Mr = po + Lr + 65535, Lr = Math.floor(Mr / 65536), po = Mr - Lr * 65536, Mr = yo + Lr + 65535, Lr = Math.floor(Mr / 65536), yo = Mr - Lr * 65536, Mr = Oo + Lr + 65535, Lr = Math.floor(Mr / 65536), Oo = Mr - Lr * 65536, Mr = Io + Lr + 65535, Lr = Math.floor(Mr / 65536), Io = Mr - Lr * 65536, Mr = go + Lr + 65535, Lr = Math.floor(Mr / 65536), go = Mr - Lr * 65536, Mr = No + Lr + 65535, Lr = Math.floor(Mr / 65536), No = Mr - Lr * 65536, no += Lr - 1 + 37 * (Lr - 1), Hr[0] = no, Hr[1] = Xr, Hr[2] = to, Hr[3] = ao, Hr[4] = bo, Hr[5] = Wr, Hr[6] = Jr, Hr[7] = fo, Hr[8] = vo, Hr[9] = mo, Hr[10] = po, Hr[11] = yo, Hr[12] = Oo, Hr[13] = Io, Hr[14] = go, Hr[15] = No;
   }
   function Fr(Hr, Yr) {
     $r(Hr, Yr, Yr);
@@ -4102,7 +3875,7 @@ var x25519 = {};
     Lr[0] = to[0] = 1;
     for (let vo = 254; vo >= 0; --vo) {
       const mo = Ur[vo >>> 3] >>> (vo & 7) & 1;
-      Oe(Lr, no, mo), Oe(Xr, to, mo), ve(ao, Lr, Xr), Se(Lr, Lr, Xr), ve(Xr, no, to), Se(no, no, to), Fr(to, ao), Fr(bo, Lr), $r(Lr, Xr, Lr), $r(Xr, no, ao), ve(ao, Lr, Xr), Se(Lr, Lr, Xr), Fr(no, Lr), Se(Xr, to, bo), $r(Lr, Xr, we), ve(Lr, Lr, to), $r(Xr, Xr, Lr), $r(Lr, to, bo), $r(to, no, Mr), Fr(no, ao), Oe(Lr, no, mo), Oe(Xr, to, mo);
+      Oe(Lr, no, mo), Oe(Xr, to, mo), we(ao, Lr, Xr), Se(Lr, Lr, Xr), we(Xr, no, to), Se(no, no, to), Fr(to, ao), Fr(bo, Lr), $r(Lr, Xr, Lr), $r(Xr, no, ao), we(ao, Lr, Xr), Se(Lr, Lr, Xr), Fr(no, Lr), Se(Xr, to, bo), $r(Lr, Xr, ve), we(Lr, Lr, to), $r(Xr, Xr, Lr), $r(Lr, to, bo), $r(to, no, Mr), Fr(no, ao), Oe(Lr, no, mo), Oe(Xr, to, mo);
     }
     for (let vo = 0; vo < 16; vo++)
       Mr[vo + 16] = Lr[vo], Mr[vo + 32] = Xr[vo], Mr[vo + 48] = no[vo], Mr[vo + 64] = to[vo];
@@ -4150,9 +3923,9 @@ var x25519 = {};
 })(x25519);
 var __spreadArray = globalThis && globalThis.__spreadArray || function(fe, e, ye) {
   if (ye || arguments.length === 2)
-    for (var me = 0, be = e.length, we; me < be; me++)
-      (we || !(me in e)) && (we || (we = Array.prototype.slice.call(e, 0, me)), we[me] = e[me]);
-  return fe.concat(we || Array.prototype.slice.call(e));
+    for (var me = 0, be = e.length, ve; me < be; me++)
+      (ve || !(me in e)) && (ve || (ve = Array.prototype.slice.call(e, 0, me)), ve[me] = e[me]);
+  return fe.concat(ve || Array.prototype.slice.call(e));
 }, BrowserInfo = (
   /** @class */
   function() {
@@ -4268,8 +4041,8 @@ function matchUserAgent(fe) {
     var me = ye[0], be = ye[1];
     if (e)
       return e;
-    var we = be.exec(fe);
-    return !!we && [me, we];
+    var ve = be.exec(fe);
+    return !!ve && [me, ve];
   }, !1);
 }
 function parseUserAgent(fe) {
@@ -4281,12 +4054,12 @@ function parseUserAgent(fe) {
     return new BotInfo();
   var be = me[1] && me[1].split(".").join("_").split("_").slice(0, 3);
   be ? be.length < REQUIRED_VERSION_PARTS && (be = __spreadArray(__spreadArray([], be, !0), createVersionParts(REQUIRED_VERSION_PARTS - be.length), !0)) : be = [];
-  var we = be.join("."), Ee = detectOS(fe), Oe = SEARCHBOT_OS_REGEX.exec(fe);
-  return Oe && Oe[1] ? new SearchBotDeviceInfo(ye, we, Ee, Oe[1]) : new BrowserInfo(ye, we, Ee);
+  var ve = be.join("."), Ee = detectOS(fe), Oe = SEARCHBOT_OS_REGEX.exec(fe);
+  return Oe && Oe[1] ? new SearchBotDeviceInfo(ye, ve, Ee, Oe[1]) : new BrowserInfo(ye, ve, Ee);
 }
 function detectOS(fe) {
   for (var e = 0, ye = operatingSystemRules.length; e < ye; e++) {
-    var me = operatingSystemRules[e], be = me[0], we = me[1], Ee = we.exec(fe);
+    var me = operatingSystemRules[e], be = me[0], ve = me[1], Ee = ve.exec(fe);
     if (Ee)
       return be;
   }
@@ -4410,10 +4183,10 @@ function getWindowMetadata() {
     let Se = me("name", "og:site_name", "og:title", "twitter:title");
     return Se || (Se = fe.title), Se;
   }
-  function we() {
+  function ve() {
     return me("description", "og:description", "twitter:description", "keywords");
   }
-  const Ee = be(), Oe = we(), xe = e.origin, gr = ye();
+  const Ee = be(), Oe = ve(), xe = e.origin, gr = ye();
   return {
     description: Oe,
     url: xe,
@@ -4457,8 +4230,8 @@ function customDecodeURIComponent(fe) {
     ye = multiMatcher.exec(fe);
   }
   e["%C2"] = "�";
-  for (var be = Object.keys(e), we = 0; we < be.length; we++) {
-    var Ee = be[we];
+  for (var be = Object.keys(e), ve = 0; ve < be.length; ve++) {
+    var Ee = be[ve];
     fe = fe.replace(new RegExp(Ee, "g"), e[Ee]);
   }
   return fe;
@@ -4482,36 +4255,36 @@ var decodeUriComponent = function(fe) {
     fe.slice(ye + e.length)
   ];
 }, filterObj = function(fe, e) {
-  for (var ye = {}, me = Object.keys(fe), be = Array.isArray(e), we = 0; we < me.length; we++) {
-    var Ee = me[we], Oe = fe[Ee];
+  for (var ye = {}, me = Object.keys(fe), be = Array.isArray(e), ve = 0; ve < me.length; ve++) {
+    var Ee = me[ve], Oe = fe[Ee];
     (be ? e.indexOf(Ee) !== -1 : e(Ee, Oe, fe)) && (ye[Ee] = Oe);
   }
   return ye;
 };
 (function(fe) {
-  const e = strictUriEncode, ye = decodeUriComponent, me = splitOnFirst, be = filterObj, we = (kr) => kr == null, Ee = Symbol("encodeFragmentIdentifier");
+  const e = strictUriEncode, ye = decodeUriComponent, me = splitOnFirst, be = filterObj, ve = (kr) => kr == null, Ee = Symbol("encodeFragmentIdentifier");
   function Oe(kr) {
     switch (kr.arrayFormat) {
       case "index":
         return (qr) => (Hr, Yr) => {
           const Ur = Hr.length;
-          return Yr === void 0 || kr.skipNull && Yr === null || kr.skipEmptyString && Yr === "" ? Hr : Yr === null ? [...Hr, [ve(qr, kr), "[", Ur, "]"].join("")] : [
+          return Yr === void 0 || kr.skipNull && Yr === null || kr.skipEmptyString && Yr === "" ? Hr : Yr === null ? [...Hr, [we(qr, kr), "[", Ur, "]"].join("")] : [
             ...Hr,
-            [ve(qr, kr), "[", ve(Ur, kr), "]=", ve(Yr, kr)].join("")
+            [we(qr, kr), "[", we(Ur, kr), "]=", we(Yr, kr)].join("")
           ];
         };
       case "bracket":
-        return (qr) => (Hr, Yr) => Yr === void 0 || kr.skipNull && Yr === null || kr.skipEmptyString && Yr === "" ? Hr : Yr === null ? [...Hr, [ve(qr, kr), "[]"].join("")] : [...Hr, [ve(qr, kr), "[]=", ve(Yr, kr)].join("")];
+        return (qr) => (Hr, Yr) => Yr === void 0 || kr.skipNull && Yr === null || kr.skipEmptyString && Yr === "" ? Hr : Yr === null ? [...Hr, [we(qr, kr), "[]"].join("")] : [...Hr, [we(qr, kr), "[]=", we(Yr, kr)].join("")];
       case "colon-list-separator":
-        return (qr) => (Hr, Yr) => Yr === void 0 || kr.skipNull && Yr === null || kr.skipEmptyString && Yr === "" ? Hr : Yr === null ? [...Hr, [ve(qr, kr), ":list="].join("")] : [...Hr, [ve(qr, kr), ":list=", ve(Yr, kr)].join("")];
+        return (qr) => (Hr, Yr) => Yr === void 0 || kr.skipNull && Yr === null || kr.skipEmptyString && Yr === "" ? Hr : Yr === null ? [...Hr, [we(qr, kr), ":list="].join("")] : [...Hr, [we(qr, kr), ":list=", we(Yr, kr)].join("")];
       case "comma":
       case "separator":
       case "bracket-separator": {
         const qr = kr.arrayFormat === "bracket-separator" ? "[]=" : "=";
-        return (Hr) => (Yr, Ur) => Ur === void 0 || kr.skipNull && Ur === null || kr.skipEmptyString && Ur === "" ? Yr : (Ur = Ur === null ? "" : Ur, Yr.length === 0 ? [[ve(Hr, kr), qr, ve(Ur, kr)].join("")] : [[Yr, ve(Ur, kr)].join(kr.arrayFormatSeparator)]);
+        return (Hr) => (Yr, Ur) => Ur === void 0 || kr.skipNull && Ur === null || kr.skipEmptyString && Ur === "" ? Yr : (Ur = Ur === null ? "" : Ur, Yr.length === 0 ? [[we(Hr, kr), qr, we(Ur, kr)].join("")] : [[Yr, we(Ur, kr)].join(kr.arrayFormatSeparator)]);
       }
       default:
-        return (qr) => (Hr, Yr) => Yr === void 0 || kr.skipNull && Yr === null || kr.skipEmptyString && Yr === "" ? Hr : Yr === null ? [...Hr, ve(qr, kr)] : [...Hr, [ve(qr, kr), "=", ve(Yr, kr)].join("")];
+        return (qr) => (Hr, Yr) => Yr === void 0 || kr.skipNull && Yr === null || kr.skipEmptyString && Yr === "" ? Hr : Yr === null ? [...Hr, we(qr, kr)] : [...Hr, [we(qr, kr), "=", we(Yr, kr)].join("")];
     }
   }
   function xe(kr) {
@@ -4585,7 +4358,7 @@ var decodeUriComponent = function(fe) {
     if (typeof kr != "string" || kr.length !== 1)
       throw new TypeError("arrayFormatSeparator must be single character string");
   }
-  function ve(kr, qr) {
+  function we(kr, qr) {
     return qr.encode ? qr.strict ? e(kr) : encodeURIComponent(kr) : kr;
   }
   function Se(kr, qr) {
@@ -4651,13 +4424,13 @@ var decodeUriComponent = function(fe) {
       arrayFormat: "none",
       arrayFormatSeparator: ","
     }, qr), gr(qr.arrayFormatSeparator);
-    const Hr = (Lr) => qr.skipNull && we(kr[Lr]) || qr.skipEmptyString && kr[Lr] === "", Yr = Oe(qr), Ur = {};
+    const Hr = (Lr) => qr.skipNull && ve(kr[Lr]) || qr.skipEmptyString && kr[Lr] === "", Yr = Oe(qr), Ur = {};
     for (const Lr of Object.keys(kr))
       Hr(Lr) || (Ur[Lr] = kr[Lr]);
     const Mr = Object.keys(Ur);
     return qr.sort !== !1 && Mr.sort(qr.sort), Mr.map((Lr) => {
       const no = kr[Lr];
-      return no === void 0 ? "" : no === null ? ve(Lr, qr) : Array.isArray(no) ? no.length === 0 && qr.arrayFormat === "bracket-separator" ? ve(Lr, qr) + "[]" : no.reduce(Yr(Lr), []).join("&") : ve(Lr, qr) + "=" + ve(no, qr);
+      return no === void 0 ? "" : no === null ? we(Lr, qr) : Array.isArray(no) ? no.length === 0 && qr.arrayFormat === "bracket-separator" ? we(Lr, qr) + "[]" : no.reduce(Yr(Lr), []).join("&") : we(Lr, qr) + "=" + we(no, qr);
     }).filter((Lr) => Lr.length > 0).join("&");
   }, fe.parseUrl = (kr, qr) => {
     qr = Object.assign({
@@ -4681,7 +4454,7 @@ var decodeUriComponent = function(fe) {
     let Lr = fe.stringify(Mr, qr);
     Lr && (Lr = `?${Lr}`);
     let no = Br(kr.url);
-    return kr.fragmentIdentifier && (no = `#${qr[Ee] ? ve(kr.fragmentIdentifier, qr) : kr.fragmentIdentifier}`), `${Hr}${Lr}${no}`;
+    return kr.fragmentIdentifier && (no = `#${qr[Ee] ? we(kr.fragmentIdentifier, qr) : kr.fragmentIdentifier}`), `${Hr}${Lr}${no}`;
   }, fe.pick = (kr, qr, Hr) => {
     Hr = Object.assign({
       parseFragmentIdentifier: !0,
@@ -4781,11 +4554,11 @@ function Te$1(fe) {
 function ee$2(fe) {
   const e = fromString(fe, L$1), ye = e.slice($n, Ie$1), me = Ie$1;
   if ($$2(ye) === _$5) {
-    const Oe = me + X$5, xe = Oe + Z$3, gr = e.slice(me, Oe), ve = e.slice(Oe, xe), Se = e.slice(xe);
-    return { type: ye, sealed: Se, iv: ve, senderPublicKey: gr };
+    const Oe = me + X$5, xe = Oe + Z$3, gr = e.slice(me, Oe), we = e.slice(Oe, xe), Se = e.slice(xe);
+    return { type: ye, sealed: Se, iv: we, senderPublicKey: gr };
   }
-  const be = me + Z$3, we = e.slice(me, be), Ee = e.slice(be);
-  return { type: ye, sealed: Ee, iv: we };
+  const be = me + Z$3, ve = e.slice(me, be), Ee = e.slice(be);
+  return { type: ye, sealed: Ee, iv: ve };
 }
 function xn$1(fe, e) {
   const ye = ee$2(fe);
@@ -4852,9 +4625,9 @@ function Me$3(fe, e, ye) {
   const me = ke$3(), be = Ve$3();
   return [[fe, e].join("-"), [je$2, ye].join("-"), me, be].join("/");
 }
-function Jn$1({ protocol: fe, version: e, relayUrl: ye, sdkVersion: me, auth: be, projectId: we, useOnCloseEvent: Ee }) {
-  const Oe = ye.split("?"), xe = Me$3(fe, e, me), gr = { auth: be, ua: xe, projectId: we, useOnCloseEvent: Ee || void 0 }, ve = De$2(Oe[1] || "", gr);
-  return Oe[0] + "?" + ve;
+function Jn$1({ protocol: fe, version: e, relayUrl: ye, sdkVersion: me, auth: be, projectId: ve, useOnCloseEvent: Ee }) {
+  const Oe = ye.split("?"), xe = Me$3(fe, e, me), gr = { auth: be, ua: xe, projectId: ve, useOnCloseEvent: Ee || void 0 }, we = De$2(Oe[1] || "", gr);
+  return Oe[0] + "?" + we;
 }
 function O$4(fe, e) {
   return fe.filter((ye) => e.includes(ye)).length === fe.length;
@@ -4867,27 +4640,27 @@ function nt$2(fe) {
 }
 function st$2(fe = cjs$4.FIVE_MINUTES, e) {
   const ye = cjs$4.toMiliseconds(fe || cjs$4.FIVE_MINUTES);
-  let me, be, we;
+  let me, be, ve;
   return { resolve: (Ee) => {
-    we && me && (clearTimeout(we), me(Ee));
+    ve && me && (clearTimeout(ve), me(Ee));
   }, reject: (Ee) => {
-    we && be && (clearTimeout(we), be(Ee));
+    ve && be && (clearTimeout(ve), be(Ee));
   }, done: () => new Promise((Ee, Oe) => {
-    we = setTimeout(() => {
+    ve = setTimeout(() => {
       Oe(new Error(e));
     }, ye), me = Ee, be = Oe;
   }) };
 }
 function it$2(fe, e, ye) {
   return new Promise(async (me, be) => {
-    const we = setTimeout(() => be(new Error(ye)), e);
+    const ve = setTimeout(() => be(new Error(ye)), e);
     try {
       const Ee = await fe;
       me(Ee);
     } catch (Ee) {
       be(Ee);
     }
-    clearTimeout(we);
+    clearTimeout(ve);
   });
 }
 function re$1(fe, e) {
@@ -4938,8 +4711,8 @@ async function pt$4({ id: fe, topic: e, wcDeepLink: ye }) {
     if (typeof be != "string")
       return;
     be.endsWith("/") && (be = be.slice(0, -1));
-    const we = `${be}/wc?requestId=${fe}&sessionTopic=${e}`, Ee = R$2();
-    Ee === m$3.browser ? we.startsWith("https://") ? window.open(we, "_blank", "noreferrer noopener") : window.open(we, "_self", "noreferrer noopener") : Ee === m$3.reactNative && typeof (global == null ? void 0 : global.Linking) < "u" && await global.Linking.openURL(we);
+    const ve = `${be}/wc?requestId=${fe}&sessionTopic=${e}`, Ee = R$2();
+    Ee === m$3.browser ? ve.startsWith("https://") ? window.open(ve, "_blank", "noreferrer noopener") : window.open(ve, "_self", "noreferrer noopener") : Ee === m$3.reactNative && typeof (global == null ? void 0 : global.Linking) < "u" && await global.Linking.openURL(ve);
   } catch (me) {
     console.error(me);
   }
@@ -4966,13 +4739,13 @@ function Be$3(fe, e = "-") {
   const ye = {}, me = "relay" + e;
   return Object.keys(fe).forEach((be) => {
     if (be.startsWith(me)) {
-      const we = be.replace(me, ""), Ee = fe[be];
-      ye[we] = Ee;
+      const ve = be.replace(me, ""), Ee = fe[be];
+      ye[ve] = Ee;
     }
   }), ye;
 }
 function bt$3(fe) {
-  const e = fe.indexOf(":"), ye = fe.indexOf("?") !== -1 ? fe.indexOf("?") : void 0, me = fe.substring(0, e), be = fe.substring(e + 1, ye).split("@"), we = typeof ye < "u" ? fe.substring(ye) : "", Ee = queryString.parse(we);
+  const e = fe.indexOf(":"), ye = fe.indexOf("?") !== -1 ? fe.indexOf("?") : void 0, me = fe.substring(0, e), be = fe.substring(e + 1, ye).split("@"), ve = typeof ye < "u" ? fe.substring(ye) : "", Ee = queryString.parse(ve);
   return { protocol: me, topic: Ge$3(be[0]), version: parseInt(be[1], 10), symKey: Ee.symKey, relay: Be$3(Ee) };
 }
 function Ge$3(fe) {
@@ -4981,8 +4754,8 @@ function Ge$3(fe) {
 function We$3(fe, e = "-") {
   const ye = "relay", me = {};
   return Object.keys(fe).forEach((be) => {
-    const we = ye + e + be;
-    fe[be] && (me[we] = fe[be]);
+    const ve = ye + e + be;
+    fe[be] && (me[ve] = fe[be]);
   }), me;
 }
 function Nt$3(fe) {
@@ -5018,8 +4791,8 @@ function At$2(fe, e) {
   if (ye)
     throw new Error(ye.message);
   const me = {};
-  for (const [be, we] of Object.entries(fe))
-    me[be] = { methods: we.methods, events: we.events, chains: we.accounts.map((Ee) => `${Ee.split(":")[0]}:${Ee.split(":")[1]}`) };
+  for (const [be, ve] of Object.entries(fe))
+    me[be] = { methods: ve.methods, events: ve.events, chains: ve.accounts.map((Ee) => `${Ee.split(":")[0]}:${Ee.split(":")[1]}`) };
   return me;
 }
 const _t$3 = { INVALID_METHOD: { message: "Invalid method.", code: 1001 }, INVALID_EVENT: { message: "Invalid event.", code: 1002 }, INVALID_UPDATE_REQUEST: { message: "Invalid update request.", code: 1003 }, INVALID_EXTEND_REQUEST: { message: "Invalid extend request.", code: 1004 }, INVALID_SESSION_SETTLE_REQUEST: { message: "Invalid session settle request.", code: 1005 }, UNAUTHORIZED_METHOD: { message: "Unauthorized method.", code: 3001 }, UNAUTHORIZED_EVENT: { message: "Unauthorized event.", code: 3002 }, UNAUTHORIZED_UPDATE_REQUEST: { message: "Unauthorized update request.", code: 3003 }, UNAUTHORIZED_EXTEND_REQUEST: { message: "Unauthorized extend request.", code: 3004 }, USER_REJECTED: { message: "User rejected.", code: 5e3 }, USER_REJECTED_CHAINS: { message: "User rejected chains.", code: 5001 }, USER_REJECTED_METHODS: { message: "User rejected methods.", code: 5002 }, USER_REJECTED_EVENTS: { message: "User rejected events.", code: 5003 }, UNSUPPORTED_CHAINS: { message: "Unsupported chains.", code: 5100 }, UNSUPPORTED_METHODS: { message: "Unsupported methods.", code: 5101 }, UNSUPPORTED_EVENTS: { message: "Unsupported events.", code: 5102 }, UNSUPPORTED_ACCOUNTS: { message: "Unsupported accounts.", code: 5103 }, UNSUPPORTED_NAMESPACE_KEY: { message: "Unsupported namespace key.", code: 5104 }, USER_DISCONNECTED: { message: "User disconnected.", code: 6e3 }, SESSION_SETTLEMENT_FAILED: { message: "Session settlement failed.", code: 7e3 }, WC_METHOD_UNSUPPORTED: { message: "Unsupported wc_ method.", code: 10001 } }, Ct$2 = { NOT_INITIALIZED: { message: "Not initialized.", code: 1 }, NO_MATCHING_KEY: { message: "No matching key.", code: 2 }, RESTORE_WILL_OVERRIDE: { message: "Restore will override.", code: 3 }, RESUBSCRIBED: { message: "Resubscribed.", code: 4 }, MISSING_OR_INVALID: { message: "Missing or invalid.", code: 5 }, EXPIRED: { message: "Expired.", code: 6 }, UNKNOWN_TYPE: { message: "Unknown type.", code: 7 }, MISMATCHED_TOPIC: { message: "Mismatched topic.", code: 8 }, NON_CONFORMING_NAMESPACES: { message: "Non conforming namespaces.", code: 9 } };
@@ -5048,11 +4821,11 @@ function G$3(fe, e) {
 }
 function $t$2(fe, e) {
   const { requiredNamespaces: ye } = e, me = Object.keys(fe.namespaces), be = Object.keys(ye);
-  let we = !0;
+  let ve = !0;
   return O$4(be, me) ? (me.forEach((Ee) => {
-    const { accounts: Oe, methods: xe, events: gr } = fe.namespaces[Ee], ve = A$3(Oe), Se = ye[Ee];
-    (!O$4(M$2(Ee, Se), ve) || !O$4(Se.methods, xe) || !O$4(Se.events, gr)) && (we = !1);
-  }), we) : !1;
+    const { accounts: Oe, methods: xe, events: gr } = fe.namespaces[Ee], we = A$3(Oe), Se = ye[Ee];
+    (!O$4(M$2(Ee, Se), we) || !O$4(Se.methods, xe) || !O$4(Se.events, gr)) && (ve = !1);
+  }), ve) : !1;
 }
 function D$6(fe) {
   return h$7(fe, !1) && fe.includes(":") ? fe.split(":").length === 2 : !1;
@@ -5099,10 +4872,10 @@ function nn$2(fe, e, ye) {
 }
 function tn$1(fe, e, ye) {
   let me = null;
-  return Object.entries(fe).forEach(([be, we]) => {
+  return Object.entries(fe).forEach(([be, ve]) => {
     if (me)
       return;
-    const Ee = nn$2(be, M$2(be, we), `${e} ${ye}`);
+    const Ee = nn$2(be, M$2(be, ve), `${e} ${ye}`);
     Ee && (me = Ee);
   }), me;
 }
@@ -5139,8 +4912,8 @@ function Mt$3(fe, e, ye) {
   if (fe && B$3(fe)) {
     const be = ce$5(fe, e);
     be && (me = be);
-    const we = tn$1(fe, e, ye);
-    we && (me = we);
+    const ve = tn$1(fe, e, ye);
+    ve && (me = ve);
   } else
     me = N$5("MISSING_OR_INVALID", `${e}, ${ye} should be an object with data`);
   return me;
@@ -5194,9 +4967,9 @@ function zt$3(fe, e, ye) {
 }
 function un$1(fe, e, ye) {
   let me = null;
-  const be = Yt$1(fe), we = Jt$1(e), Ee = Object.keys(be), Oe = Object.keys(we), xe = ln$1(Object.keys(fe)), gr = ln$1(Object.keys(e)), ve = xe.filter((Se) => !gr.includes(Se));
-  return ve.length && (me = N$5("NON_CONFORMING_NAMESPACES", `${ye} namespaces keys don't satisfy requiredNamespaces.
-      Required: ${ve.toString()}
+  const be = Yt$1(fe), ve = Jt$1(e), Ee = Object.keys(be), Oe = Object.keys(ve), xe = ln$1(Object.keys(fe)), gr = ln$1(Object.keys(e)), we = xe.filter((Se) => !gr.includes(Se));
+  return we.length && (me = N$5("NON_CONFORMING_NAMESPACES", `${ye} namespaces keys don't satisfy requiredNamespaces.
+      Required: ${we.toString()}
       Received: ${Object.keys(e).toString()}`)), O$4(Ee, Oe) || (me = N$5("NON_CONFORMING_NAMESPACES", `${ye} namespaces chains don't satisfy required namespaces.
       Required: ${Ee.toString()}
       Approved: ${Oe.toString()}`)), Object.keys(e).forEach((Se) => {
@@ -5207,7 +4980,7 @@ function un$1(fe, e, ye) {
         Required: ${Se}
         Approved: ${$r.toString()}`));
   }), Ee.forEach((Se) => {
-    me || (O$4(be[Se].methods, we[Se].methods) ? O$4(be[Se].events, we[Se].events) || (me = N$5("NON_CONFORMING_NAMESPACES", `${ye} namespaces events don't satisfy namespace events for ${Se}`)) : me = N$5("NON_CONFORMING_NAMESPACES", `${ye} namespaces methods don't satisfy namespace methods for ${Se}`));
+    me || (O$4(be[Se].methods, ve[Se].methods) ? O$4(be[Se].events, ve[Se].events) || (me = N$5("NON_CONFORMING_NAMESPACES", `${ye} namespaces events don't satisfy namespace events for ${Se}`)) : me = N$5("NON_CONFORMING_NAMESPACES", `${ye} namespaces methods don't satisfy namespace methods for ${Se}`));
   }), me;
 }
 function Yt$1(fe) {
@@ -5230,7 +5003,7 @@ function Jt$1(fe) {
     else {
       const me = A$3(fe[ye].accounts);
       me == null || me.forEach((be) => {
-        e[be] = { accounts: fe[ye].accounts.filter((we) => we.includes(`${be}:`)), methods: fe[ye].methods, events: fe[ye].events };
+        e[be] = { accounts: fe[ye].accounts.filter((ve) => ve.includes(`${be}:`)), methods: fe[ye].methods, events: fe[ye].events };
       });
     }
   }), e;
@@ -5437,7 +5210,7 @@ function isJsonRpcError(fe) {
 }
 class JsonRpcProvider extends IJsonRpcProvider {
   constructor(e) {
-    super(e), this.events = new eventsExports.EventEmitter(), this.hasRegisteredEventListeners = !1, this.connection = this.setConnection(e), this.connection.connected && this.registerEventListeners();
+    super(e), this.events = new EventEmitter$1(), this.hasRegisteredEventListeners = !1, this.connection = this.setConnection(e), this.connection.connected && this.registerEventListeners();
   }
   async connect(e = this.connection) {
     await this.open(e);
@@ -5465,16 +5238,16 @@ class JsonRpcProvider extends IJsonRpcProvider {
       if (!this.connection.connected)
         try {
           await this.open();
-        } catch (we) {
-          be(we);
+        } catch (ve) {
+          be(ve);
         }
-      this.events.on(`${e.id}`, (we) => {
-        isJsonRpcError(we) ? be(we.error) : me(we.result);
+      this.events.on(`${e.id}`, (ve) => {
+        isJsonRpcError(ve) ? be(ve.error) : me(ve.result);
       });
       try {
         await this.connection.send(e, ye);
-      } catch (we) {
-        be(we);
+      } catch (ve) {
+        be(ve);
       }
     });
   }
@@ -5503,7 +5276,7 @@ class JsonRpcProvider extends IJsonRpcProvider {
 const resolveWebSocketImplementation = () => typeof WebSocket < "u" ? WebSocket : typeof global < "u" && typeof global.WebSocket < "u" ? global.WebSocket : typeof window < "u" && typeof window.WebSocket < "u" ? window.WebSocket : typeof self < "u" && typeof self.WebSocket < "u" ? self.WebSocket : require("ws"), hasBuiltInWebSocket = () => typeof WebSocket < "u" || typeof global < "u" && typeof global.WebSocket < "u" || typeof window < "u" && typeof window.WebSocket < "u" || typeof self < "u" && typeof self.WebSocket < "u", truncateQuery = (fe) => fe.split("?")[0], EVENT_EMITTER_MAX_LISTENERS_DEFAULT = 10, WS = resolveWebSocketImplementation();
 class WsConnection {
   constructor(e) {
-    if (this.url = e, this.events = new eventsExports.EventEmitter(), this.registering = !1, !isWsUrl(e))
+    if (this.url = e, this.events = new EventEmitter$1(), this.registering = !1, !isWsUrl(e))
       throw new Error(`Provided URL is not compatible with WebSocket connection: ${e}`);
     this.url = e;
   }
@@ -5553,8 +5326,8 @@ class WsConnection {
     if (this.registering) {
       const ye = this.events.getMaxListeners();
       return (this.events.listenerCount("register_error") >= ye || this.events.listenerCount("open") >= ye) && this.events.setMaxListeners(ye + 1), new Promise((me, be) => {
-        this.events.once("register_error", (we) => {
-          this.resetMaxListeners(), be(we);
+        this.events.once("register_error", (ve) => {
+          this.resetMaxListeners(), be(ve);
         }), this.events.once("open", () => {
           if (this.resetMaxListeners(), typeof this.socket > "u")
             return be(new Error("WebSocket connection is missing or invalid"));
@@ -5563,14 +5336,14 @@ class WsConnection {
       });
     }
     return this.url = e, this.registering = !0, new Promise((ye, me) => {
-      const be = cjs.isReactNative() ? void 0 : { rejectUnauthorized: !isLocalhostUrl(e) }, we = new WS(e, [], be);
-      hasBuiltInWebSocket() ? we.onerror = (Ee) => {
+      const be = cjs.isReactNative() ? void 0 : { rejectUnauthorized: !isLocalhostUrl(e) }, ve = new WS(e, [], be);
+      hasBuiltInWebSocket() ? ve.onerror = (Ee) => {
         const Oe = Ee;
         me(this.emitError(Oe.error));
-      } : we.on("error", (Ee) => {
+      } : ve.on("error", (Ee) => {
         me(this.emitError(Ee));
-      }), we.onopen = () => {
-        this.onOpen(we), ye(we);
+      }), ve.onopen = () => {
+        this.onOpen(ve), ye(ve);
       };
     });
   }
@@ -5587,8 +5360,8 @@ class WsConnection {
     this.events.emit("payload", ye);
   }
   onError(e, ye) {
-    const me = this.parseError(ye), be = me.message || me.toString(), we = formatJsonRpcError(e, be);
-    this.events.emit("payload", we);
+    const me = this.parseError(ye), be = me.message || me.toString(), ve = formatJsonRpcError(e, be);
+    this.events.emit("payload", ve);
   }
   parseError(e, ye = this.url) {
     return parseConnectionError(e, truncateQuery(ye), "WS");
@@ -5604,8 +5377,8 @@ class WsConnection {
 var lodash_isequal = { exports: {} };
 lodash_isequal.exports;
 (function(fe, e) {
-  var ye = 200, me = "__lodash_hash_undefined__", be = 1, we = 2, Ee = 9007199254740991, Oe = "[object Arguments]", xe = "[object Array]", gr = "[object AsyncFunction]", ve = "[object Boolean]", Se = "[object Date]", $r = "[object Error]", Fr = "[object Function]", Br = "[object GeneratorFunction]", Vr = "[object Map]", oo = "[object Number]", so = "[object Null]", kr = "[object Object]", qr = "[object Promise]", Hr = "[object Proxy]", Yr = "[object RegExp]", Ur = "[object Set]", Mr = "[object String]", Lr = "[object Symbol]", no = "[object Undefined]", Xr = "[object WeakMap]", to = "[object ArrayBuffer]", ao = "[object DataView]", bo = "[object Float32Array]", Wr = "[object Float64Array]", Jr = "[object Int8Array]", fo = "[object Int16Array]", vo = "[object Int32Array]", mo = "[object Uint8Array]", po = "[object Uint8ClampedArray]", yo = "[object Uint16Array]", Oo = "[object Uint32Array]", Do = /[\\^$.*+?()[\]{}|]/g, go = /^\[object .+?Constructor\]$/, No = /^(?:0|[1-9]\d*)$/, Po = {};
-  Po[bo] = Po[Wr] = Po[Jr] = Po[fo] = Po[vo] = Po[mo] = Po[po] = Po[yo] = Po[Oo] = !0, Po[Oe] = Po[xe] = Po[to] = Po[ve] = Po[ao] = Po[Se] = Po[$r] = Po[Fr] = Po[Vr] = Po[oo] = Po[kr] = Po[Yr] = Po[Ur] = Po[Mr] = Po[Xr] = !1;
+  var ye = 200, me = "__lodash_hash_undefined__", be = 1, ve = 2, Ee = 9007199254740991, Oe = "[object Arguments]", xe = "[object Array]", gr = "[object AsyncFunction]", we = "[object Boolean]", Se = "[object Date]", $r = "[object Error]", Fr = "[object Function]", Br = "[object GeneratorFunction]", Vr = "[object Map]", oo = "[object Number]", so = "[object Null]", kr = "[object Object]", qr = "[object Promise]", Hr = "[object Proxy]", Yr = "[object RegExp]", Ur = "[object Set]", Mr = "[object String]", Lr = "[object Symbol]", no = "[object Undefined]", Xr = "[object WeakMap]", to = "[object ArrayBuffer]", ao = "[object DataView]", bo = "[object Float32Array]", Wr = "[object Float64Array]", Jr = "[object Int8Array]", fo = "[object Int16Array]", vo = "[object Int32Array]", mo = "[object Uint8Array]", po = "[object Uint8ClampedArray]", yo = "[object Uint16Array]", Oo = "[object Uint32Array]", Io = /[\\^$.*+?()[\]{}|]/g, go = /^\[object .+?Constructor\]$/, No = /^(?:0|[1-9]\d*)$/, Po = {};
+  Po[bo] = Po[Wr] = Po[Jr] = Po[fo] = Po[vo] = Po[mo] = Po[po] = Po[yo] = Po[Oo] = !0, Po[Oe] = Po[xe] = Po[to] = Po[we] = Po[ao] = Po[Se] = Po[$r] = Po[Fr] = Po[Vr] = Po[oo] = Po[kr] = Po[Yr] = Po[Ur] = Po[Mr] = Po[Xr] = !1;
   var Bo = typeof commonjsGlobal == "object" && commonjsGlobal && commonjsGlobal.Object === Object && commonjsGlobal, ho = typeof self == "object" && self && self.Object === Object && self, co = Bo || ho || Function("return this")(), Qr = e && !e.nodeType && e, jr = Qr && !0 && fe && !fe.nodeType && fe, Zr = jr && jr.exports === Qr, wo = Zr && Bo.process, Eo = function() {
     try {
       return wo && wo.binding && wo.binding("util");
@@ -5667,8 +5440,8 @@ lodash_isequal.exports;
     var eo = /[^.]+$/.exec(Yo && Yo.keys && Yo.keys.IE_PROTO || "");
     return eo ? "Symbol(src)_1." + eo : "";
   }(), ti = Wo.toString, ri = RegExp(
-    "^" + ei.call(zo).replace(Do, "\\$&").replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, "$1.*?") + "$"
-  ), ni = Zr ? co.Buffer : void 0, ii = co.Symbol, wi = co.Uint8Array, Si = Wo.propertyIsEnumerable, $i = Ho.splice, bi = ii ? ii.toStringTag : void 0, Ii = Object.getOwnPropertySymbols, Ni = ni ? ni.isBuffer : void 0, fi = Ko(Object.keys, Object), ai = vn(co, "DataView"), li = vn(co, "Map"), io = vn(co, "Promise"), Gr = vn(co, "Set"), ro = vn(co, "WeakMap"), lo = vn(Object, "create"), _o = bn(ai), So = bn(li), $o = bn(io), Ro = bn(Gr), Fo = bn(ro), Io = ii ? ii.prototype : void 0, xo = Io ? Io.valueOf : void 0;
+    "^" + ei.call(zo).replace(Io, "\\$&").replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, "$1.*?") + "$"
+  ), ni = Zr ? co.Buffer : void 0, ii = co.Symbol, wi = co.Uint8Array, Si = Wo.propertyIsEnumerable, $i = Ho.splice, bi = ii ? ii.toStringTag : void 0, Di = Object.getOwnPropertySymbols, Ni = ni ? ni.isBuffer : void 0, fi = Ko(Object.keys, Object), ai = vn(co, "DataView"), li = vn(co, "Map"), io = vn(co, "Promise"), Gr = vn(co, "Set"), ro = vn(co, "WeakMap"), lo = vn(Object, "create"), _o = bn(ai), So = bn(li), $o = bn(io), Ro = bn(Gr), Fo = bn(ro), Do = ii ? ii.prototype : void 0, xo = Do ? Do.valueOf : void 0;
   function jo(eo) {
     var uo = -1, To = eo == null ? 0 : eo.length;
     for (this.clear(); ++uo < To; ) {
@@ -5837,15 +5610,15 @@ lodash_isequal.exports;
       di = !0, Ei = !1;
     }
     if (mi && !Ei)
-      return qo || (qo = new xi()), di || sa(eo) ? ea(eo, uo, To, Mo, ci, qo) : Ia(eo, uo, yi, To, Mo, ci, qo);
+      return qo || (qo = new xi()), di || sa(eo) ? ea(eo, uo, To, Mo, ci, qo) : Da(eo, uo, yi, To, Mo, ci, qo);
     if (!(To & be)) {
       var Oi = Ei && zo.call(eo, "__wrapped__"), Ti = Ri && zo.call(uo, "__wrapped__");
       if (Oi || Ti) {
-        var Ui = Oi ? eo.value() : eo, Di = Ti ? uo.value() : uo;
-        return qo || (qo = new xi()), ci(Ui, Di, To, Mo, qo);
+        var Ui = Oi ? eo.value() : eo, Ii = Ti ? uo.value() : uo;
+        return qo || (qo = new xi()), ci(Ui, Ii, To, Mo, qo);
       }
     }
-    return mi ? (qo || (qo = new xi()), Da(eo, uo, To, Mo, ci, qo)) : !1;
+    return mi ? (qo || (qo = new xi()), Ia(eo, uo, To, Mo, ci, qo)) : !1;
   }
   function $a(eo) {
     if (!na(eo) || xa(eo))
@@ -5871,7 +5644,7 @@ lodash_isequal.exports;
     var pi = qo.get(eo);
     if (pi && qo.get(uo))
       return pi == uo;
-    var Ei = -1, Ri = !0, mi = To & we ? new Tn() : void 0;
+    var Ei = -1, Ri = !0, mi = To & ve ? new Tn() : void 0;
     for (qo.set(eo, uo), qo.set(uo, eo); ++Ei < hi; ) {
       var Oi = eo[Ei], Ti = uo[Ei];
       if (Mo)
@@ -5883,8 +5656,8 @@ lodash_isequal.exports;
         break;
       }
       if (mi) {
-        if (!ko(uo, function(Di, _n) {
-          if (!Go(mi, _n) && (Oi === Di || ci(Oi, Di, To, Mo, qo)))
+        if (!ko(uo, function(Ii, _n) {
+          if (!Go(mi, _n) && (Oi === Ii || ci(Oi, Ii, To, Mo, qo)))
             return mi.push(_n);
         })) {
           Ri = !1;
@@ -5897,7 +5670,7 @@ lodash_isequal.exports;
     }
     return qo.delete(eo), qo.delete(uo), Ri;
   }
-  function Ia(eo, uo, To, Mo, ci, qo, di) {
+  function Da(eo, uo, To, Mo, ci, qo, di) {
     switch (To) {
       case ao:
         if (eo.byteLength != uo.byteLength || eo.byteOffset != uo.byteOffset)
@@ -5905,7 +5678,7 @@ lodash_isequal.exports;
         eo = eo.buffer, uo = uo.buffer;
       case to:
         return !(eo.byteLength != uo.byteLength || !qo(new wi(eo), new wi(uo)));
-      case ve:
+      case we:
       case Se:
       case oo:
         return ra(+eo, +uo);
@@ -5923,7 +5696,7 @@ lodash_isequal.exports;
         var pi = di.get(eo);
         if (pi)
           return pi == uo;
-        Mo |= we, di.set(eo, uo);
+        Mo |= ve, di.set(eo, uo);
         var Ei = ea(hi(eo), hi(uo), Mo, ci, qo, di);
         return di.delete(eo), Ei;
       case Lr:
@@ -5932,7 +5705,7 @@ lodash_isequal.exports;
     }
     return !1;
   }
-  function Da(eo, uo, To, Mo, ci, qo) {
+  function Ia(eo, uo, To, Mo, ci, qo) {
     var di = To & be, hi = ta(eo), yi = hi.length, pi = ta(uo), Ei = pi.length;
     if (yi != Ei && !di)
       return !1;
@@ -5948,10 +5721,10 @@ lodash_isequal.exports;
     qo.set(eo, uo), qo.set(uo, eo);
     for (var Ui = di; ++Ri < yi; ) {
       mi = hi[Ri];
-      var Di = eo[mi], _n = uo[mi];
+      var Ii = eo[mi], _n = uo[mi];
       if (Mo)
-        var aa = di ? Mo(_n, Di, mi, uo, eo, qo) : Mo(Di, _n, mi, eo, uo, qo);
-      if (!(aa === void 0 ? Di === _n || ci(Di, _n, To, Mo, qo) : aa)) {
+        var aa = di ? Mo(_n, Ii, mi, uo, eo, qo) : Mo(Ii, _n, mi, eo, uo, qo);
+      if (!(aa === void 0 ? Ii === _n || ci(Ii, _n, To, Mo, qo) : aa)) {
         Ti = !1;
         break;
       }
@@ -5984,8 +5757,8 @@ lodash_isequal.exports;
     var ci = ti.call(eo);
     return Mo && (uo ? eo[bi] = To : delete eo[bi]), ci;
   }
-  var Na = Ii ? function(eo) {
-    return eo == null ? [] : (eo = Object(eo), Co(Ii(eo), function(uo) {
+  var Na = Di ? function(eo) {
+    return eo == null ? [] : (eo = Object(eo), Co(Di(eo), function(uo) {
       return Si.call(eo, uo);
     }));
   } : Wa, Ci = Sn;
@@ -6087,12 +5860,12 @@ function ki(fe, e) {
   for (var ye = new Uint8Array(256), me = 0; me < ye.length; me++)
     ye[me] = 255;
   for (var be = 0; be < fe.length; be++) {
-    var we = fe.charAt(be), Ee = we.charCodeAt(0);
+    var ve = fe.charAt(be), Ee = ve.charCodeAt(0);
     if (ye[Ee] !== 255)
-      throw new TypeError(we + " is ambiguous");
+      throw new TypeError(ve + " is ambiguous");
     ye[Ee] = be;
   }
-  var Oe = fe.length, xe = fe.charAt(0), gr = Math.log(Oe) / Math.log(256), ve = Math.log(256) / Math.log(Oe);
+  var Oe = fe.length, xe = fe.charAt(0), gr = Math.log(Oe) / Math.log(256), we = Math.log(256) / Math.log(Oe);
   function Se(Br) {
     if (Br instanceof Uint8Array || (ArrayBuffer.isView(Br) ? Br = new Uint8Array(Br.buffer, Br.byteOffset, Br.byteLength) : Array.isArray(Br) && (Br = Uint8Array.from(Br))), !(Br instanceof Uint8Array))
       throw new TypeError("Expected Uint8Array");
@@ -6100,7 +5873,7 @@ function ki(fe, e) {
       return "";
     for (var Vr = 0, oo = 0, so = 0, kr = Br.length; so !== kr && Br[so] === 0; )
       so++, Vr++;
-    for (var qr = (kr - so) * ve + 1 >>> 0, Hr = new Uint8Array(qr); so !== kr; ) {
+    for (var qr = (kr - so) * we + 1 >>> 0, Hr = new Uint8Array(qr); so !== kr; ) {
       for (var Yr = Br[so], Ur = 0, Mr = qr - 1; (Yr !== 0 || Ur < oo) && Mr !== -1; Mr--, Ur++)
         Yr += 256 * Hr[Mr] >>> 0, Hr[Mr] = Yr % Oe >>> 0, Yr = Yr / Oe >>> 0;
       if (Yr !== 0)
@@ -6213,18 +5986,18 @@ let Hi$1 = class {
 };
 const J$2 = ({ name: fe, prefix: e, encode: ye, decode: me }) => new Hi$1(fe, e, ye, me), K$2 = ({ prefix: fe, name: e, alphabet: ye }) => {
   const { encode: me, decode: be } = Bi(ye, e);
-  return J$2({ prefix: fe, name: e, encode: me, decode: (we) => Ae$1(be(we)) });
+  return J$2({ prefix: fe, name: e, encode: me, decode: (ve) => Ae$1(be(ve)) });
 }, Ji$1 = (fe, e, ye, me) => {
   const be = {};
-  for (let ve = 0; ve < e.length; ++ve)
-    be[e[ve]] = ve;
-  let we = fe.length;
-  for (; fe[we - 1] === "="; )
-    --we;
-  const Ee = new Uint8Array(we * ye / 8 | 0);
+  for (let we = 0; we < e.length; ++we)
+    be[e[we]] = we;
+  let ve = fe.length;
+  for (; fe[ve - 1] === "="; )
+    --ve;
+  const Ee = new Uint8Array(ve * ye / 8 | 0);
   let Oe = 0, xe = 0, gr = 0;
-  for (let ve = 0; ve < we; ++ve) {
-    const Se = be[fe[ve]];
+  for (let we = 0; we < ve; ++we) {
+    const Se = be[fe[we]];
     if (Se === void 0)
       throw new SyntaxError(`Non-${me} character`);
     xe = xe << ye | Se, Oe += ye, Oe >= 8 && (Oe -= 8, Ee[gr++] = 255 & xe >> Oe);
@@ -6234,14 +6007,14 @@ const J$2 = ({ name: fe, prefix: e, encode: ye, decode: me }) => new Hi$1(fe, e,
   return Ee;
 }, Wi$1 = (fe, e, ye) => {
   const me = e[e.length - 1] === "=", be = (1 << ye) - 1;
-  let we = "", Ee = 0, Oe = 0;
+  let ve = "", Ee = 0, Oe = 0;
   for (let xe = 0; xe < fe.length; ++xe)
     for (Oe = Oe << 8 | fe[xe], Ee += 8; Ee > ye; )
-      Ee -= ye, we += e[be & Oe >> Ee];
-  if (Ee && (we += e[be & Oe << ye - Ee]), me)
-    for (; we.length * ye & 7; )
-      we += "=";
-  return we;
+      Ee -= ye, ve += e[be & Oe >> Ee];
+  if (Ee && (ve += e[be & Oe << ye - Ee]), me)
+    for (; ve.length * ye & 7; )
+      ve += "=";
+  return ve;
 }, g$5 = ({ name: fe, prefix: e, bitsPerChar: ye, alphabet: me }) => J$2({ prefix: e, name: fe, encode(be) {
   return Wi$1(be, me, ye);
 }, decode(be) {
@@ -6290,20 +6063,20 @@ function Ue$2(fe, e, ye) {
 }
 var Ms$1 = ae$3, ks$1 = 128, Fe$2 = 127;
 function ae$3(fe, me) {
-  var ye = 0, me = me || 0, be = 0, we = me, Ee, Oe = fe.length;
+  var ye = 0, me = me || 0, be = 0, ve = me, Ee, Oe = fe.length;
   do {
-    if (we >= Oe)
+    if (ve >= Oe)
       throw ae$3.bytes = 0, new RangeError("Could not decode varint");
-    Ee = fe[we++], ye += be < 28 ? (Ee & Fe$2) << be : (Ee & Fe$2) * Math.pow(2, be), be += 7;
+    Ee = fe[ve++], ye += be < 28 ? (Ee & Fe$2) << be : (Ee & Fe$2) * Math.pow(2, be), be += 7;
   } while (Ee >= ks$1);
-  return ae$3.bytes = we - me, ye;
+  return ae$3.bytes = ve - me, ye;
 }
 var Ks$1 = Math.pow(2, 7), Bs$1 = Math.pow(2, 14), Vs$1 = Math.pow(2, 21), qs$1 = Math.pow(2, 28), js$1 = Math.pow(2, 35), Ys$1 = Math.pow(2, 42), Gs$1 = Math.pow(2, 49), Hs$1 = Math.pow(2, 56), Js$1 = Math.pow(2, 63), Ws$1 = function(fe) {
   return fe < Ks$1 ? 1 : fe < Bs$1 ? 2 : fe < Vs$1 ? 3 : fe < qs$1 ? 4 : fe < js$1 ? 5 : fe < Ys$1 ? 6 : fe < Gs$1 ? 7 : fe < Hs$1 ? 8 : fe < Js$1 ? 9 : 10;
 }, Xs$1 = { encode: Ls$1, decode: Ms$1, encodingLength: Ws$1 }, $e$2 = Xs$1;
 const Me$2 = (fe, e, ye = 0) => ($e$2.encode(fe, e, ye), e), ke$2 = (fe) => $e$2.encodingLength(fe), oe$2 = (fe, e) => {
-  const ye = e.byteLength, me = ke$2(fe), be = me + ke$2(ye), we = new Uint8Array(be + ye);
-  return Me$2(fe, we, 0), Me$2(ye, we, me), we.set(e, be), new Qs$1(fe, ye, e, we);
+  const ye = e.byteLength, me = ke$2(fe), be = me + ke$2(ye), ve = new Uint8Array(be + ye);
+  return Me$2(fe, ve, 0), Me$2(ye, ve, me), ve.set(e, be), new Qs$1(fe, ye, e, ve);
 };
 let Qs$1 = class {
   constructor(e, ye, me, be) {
@@ -6371,8 +6144,8 @@ let Ct$1 = class {
       this.isInitialized();
       const be = this.keychain.get(me);
       if (typeof be > "u") {
-        const { message: we } = N$5("NO_MATCHING_KEY", `${this.name}: ${me}`);
-        throw new Error(we);
+        const { message: ve } = N$5("NO_MATCHING_KEY", `${this.name}: ${me}`);
+        throw new Error(ve);
       }
       return be;
     }, this.del = async (me) => {
@@ -6407,56 +6180,56 @@ let Ct$1 = class {
       this.initialized || (await this.keychain.init(), this.initialized = !0);
     }, this.hasKeys = (be) => (this.isInitialized(), this.keychain.has(be)), this.getClientId = async () => {
       this.isInitialized();
-      const be = await this.getClientSeed(), we = generateKeyPair(be);
-      return encodeIss(we.publicKey);
+      const be = await this.getClientSeed(), ve = generateKeyPair(be);
+      return encodeIss(ve.publicKey);
     }, this.generateKeyPair = () => {
       this.isInitialized();
       const be = jn();
       return this.setPrivateKey(be.publicKey, be.privateKey);
     }, this.signJWT = async (be) => {
       this.isInitialized();
-      const we = await this.getClientSeed(), Ee = generateKeyPair(we), Oe = Dn$1();
+      const ve = await this.getClientSeed(), Ee = generateKeyPair(ve), Oe = Dn$1();
       return await signJWT(Oe, be, Ze$2, Ee);
-    }, this.generateSharedKey = (be, we, Ee) => {
+    }, this.generateSharedKey = (be, ve, Ee) => {
       this.isInitialized();
-      const Oe = this.getPrivateKey(be), xe = kn$1(Oe, we);
+      const Oe = this.getPrivateKey(be), xe = kn$1(Oe, ve);
       return this.setSymKey(xe, Ee);
-    }, this.setSymKey = async (be, we) => {
+    }, this.setSymKey = async (be, ve) => {
       this.isInitialized();
-      const Ee = we || Vn$1(be);
+      const Ee = ve || Vn$1(be);
       return await this.keychain.set(Ee, be), Ee;
     }, this.deleteKeyPair = async (be) => {
       this.isInitialized(), await this.keychain.del(be);
     }, this.deleteSymKey = async (be) => {
       this.isInitialized(), await this.keychain.del(be);
-    }, this.encode = async (be, we, Ee) => {
+    }, this.encode = async (be, ve, Ee) => {
       this.isInitialized();
-      const Oe = Re$1(Ee), xe = safeJsonStringify(we);
+      const Oe = Re$1(Ee), xe = safeJsonStringify(ve);
       if (Fn$1(Oe)) {
         const $r = Oe.senderPublicKey, Fr = Oe.receiverPublicKey;
         be = await this.generateSharedKey($r, Fr);
       }
-      const gr = this.getSymKey(be), { type: ve, senderPublicKey: Se } = Oe;
-      return Kn$1({ type: ve, symKey: gr, message: xe, senderPublicKey: Se });
-    }, this.decode = async (be, we, Ee) => {
+      const gr = this.getSymKey(be), { type: we, senderPublicKey: Se } = Oe;
+      return Kn$1({ type: we, symKey: gr, message: xe, senderPublicKey: Se });
+    }, this.decode = async (be, ve, Ee) => {
       this.isInitialized();
-      const Oe = xn$1(we, Ee);
+      const Oe = xn$1(ve, Ee);
       if (Fn$1(Oe)) {
         const xe = Oe.receiverPublicKey, gr = Oe.senderPublicKey;
         be = await this.generateSharedKey(xe, gr);
       }
       try {
-        const xe = this.getSymKey(be), gr = Ln$2({ symKey: xe, encoded: we });
+        const xe = this.getSymKey(be), gr = Ln$2({ symKey: xe, encoded: ve });
         return safeJsonParse(gr);
       } catch (xe) {
         this.logger.error(`Failed to decode message from topic: '${be}', clientId: '${await this.getClientId()}'`), this.logger.error(xe);
       }
     }, this.getPayloadType = (be) => {
-      const we = ee$2(be);
-      return $$2(we.type);
+      const ve = ee$2(be);
+      return $$2(ve.type);
     }, this.getPayloadSenderPublicKey = (be) => {
-      const we = ee$2(be);
-      return we.senderPublicKey ? toString(we.senderPublicKey, p$4) : void 0;
+      const ve = ee$2(be);
+      return ve.senderPublicKey ? toString(ve.senderPublicKey, p$4) : void 0;
     }, this.core = e, this.logger = cjs$3.generateChildLogger(ye, this.name), this.keychain = me || new Ct$1(this.core, this.logger);
   }
   get context() {
@@ -6502,17 +6275,17 @@ let Ct$1 = class {
       }
     }, this.set = async (me, be) => {
       this.isInitialized();
-      const we = Mn$1(be);
+      const ve = Mn$1(be);
       let Ee = this.messages.get(me);
-      return typeof Ee > "u" && (Ee = {}), typeof Ee[we] < "u" || (Ee[we] = be, this.messages.set(me, Ee), await this.persist()), we;
+      return typeof Ee > "u" && (Ee = {}), typeof Ee[ve] < "u" || (Ee[ve] = be, this.messages.set(me, Ee), await this.persist()), ve;
     }, this.get = (me) => {
       this.isInitialized();
       let be = this.messages.get(me);
       return typeof be > "u" && (be = {}), be;
     }, this.has = (me, be) => {
       this.isInitialized();
-      const we = this.get(me), Ee = Mn$1(be);
-      return typeof we[Ee] < "u";
+      const ve = this.get(me), Ee = Mn$1(be);
+      return typeof ve[Ee] < "u";
     }, this.del = async (me) => {
       this.isInitialized(), this.messages.delete(me), await this.persist();
     }, this.logger = cjs$3.generateChildLogger(e, this.name), this.core = ye;
@@ -6542,21 +6315,21 @@ let Ct$1 = class {
 };
 class pr extends u$2 {
   constructor(e, ye) {
-    super(e, ye), this.relayer = e, this.logger = ye, this.events = new eventsExports.EventEmitter(), this.name = nt$1, this.queue = /* @__PURE__ */ new Map(), this.publishTimeout = cjs$4.toMiliseconds(cjs$4.TEN_SECONDS), this.needsTransportRestart = !1, this.publish = async (me, be, we) => {
+    super(e, ye), this.relayer = e, this.logger = ye, this.events = new EventEmitter$1(), this.name = nt$1, this.queue = /* @__PURE__ */ new Map(), this.publishTimeout = cjs$4.toMiliseconds(cjs$4.TEN_SECONDS), this.needsTransportRestart = !1, this.publish = async (me, be, ve) => {
       var Ee;
-      this.logger.debug("Publishing Payload"), this.logger.trace({ type: "method", method: "publish", params: { topic: me, message: be, opts: we } });
+      this.logger.debug("Publishing Payload"), this.logger.trace({ type: "method", method: "publish", params: { topic: me, message: be, opts: ve } });
       try {
-        const Oe = (we == null ? void 0 : we.ttl) || rt$2, xe = mt$4(we), gr = (we == null ? void 0 : we.prompt) || !1, ve = (we == null ? void 0 : we.tag) || 0, Se = (we == null ? void 0 : we.id) || getBigIntRpcId().toString(), $r = { topic: me, message: be, opts: { ttl: Oe, relay: xe, prompt: gr, tag: ve, id: Se } }, Fr = setTimeout(() => this.queue.set(Se, $r), this.publishTimeout);
+        const Oe = (ve == null ? void 0 : ve.ttl) || rt$2, xe = mt$4(ve), gr = (ve == null ? void 0 : ve.prompt) || !1, we = (ve == null ? void 0 : ve.tag) || 0, Se = (ve == null ? void 0 : ve.id) || getBigIntRpcId().toString(), $r = { topic: me, message: be, opts: { ttl: Oe, relay: xe, prompt: gr, tag: we, id: Se } }, Fr = setTimeout(() => this.queue.set(Se, $r), this.publishTimeout);
         try {
-          await await it$2(this.rpcPublish(me, be, Oe, xe, gr, ve, Se), this.publishTimeout, "Failed to publish payload, please try again."), this.removeRequestFromQueue(Se), this.relayer.events.emit(D$5.publish, $r);
+          await await it$2(this.rpcPublish(me, be, Oe, xe, gr, we, Se), this.publishTimeout, "Failed to publish payload, please try again."), this.removeRequestFromQueue(Se), this.relayer.events.emit(D$5.publish, $r);
         } catch (Br) {
-          if (this.logger.debug("Publishing Payload stalled"), this.needsTransportRestart = !0, (Ee = we == null ? void 0 : we.internal) != null && Ee.throwOnFailedPublish)
+          if (this.logger.debug("Publishing Payload stalled"), this.needsTransportRestart = !0, (Ee = ve == null ? void 0 : ve.internal) != null && Ee.throwOnFailedPublish)
             throw this.removeRequestFromQueue(Se), Br;
           return;
         } finally {
           clearTimeout(Fr);
         }
-        this.logger.debug("Successfully Published Payload"), this.logger.trace({ type: "method", method: "publish", params: { topic: me, message: be, opts: we } });
+        this.logger.debug("Successfully Published Payload"), this.logger.trace({ type: "method", method: "publish", params: { topic: me, message: be, opts: ve } });
       } catch (Oe) {
         throw this.logger.debug("Failed to Publish Payload"), this.logger.error(Oe), Oe;
       }
@@ -6573,10 +6346,10 @@ class pr extends u$2 {
   get context() {
     return cjs$3.getLoggerContext(this.logger);
   }
-  rpcPublish(e, ye, me, be, we, Ee, Oe) {
-    var xe, gr, ve, Se;
-    const $r = { method: yt$4(be.protocol).publish, params: { topic: e, message: ye, ttl: me, prompt: we, tag: Ee }, id: Oe };
-    return w$6((xe = $r.params) == null ? void 0 : xe.prompt) && ((gr = $r.params) == null || delete gr.prompt), w$6((ve = $r.params) == null ? void 0 : ve.tag) && ((Se = $r.params) == null || delete Se.tag), this.logger.debug("Outgoing Relay Payload"), this.logger.trace({ type: "message", direction: "outgoing", request: $r }), this.relayer.request($r);
+  rpcPublish(e, ye, me, be, ve, Ee, Oe) {
+    var xe, gr, we, Se;
+    const $r = { method: yt$4(be.protocol).publish, params: { topic: e, message: ye, ttl: me, prompt: ve, tag: Ee }, id: Oe };
+    return w$6((xe = $r.params) == null ? void 0 : xe.prompt) && ((gr = $r.params) == null || delete gr.prompt), w$6((we = $r.params) == null ? void 0 : we.tag) && ((Se = $r.params) == null || delete Se.tag), this.logger.debug("Outgoing Relay Payload"), this.logger.trace({ type: "message", direction: "outgoing", request: $r }), this.relayer.request($r);
   }
   removeRequestFromQueue(e) {
     this.queue.delete(e);
@@ -6614,7 +6387,7 @@ class Dr {
       const me = this.get(e);
       if (!this.exists(e, ye))
         return;
-      const be = me.filter((we) => we !== ye);
+      const be = me.filter((ve) => ve !== ye);
       if (!be.length) {
         this.map.delete(e);
         return;
@@ -6638,25 +6411,25 @@ var yr = Object.defineProperty, br$1 = Object.defineProperties, mr$1 = Object.ge
 }, pe$3 = (fe, e) => br$1(fe, mr$1(e));
 let Pt$1 = class extends d$1 {
   constructor(e, ye) {
-    super(e, ye), this.relayer = e, this.logger = ye, this.subscriptions = /* @__PURE__ */ new Map(), this.topicMap = new Dr(), this.events = new eventsExports.EventEmitter(), this.name = Dt$2, this.version = yt$3, this.pending = /* @__PURE__ */ new Map(), this.cached = [], this.initialized = !1, this.pendingSubscriptionWatchLabel = "pending_sub_watch_label", this.pollingInterval = 20, this.storagePrefix = x$3, this.subscribeTimeout = 1e4, this.restartInProgress = !1, this.batchSubscribeTopicsLimit = 500, this.init = async () => {
+    super(e, ye), this.relayer = e, this.logger = ye, this.subscriptions = /* @__PURE__ */ new Map(), this.topicMap = new Dr(), this.events = new EventEmitter$1(), this.name = Dt$2, this.version = yt$3, this.pending = /* @__PURE__ */ new Map(), this.cached = [], this.initialized = !1, this.pendingSubscriptionWatchLabel = "pending_sub_watch_label", this.pollingInterval = 20, this.storagePrefix = x$3, this.subscribeTimeout = 1e4, this.restartInProgress = !1, this.batchSubscribeTopicsLimit = 500, this.init = async () => {
       this.initialized || (this.logger.trace("Initialized"), this.registerEventListeners(), this.clientId = await this.relayer.core.crypto.getClientId());
     }, this.subscribe = async (me, be) => {
       await this.restartToComplete(), this.isInitialized(), this.logger.debug("Subscribing Topic"), this.logger.trace({ type: "method", method: "subscribe", params: { topic: me, opts: be } });
       try {
-        const we = mt$4(be), Ee = { topic: me, relay: we };
+        const ve = mt$4(be), Ee = { topic: me, relay: ve };
         this.pending.set(me, Ee);
-        const Oe = await this.rpcSubscribe(me, we);
+        const Oe = await this.rpcSubscribe(me, ve);
         return this.onSubscribe(Oe, Ee), this.logger.debug("Successfully Subscribed Topic"), this.logger.trace({ type: "method", method: "subscribe", params: { topic: me, opts: be } }), Oe;
-      } catch (we) {
-        throw this.logger.debug("Failed to Subscribe Topic"), this.logger.error(we), we;
+      } catch (ve) {
+        throw this.logger.debug("Failed to Subscribe Topic"), this.logger.error(ve), ve;
       }
     }, this.unsubscribe = async (me, be) => {
       await this.restartToComplete(), this.isInitialized(), typeof (be == null ? void 0 : be.id) < "u" ? await this.unsubscribeById(me, be.id, be) : await this.unsubscribeByTopic(me, be);
-    }, this.isSubscribed = async (me) => this.topics.includes(me) ? !0 : await new Promise((be, we) => {
+    }, this.isSubscribed = async (me) => this.topics.includes(me) ? !0 : await new Promise((be, ve) => {
       const Ee = new cjs$4.Watch();
       Ee.start(this.pendingSubscriptionWatchLabel);
       const Oe = setInterval(() => {
-        !this.pending.has(me) && this.topics.includes(me) && (clearInterval(Oe), Ee.stop(this.pendingSubscriptionWatchLabel), be(!0)), Ee.elapsed(this.pendingSubscriptionWatchLabel) >= bt$2 && (clearInterval(Oe), Ee.stop(this.pendingSubscriptionWatchLabel), we(new Error("Subscription resolution timeout")));
+        !this.pending.has(me) && this.topics.includes(me) && (clearInterval(Oe), Ee.stop(this.pendingSubscriptionWatchLabel), be(!0)), Ee.elapsed(this.pendingSubscriptionWatchLabel) >= bt$2 && (clearInterval(Oe), Ee.stop(this.pendingSubscriptionWatchLabel), ve(new Error("Subscription resolution timeout")));
       }, this.pollingInterval);
     }).catch(() => !1), this.on = (me, be) => {
       this.events.on(me, be);
@@ -6711,8 +6484,8 @@ let Pt$1 = class extends d$1 {
     try {
       const be = mt$4(me);
       await this.rpcUnsubscribe(e, ye, be);
-      const we = U$6("USER_DISCONNECTED", `${this.name}, ${e}`);
-      await this.onUnsubscribe(e, ye, we), this.logger.debug("Successfully Unsubscribed Topic"), this.logger.trace({ type: "method", method: "unsubscribe", params: { topic: e, id: ye, opts: me } });
+      const ve = U$6("USER_DISCONNECTED", `${this.name}, ${e}`);
+      await this.onUnsubscribe(e, ye, ve), this.logger.debug("Successfully Unsubscribed Topic"), this.logger.trace({ type: "method", method: "unsubscribe", params: { topic: e, id: ye, opts: me } });
     } catch (be) {
       throw this.logger.debug("Failed to Unsubscribe Topic"), this.logger.error(be), be;
     }
@@ -6865,7 +6638,7 @@ var wr$1 = Object.defineProperty, Ot$2 = Object.getOwnPropertySymbols, vr$1 = Ob
 };
 let At$1 = class extends g$6 {
   constructor(e) {
-    super(e), this.protocol = "wc", this.version = 2, this.events = new eventsExports.EventEmitter(), this.name = ht$2, this.transportExplicitlyClosed = !1, this.initialized = !1, this.connectionAttemptInProgress = !1, this.connectionStatusPollingInterval = 20, this.staleConnectionErrors = ["socket hang up", "socket stalled"], this.hasExperiencedNetworkDisruption = !1, this.request = async (ye) => {
+    super(e), this.protocol = "wc", this.version = 2, this.events = new EventEmitter$1(), this.name = ht$2, this.transportExplicitlyClosed = !1, this.initialized = !1, this.connectionAttemptInProgress = !1, this.connectionStatusPollingInterval = 20, this.staleConnectionErrors = ["socket hang up", "socket stalled"], this.hasExperiencedNetworkDisruption = !1, this.request = async (ye) => {
       this.logger.debug("Publishing Request Payload");
       try {
         return await this.toEstablishConnection(), await this.provider.request(ye);
@@ -6911,12 +6684,12 @@ let At$1 = class extends g$6 {
     var me;
     this.isInitialized();
     let be = ((me = this.subscriber.topicMap.get(e)) == null ? void 0 : me[0]) || "";
-    return be || (await Promise.all([new Promise((we) => {
+    return be || (await Promise.all([new Promise((ve) => {
       this.subscriber.once(C$3.created, (Ee) => {
-        Ee.topic === e && we();
+        Ee.topic === e && ve();
       });
-    }), new Promise(async (we) => {
-      be = await this.subscriber.subscribe(e, ye), we();
+    }), new Promise(async (ve) => {
+      be = await this.subscriber.subscribe(e, ye), ve();
     })]), be);
   }
   async unsubscribe(e, ye) {
@@ -6999,7 +6772,7 @@ let At$1 = class extends g$6 {
     if (this.logger.debug("Incoming Relay Payload"), this.logger.trace({ type: "payload", direction: "incoming", payload: e }), isJsonRpcRequest(e)) {
       if (!e.method.endsWith(ct$1))
         return;
-      const ye = e.params, { topic: me, message: be, publishedAt: we } = ye.data, Ee = { topic: me, message: be, publishedAt: we };
+      const ye = e.params, { topic: me, message: be, publishedAt: ve } = ye.data, Ee = { topic: me, message: be, publishedAt: ve };
       this.logger.debug("Emitting Relayer Payload"), this.logger.trace(Cr$1({ type: "event", event: ye.id }, Ee)), this.events.emit(ye.id, Ee), await this.acknowledgePayload(e), await this.onMessageEvent(Ee);
     } else
       isJsonRpcResponse(e) && this.events.emit(D$5.message_ack, e);
@@ -7058,7 +6831,7 @@ var Rr$1 = Object.defineProperty, zt$2 = Object.getOwnPropertySymbols, _r$1 = Ob
   return fe;
 };
 let Ut$1 = class extends p$5 {
-  constructor(e, ye, me, be = x$3, we = void 0) {
+  constructor(e, ye, me, be = x$3, ve = void 0) {
     super(e, ye, me, be), this.core = e, this.logger = ye, this.name = me, this.map = /* @__PURE__ */ new Map(), this.version = gt$2, this.cached = [], this.initialized = !1, this.storagePrefix = x$3, this.init = async () => {
       this.initialized || (this.logger.trace("Initialized"), await this.restore(), this.cached.forEach((Ee) => {
         this.getKey && Ee !== null && !w$6(Ee) ? this.map.set(this.getKey(Ee), Ee) : Dt$3(Ee) ? this.map.set(Ee.id, Ee) : kt$3(Ee) && this.map.set(Ee.topic, Ee);
@@ -7071,7 +6844,7 @@ let Ut$1 = class extends p$5 {
       this.map.set(Ee, xe), await this.persist();
     }, this.delete = async (Ee, Oe) => {
       this.isInitialized(), this.map.has(Ee) && (this.logger.debug("Deleting value"), this.logger.trace({ type: "method", method: "delete", key: Ee, reason: Oe }), this.map.delete(Ee), await this.persist());
-    }, this.logger = cjs$3.generateChildLogger(ye, this.name), this.storagePrefix = be, this.getKey = we;
+    }, this.logger = cjs$3.generateChildLogger(ye, this.name), this.storagePrefix = be, this.getKey = ve;
   }
   get context() {
     return cjs$3.getLoggerContext(this.logger);
@@ -7127,23 +6900,23 @@ let Ut$1 = class extends p$5 {
   }
 }, Ft$2 = class {
   constructor(e, ye) {
-    this.core = e, this.logger = ye, this.name = mt$3, this.version = ft$3, this.events = new Ye$2(), this.initialized = !1, this.storagePrefix = x$3, this.ignoredPayloadTypes = [_$5], this.registeredMethods = [], this.init = async () => {
+    this.core = e, this.logger = ye, this.name = mt$3, this.version = ft$3, this.events = new c$5(), this.initialized = !1, this.storagePrefix = x$3, this.ignoredPayloadTypes = [_$5], this.registeredMethods = [], this.init = async () => {
       this.initialized || (await this.pairings.init(), await this.cleanup(), this.registerRelayerEvents(), this.registerExpirerEvents(), this.initialized = !0, this.logger.trace("Initialized"));
     }, this.register = ({ methods: me }) => {
       this.isInitialized(), this.registeredMethods = [.../* @__PURE__ */ new Set([...this.registeredMethods, ...me])];
     }, this.create = async () => {
       this.isInitialized();
-      const me = Dn$1(), be = await this.core.crypto.setSymKey(me), we = lt$3(cjs$4.FIVE_MINUTES), Ee = { protocol: at$3 }, Oe = { topic: be, expiry: we, relay: Ee, active: !1 }, xe = Nt$3({ protocol: this.core.protocol, version: this.core.version, topic: be, symKey: me, relay: Ee });
-      return await this.pairings.set(be, Oe), await this.core.relayer.subscribe(be), this.core.expirer.set(be, we), { topic: be, uri: xe };
+      const me = Dn$1(), be = await this.core.crypto.setSymKey(me), ve = lt$3(cjs$4.FIVE_MINUTES), Ee = { protocol: at$3 }, Oe = { topic: be, expiry: ve, relay: Ee, active: !1 }, xe = Nt$3({ protocol: this.core.protocol, version: this.core.version, topic: be, symKey: me, relay: Ee });
+      return await this.pairings.set(be, Oe), await this.core.relayer.subscribe(be), this.core.expirer.set(be, ve), { topic: be, uri: xe };
     }, this.pair = async (me) => {
       this.isInitialized(), this.isValidPair(me);
-      const { topic: be, symKey: we, relay: Ee } = bt$3(me.uri);
+      const { topic: be, symKey: ve, relay: Ee } = bt$3(me.uri);
       if (this.pairings.keys.includes(be))
         throw new Error(`Pairing already exists: ${be}`);
       if (this.core.crypto.hasKeys(be))
         throw new Error(`Keychain already exists: ${be}`);
       const Oe = lt$3(cjs$4.FIVE_MINUTES), xe = { topic: be, relay: Ee, expiry: Oe, active: !1 };
-      return await this.pairings.set(be, xe), await this.core.crypto.setSymKey(we, be), await this.core.relayer.subscribe(be, { relay: Ee }), this.core.expirer.set(be, Oe), me.activatePairing && await this.activate({ topic: be }), xe;
+      return await this.pairings.set(be, xe), await this.core.crypto.setSymKey(ve, be), await this.core.relayer.subscribe(be, { relay: Ee }), this.core.expirer.set(be, Oe), me.activatePairing && await this.activate({ topic: be }), xe;
     }, this.activate = async ({ topic: me }) => {
       this.isInitialized();
       const be = lt$3(cjs$4.THIRTY_DAYS);
@@ -7152,8 +6925,8 @@ let Ut$1 = class extends p$5 {
       this.isInitialized(), await this.isValidPing(me);
       const { topic: be } = me;
       if (this.pairings.keys.includes(be)) {
-        const we = await this.sendRequest(be, "wc_pairingPing", {}), { done: Ee, resolve: Oe, reject: xe } = st$2();
-        this.events.once(ft$4("pairing_ping", we), ({ error: gr }) => {
+        const ve = await this.sendRequest(be, "wc_pairingPing", {}), { done: Ee, resolve: Oe, reject: xe } = st$2();
+        this.events.once(ft$4("pairing_ping", ve), ({ error: gr }) => {
           gr ? xe(gr) : Oe();
         }), await Ee();
       }
@@ -7165,14 +6938,14 @@ let Ut$1 = class extends p$5 {
       this.isInitialized(), await this.isValidDisconnect(me);
       const { topic: be } = me;
       this.pairings.keys.includes(be) && (await this.sendRequest(be, "wc_pairingDelete", U$6("USER_DISCONNECTED")), await this.deletePairing(be));
-    }, this.sendRequest = async (me, be, we) => {
-      const Ee = formatJsonRpcRequest(be, we), Oe = await this.core.crypto.encode(me, Ee), xe = F$4[be].req;
+    }, this.sendRequest = async (me, be, ve) => {
+      const Ee = formatJsonRpcRequest(be, ve), Oe = await this.core.crypto.encode(me, Ee), xe = F$4[be].req;
       return this.core.history.set(me, Ee), this.core.relayer.publish(me, Oe, xe), Ee.id;
-    }, this.sendResult = async (me, be, we) => {
-      const Ee = formatJsonRpcResult(me, we), Oe = await this.core.crypto.encode(be, Ee), xe = await this.core.history.get(be, me), gr = F$4[xe.request.method].res;
+    }, this.sendResult = async (me, be, ve) => {
+      const Ee = formatJsonRpcResult(me, ve), Oe = await this.core.crypto.encode(be, Ee), xe = await this.core.history.get(be, me), gr = F$4[xe.request.method].res;
       await this.core.relayer.publish(be, Oe, gr), await this.core.history.resolve(Ee);
-    }, this.sendError = async (me, be, we) => {
-      const Ee = formatJsonRpcError(me, we), Oe = await this.core.crypto.encode(be, Ee), xe = await this.core.history.get(be, me), gr = F$4[xe.request.method] ? F$4[xe.request.method].res : F$4.unregistered_method.res;
+    }, this.sendError = async (me, be, ve) => {
+      const Ee = formatJsonRpcError(me, ve), Oe = await this.core.crypto.encode(be, Ee), xe = await this.core.history.get(be, me), gr = F$4[xe.request.method] ? F$4[xe.request.method].res : F$4.unregistered_method.res;
       await this.core.relayer.publish(be, Oe, gr), await this.core.history.resolve(Ee);
     }, this.deletePairing = async (me, be) => {
       await this.core.relayer.unsubscribe(me), await Promise.all([this.pairings.delete(me, U$6("USER_DISCONNECTED")), this.core.crypto.deleteSymKey(me), be ? Promise.resolve() : this.core.expirer.del(me)]);
@@ -7180,51 +6953,51 @@ let Ut$1 = class extends p$5 {
       const me = this.pairings.getAll().filter((be) => dt$3(be.expiry));
       await Promise.all(me.map((be) => this.deletePairing(be.topic)));
     }, this.onRelayEventRequest = (me) => {
-      const { topic: be, payload: we } = me;
-      switch (we.method) {
+      const { topic: be, payload: ve } = me;
+      switch (ve.method) {
         case "wc_pairingPing":
-          return this.onPairingPingRequest(be, we);
+          return this.onPairingPingRequest(be, ve);
         case "wc_pairingDelete":
-          return this.onPairingDeleteRequest(be, we);
+          return this.onPairingDeleteRequest(be, ve);
         default:
-          return this.onUnknownRpcMethodRequest(be, we);
+          return this.onUnknownRpcMethodRequest(be, ve);
       }
     }, this.onRelayEventResponse = async (me) => {
-      const { topic: be, payload: we } = me, Ee = (await this.core.history.get(be, we.id)).request.method;
+      const { topic: be, payload: ve } = me, Ee = (await this.core.history.get(be, ve.id)).request.method;
       switch (Ee) {
         case "wc_pairingPing":
-          return this.onPairingPingResponse(be, we);
+          return this.onPairingPingResponse(be, ve);
         default:
           return this.onUnknownRpcMethodResponse(Ee);
       }
     }, this.onPairingPingRequest = async (me, be) => {
-      const { id: we } = be;
+      const { id: ve } = be;
       try {
-        this.isValidPing({ topic: me }), await this.sendResult(we, me, !0), this.events.emit("pairing_ping", { id: we, topic: me });
+        this.isValidPing({ topic: me }), await this.sendResult(ve, me, !0), this.events.emit("pairing_ping", { id: ve, topic: me });
       } catch (Ee) {
-        await this.sendError(we, me, Ee), this.logger.error(Ee);
+        await this.sendError(ve, me, Ee), this.logger.error(Ee);
       }
     }, this.onPairingPingResponse = (me, be) => {
-      const { id: we } = be;
+      const { id: ve } = be;
       setTimeout(() => {
-        isJsonRpcResult(be) ? this.events.emit(ft$4("pairing_ping", we), {}) : isJsonRpcError(be) && this.events.emit(ft$4("pairing_ping", we), { error: be.error });
+        isJsonRpcResult(be) ? this.events.emit(ft$4("pairing_ping", ve), {}) : isJsonRpcError(be) && this.events.emit(ft$4("pairing_ping", ve), { error: be.error });
       }, 500);
     }, this.onPairingDeleteRequest = async (me, be) => {
-      const { id: we } = be;
+      const { id: ve } = be;
       try {
-        this.isValidDisconnect({ topic: me }), await this.deletePairing(me), this.events.emit("pairing_delete", { id: we, topic: me });
+        this.isValidDisconnect({ topic: me }), await this.deletePairing(me), this.events.emit("pairing_delete", { id: ve, topic: me });
       } catch (Ee) {
-        await this.sendError(we, me, Ee), this.logger.error(Ee);
+        await this.sendError(ve, me, Ee), this.logger.error(Ee);
       }
     }, this.onUnknownRpcMethodRequest = async (me, be) => {
-      const { id: we, method: Ee } = be;
+      const { id: ve, method: Ee } = be;
       try {
         if (this.registeredMethods.includes(Ee))
           return;
         const Oe = U$6("WC_METHOD_UNSUPPORTED", Ee);
-        await this.sendError(we, me, Oe), this.logger.error(Oe);
+        await this.sendError(ve, me, Oe), this.logger.error(Oe);
       } catch (Oe) {
-        await this.sendError(we, me, Oe), this.logger.error(Oe);
+        await this.sendError(ve, me, Oe), this.logger.error(Oe);
       }
     }, this.onUnknownRpcMethodResponse = (me) => {
       this.registeredMethods.includes(me) || this.logger.error(U$6("WC_METHOD_UNSUPPORTED", me));
@@ -7239,15 +7012,15 @@ let Ut$1 = class extends p$5 {
       }
     }, this.isValidPing = async (me) => {
       if (!xt$3(me)) {
-        const { message: we } = N$5("MISSING_OR_INVALID", `ping() params: ${me}`);
-        throw new Error(we);
+        const { message: ve } = N$5("MISSING_OR_INVALID", `ping() params: ${me}`);
+        throw new Error(ve);
       }
       const { topic: be } = me;
       await this.isValidPairingTopic(be);
     }, this.isValidDisconnect = async (me) => {
       if (!xt$3(me)) {
-        const { message: we } = N$5("MISSING_OR_INVALID", `disconnect() params: ${me}`);
-        throw new Error(we);
+        const { message: ve } = N$5("MISSING_OR_INVALID", `disconnect() params: ${me}`);
+        throw new Error(ve);
       }
       const { topic: be } = me;
       await this.isValidPairingTopic(be);
@@ -7284,8 +7057,8 @@ let Ut$1 = class extends p$5 {
       const be = await this.core.crypto.decode(ye, me);
       try {
         isJsonRpcRequest(be) ? (this.core.history.set(ye, be), this.onRelayEventRequest({ topic: ye, payload: be })) : isJsonRpcResponse(be) && (await this.core.history.resolve(be), await this.onRelayEventResponse({ topic: ye, payload: be }), this.core.history.delete(ye, be.id));
-      } catch (we) {
-        this.logger.error(we);
+      } catch (ve) {
+        this.logger.error(ve);
       }
     });
   }
@@ -7297,12 +7070,12 @@ let Ut$1 = class extends p$5 {
   }
 }, $t$1 = class extends h$8 {
   constructor(e, ye) {
-    super(e, ye), this.core = e, this.logger = ye, this.records = /* @__PURE__ */ new Map(), this.events = new eventsExports.EventEmitter(), this.name = Et$2, this.version = wt$2, this.cached = [], this.initialized = !1, this.storagePrefix = x$3, this.init = async () => {
+    super(e, ye), this.core = e, this.logger = ye, this.records = /* @__PURE__ */ new Map(), this.events = new EventEmitter$1(), this.name = Et$2, this.version = wt$2, this.cached = [], this.initialized = !1, this.storagePrefix = x$3, this.init = async () => {
       this.initialized || (this.logger.trace("Initialized"), await this.restore(), this.cached.forEach((me) => this.records.set(me.id, me)), this.cached = [], this.registerEventListeners(), this.initialized = !0);
-    }, this.set = (me, be, we) => {
-      if (this.isInitialized(), this.logger.debug("Setting JSON-RPC request history record"), this.logger.trace({ type: "method", method: "set", topic: me, request: be, chainId: we }), this.records.has(be.id))
+    }, this.set = (me, be, ve) => {
+      if (this.isInitialized(), this.logger.debug("Setting JSON-RPC request history record"), this.logger.trace({ type: "method", method: "set", topic: me, request: be, chainId: ve }), this.records.has(be.id))
         return;
-      const Ee = { id: be.id, topic: me, request: { method: be.method, params: be.params || null }, chainId: we, expiry: lt$3(cjs$4.THIRTY_DAYS) };
+      const Ee = { id: be.id, topic: me, request: { method: be.method, params: be.params || null }, chainId: ve, expiry: lt$3(cjs$4.THIRTY_DAYS) };
       this.records.set(Ee.id, Ee), this.events.emit(R$1.created, Ee);
     }, this.resolve = async (me) => {
       if (this.isInitialized(), this.logger.debug("Updating JSON-RPC response history record"), this.logger.trace({ type: "method", method: "update", response: me }), !this.records.has(me.id))
@@ -7310,11 +7083,11 @@ let Ut$1 = class extends p$5 {
       const be = await this.getRecord(me.id);
       typeof be.response > "u" && (be.response = isJsonRpcError(me) ? { error: me.error } : { result: me.result }, this.records.set(be.id, be), this.events.emit(R$1.updated, be));
     }, this.get = async (me, be) => (this.isInitialized(), this.logger.debug("Getting record"), this.logger.trace({ type: "method", method: "get", topic: me, id: be }), await this.getRecord(be)), this.delete = (me, be) => {
-      this.isInitialized(), this.logger.debug("Deleting record"), this.logger.trace({ type: "method", method: "delete", id: be }), this.values.forEach((we) => {
-        if (we.topic === me) {
-          if (typeof be < "u" && we.id !== be)
+      this.isInitialized(), this.logger.debug("Deleting record"), this.logger.trace({ type: "method", method: "delete", id: be }), this.values.forEach((ve) => {
+        if (ve.topic === me) {
+          if (typeof be < "u" && ve.id !== be)
             return;
-          this.records.delete(we.id), this.events.emit(R$1.deleted, we);
+          this.records.delete(ve.id), this.events.emit(R$1.deleted, ve);
         }
       });
     }, this.exists = async (me, be) => (this.isInitialized(), this.records.has(be) ? (await this.getRecord(be)).topic === me : !1), this.on = (me, be) => {
@@ -7414,7 +7187,7 @@ let Ut$1 = class extends p$5 {
   }
 }, Mt$2 = class extends E$4 {
   constructor(e, ye) {
-    super(e, ye), this.core = e, this.logger = ye, this.expirations = /* @__PURE__ */ new Map(), this.events = new eventsExports.EventEmitter(), this.name = vt$2, this.version = It$2, this.cached = [], this.initialized = !1, this.storagePrefix = x$3, this.init = async () => {
+    super(e, ye), this.core = e, this.logger = ye, this.expirations = /* @__PURE__ */ new Map(), this.events = new EventEmitter$1(), this.name = vt$2, this.version = It$2, this.cached = [], this.initialized = !1, this.storagePrefix = x$3, this.init = async () => {
       this.initialized || (this.logger.trace("Initialized"), await this.restore(), this.cached.forEach((me) => this.expirations.set(me.target, me)), this.cached = [], this.registerEventListeners(), this.initialized = !0);
     }, this.has = (me) => {
       try {
@@ -7425,16 +7198,16 @@ let Ut$1 = class extends p$5 {
       }
     }, this.set = (me, be) => {
       this.isInitialized();
-      const we = this.formatTarget(me), Ee = { target: we, expiry: be };
-      this.expirations.set(we, Ee), this.checkExpiry(we, Ee), this.events.emit(w$5.created, { target: we, expiration: Ee });
+      const ve = this.formatTarget(me), Ee = { target: ve, expiry: be };
+      this.expirations.set(ve, Ee), this.checkExpiry(ve, Ee), this.events.emit(w$5.created, { target: ve, expiration: Ee });
     }, this.get = (me) => {
       this.isInitialized();
       const be = this.formatTarget(me);
       return this.getExpiration(be);
     }, this.del = (me) => {
       if (this.isInitialized(), this.has(me)) {
-        const be = this.formatTarget(me), we = this.getExpiration(be);
-        this.expirations.delete(be), this.events.emit(w$5.deleted, { target: be, expiration: we });
+        const be = this.formatTarget(me), ve = this.getExpiration(be);
+        this.expirations.delete(be), this.events.emit(w$5.deleted, { target: be, expiration: ve });
       }
     }, this.on = (me, be) => {
       this.events.on(me, be);
@@ -7537,15 +7310,15 @@ let Ut$1 = class extends p$5 {
       this.verifyUrl !== be && this.removeIframe(), this.verifyUrl = be;
       try {
         await this.createIframe();
-      } catch (we) {
-        this.logger.warn(`Verify iframe failed to load: ${this.verifyUrl}`), this.logger.warn(we);
+      } catch (ve) {
+        this.logger.warn(`Verify iframe failed to load: ${this.verifyUrl}`), this.logger.warn(ve);
       }
       if (!this.initialized) {
         this.removeIframe(), this.verifyUrl = ge$1;
         try {
           await this.createIframe();
-        } catch (we) {
-          this.logger.error(`Verify iframe failed to load: ${this.verifyUrl}`), this.logger.error(we), this.verifyDisabled = !0;
+        } catch (ve) {
+          this.logger.error(`Verify iframe failed to load: ${this.verifyUrl}`), this.logger.error(ve), this.verifyDisabled = !0;
         }
       }
     }, this.register = async (me) => {
@@ -7554,18 +7327,18 @@ let Ut$1 = class extends p$5 {
       if (this.isDevEnv)
         return "";
       const be = (me == null ? void 0 : me.verifyUrl) || Q$4;
-      let we = "";
+      let ve = "";
       try {
-        we = await this.fetchAttestation(me.attestationId, be);
+        ve = await this.fetchAttestation(me.attestationId, be);
       } catch (Ee) {
-        this.logger.warn(`failed to resolve attestation: ${me.attestationId} from url: ${be}`), this.logger.warn(Ee), we = await this.fetchAttestation(me.attestationId, ge$1);
+        this.logger.warn(`failed to resolve attestation: ${me.attestationId} from url: ${be}`), this.logger.warn(Ee), ve = await this.fetchAttestation(me.attestationId, ge$1);
       }
-      return we;
+      return ve;
     }, this.fetchAttestation = async (me, be) => {
-      var we;
+      var ve;
       this.logger.info(`resolving attestation: ${me} from url: ${be}`);
       const Ee = this.startAbortTimer(cjs$4.ONE_SECOND * 2), Oe = await fetch(`${be}/attestation/${me}`, { signal: this.abortController.signal });
-      return clearTimeout(Ee), Oe.status === 200 ? (we = await Oe.json()) == null ? void 0 : we.origin : "";
+      return clearTimeout(Ee), Oe.status === 200 ? (ve = await Oe.json()) == null ? void 0 : ve.origin : "";
     }, this.addToQueue = (me) => {
       this.queue.push(me);
     }, this.processQueue = () => {
@@ -7580,16 +7353,16 @@ let Ut$1 = class extends p$5 {
       }
     }, this.createIframe = async () => {
       let me;
-      const be = (we) => {
-        we.data === "verify_ready" && (this.initialized = !0, this.processQueue(), window.removeEventListener("message", be), me());
+      const be = (ve) => {
+        ve.data === "verify_ready" && (this.initialized = !0, this.processQueue(), window.removeEventListener("message", be), me());
       };
-      await Promise.race([new Promise((we) => {
+      await Promise.race([new Promise((ve) => {
         if (document.getElementById(X$4))
-          return we();
+          return ve();
         window.addEventListener("message", be);
         const Ee = document.createElement("iframe");
-        Ee.id = X$4, Ee.src = `${this.verifyUrl}/${this.projectId}`, Ee.style.display = "none", document.body.append(Ee), this.iframe = Ee, me = we;
-      }), new Promise((we, Ee) => setTimeout(() => {
+        Ee.id = X$4, Ee.src = `${this.verifyUrl}/${this.projectId}`, Ee.style.display = "none", document.body.append(Ee), this.iframe = Ee, me = ve;
+      }), new Promise((ve, Ee) => setTimeout(() => {
         window.removeEventListener("message", be), Ee("verify iframe load timeout");
       }, cjs$4.toMiliseconds(cjs$4.FIVE_SECONDS)))]);
     }, this.removeIframe = () => {
@@ -7613,7 +7386,7 @@ var Sr$1 = Object.defineProperty, Kt$2 = Object.getOwnPropertySymbols, Pr$1 = Ob
 };
 let Z$2 = class la extends n$2 {
   constructor(e) {
-    super(e), this.protocol = ce$4, this.version = Je$2, this.name = W$2, this.events = new eventsExports.EventEmitter(), this.initialized = !1, this.on = (me, be) => this.events.on(me, be), this.once = (me, be) => this.events.once(me, be), this.off = (me, be) => this.events.off(me, be), this.removeListener = (me, be) => this.events.removeListener(me, be), this.projectId = e == null ? void 0 : e.projectId, this.relayUrl = (e == null ? void 0 : e.relayUrl) || le$3;
+    super(e), this.protocol = ce$4, this.version = Je$2, this.name = W$2, this.events = new EventEmitter$1(), this.initialized = !1, this.on = (me, be) => this.events.on(me, be), this.once = (me, be) => this.events.once(me, be), this.off = (me, be) => this.events.off(me, be), this.removeListener = (me, be) => this.events.removeListener(me, be), this.projectId = e == null ? void 0 : e.projectId, this.relayUrl = (e == null ? void 0 : e.relayUrl) || le$3;
     const ye = typeof (e == null ? void 0 : e.logger) < "u" && typeof (e == null ? void 0 : e.logger) != "string" ? e.logger : cjs$3.pino(cjs$3.getDefaultLoggerOptions({ level: (e == null ? void 0 : e.logger) || We$2.logger }));
     this.logger = cjs$3.generateChildLogger(ye, this.name), this.heartbeat = new cjs$5.HeartBeat(), this.crypto = new Rt$1(this, this.logger, e == null ? void 0 : e.keychain), this.history = new $t$1(this, this.logger), this.expirer = new Mt$2(this, this.logger), this.storage = e != null && e.storage ? e.storage : new h$9(Vt$2(Vt$2({}, Xe$1), e == null ? void 0 : e.storageOptions)), this.relayer = new At$1({ core: this, logger: this.logger, relayUrl: this.relayUrl, projectId: this.projectId }), this.pairing = new Ft$2(this, this.logger), this.verify = new kt$2(this.projectId || "", this.logger);
   }
@@ -7649,7 +7422,7 @@ var rs$1 = Object.defineProperty, ns$1 = Object.defineProperties, os$2 = Object.
 }, b$3 = (fe, e) => ns$1(fe, os$2(e));
 let ls$2 = class extends S$3 {
   constructor(e) {
-    super(e), this.name = ce$3, this.events = new Ye$2(), this.initialized = !1, this.ignoredPayloadTypes = [_$5], this.requestQueue = { state: E$3.idle, queue: [] }, this.sessionRequestQueue = { state: E$3.idle, queue: [] }, this.requestQueueDelay = cjs$4.ONE_SECOND, this.init = async () => {
+    super(e), this.name = ce$3, this.events = new c$5(), this.initialized = !1, this.ignoredPayloadTypes = [_$5], this.requestQueue = { state: E$3.idle, queue: [] }, this.sessionRequestQueue = { state: E$3.idle, queue: [] }, this.requestQueueDelay = cjs$4.ONE_SECOND, this.init = async () => {
       this.initialized || (await this.cleanup(), this.registerRelayerEvents(), this.registerExpirerEvents(), this.client.core.pairing.register({ methods: Object.keys(V$3) }), this.initialized = !0, setTimeout(() => {
         this.sessionRequestQueue.queue = this.getPendingSessionRequests(), this.processSessionRequestQueue();
       }, cjs$4.toMiliseconds(this.requestQueueDelay)));
@@ -7657,13 +7430,13 @@ let ls$2 = class extends S$3 {
       await this.isInitialized();
       const me = b$3(g$4({}, ye), { requiredNamespaces: ye.requiredNamespaces || {}, optionalNamespaces: ye.optionalNamespaces || {} });
       await this.isValidConnect(me);
-      const { pairingTopic: be, requiredNamespaces: we, optionalNamespaces: Ee, sessionProperties: Oe, relays: xe } = me;
-      let gr = be, ve, Se = !1;
+      const { pairingTopic: be, requiredNamespaces: ve, optionalNamespaces: Ee, sessionProperties: Oe, relays: xe } = me;
+      let gr = be, we, Se = !1;
       if (gr && (Se = this.client.core.pairing.pairings.get(gr).active), !gr || !Se) {
         const { topic: qr, uri: Hr } = await this.client.core.pairing.create();
-        gr = qr, ve = Hr;
+        gr = qr, we = Hr;
       }
-      const $r = await this.client.core.crypto.generateKeyPair(), Fr = g$4({ requiredNamespaces: we, optionalNamespaces: Ee, relays: xe ?? [{ protocol: at$3 }], proposer: { publicKey: $r, metadata: this.client.metadata } }, Oe && { sessionProperties: Oe }), { reject: Br, resolve: Vr, done: oo } = st$2(cjs$4.FIVE_MINUTES, oe$1);
+      const $r = await this.client.core.crypto.generateKeyPair(), Fr = g$4({ requiredNamespaces: ve, optionalNamespaces: Ee, relays: xe ?? [{ protocol: at$3 }], proposer: { publicKey: $r, metadata: this.client.metadata } }, Oe && { sessionProperties: Oe }), { reject: Br, resolve: Vr, done: oo } = st$2(cjs$4.FIVE_MINUTES, oe$1);
       if (this.events.once(ft$4("session_connect"), async ({ error: qr, session: Hr }) => {
         if (qr)
           Br(qr);
@@ -7677,63 +7450,63 @@ let ls$2 = class extends S$3 {
         throw new Error(qr);
       }
       const so = await this.sendRequest({ topic: gr, method: "wc_sessionPropose", params: Fr }), kr = lt$3(cjs$4.FIVE_MINUTES);
-      return await this.setProposal(so, g$4({ id: so, expiry: kr }, Fr)), { uri: ve, approval: oo };
+      return await this.setProposal(so, g$4({ id: so, expiry: kr }, Fr)), { uri: we, approval: oo };
     }, this.pair = async (ye) => (await this.isInitialized(), await this.client.core.pairing.pair(ye)), this.approve = async (ye) => {
       await this.isInitialized(), await this.isValidApprove(ye);
-      const { id: me, relayProtocol: be, namespaces: we, sessionProperties: Ee } = ye, Oe = this.client.proposal.get(me);
-      let { pairingTopic: xe, proposer: gr, requiredNamespaces: ve, optionalNamespaces: Se } = Oe;
-      xe = xe || "", B$3(ve) || (ve = At$2(we, "approve()"));
+      const { id: me, relayProtocol: be, namespaces: ve, sessionProperties: Ee } = ye, Oe = this.client.proposal.get(me);
+      let { pairingTopic: xe, proposer: gr, requiredNamespaces: we, optionalNamespaces: Se } = Oe;
+      xe = xe || "", B$3(we) || (we = At$2(ve, "approve()"));
       const $r = await this.client.core.crypto.generateKeyPair(), Fr = gr.publicKey, Br = await this.client.core.crypto.generateSharedKey($r, Fr);
       xe && me && (await this.client.core.pairing.updateMetadata({ topic: xe, metadata: gr.metadata }), await this.sendResult({ id: me, topic: xe, result: { relay: { protocol: be ?? "irn" }, responderPublicKey: $r } }), await this.client.proposal.delete(me, U$6("USER_DISCONNECTED")), await this.client.core.pairing.activate({ topic: xe }));
-      const Vr = g$4({ relay: { protocol: be ?? "irn" }, namespaces: we, requiredNamespaces: ve, optionalNamespaces: Se, pairingTopic: xe, controller: { publicKey: $r, metadata: this.client.metadata }, expiry: lt$3(C$2) }, Ee && { sessionProperties: Ee });
+      const Vr = g$4({ relay: { protocol: be ?? "irn" }, namespaces: ve, requiredNamespaces: we, optionalNamespaces: Se, pairingTopic: xe, controller: { publicKey: $r, metadata: this.client.metadata }, expiry: lt$3(C$2) }, Ee && { sessionProperties: Ee });
       await this.client.core.relayer.subscribe(Br), await this.sendRequest({ topic: Br, method: "wc_sessionSettle", params: Vr, throwOnFailedPublish: !0 });
       const oo = b$3(g$4({}, Vr), { topic: Br, pairingTopic: xe, acknowledged: !1, self: Vr.controller, peer: { publicKey: gr.publicKey, metadata: gr.metadata }, controller: $r });
       return await this.client.session.set(Br, oo), await this.setExpiry(Br, lt$3(C$2)), { topic: Br, acknowledged: () => new Promise((so) => setTimeout(() => so(this.client.session.get(Br)), 500)) };
     }, this.reject = async (ye) => {
       await this.isInitialized(), await this.isValidReject(ye);
-      const { id: me, reason: be } = ye, { pairingTopic: we } = this.client.proposal.get(me);
-      we && (await this.sendError(me, we, be), await this.client.proposal.delete(me, U$6("USER_DISCONNECTED")));
+      const { id: me, reason: be } = ye, { pairingTopic: ve } = this.client.proposal.get(me);
+      ve && (await this.sendError(me, ve, be), await this.client.proposal.delete(me, U$6("USER_DISCONNECTED")));
     }, this.update = async (ye) => {
       await this.isInitialized(), await this.isValidUpdate(ye);
-      const { topic: me, namespaces: be } = ye, we = await this.sendRequest({ topic: me, method: "wc_sessionUpdate", params: { namespaces: be } }), { done: Ee, resolve: Oe, reject: xe } = st$2();
-      return this.events.once(ft$4("session_update", we), ({ error: gr }) => {
+      const { topic: me, namespaces: be } = ye, ve = await this.sendRequest({ topic: me, method: "wc_sessionUpdate", params: { namespaces: be } }), { done: Ee, resolve: Oe, reject: xe } = st$2();
+      return this.events.once(ft$4("session_update", ve), ({ error: gr }) => {
         gr ? xe(gr) : Oe();
       }), await this.client.session.update(me, { namespaces: be }), { acknowledged: Ee };
     }, this.extend = async (ye) => {
       await this.isInitialized(), await this.isValidExtend(ye);
-      const { topic: me } = ye, be = await this.sendRequest({ topic: me, method: "wc_sessionExtend", params: {} }), { done: we, resolve: Ee, reject: Oe } = st$2();
+      const { topic: me } = ye, be = await this.sendRequest({ topic: me, method: "wc_sessionExtend", params: {} }), { done: ve, resolve: Ee, reject: Oe } = st$2();
       return this.events.once(ft$4("session_extend", be), ({ error: xe }) => {
         xe ? Oe(xe) : Ee();
-      }), await this.setExpiry(me, lt$3(C$2)), { acknowledged: we };
+      }), await this.setExpiry(me, lt$3(C$2)), { acknowledged: ve };
     }, this.request = async (ye) => {
       await this.isInitialized(), await this.isValidRequest(ye);
-      const { chainId: me, request: be, topic: we, expiry: Ee } = ye, Oe = payloadId(), { done: xe, resolve: gr, reject: ve } = st$2(Ee);
+      const { chainId: me, request: be, topic: ve, expiry: Ee } = ye, Oe = payloadId(), { done: xe, resolve: gr, reject: we } = st$2(Ee);
       return this.events.once(ft$4("session_request", Oe), ({ error: Se, result: $r }) => {
-        Se ? ve(Se) : gr($r);
+        Se ? we(Se) : gr($r);
       }), await Promise.all([new Promise(async (Se) => {
-        await this.sendRequest({ clientRpcId: Oe, topic: we, method: "wc_sessionRequest", params: { request: be, chainId: me }, expiry: Ee, throwOnFailedPublish: !0 }).catch(($r) => ve($r)), this.client.events.emit("session_request_sent", { topic: we, request: be, chainId: me, id: Oe }), Se();
+        await this.sendRequest({ clientRpcId: Oe, topic: ve, method: "wc_sessionRequest", params: { request: be, chainId: me }, expiry: Ee, throwOnFailedPublish: !0 }).catch(($r) => we($r)), this.client.events.emit("session_request_sent", { topic: ve, request: be, chainId: me, id: Oe }), Se();
       }), new Promise(async (Se) => {
         const $r = await this.client.core.storage.getItem(H$3);
-        pt$4({ id: Oe, topic: we, wcDeepLink: $r }), Se();
+        pt$4({ id: Oe, topic: ve, wcDeepLink: $r }), Se();
       }), xe()]).then((Se) => Se[2]);
     }, this.respond = async (ye) => {
       await this.isInitialized(), await this.isValidRespond(ye);
-      const { topic: me, response: be } = ye, { id: we } = be;
-      isJsonRpcResult(be) ? await this.sendResult({ id: we, topic: me, result: be.result, throwOnFailedPublish: !0 }) : isJsonRpcError(be) && await this.sendError(we, me, be.error), this.cleanupAfterResponse(ye);
+      const { topic: me, response: be } = ye, { id: ve } = be;
+      isJsonRpcResult(be) ? await this.sendResult({ id: ve, topic: me, result: be.result, throwOnFailedPublish: !0 }) : isJsonRpcError(be) && await this.sendError(ve, me, be.error), this.cleanupAfterResponse(ye);
     }, this.ping = async (ye) => {
       await this.isInitialized(), await this.isValidPing(ye);
       const { topic: me } = ye;
       if (this.client.session.keys.includes(me)) {
-        const be = await this.sendRequest({ topic: me, method: "wc_sessionPing", params: {} }), { done: we, resolve: Ee, reject: Oe } = st$2();
+        const be = await this.sendRequest({ topic: me, method: "wc_sessionPing", params: {} }), { done: ve, resolve: Ee, reject: Oe } = st$2();
         this.events.once(ft$4("session_ping", be), ({ error: xe }) => {
           xe ? Oe(xe) : Ee();
-        }), await we();
+        }), await ve();
       } else
         this.client.core.pairing.pairings.keys.includes(me) && await this.client.core.pairing.ping({ topic: me });
     }, this.emit = async (ye) => {
       await this.isInitialized(), await this.isValidEmit(ye);
-      const { topic: me, event: be, chainId: we } = ye;
-      await this.sendRequest({ topic: me, method: "wc_sessionEvent", params: { event: be, chainId: we } });
+      const { topic: me, event: be, chainId: ve } = ye;
+      await this.sendRequest({ topic: me, method: "wc_sessionEvent", params: { event: be, chainId: ve } });
     }, this.disconnect = async (ye) => {
       await this.isInitialized(), await this.isValidDisconnect(ye);
       const { topic: me } = ye;
@@ -7741,44 +7514,44 @@ let ls$2 = class extends S$3 {
     }, this.find = (ye) => (this.isInitialized(), this.client.session.getAll().filter((me) => $t$2(me, ye))), this.getPendingSessionRequests = () => (this.isInitialized(), this.client.pendingRequest.getAll()), this.cleanupDuplicatePairings = async (ye) => {
       if (ye.pairingTopic)
         try {
-          const me = this.client.core.pairing.pairings.get(ye.pairingTopic), be = this.client.core.pairing.pairings.getAll().filter((we) => {
+          const me = this.client.core.pairing.pairings.get(ye.pairingTopic), be = this.client.core.pairing.pairings.getAll().filter((ve) => {
             var Ee, Oe;
-            return ((Ee = we.peerMetadata) == null ? void 0 : Ee.url) && ((Oe = we.peerMetadata) == null ? void 0 : Oe.url) === ye.peer.metadata.url && we.topic && we.topic !== me.topic;
+            return ((Ee = ve.peerMetadata) == null ? void 0 : Ee.url) && ((Oe = ve.peerMetadata) == null ? void 0 : Oe.url) === ye.peer.metadata.url && ve.topic && ve.topic !== me.topic;
           });
           if (be.length === 0)
             return;
-          this.client.logger.info(`Cleaning up ${be.length} duplicate pairing(s)`), await Promise.all(be.map((we) => this.client.core.pairing.disconnect({ topic: we.topic }))), this.client.logger.info("Duplicate pairings clean up finished");
+          this.client.logger.info(`Cleaning up ${be.length} duplicate pairing(s)`), await Promise.all(be.map((ve) => this.client.core.pairing.disconnect({ topic: ve.topic }))), this.client.logger.info("Duplicate pairings clean up finished");
         } catch (me) {
           this.client.logger.error(me);
         }
     }, this.deleteSession = async (ye, me) => {
       const { self: be } = this.client.session.get(ye);
-      await this.client.core.relayer.unsubscribe(ye), this.client.session.delete(ye, U$6("USER_DISCONNECTED")), this.client.core.crypto.keychain.has(be.publicKey) && await this.client.core.crypto.deleteKeyPair(be.publicKey), this.client.core.crypto.keychain.has(ye) && await this.client.core.crypto.deleteSymKey(ye), me || this.client.core.expirer.del(ye), this.client.core.storage.removeItem(H$3).catch((we) => this.client.logger.warn(we));
+      await this.client.core.relayer.unsubscribe(ye), this.client.session.delete(ye, U$6("USER_DISCONNECTED")), this.client.core.crypto.keychain.has(be.publicKey) && await this.client.core.crypto.deleteKeyPair(be.publicKey), this.client.core.crypto.keychain.has(ye) && await this.client.core.crypto.deleteSymKey(ye), me || this.client.core.expirer.del(ye), this.client.core.storage.removeItem(H$3).catch((ve) => this.client.logger.warn(ve));
     }, this.deleteProposal = async (ye, me) => {
       await Promise.all([this.client.proposal.delete(ye, U$6("USER_DISCONNECTED")), me ? Promise.resolve() : this.client.core.expirer.del(ye)]);
     }, this.deletePendingSessionRequest = async (ye, me, be = !1) => {
-      await Promise.all([this.client.pendingRequest.delete(ye, me), be ? Promise.resolve() : this.client.core.expirer.del(ye)]), this.sessionRequestQueue.queue = this.sessionRequestQueue.queue.filter((we) => we.id !== ye), be && (this.sessionRequestQueue.state = E$3.idle);
+      await Promise.all([this.client.pendingRequest.delete(ye, me), be ? Promise.resolve() : this.client.core.expirer.del(ye)]), this.sessionRequestQueue.queue = this.sessionRequestQueue.queue.filter((ve) => ve.id !== ye), be && (this.sessionRequestQueue.state = E$3.idle);
     }, this.setExpiry = async (ye, me) => {
       this.client.session.keys.includes(ye) && await this.client.session.update(ye, { expiry: me }), this.client.core.expirer.set(ye, me);
     }, this.setProposal = async (ye, me) => {
       await this.client.proposal.set(ye, me), this.client.core.expirer.set(ye, me.expiry);
     }, this.setPendingSessionRequest = async (ye) => {
-      const me = V$3.wc_sessionRequest.req.ttl, { id: be, topic: we, params: Ee } = ye;
-      await this.client.pendingRequest.set(be, { id: be, topic: we, params: Ee }), me && this.client.core.expirer.set(be, lt$3(me));
+      const me = V$3.wc_sessionRequest.req.ttl, { id: be, topic: ve, params: Ee } = ye;
+      await this.client.pendingRequest.set(be, { id: be, topic: ve, params: Ee }), me && this.client.core.expirer.set(be, lt$3(me));
     }, this.sendRequest = async (ye) => {
-      const { topic: me, method: be, params: we, expiry: Ee, relayRpcId: Oe, clientRpcId: xe, throwOnFailedPublish: gr } = ye, ve = formatJsonRpcRequest(be, we, xe);
+      const { topic: me, method: be, params: ve, expiry: Ee, relayRpcId: Oe, clientRpcId: xe, throwOnFailedPublish: gr } = ye, we = formatJsonRpcRequest(be, ve, xe);
       if (q$2() && pe$2.includes(be)) {
-        const Fr = Mn$1(JSON.stringify(ve));
+        const Fr = Mn$1(JSON.stringify(we));
         this.client.core.verify.register({ attestationId: Fr });
       }
-      const Se = await this.client.core.crypto.encode(me, ve), $r = V$3[be].req;
-      return Ee && ($r.ttl = Ee), Oe && ($r.id = Oe), this.client.core.history.set(me, ve), gr ? ($r.internal = b$3(g$4({}, $r.internal), { throwOnFailedPublish: !0 }), await this.client.core.relayer.publish(me, Se, $r)) : this.client.core.relayer.publish(me, Se, $r).catch((Fr) => this.client.logger.error(Fr)), ve.id;
+      const Se = await this.client.core.crypto.encode(me, we), $r = V$3[be].req;
+      return Ee && ($r.ttl = Ee), Oe && ($r.id = Oe), this.client.core.history.set(me, we), gr ? ($r.internal = b$3(g$4({}, $r.internal), { throwOnFailedPublish: !0 }), await this.client.core.relayer.publish(me, Se, $r)) : this.client.core.relayer.publish(me, Se, $r).catch((Fr) => this.client.logger.error(Fr)), we.id;
     }, this.sendResult = async (ye) => {
-      const { id: me, topic: be, result: we, throwOnFailedPublish: Ee } = ye, Oe = formatJsonRpcResult(me, we), xe = await this.client.core.crypto.encode(be, Oe), gr = await this.client.core.history.get(be, me), ve = V$3[gr.request.method].res;
-      Ee ? (ve.internal = b$3(g$4({}, ve.internal), { throwOnFailedPublish: !0 }), await this.client.core.relayer.publish(be, xe, ve)) : this.client.core.relayer.publish(be, xe, ve).catch((Se) => this.client.logger.error(Se)), await this.client.core.history.resolve(Oe);
+      const { id: me, topic: be, result: ve, throwOnFailedPublish: Ee } = ye, Oe = formatJsonRpcResult(me, ve), xe = await this.client.core.crypto.encode(be, Oe), gr = await this.client.core.history.get(be, me), we = V$3[gr.request.method].res;
+      Ee ? (we.internal = b$3(g$4({}, we.internal), { throwOnFailedPublish: !0 }), await this.client.core.relayer.publish(be, xe, we)) : this.client.core.relayer.publish(be, xe, we).catch((Se) => this.client.logger.error(Se)), await this.client.core.history.resolve(Oe);
     }, this.sendError = async (ye, me, be) => {
-      const we = formatJsonRpcError(ye, be), Ee = await this.client.core.crypto.encode(me, we), Oe = await this.client.core.history.get(me, ye), xe = V$3[Oe.request.method].res;
-      this.client.core.relayer.publish(me, Ee, xe), await this.client.core.history.resolve(we);
+      const ve = formatJsonRpcError(ye, be), Ee = await this.client.core.crypto.encode(me, ve), Oe = await this.client.core.history.get(me, ye), xe = V$3[Oe.request.method].res;
+      this.client.core.relayer.publish(me, Ee, xe), await this.client.core.history.resolve(ve);
     }, this.cleanup = async () => {
       const ye = [], me = [];
       this.client.session.getAll().forEach((be) => {
@@ -7805,8 +7578,8 @@ let ls$2 = class extends S$3 {
       }
       this.requestQueue.state = E$3.idle;
     }, this.processRequest = (ye) => {
-      const { topic: me, payload: be } = ye, we = be.method;
-      switch (we) {
+      const { topic: me, payload: be } = ye, ve = be.method;
+      switch (ve) {
         case "wc_sessionPropose":
           return this.onSessionProposeRequest(me, be);
         case "wc_sessionSettle":
@@ -7824,11 +7597,11 @@ let ls$2 = class extends S$3 {
         case "wc_sessionEvent":
           return this.onSessionEventRequest(me, be);
         default:
-          return this.client.logger.info(`Unsupported request method ${we}`);
+          return this.client.logger.info(`Unsupported request method ${ve}`);
       }
     }, this.onRelayEventResponse = async (ye) => {
-      const { topic: me, payload: be } = ye, we = (await this.client.core.history.get(me, be.id)).request.method;
-      switch (we) {
+      const { topic: me, payload: be } = ye, ve = (await this.client.core.history.get(me, be.id)).request.method;
+      switch (ve) {
         case "wc_sessionPropose":
           return this.onSessionProposeResponse(me, be);
         case "wc_sessionSettle":
@@ -7842,44 +7615,44 @@ let ls$2 = class extends S$3 {
         case "wc_sessionRequest":
           return this.onSessionRequestResponse(me, be);
         default:
-          return this.client.logger.info(`Unsupported response method ${we}`);
+          return this.client.logger.info(`Unsupported response method ${ve}`);
       }
     }, this.onRelayEventUnknownPayload = (ye) => {
       const { topic: me } = ye, { message: be } = N$5("MISSING_OR_INVALID", `Decoded payload on topic ${me} is not identifiable as a JSON-RPC request or a response.`);
       throw new Error(be);
     }, this.onSessionProposeRequest = async (ye, me) => {
-      const { params: be, id: we } = me;
+      const { params: be, id: ve } = me;
       try {
         this.isValidConnect(g$4({}, me.params));
-        const Ee = lt$3(cjs$4.FIVE_MINUTES), Oe = g$4({ id: we, pairingTopic: ye, expiry: Ee }, be);
-        await this.setProposal(we, Oe);
+        const Ee = lt$3(cjs$4.FIVE_MINUTES), Oe = g$4({ id: ve, pairingTopic: ye, expiry: Ee }, be);
+        await this.setProposal(ve, Oe);
         const xe = Mn$1(JSON.stringify(me)), gr = await this.getVerifyContext(xe, Oe.proposer.metadata);
-        this.client.events.emit("session_proposal", { id: we, params: Oe, verifyContext: gr });
+        this.client.events.emit("session_proposal", { id: ve, params: Oe, verifyContext: gr });
       } catch (Ee) {
-        await this.sendError(we, ye, Ee), this.client.logger.error(Ee);
+        await this.sendError(ve, ye, Ee), this.client.logger.error(Ee);
       }
     }, this.onSessionProposeResponse = async (ye, me) => {
       const { id: be } = me;
       if (isJsonRpcResult(me)) {
-        const { result: we } = me;
-        this.client.logger.trace({ type: "method", method: "onSessionProposeResponse", result: we });
+        const { result: ve } = me;
+        this.client.logger.trace({ type: "method", method: "onSessionProposeResponse", result: ve });
         const Ee = this.client.proposal.get(be);
         this.client.logger.trace({ type: "method", method: "onSessionProposeResponse", proposal: Ee });
         const Oe = Ee.proposer.publicKey;
         this.client.logger.trace({ type: "method", method: "onSessionProposeResponse", selfPublicKey: Oe });
-        const xe = we.responderPublicKey;
+        const xe = ve.responderPublicKey;
         this.client.logger.trace({ type: "method", method: "onSessionProposeResponse", peerPublicKey: xe });
         const gr = await this.client.core.crypto.generateSharedKey(Oe, xe);
         this.client.logger.trace({ type: "method", method: "onSessionProposeResponse", sessionTopic: gr });
-        const ve = await this.client.core.relayer.subscribe(gr);
-        this.client.logger.trace({ type: "method", method: "onSessionProposeResponse", subscriptionId: ve }), await this.client.core.pairing.activate({ topic: ye });
+        const we = await this.client.core.relayer.subscribe(gr);
+        this.client.logger.trace({ type: "method", method: "onSessionProposeResponse", subscriptionId: we }), await this.client.core.pairing.activate({ topic: ye });
       } else
         isJsonRpcError(me) && (await this.client.proposal.delete(be, U$6("USER_DISCONNECTED")), this.events.emit(ft$4("session_connect"), { error: me.error }));
     }, this.onSessionSettleRequest = async (ye, me) => {
-      const { id: be, params: we } = me;
+      const { id: be, params: ve } = me;
       try {
-        this.isValidSessionSettleRequest(we);
-        const { relay: Ee, controller: Oe, expiry: xe, namespaces: gr, requiredNamespaces: ve, optionalNamespaces: Se, sessionProperties: $r, pairingTopic: Fr } = me.params, Br = g$4({ topic: ye, relay: Ee, expiry: xe, namespaces: gr, acknowledged: !0, pairingTopic: Fr, requiredNamespaces: ve, optionalNamespaces: Se, controller: Oe.publicKey, self: { publicKey: "", metadata: this.client.metadata }, peer: { publicKey: Oe.publicKey, metadata: Oe.metadata } }, $r && { sessionProperties: $r });
+        this.isValidSessionSettleRequest(ve);
+        const { relay: Ee, controller: Oe, expiry: xe, namespaces: gr, requiredNamespaces: we, optionalNamespaces: Se, sessionProperties: $r, pairingTopic: Fr } = me.params, Br = g$4({ topic: ye, relay: Ee, expiry: xe, namespaces: gr, acknowledged: !0, pairingTopic: Fr, requiredNamespaces: we, optionalNamespaces: Se, controller: Oe.publicKey, self: { publicKey: "", metadata: this.client.metadata }, peer: { publicKey: Oe.publicKey, metadata: Oe.metadata } }, $r && { sessionProperties: $r });
         await this.sendResult({ id: me.id, topic: ye, result: !0 }), this.events.emit(ft$4("session_connect"), { session: Br }), this.cleanupDuplicatePairings(Br);
       } catch (Ee) {
         await this.sendError(be, ye, Ee), this.client.logger.error(Ee);
@@ -7888,16 +7661,16 @@ let ls$2 = class extends S$3 {
       const { id: be } = me;
       isJsonRpcResult(me) ? (await this.client.session.update(ye, { acknowledged: !0 }), this.events.emit(ft$4("session_approve", be), {})) : isJsonRpcError(me) && (await this.client.session.delete(ye, U$6("USER_DISCONNECTED")), this.events.emit(ft$4("session_approve", be), { error: me.error }));
     }, this.onSessionUpdateRequest = async (ye, me) => {
-      const { params: be, id: we } = me;
+      const { params: be, id: ve } = me;
       try {
         const Ee = `${ye}_session_update`, Oe = er$3.get(Ee);
-        if (Oe && this.isRequestOutOfSync(Oe, we)) {
-          this.client.logger.info(`Discarding out of sync request - ${we}`);
+        if (Oe && this.isRequestOutOfSync(Oe, ve)) {
+          this.client.logger.info(`Discarding out of sync request - ${ve}`);
           return;
         }
-        this.isValidUpdate(g$4({ topic: ye }, be)), await this.client.session.update(ye, { namespaces: be.namespaces }), await this.sendResult({ id: we, topic: ye, result: !0 }), this.client.events.emit("session_update", { id: we, topic: ye, params: be }), er$3.set(Ee, we);
+        this.isValidUpdate(g$4({ topic: ye }, be)), await this.client.session.update(ye, { namespaces: be.namespaces }), await this.sendResult({ id: ve, topic: ye, result: !0 }), this.client.events.emit("session_update", { id: ve, topic: ye, params: be }), er$3.set(Ee, ve);
       } catch (Ee) {
-        await this.sendError(we, ye, Ee), this.client.logger.error(Ee);
+        await this.sendError(ve, ye, Ee), this.client.logger.error(Ee);
       }
     }, this.isRequestOutOfSync = (ye, me) => parseInt(me.toString().slice(0, -3)) <= parseInt(ye.toString().slice(0, -3)), this.onSessionUpdateResponse = (ye, me) => {
       const { id: be } = me;
@@ -7906,8 +7679,8 @@ let ls$2 = class extends S$3 {
       const { id: be } = me;
       try {
         this.isValidExtend({ topic: ye }), await this.setExpiry(ye, lt$3(C$2)), await this.sendResult({ id: be, topic: ye, result: !0 }), this.client.events.emit("session_extend", { id: be, topic: ye });
-      } catch (we) {
-        await this.sendError(be, ye, we), this.client.logger.error(we);
+      } catch (ve) {
+        await this.sendError(be, ye, ve), this.client.logger.error(ve);
       }
     }, this.onSessionExtendResponse = (ye, me) => {
       const { id: be } = me;
@@ -7916,8 +7689,8 @@ let ls$2 = class extends S$3 {
       const { id: be } = me;
       try {
         this.isValidPing({ topic: ye }), await this.sendResult({ id: be, topic: ye, result: !0 }), this.client.events.emit("session_ping", { id: be, topic: ye });
-      } catch (we) {
-        await this.sendError(be, ye, we), this.client.logger.error(we);
+      } catch (ve) {
+        await this.sendError(be, ye, ve), this.client.logger.error(ve);
       }
     }, this.onSessionPingResponse = (ye, me) => {
       const { id: be } = me;
@@ -7927,18 +7700,18 @@ let ls$2 = class extends S$3 {
     }, this.onSessionDeleteRequest = async (ye, me) => {
       const { id: be } = me;
       try {
-        this.isValidDisconnect({ topic: ye, reason: me.params }), await Promise.all([new Promise((we) => {
+        this.isValidDisconnect({ topic: ye, reason: me.params }), await Promise.all([new Promise((ve) => {
           this.client.core.relayer.once(D$5.publish, async () => {
-            we(await this.deleteSession(ye));
+            ve(await this.deleteSession(ye));
           });
         }), this.sendResult({ id: be, topic: ye, result: !0 })]), this.client.events.emit("session_delete", { id: be, topic: ye });
-      } catch (we) {
-        this.client.logger.error(we);
+      } catch (ve) {
+        this.client.logger.error(ve);
       }
     }, this.onSessionRequest = async (ye, me) => {
-      const { id: be, params: we } = me;
+      const { id: be, params: ve } = me;
       try {
-        this.isValidRequest(g$4({ topic: ye }, we)), await this.setPendingSessionRequest({ id: be, topic: ye, params: we }), this.addSessionRequestToSessionRequestQueue({ id: be, topic: ye, params: we }), await this.processSessionRequestQueue();
+        this.isValidRequest(g$4({ topic: ye }, ve)), await this.setPendingSessionRequest({ id: be, topic: ye, params: ve }), this.addSessionRequestToSessionRequestQueue({ id: be, topic: ye, params: ve }), await this.processSessionRequestQueue();
       } catch (Ee) {
         await this.sendError(be, ye, Ee), this.client.logger.error(Ee);
       }
@@ -7946,14 +7719,14 @@ let ls$2 = class extends S$3 {
       const { id: be } = me;
       isJsonRpcResult(me) ? this.events.emit(ft$4("session_request", be), { result: me.result }) : isJsonRpcError(me) && this.events.emit(ft$4("session_request", be), { error: me.error });
     }, this.onSessionEventRequest = async (ye, me) => {
-      const { id: be, params: we } = me;
+      const { id: be, params: ve } = me;
       try {
-        const Ee = `${ye}_session_event_${we.event.name}`, Oe = er$3.get(Ee);
+        const Ee = `${ye}_session_event_${ve.event.name}`, Oe = er$3.get(Ee);
         if (Oe && this.isRequestOutOfSync(Oe, be)) {
           this.client.logger.info(`Discarding out of sync request - ${be}`);
           return;
         }
-        this.isValidEmit(g$4({ topic: ye }, we)), this.client.events.emit("session_event", { id: be, topic: ye, params: we }), er$3.set(Ee, be);
+        this.isValidEmit(g$4({ topic: ye }, ve)), this.client.events.emit("session_event", { id: be, topic: ye, params: ve }), er$3.set(Ee, be);
       } catch (Ee) {
         await this.sendError(be, ye, Ee), this.client.logger.error(Ee);
       }
@@ -7974,8 +7747,8 @@ let ls$2 = class extends S$3 {
         return;
       }
       try {
-        const { id: me, topic: be, params: we } = ye, Ee = Mn$1(JSON.stringify(formatJsonRpcRequest("wc_sessionRequest", we, me))), Oe = this.client.session.get(be), xe = await this.getVerifyContext(Ee, Oe.peer.metadata);
-        this.sessionRequestQueue.state = E$3.active, this.client.events.emit("session_request", { id: me, topic: be, params: we, verifyContext: xe });
+        const { id: me, topic: be, params: ve } = ye, Ee = Mn$1(JSON.stringify(formatJsonRpcRequest("wc_sessionRequest", ve, me))), Oe = this.client.session.get(be), xe = await this.getVerifyContext(Ee, Oe.peer.metadata);
+        this.sessionRequestQueue.state = E$3.active, this.client.events.emit("session_request", { id: me, topic: be, params: ve, verifyContext: xe });
       } catch (me) {
         this.client.logger.error(me);
       }
@@ -7984,12 +7757,12 @@ let ls$2 = class extends S$3 {
         const { message: xe } = N$5("MISSING_OR_INVALID", `connect() params: ${JSON.stringify(ye)}`);
         throw new Error(xe);
       }
-      const { pairingTopic: me, requiredNamespaces: be, optionalNamespaces: we, sessionProperties: Ee, relays: Oe } = ye;
+      const { pairingTopic: me, requiredNamespaces: be, optionalNamespaces: ve, sessionProperties: Ee, relays: Oe } = ye;
       if (w$6(me) || await this.isValidPairingTopic(me), !Kt$3(Oe, !0)) {
         const { message: xe } = N$5("MISSING_OR_INVALID", `connect() relays: ${Oe}`);
         throw new Error(xe);
       }
-      !w$6(be) && B$3(be) !== 0 && this.validateNamespaces(be, "requiredNamespaces"), !w$6(we) && B$3(we) !== 0 && this.validateNamespaces(we, "optionalNamespaces"), w$6(Ee) || this.validateSessionProps(Ee, "sessionProperties");
+      !w$6(be) && B$3(be) !== 0 && this.validateNamespaces(be, "requiredNamespaces"), !w$6(ve) && B$3(ve) !== 0 && this.validateNamespaces(ve, "optionalNamespaces"), w$6(Ee) || this.validateSessionProps(Ee, "sessionProperties");
     }, this.validateNamespaces = (ye, me) => {
       const be = Mt$3(ye, "connect()", me);
       if (be)
@@ -7997,7 +7770,7 @@ let ls$2 = class extends S$3 {
     }, this.isValidApprove = async (ye) => {
       if (!xt$3(ye))
         throw new Error(N$5("MISSING_OR_INVALID", `approve() params: ${ye}`).message);
-      const { id: me, namespaces: be, relayProtocol: we, sessionProperties: Ee } = ye;
+      const { id: me, namespaces: be, relayProtocol: ve, sessionProperties: Ee } = ye;
       await this.isValidProposalId(me);
       const Oe = this.client.proposal.get(me), xe = cn$1(be, "approve()");
       if (xe)
@@ -8005,27 +7778,27 @@ let ls$2 = class extends S$3 {
       const gr = un$1(Oe.requiredNamespaces, be, "approve()");
       if (gr)
         throw new Error(gr.message);
-      if (!h$7(we, !0)) {
-        const { message: ve } = N$5("MISSING_OR_INVALID", `approve() relayProtocol: ${we}`);
-        throw new Error(ve);
+      if (!h$7(ve, !0)) {
+        const { message: we } = N$5("MISSING_OR_INVALID", `approve() relayProtocol: ${ve}`);
+        throw new Error(we);
       }
       w$6(Ee) || this.validateSessionProps(Ee, "sessionProperties");
     }, this.isValidReject = async (ye) => {
       if (!xt$3(ye)) {
-        const { message: we } = N$5("MISSING_OR_INVALID", `reject() params: ${ye}`);
-        throw new Error(we);
+        const { message: ve } = N$5("MISSING_OR_INVALID", `reject() params: ${ye}`);
+        throw new Error(ve);
       }
       const { id: me, reason: be } = ye;
       if (await this.isValidProposalId(me), !Ft$3(be)) {
-        const { message: we } = N$5("MISSING_OR_INVALID", `reject() reason: ${JSON.stringify(be)}`);
-        throw new Error(we);
+        const { message: ve } = N$5("MISSING_OR_INVALID", `reject() reason: ${JSON.stringify(be)}`);
+        throw new Error(ve);
       }
     }, this.isValidSessionSettleRequest = (ye) => {
       if (!xt$3(ye)) {
         const { message: gr } = N$5("MISSING_OR_INVALID", `onSessionSettleRequest() params: ${ye}`);
         throw new Error(gr);
       }
-      const { relay: me, controller: be, namespaces: we, expiry: Ee } = ye;
+      const { relay: me, controller: be, namespaces: ve, expiry: Ee } = ye;
       if (!an$1(me)) {
         const { message: gr } = N$5("MISSING_OR_INVALID", "onSessionSettleRequest() relay protocol should be a string");
         throw new Error(gr);
@@ -8033,7 +7806,7 @@ let ls$2 = class extends S$3 {
       const Oe = Vt$3(be, "onSessionSettleRequest()");
       if (Oe)
         throw new Error(Oe.message);
-      const xe = cn$1(we, "onSessionSettleRequest()");
+      const xe = cn$1(ve, "onSessionSettleRequest()");
       if (xe)
         throw new Error(xe.message);
       if (dt$3(Ee)) {
@@ -8047,10 +7820,10 @@ let ls$2 = class extends S$3 {
       }
       const { topic: me, namespaces: be } = ye;
       await this.isValidSessionTopic(me);
-      const we = this.client.session.get(me), Ee = cn$1(be, "update()");
+      const ve = this.client.session.get(me), Ee = cn$1(be, "update()");
       if (Ee)
         throw new Error(Ee.message);
-      const Oe = un$1(we.requiredNamespaces, be, "update()");
+      const Oe = un$1(ve.requiredNamespaces, be, "update()");
       if (Oe)
         throw new Error(Oe.message);
     }, this.isValidExtend = async (ye) => {
@@ -8065,18 +7838,18 @@ let ls$2 = class extends S$3 {
         const { message: xe } = N$5("MISSING_OR_INVALID", `request() params: ${ye}`);
         throw new Error(xe);
       }
-      const { topic: me, request: be, chainId: we, expiry: Ee } = ye;
+      const { topic: me, request: be, chainId: ve, expiry: Ee } = ye;
       await this.isValidSessionTopic(me);
       const { namespaces: Oe } = this.client.session.get(me);
-      if (!Gt$2(Oe, we)) {
-        const { message: xe } = N$5("MISSING_OR_INVALID", `request() chainId: ${we}`);
+      if (!Gt$2(Oe, ve)) {
+        const { message: xe } = N$5("MISSING_OR_INVALID", `request() chainId: ${ve}`);
         throw new Error(xe);
       }
       if (!Ht$2(be)) {
         const { message: xe } = N$5("MISSING_OR_INVALID", `request() ${JSON.stringify(be)}`);
         throw new Error(xe);
       }
-      if (!Wt$1(Oe, we, be.method)) {
+      if (!Wt$1(Oe, ve, be.method)) {
         const { message: xe } = N$5("MISSING_OR_INVALID", `request() method: ${be.method}`);
         throw new Error(xe);
       }
@@ -8086,13 +7859,13 @@ let ls$2 = class extends S$3 {
       }
     }, this.isValidRespond = async (ye) => {
       if (!xt$3(ye)) {
-        const { message: we } = N$5("MISSING_OR_INVALID", `respond() params: ${ye}`);
-        throw new Error(we);
+        const { message: ve } = N$5("MISSING_OR_INVALID", `respond() params: ${ye}`);
+        throw new Error(ve);
       }
       const { topic: me, response: be } = ye;
       if (await this.isValidSessionTopic(me), !qt$2(be)) {
-        const { message: we } = N$5("MISSING_OR_INVALID", `respond() response: ${JSON.stringify(be)}`);
-        throw new Error(we);
+        const { message: ve } = N$5("MISSING_OR_INVALID", `respond() response: ${JSON.stringify(be)}`);
+        throw new Error(ve);
       }
     }, this.isValidPing = async (ye) => {
       if (!xt$3(ye)) {
@@ -8106,18 +7879,18 @@ let ls$2 = class extends S$3 {
         const { message: Oe } = N$5("MISSING_OR_INVALID", `emit() params: ${ye}`);
         throw new Error(Oe);
       }
-      const { topic: me, event: be, chainId: we } = ye;
+      const { topic: me, event: be, chainId: ve } = ye;
       await this.isValidSessionTopic(me);
       const { namespaces: Ee } = this.client.session.get(me);
-      if (!Gt$2(Ee, we)) {
-        const { message: Oe } = N$5("MISSING_OR_INVALID", `emit() chainId: ${we}`);
+      if (!Gt$2(Ee, ve)) {
+        const { message: Oe } = N$5("MISSING_OR_INVALID", `emit() chainId: ${ve}`);
         throw new Error(Oe);
       }
       if (!Bt$3(be)) {
         const { message: Oe } = N$5("MISSING_OR_INVALID", `emit() event: ${JSON.stringify(be)}`);
         throw new Error(Oe);
       }
-      if (!zt$3(Ee, we, be.name)) {
+      if (!zt$3(Ee, ve, be.name)) {
         const { message: Oe } = N$5("MISSING_OR_INVALID", `emit() event: ${JSON.stringify(be)}`);
         throw new Error(Oe);
       }
@@ -8131,17 +7904,17 @@ let ls$2 = class extends S$3 {
     }, this.getVerifyContext = async (ye, me) => {
       const be = { verified: { verifyUrl: me.verifyUrl || Q$4, validation: "UNKNOWN", origin: me.url || "" } };
       try {
-        const we = await this.client.core.verify.resolve({ attestationId: ye, verifyUrl: me.verifyUrl });
-        we && (be.verified.origin = we, be.verified.validation = we === new URL(me.url).origin ? "VALID" : "INVALID");
-      } catch (we) {
-        this.client.logger.error(we);
+        const ve = await this.client.core.verify.resolve({ attestationId: ye, verifyUrl: me.verifyUrl });
+        ve && (be.verified.origin = ve, be.verified.validation = ve === new URL(me.url).origin ? "VALID" : "INVALID");
+      } catch (ve) {
+        this.client.logger.error(ve);
       }
       return this.client.logger.info(`Verify context: ${JSON.stringify(be)}`), be;
     }, this.validateSessionProps = (ye, me) => {
       Object.values(ye).forEach((be) => {
         if (!h$7(be, !1)) {
-          const { message: we } = N$5("MISSING_OR_INVALID", `${me} must be in Record<string, string> format. Received: ${JSON.stringify(be)}`);
-          throw new Error(we);
+          const { message: ve } = N$5("MISSING_OR_INVALID", `${me} must be in Record<string, string> format. Received: ${JSON.stringify(be)}`);
+          throw new Error(ve);
         }
       });
     };
@@ -8161,8 +7934,8 @@ let ls$2 = class extends S$3 {
       const be = await this.client.core.crypto.decode(ye, me);
       try {
         isJsonRpcRequest(be) ? (this.client.core.history.set(ye, be), this.onRelayEventRequest({ topic: ye, payload: be })) : isJsonRpcResponse(be) ? (await this.client.core.history.resolve(be), await this.onRelayEventResponse({ topic: ye, payload: be }), this.client.core.history.delete(ye, be.id)) : this.onRelayEventUnknownPayload({ topic: ye, payload: be });
-      } catch (we) {
-        this.client.logger.error(we);
+      } catch (ve) {
+        this.client.logger.error(ve);
       }
     });
   }
@@ -8245,7 +8018,7 @@ let ls$2 = class extends S$3 {
   }
 }, Q$3 = class ua extends b$4 {
   constructor(e) {
-    super(e), this.protocol = J$1, this.version = X$3, this.name = M$1.name, this.events = new eventsExports.EventEmitter(), this.on = (me, be) => this.events.on(me, be), this.once = (me, be) => this.events.once(me, be), this.off = (me, be) => this.events.off(me, be), this.removeListener = (me, be) => this.events.removeListener(me, be), this.removeAllListeners = (me) => this.events.removeAllListeners(me), this.connect = async (me) => {
+    super(e), this.protocol = J$1, this.version = X$3, this.name = M$1.name, this.events = new EventEmitter$1(), this.on = (me, be) => this.events.on(me, be), this.once = (me, be) => this.events.once(me, be), this.off = (me, be) => this.events.off(me, be), this.removeListener = (me, be) => this.events.removeListener(me, be), this.removeAllListeners = (me) => this.events.removeAllListeners(me), this.connect = async (me) => {
       try {
         return await this.engine.connect(me);
       } catch (be) {
@@ -8367,24 +8140,24 @@ let z$2 = class {
   }
   async connect(e) {
     const { requiredNamespaces: ye, optionalNamespaces: me } = e;
-    return new Promise(async (be, we) => {
+    return new Promise(async (be, ve) => {
       await o(this, n$1, r).call(this);
       const Ee = a$2(this, p$3).subscribeModal((gr) => {
-        gr.open || (Ee(), we(new Error("Modal closed")));
+        gr.open || (Ee(), ve(new Error("Modal closed")));
       }), { uri: Oe, approval: xe } = await a$2(this, i).connect(e);
       if (Oe) {
         const gr = /* @__PURE__ */ new Set();
-        ye && Object.values(ye).forEach(({ chains: ve }) => {
-          ve && ve.forEach((Se) => gr.add(Se));
-        }), me && Object.values(me).forEach(({ chains: ve }) => {
-          ve && ve.forEach((Se) => gr.add(Se));
+        ye && Object.values(ye).forEach(({ chains: we }) => {
+          we && we.forEach((Se) => gr.add(Se));
+        }), me && Object.values(me).forEach(({ chains: we }) => {
+          we && we.forEach((Se) => gr.add(Se));
         }), await a$2(this, p$3).openModal({ uri: Oe, chains: Array.from(gr) });
       }
       try {
         const gr = await xe();
         be(gr);
       } catch (gr) {
-        we(gr);
+        ve(gr);
       } finally {
         Ee(), a$2(this, p$3).closeModal();
       }
@@ -8541,7 +8314,7 @@ function generateProvider(fe, e, ye) {
         }
       });
     },
-    async getBlocks(me, be = 1, we) {
+    async getBlocks(me, be = 1, ve) {
       return await ye.request({
         chainId: fe,
         topic: e,
@@ -8550,7 +8323,7 @@ function generateProvider(fe, e, ye) {
           params: {
             height: me,
             numBlocks: be,
-            idRef: we
+            idRef: ve
           }
         }
       });
@@ -8567,7 +8340,7 @@ function generateProvider(fe, e, ye) {
         }
       });
     },
-    async wait(me, be = "byBlock", we = 3e4) {
+    async wait(me, be = "byBlock", ve = 3e4) {
       return await ye.request({
         chainId: fe,
         topic: e,
@@ -8576,13 +8349,13 @@ function generateProvider(fe, e, ye) {
           params: {
             transactionId: me,
             type: be,
-            timeout: we
+            timeout: ve
           }
         }
       });
     },
     async sendTransaction(me, be = !0) {
-      const we = await ye.request({
+      const ve = await ye.request({
         chainId: fe,
         topic: e,
         request: {
@@ -8593,18 +8366,18 @@ function generateProvider(fe, e, ye) {
           }
         }
       });
-      return we.wait = async (Ee = "byBlock", Oe = 6e4) => await ye.request({
+      return ve.wait = async (Ee = "byBlock", Oe = 6e4) => await ye.request({
         chainId: fe,
         topic: e,
         request: {
           method: Methods.WaitForTransaction,
           params: {
-            transactionId: we.id,
+            transactionId: ve.id,
             type: Ee,
             timeout: Oe
           }
         }
-      }), we;
+      }), ve;
     },
     async readContract(me) {
       return await ye.request({
@@ -8639,13 +8412,13 @@ function base$1(fe) {
   for (var e = new Uint8Array(256), ye = 0; ye < e.length; ye++)
     e[ye] = 255;
   for (var me = 0; me < fe.length; me++) {
-    var be = fe.charAt(me), we = be.charCodeAt(0);
-    if (e[we] !== 255)
+    var be = fe.charAt(me), ve = be.charCodeAt(0);
+    if (e[ve] !== 255)
       throw new TypeError(be + " is ambiguous");
-    e[we] = me;
+    e[ve] = me;
   }
   var Ee = fe.length, Oe = fe.charAt(0), xe = Math.log(Ee) / Math.log(256), gr = Math.log(256) / Math.log(Ee);
-  function ve(Fr) {
+  function we(Fr) {
     if (Fr instanceof Uint8Array || (ArrayBuffer.isView(Fr) ? Fr = new Uint8Array(Fr.buffer, Fr.byteOffset, Fr.byteLength) : Array.isArray(Fr) && (Fr = Uint8Array.from(Fr))), !(Fr instanceof Uint8Array))
       throw new TypeError("Expected Uint8Array");
     if (Fr.length === 0)
@@ -8700,7 +8473,7 @@ function base$1(fe) {
     throw new Error("Non-base" + Ee + " character");
   }
   return {
-    encode: ve,
+    encode: we,
     decodeUnsafe: Se,
     decode: $r
   };
@@ -8752,27 +8525,27 @@ const decode = (fe, e, ye) => {
   let be = fe.length;
   for (; fe[be - 1] === "="; )
     --be;
-  const we = new Uint8Array(be * ye / 8 | 0);
+  const ve = new Uint8Array(be * ye / 8 | 0);
   let Ee = 0, Oe = 0, xe = 0;
   for (let gr = 0; gr < be; ++gr) {
-    const ve = me[fe[gr]];
-    if (ve === void 0)
+    const we = me[fe[gr]];
+    if (we === void 0)
       throw new SyntaxError("Invalid character " + fe[gr]);
-    Oe = Oe << ye | ve, Ee += ye, Ee >= 8 && (Ee -= 8, we[xe++] = 255 & Oe >> Ee);
+    Oe = Oe << ye | we, Ee += ye, Ee >= 8 && (Ee -= 8, ve[xe++] = 255 & Oe >> Ee);
   }
   if (Ee >= ye || 255 & Oe << 8 - Ee)
     throw new SyntaxError("Unexpected end of data");
-  return we;
+  return ve;
 }, encode = (fe, e, ye) => {
   const me = e[e.length - 1] === "=", be = (1 << ye) - 1;
-  let we = "", Ee = 0, Oe = 0;
+  let ve = "", Ee = 0, Oe = 0;
   for (let xe = 0; xe < fe.length; ++xe)
     for (Oe = Oe << 8 | fe[xe], Ee += 8; Ee > ye; )
-      Ee -= ye, we += e[be & Oe >> Ee];
-  if (Ee && (we += e[be & Oe << ye - Ee]), me)
-    for (; we.length * ye & 7; )
-      we += "=";
-  return we;
+      Ee -= ye, ve += e[be & Oe >> Ee];
+  if (Ee && (ve += e[be & Oe << ye - Ee]), me)
+    for (; ve.length * ye & 7; )
+      ve += "=";
+  return ve;
 }, rfc4648$1 = (fe) => (e) => ({
   /**
    * @param {Uint8Array} input
@@ -8831,16 +8604,16 @@ var constants_1 = {
   codes
 };
 (function(fe, e) {
-  const ye = constants_1, { encodeText: me, decodeText: be, concat: we } = util$9;
+  const ye = constants_1, { encodeText: me, decodeText: be, concat: ve } = util$9;
   function Ee(Vr, oo) {
     if (!oo)
       throw new Error("requires an encoded Uint8Array");
     const { name: so, codeBuf: kr } = Se(Vr);
-    return ve(so, oo), we([kr, oo], kr.length + oo.length);
+    return we(so, oo), ve([kr, oo], kr.length + oo.length);
   }
   function Oe(Vr, oo) {
     const so = Se(Vr), kr = me(so.encode(oo));
-    return we([so.codeBuf, kr], so.codeBuf.length + kr.length);
+    return ve([so.codeBuf, kr], so.codeBuf.length + kr.length);
   }
   function xe(Vr) {
     Vr instanceof Uint8Array && (Vr = be(Vr));
@@ -8862,7 +8635,7 @@ var constants_1 = {
       return !1;
     }
   }
-  function ve(Vr, oo) {
+  function we(Vr, oo) {
     Se(Vr).decode(be(oo));
   }
   function Se(Vr) {
@@ -8956,8 +8729,8 @@ crypto$1.crypto = typeof globalThis == "object" && "crypto" in globalThis ? glob
   fe.u8 = me;
   const be = (Ur) => new Uint32Array(Ur.buffer, Ur.byteOffset, Math.floor(Ur.byteLength / 4));
   fe.u32 = be;
-  const we = (Ur) => new DataView(Ur.buffer, Ur.byteOffset, Ur.byteLength);
-  fe.createView = we;
+  const ve = (Ur) => new DataView(Ur.buffer, Ur.byteOffset, Ur.byteLength);
+  fe.createView = ve;
   const Ee = (Ur, Mr) => Ur << 32 - Mr | Ur >>> Mr;
   if (fe.rotr = Ee, fe.isLE = new Uint8Array(new Uint32Array([287454020]).buffer)[0] === 68, !fe.isLE)
     throw new Error("Non little-endian hardware is not supported");
@@ -8987,9 +8760,9 @@ crypto$1.crypto = typeof globalThis == "object" && "crypto" in globalThis ? glob
     return Lr;
   }
   fe.hexToBytes = gr;
-  const ve = async () => {
+  const we = async () => {
   };
-  fe.nextTick = ve;
+  fe.nextTick = we;
   async function Se(Ur, Mr, Lr) {
     let no = Date.now();
     for (let Xr = 0; Xr < Ur; Xr++) {
@@ -9063,7 +8836,7 @@ const _assert_js_1 = _assert, utils_js_1$2 = utils;
 function setBigUint64(fe, e, ye, me) {
   if (typeof fe.setBigUint64 == "function")
     return fe.setBigUint64(e, ye, me);
-  const be = BigInt(32), we = BigInt(4294967295), Ee = Number(ye >> be & we), Oe = Number(ye & we), xe = me ? 4 : 0, gr = me ? 0 : 4;
+  const be = BigInt(32), ve = BigInt(4294967295), Ee = Number(ye >> be & ve), Oe = Number(ye & ve), xe = me ? 4 : 0, gr = me ? 0 : 4;
   fe.setUint32(e + xe, Ee, me), fe.setUint32(e + gr, Oe, me);
 }
 class SHA2 extends utils_js_1$2.Hash {
@@ -9074,12 +8847,12 @@ class SHA2 extends utils_js_1$2.Hash {
     _assert_js_1.default.exists(this);
     const { view: ye, buffer: me, blockLen: be } = this;
     e = (0, utils_js_1$2.toBytes)(e);
-    const we = e.length;
-    for (let Ee = 0; Ee < we; ) {
-      const Oe = Math.min(be - this.pos, we - Ee);
+    const ve = e.length;
+    for (let Ee = 0; Ee < ve; ) {
+      const Oe = Math.min(be - this.pos, ve - Ee);
       if (Oe === be) {
         const xe = (0, utils_js_1$2.createView)(e);
-        for (; be <= we - Ee; Ee += be)
+        for (; be <= ve - Ee; Ee += be)
           this.process(xe, Ee);
         continue;
       }
@@ -9089,20 +8862,20 @@ class SHA2 extends utils_js_1$2.Hash {
   }
   digestInto(e) {
     _assert_js_1.default.exists(this), _assert_js_1.default.output(e, this), this.finished = !0;
-    const { buffer: ye, view: me, blockLen: be, isLE: we } = this;
+    const { buffer: ye, view: me, blockLen: be, isLE: ve } = this;
     let { pos: Ee } = this;
     ye[Ee++] = 128, this.buffer.subarray(Ee).fill(0), this.padOffset > be - Ee && (this.process(me, 0), Ee = 0);
     for (let Se = Ee; Se < be; Se++)
       ye[Se] = 0;
-    setBigUint64(me, be - 8, BigInt(this.length * 8), we), this.process(me, 0);
+    setBigUint64(me, be - 8, BigInt(this.length * 8), ve), this.process(me, 0);
     const Oe = (0, utils_js_1$2.createView)(e), xe = this.outputLen;
     if (xe % 4)
       throw new Error("_sha2: outputLen should be aligned to 32bit");
-    const gr = xe / 4, ve = this.get();
-    if (gr > ve.length)
+    const gr = xe / 4, we = this.get();
+    if (gr > we.length)
       throw new Error("_sha2: outputLen bigger than state");
     for (let Se = 0; Se < gr; Se++)
-      Oe.setUint32(4 * Se, ve[Se], we);
+      Oe.setUint32(4 * Se, we[Se], ve);
   }
   digest() {
     const { buffer: e, outputLen: ye } = this;
@@ -9112,8 +8885,8 @@ class SHA2 extends utils_js_1$2.Hash {
   }
   _cloneInto(e) {
     e || (e = new this.constructor()), e.set(...this.get());
-    const { blockLen: ye, buffer: me, length: be, finished: we, destroyed: Ee, pos: Oe } = this;
-    return e.length = be, e.pos = Oe, e.finished = we, e.destroyed = Ee, be % ye && e.buffer.set(me), e;
+    const { blockLen: ye, buffer: me, length: be, finished: ve, destroyed: Ee, pos: Oe } = this;
+    return e.length = be, e.pos = Oe, e.finished = ve, e.destroyed = Ee, be % ye && e.buffer.set(me), e;
   }
 }
 _sha2.SHA2 = SHA2;
@@ -9199,12 +8972,12 @@ class SHA256 extends _sha2_js_1$1.SHA2 {
     super(64, 32, 8, !1), this.A = IV[0] | 0, this.B = IV[1] | 0, this.C = IV[2] | 0, this.D = IV[3] | 0, this.E = IV[4] | 0, this.F = IV[5] | 0, this.G = IV[6] | 0, this.H = IV[7] | 0;
   }
   get() {
-    const { A: e, B: ye, C: me, D: be, E: we, F: Ee, G: Oe, H: xe } = this;
-    return [e, ye, me, be, we, Ee, Oe, xe];
+    const { A: e, B: ye, C: me, D: be, E: ve, F: Ee, G: Oe, H: xe } = this;
+    return [e, ye, me, be, ve, Ee, Oe, xe];
   }
   // prettier-ignore
-  set(e, ye, me, be, we, Ee, Oe, xe) {
-    this.A = e | 0, this.B = ye | 0, this.C = me | 0, this.D = be | 0, this.E = we | 0, this.F = Ee | 0, this.G = Oe | 0, this.H = xe | 0;
+  set(e, ye, me, be, ve, Ee, Oe, xe) {
+    this.A = e | 0, this.B = ye | 0, this.C = me | 0, this.D = be | 0, this.E = ve | 0, this.F = Ee | 0, this.G = Oe | 0, this.H = xe | 0;
   }
   process(e, ye) {
     for (let Se = 0; Se < 16; Se++, ye += 4)
@@ -9213,12 +8986,12 @@ class SHA256 extends _sha2_js_1$1.SHA2 {
       const $r = SHA256_W[Se - 15], Fr = SHA256_W[Se - 2], Br = (0, utils_js_1$1.rotr)($r, 7) ^ (0, utils_js_1$1.rotr)($r, 18) ^ $r >>> 3, Vr = (0, utils_js_1$1.rotr)(Fr, 17) ^ (0, utils_js_1$1.rotr)(Fr, 19) ^ Fr >>> 10;
       SHA256_W[Se] = Vr + SHA256_W[Se - 7] + Br + SHA256_W[Se - 16] | 0;
     }
-    let { A: me, B: be, C: we, D: Ee, E: Oe, F: xe, G: gr, H: ve } = this;
+    let { A: me, B: be, C: ve, D: Ee, E: Oe, F: xe, G: gr, H: we } = this;
     for (let Se = 0; Se < 64; Se++) {
-      const $r = (0, utils_js_1$1.rotr)(Oe, 6) ^ (0, utils_js_1$1.rotr)(Oe, 11) ^ (0, utils_js_1$1.rotr)(Oe, 25), Fr = ve + $r + Chi(Oe, xe, gr) + SHA256_K[Se] + SHA256_W[Se] | 0, Vr = ((0, utils_js_1$1.rotr)(me, 2) ^ (0, utils_js_1$1.rotr)(me, 13) ^ (0, utils_js_1$1.rotr)(me, 22)) + Maj(me, be, we) | 0;
-      ve = gr, gr = xe, xe = Oe, Oe = Ee + Fr | 0, Ee = we, we = be, be = me, me = Fr + Vr | 0;
+      const $r = (0, utils_js_1$1.rotr)(Oe, 6) ^ (0, utils_js_1$1.rotr)(Oe, 11) ^ (0, utils_js_1$1.rotr)(Oe, 25), Fr = we + $r + Chi(Oe, xe, gr) + SHA256_K[Se] + SHA256_W[Se] | 0, Vr = ((0, utils_js_1$1.rotr)(me, 2) ^ (0, utils_js_1$1.rotr)(me, 13) ^ (0, utils_js_1$1.rotr)(me, 22)) + Maj(me, be, ve) | 0;
+      we = gr, gr = xe, xe = Oe, Oe = Ee + Fr | 0, Ee = ve, ve = be, be = me, me = Fr + Vr | 0;
     }
-    me = me + this.A | 0, be = be + this.B | 0, we = we + this.C | 0, Ee = Ee + this.D | 0, Oe = Oe + this.E | 0, xe = xe + this.F | 0, gr = gr + this.G | 0, ve = ve + this.H | 0, this.set(me, be, we, Ee, Oe, xe, gr, ve);
+    me = me + this.A | 0, be = be + this.B | 0, ve = ve + this.C | 0, Ee = Ee + this.D | 0, Oe = Oe + this.E | 0, xe = xe + this.F | 0, gr = gr + this.G | 0, we = we + this.H | 0, this.set(me, be, ve, Ee, Oe, xe, gr, we);
   }
   roundClean() {
     SHA256_W.fill(0);
@@ -9258,28 +9031,28 @@ class RIPEMD160 extends _sha2_js_1.SHA2 {
     super(64, 20, 8, !0), this.h0 = 1732584193, this.h1 = -271733879, this.h2 = -1732584194, this.h3 = 271733878, this.h4 = -1009589776;
   }
   get() {
-    const { h0: e, h1: ye, h2: me, h3: be, h4: we } = this;
-    return [e, ye, me, be, we];
+    const { h0: e, h1: ye, h2: me, h3: be, h4: ve } = this;
+    return [e, ye, me, be, ve];
   }
-  set(e, ye, me, be, we) {
-    this.h0 = e | 0, this.h1 = ye | 0, this.h2 = me | 0, this.h3 = be | 0, this.h4 = we | 0;
+  set(e, ye, me, be, ve) {
+    this.h0 = e | 0, this.h1 = ye | 0, this.h2 = me | 0, this.h3 = be | 0, this.h4 = ve | 0;
   }
   process(e, ye) {
     for (let Fr = 0; Fr < 16; Fr++, ye += 4)
       BUF[Fr] = e.getUint32(ye, !0);
-    let me = this.h0 | 0, be = me, we = this.h1 | 0, Ee = we, Oe = this.h2 | 0, xe = Oe, gr = this.h3 | 0, ve = gr, Se = this.h4 | 0, $r = Se;
+    let me = this.h0 | 0, be = me, ve = this.h1 | 0, Ee = ve, Oe = this.h2 | 0, xe = Oe, gr = this.h3 | 0, we = gr, Se = this.h4 | 0, $r = Se;
     for (let Fr = 0; Fr < 5; Fr++) {
       const Br = 4 - Fr, Vr = Kl[Fr], oo = Kr[Fr], so = idxL[Fr], kr = idxR[Fr], qr = shiftsL[Fr], Hr = shiftsR[Fr];
       for (let Yr = 0; Yr < 16; Yr++) {
-        const Ur = rotl(me + f$1(Fr, we, Oe, gr) + BUF[so[Yr]] + Vr, qr[Yr]) + Se | 0;
-        me = Se, Se = gr, gr = rotl(Oe, 10) | 0, Oe = we, we = Ur;
+        const Ur = rotl(me + f$1(Fr, ve, Oe, gr) + BUF[so[Yr]] + Vr, qr[Yr]) + Se | 0;
+        me = Se, Se = gr, gr = rotl(Oe, 10) | 0, Oe = ve, ve = Ur;
       }
       for (let Yr = 0; Yr < 16; Yr++) {
-        const Ur = rotl(be + f$1(Br, Ee, xe, ve) + BUF[kr[Yr]] + oo, Hr[Yr]) + $r | 0;
-        be = $r, $r = ve, ve = rotl(xe, 10) | 0, xe = Ee, Ee = Ur;
+        const Ur = rotl(be + f$1(Br, Ee, xe, we) + BUF[kr[Yr]] + oo, Hr[Yr]) + $r | 0;
+        be = $r, $r = we, we = rotl(xe, 10) | 0, xe = Ee, Ee = Ur;
       }
     }
-    this.set(this.h1 + Oe + ve | 0, this.h2 + gr + $r | 0, this.h3 + Se + be | 0, this.h4 + me + Ee | 0, this.h0 + we + xe | 0);
+    this.set(this.h1 + Oe + we | 0, this.h2 + gr + $r | 0, this.h3 + Se + be | 0, this.h4 + me + Ee | 0, this.h0 + ve + xe | 0);
   }
   roundClean() {
     BUF.fill(0);
@@ -9634,10 +9407,10 @@ function calculateMerkleRoot(fe) {
 }
 utils$1.calculateMerkleRoot = calculateMerkleRoot;
 function bitcoinEncode(fe, e, ye = !1) {
-  let me, be, we;
-  e === "public" ? (me = new Uint8Array(25), be = new Uint8Array(21), me[0] = 0, be[0] = 0, we = 21) : (ye ? (me = new Uint8Array(38), be = new Uint8Array(34), we = 34, me[33] = 1, be[33] = 1) : (me = new Uint8Array(37), be = new Uint8Array(33), we = 33), me[0] = 128, be[0] = 128), be.set(fe, 1);
+  let me, be, ve;
+  e === "public" ? (me = new Uint8Array(25), be = new Uint8Array(21), me[0] = 0, be[0] = 0, ve = 21) : (ye ? (me = new Uint8Array(38), be = new Uint8Array(34), ve = 34, me[33] = 1, be[33] = 1) : (me = new Uint8Array(37), be = new Uint8Array(33), ve = 33), me[0] = 128, be[0] = 128), be.set(fe, 1);
   const Ee = (0, sha256_1$2.sha256)(be), Oe = (0, sha256_1$2.sha256)(Ee), xe = new Uint8Array(4);
-  return xe.set(Oe.slice(0, 4)), me.set(fe, 1), me.set(xe, we), encodeBase58(me);
+  return xe.set(Oe.slice(0, 4)), me.set(fe, 1), me.set(xe, ve), encodeBase58(me);
 }
 utils$1.bitcoinEncode = bitcoinEncode;
 function bitcoinDecode(fe) {
@@ -9656,8 +9429,8 @@ function isChecksum(fe) {
   const me = new Uint8Array(4);
   me.set(fe.slice(e));
   const be = (0, sha256_1$2.sha256)((0, sha256_1$2.sha256)(ye));
-  for (let we = 0; we < 4; we += 1)
-    if (me[we] !== be[we])
+  for (let ve = 0; ve < 4; ve += 1)
+    if (me[ve] !== be[ve])
       return !1;
   return !0;
 }
@@ -9676,16 +9449,16 @@ function formatUnits(fe, e) {
   let ye = typeof fe == "string" ? fe : BigInt(fe).toString();
   const me = ye[0] === "-" ? "-" : "";
   ye = ye.replace("-", "").padStart(e + 1, "0");
-  const be = ye.substring(0, ye.length - e).replace(/^0+(?=\d)/, ""), we = ye.substring(ye.length - e);
-  return `${me}${be}.${we}`.replace(/(\.0+)?(0+)$/, "");
+  const be = ye.substring(0, ye.length - e).replace(/^0+(?=\d)/, ""), ve = ye.substring(ye.length - e);
+  return `${me}${be}.${ve}`.replace(/(\.0+)?(0+)$/, "");
 }
 utils$1.formatUnits = formatUnits;
 function parseUnits(fe, e) {
   const ye = fe[0] === "-" ? "-" : "";
   let [me, be] = fe.replace("-", "").replace(",", ".").split(".");
   if (be || (be = ""), be = be.padEnd(e, "0"), be.length > e) {
-    const we = be.substring(e);
-    be = be.substring(0, e), we.startsWith("5") && (be = (BigInt(be) + BigInt(1)).toString());
+    const ve = be.substring(e);
+    be = be.substring(0, e), ve.startsWith("5") && (be = (BigInt(be) + BigInt(1)).toString());
   }
   return `${ye}${`${me}${be}`.replace(/^0+(?=\d)/, "")}`;
 }
@@ -9750,7 +9523,7 @@ function btypeDecode(fe, e, ye) {
     return fe;
   const me = {};
   return Object.keys(e).forEach((be) => {
-    fe[be] && (e[be].rule === "repeated" ? me[be] = fe[be].map((we) => e[be].subtypes ? btypeDecode(we, e[be].subtypes, ye) : btypeDecodeValue(we, e[be], ye)) : e[be].subtypes ? me[be] = btypeDecode(fe[be], e[be].subtypes, ye) : me[be] = btypeDecodeValue(fe[be], e[be], ye));
+    fe[be] && (e[be].rule === "repeated" ? me[be] = fe[be].map((ve) => e[be].subtypes ? btypeDecode(ve, e[be].subtypes, ye) : btypeDecodeValue(ve, e[be], ye)) : e[be].subtypes ? me[be] = btypeDecode(fe[be], e[be].subtypes, ye) : me[be] = btypeDecodeValue(fe[be], e[be], ye));
   }), me;
 }
 utils$1.btypeDecode = btypeDecode;
@@ -9759,7 +9532,7 @@ function btypeEncode(fe, e, ye) {
     return fe;
   const me = {};
   return Object.keys(e).forEach((be) => {
-    fe[be] && (e[be].rule === "repeated" ? me[be] = fe[be].map((we) => e[be].subtypes ? btypeEncode(we, e[be].subtypes, ye) : btypeEncodeValue(we, e[be], ye)) : e[be].subtypes ? me[be] = btypeEncode(fe[be], e[be].subtypes, ye) : me[be] = btypeEncodeValue(fe[be], e[be], ye));
+    fe[be] && (e[be].rule === "repeated" ? me[be] = fe[be].map((ve) => e[be].subtypes ? btypeEncode(ve, e[be].subtypes, ye) : btypeEncodeValue(ve, e[be], ye)) : e[be].subtypes ? me[be] = btypeEncode(fe[be], e[be].subtypes, ye) : me[be] = btypeEncodeValue(fe[be], e[be], ye));
   }), me;
 }
 utils$1.btypeEncode = btypeEncode;
@@ -9816,13 +9589,13 @@ utils$1.tokenAbi = {
 };
 var utilsNode = {}, Serializer$1 = {}, src = { exports: {} }, indexLight = { exports: {} }, indexMinimal = {}, minimal$1 = {}, aspromise = asPromise$1;
 function asPromise$1(fe, e) {
-  for (var ye = new Array(arguments.length - 1), me = 0, be = 2, we = !0; be < arguments.length; )
+  for (var ye = new Array(arguments.length - 1), me = 0, be = 2, ve = !0; be < arguments.length; )
     ye[me++] = arguments[be++];
   return new Promise(function(Oe, xe) {
-    ye[me] = function(ve) {
-      if (we)
-        if (we = !1, ve)
-          xe(ve);
+    ye[me] = function(we) {
+      if (ve)
+        if (ve = !1, we)
+          xe(we);
         else {
           for (var Se = new Array(arguments.length - 1), $r = 0; $r < Se.length; )
             Se[$r++] = arguments[$r];
@@ -9832,7 +9605,7 @@ function asPromise$1(fe, e) {
     try {
       fe.apply(e || null, ye);
     } catch (gr) {
-      we && (we = !1, xe(gr));
+      ve && (ve = !1, xe(gr));
     }
   });
 }
@@ -9850,7 +9623,7 @@ var base64$1 = {};
   for (var ye = new Array(64), me = new Array(123), be = 0; be < 64; )
     me[ye[be] = be < 26 ? be + 65 : be < 52 ? be + 71 : be < 62 ? be - 4 : be - 59 | 43] = be++;
   e.encode = function(Oe, xe, gr) {
-    for (var ve = null, Se = [], $r = 0, Fr = 0, Br; xe < gr; ) {
+    for (var we = null, Se = [], $r = 0, Fr = 0, Br; xe < gr; ) {
       var Vr = Oe[xe++];
       switch (Fr) {
         case 0:
@@ -9863,18 +9636,18 @@ var base64$1 = {};
           Se[$r++] = ye[Br | Vr >> 6], Se[$r++] = ye[Vr & 63], Fr = 0;
           break;
       }
-      $r > 8191 && ((ve || (ve = [])).push(String.fromCharCode.apply(String, Se)), $r = 0);
+      $r > 8191 && ((we || (we = [])).push(String.fromCharCode.apply(String, Se)), $r = 0);
     }
-    return Fr && (Se[$r++] = ye[Br], Se[$r++] = 61, Fr === 1 && (Se[$r++] = 61)), ve ? ($r && ve.push(String.fromCharCode.apply(String, Se.slice(0, $r))), ve.join("")) : String.fromCharCode.apply(String, Se.slice(0, $r));
+    return Fr && (Se[$r++] = ye[Br], Se[$r++] = 61, Fr === 1 && (Se[$r++] = 61)), we ? ($r && we.push(String.fromCharCode.apply(String, Se.slice(0, $r))), we.join("")) : String.fromCharCode.apply(String, Se.slice(0, $r));
   };
-  var we = "invalid encoding";
+  var ve = "invalid encoding";
   e.decode = function(Oe, xe, gr) {
-    for (var ve = gr, Se = 0, $r, Fr = 0; Fr < Oe.length; ) {
+    for (var we = gr, Se = 0, $r, Fr = 0; Fr < Oe.length; ) {
       var Br = Oe.charCodeAt(Fr++);
       if (Br === 61 && Se > 1)
         break;
       if ((Br = me[Br]) === void 0)
-        throw Error(we);
+        throw Error(ve);
       switch (Se) {
         case 0:
           $r = Br, Se = 1;
@@ -9891,8 +9664,8 @@ var base64$1 = {};
       }
     }
     if (Se === 1)
-      throw Error(we);
-    return gr - ve;
+      throw Error(ve);
+    return gr - we;
   }, e.test = function(Oe) {
     return /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(Oe);
   };
@@ -9931,13 +9704,13 @@ var float = factory(factory);
 function factory(fe) {
   return typeof Float32Array < "u" ? function() {
     var e = new Float32Array([-0]), ye = new Uint8Array(e.buffer), me = ye[3] === 128;
-    function be(xe, gr, ve) {
-      e[0] = xe, gr[ve] = ye[0], gr[ve + 1] = ye[1], gr[ve + 2] = ye[2], gr[ve + 3] = ye[3];
+    function be(xe, gr, we) {
+      e[0] = xe, gr[we] = ye[0], gr[we + 1] = ye[1], gr[we + 2] = ye[2], gr[we + 3] = ye[3];
     }
-    function we(xe, gr, ve) {
-      e[0] = xe, gr[ve] = ye[3], gr[ve + 1] = ye[2], gr[ve + 2] = ye[1], gr[ve + 3] = ye[0];
+    function ve(xe, gr, we) {
+      e[0] = xe, gr[we] = ye[3], gr[we + 1] = ye[2], gr[we + 2] = ye[1], gr[we + 3] = ye[0];
     }
-    fe.writeFloatLE = me ? be : we, fe.writeFloatBE = me ? we : be;
+    fe.writeFloatLE = me ? be : ve, fe.writeFloatBE = me ? ve : be;
     function Ee(xe, gr) {
       return ye[0] = xe[gr], ye[1] = xe[gr + 1], ye[2] = xe[gr + 2], ye[3] = xe[gr + 3], e[0];
     }
@@ -9946,7 +9719,7 @@ function factory(fe) {
     }
     fe.readFloatLE = me ? Ee : Oe, fe.readFloatBE = me ? Oe : Ee;
   }() : function() {
-    function e(me, be, we, Ee) {
+    function e(me, be, ve, Ee) {
       var Oe = be < 0 ? 1 : 0;
       if (Oe && (be = -be), be === 0)
         me(1 / be > 0 ? (
@@ -9955,33 +9728,33 @@ function factory(fe) {
         ) : (
           /* negative 0 */
           2147483648
-        ), we, Ee);
+        ), ve, Ee);
       else if (isNaN(be))
-        me(2143289344, we, Ee);
+        me(2143289344, ve, Ee);
       else if (be > 34028234663852886e22)
-        me((Oe << 31 | 2139095040) >>> 0, we, Ee);
+        me((Oe << 31 | 2139095040) >>> 0, ve, Ee);
       else if (be < 11754943508222875e-54)
-        me((Oe << 31 | Math.round(be / 1401298464324817e-60)) >>> 0, we, Ee);
+        me((Oe << 31 | Math.round(be / 1401298464324817e-60)) >>> 0, ve, Ee);
       else {
         var xe = Math.floor(Math.log(be) / Math.LN2), gr = Math.round(be * Math.pow(2, -xe) * 8388608) & 8388607;
-        me((Oe << 31 | xe + 127 << 23 | gr) >>> 0, we, Ee);
+        me((Oe << 31 | xe + 127 << 23 | gr) >>> 0, ve, Ee);
       }
     }
     fe.writeFloatLE = e.bind(null, writeUintLE), fe.writeFloatBE = e.bind(null, writeUintBE);
-    function ye(me, be, we) {
-      var Ee = me(be, we), Oe = (Ee >> 31) * 2 + 1, xe = Ee >>> 23 & 255, gr = Ee & 8388607;
+    function ye(me, be, ve) {
+      var Ee = me(be, ve), Oe = (Ee >> 31) * 2 + 1, xe = Ee >>> 23 & 255, gr = Ee & 8388607;
       return xe === 255 ? gr ? NaN : Oe * (1 / 0) : xe === 0 ? Oe * 1401298464324817e-60 * gr : Oe * Math.pow(2, xe - 150) * (gr + 8388608);
     }
     fe.readFloatLE = ye.bind(null, readUintLE), fe.readFloatBE = ye.bind(null, readUintBE);
   }(), typeof Float64Array < "u" ? function() {
     var e = new Float64Array([-0]), ye = new Uint8Array(e.buffer), me = ye[7] === 128;
-    function be(xe, gr, ve) {
-      e[0] = xe, gr[ve] = ye[0], gr[ve + 1] = ye[1], gr[ve + 2] = ye[2], gr[ve + 3] = ye[3], gr[ve + 4] = ye[4], gr[ve + 5] = ye[5], gr[ve + 6] = ye[6], gr[ve + 7] = ye[7];
+    function be(xe, gr, we) {
+      e[0] = xe, gr[we] = ye[0], gr[we + 1] = ye[1], gr[we + 2] = ye[2], gr[we + 3] = ye[3], gr[we + 4] = ye[4], gr[we + 5] = ye[5], gr[we + 6] = ye[6], gr[we + 7] = ye[7];
     }
-    function we(xe, gr, ve) {
-      e[0] = xe, gr[ve] = ye[7], gr[ve + 1] = ye[6], gr[ve + 2] = ye[5], gr[ve + 3] = ye[4], gr[ve + 4] = ye[3], gr[ve + 5] = ye[2], gr[ve + 6] = ye[1], gr[ve + 7] = ye[0];
+    function ve(xe, gr, we) {
+      e[0] = xe, gr[we] = ye[7], gr[we + 1] = ye[6], gr[we + 2] = ye[5], gr[we + 3] = ye[4], gr[we + 4] = ye[3], gr[we + 5] = ye[2], gr[we + 6] = ye[1], gr[we + 7] = ye[0];
     }
-    fe.writeDoubleLE = me ? be : we, fe.writeDoubleBE = me ? we : be;
+    fe.writeDoubleLE = me ? be : ve, fe.writeDoubleBE = me ? ve : be;
     function Ee(xe, gr) {
       return ye[0] = xe[gr], ye[1] = xe[gr + 1], ye[2] = xe[gr + 2], ye[3] = xe[gr + 3], ye[4] = xe[gr + 4], ye[5] = xe[gr + 5], ye[6] = xe[gr + 6], ye[7] = xe[gr + 7], e[0];
     }
@@ -9990,7 +9763,7 @@ function factory(fe) {
     }
     fe.readDoubleLE = me ? Ee : Oe, fe.readDoubleBE = me ? Oe : Ee;
   }() : function() {
-    function e(me, be, we, Ee, Oe, xe) {
+    function e(me, be, ve, Ee, Oe, xe) {
       var gr = Ee < 0 ? 1 : 0;
       if (gr && (Ee = -Ee), Ee === 0)
         me(0, Oe, xe + be), me(1 / Ee > 0 ? (
@@ -9999,25 +9772,25 @@ function factory(fe) {
         ) : (
           /* negative 0 */
           2147483648
-        ), Oe, xe + we);
+        ), Oe, xe + ve);
       else if (isNaN(Ee))
-        me(0, Oe, xe + be), me(2146959360, Oe, xe + we);
+        me(0, Oe, xe + be), me(2146959360, Oe, xe + ve);
       else if (Ee > 17976931348623157e292)
-        me(0, Oe, xe + be), me((gr << 31 | 2146435072) >>> 0, Oe, xe + we);
+        me(0, Oe, xe + be), me((gr << 31 | 2146435072) >>> 0, Oe, xe + ve);
       else {
-        var ve;
+        var we;
         if (Ee < 22250738585072014e-324)
-          ve = Ee / 5e-324, me(ve >>> 0, Oe, xe + be), me((gr << 31 | ve / 4294967296) >>> 0, Oe, xe + we);
+          we = Ee / 5e-324, me(we >>> 0, Oe, xe + be), me((gr << 31 | we / 4294967296) >>> 0, Oe, xe + ve);
         else {
           var Se = Math.floor(Math.log(Ee) / Math.LN2);
-          Se === 1024 && (Se = 1023), ve = Ee * Math.pow(2, -Se), me(ve * 4503599627370496 >>> 0, Oe, xe + be), me((gr << 31 | Se + 1023 << 20 | ve * 1048576 & 1048575) >>> 0, Oe, xe + we);
+          Se === 1024 && (Se = 1023), we = Ee * Math.pow(2, -Se), me(we * 4503599627370496 >>> 0, Oe, xe + be), me((gr << 31 | Se + 1023 << 20 | we * 1048576 & 1048575) >>> 0, Oe, xe + ve);
         }
       }
     }
     fe.writeDoubleLE = e.bind(null, writeUintLE, 0, 4), fe.writeDoubleBE = e.bind(null, writeUintBE, 4, 0);
-    function ye(me, be, we, Ee, Oe) {
-      var xe = me(Ee, Oe + be), gr = me(Ee, Oe + we), ve = (gr >> 31) * 2 + 1, Se = gr >>> 20 & 2047, $r = 4294967296 * (gr & 1048575) + xe;
-      return Se === 2047 ? $r ? NaN : ve * (1 / 0) : Se === 0 ? ve * 5e-324 * $r : ve * Math.pow(2, Se - 1075) * ($r + 4503599627370496);
+    function ye(me, be, ve, Ee, Oe) {
+      var xe = me(Ee, Oe + be), gr = me(Ee, Oe + ve), we = (gr >> 31) * 2 + 1, Se = gr >>> 20 & 2047, $r = 4294967296 * (gr & 1048575) + xe;
+      return Se === 2047 ? $r ? NaN : we * (1 / 0) : Se === 0 ? we * 5e-324 * $r : we * Math.pow(2, Se - 1075) * ($r + 4503599627370496);
     }
     fe.readDoubleLE = ye.bind(null, readUintLE, 0, 4), fe.readDoubleBE = ye.bind(null, readUintBE, 4, 0);
   }(), fe;
@@ -10048,30 +9821,30 @@ var utf8$2 = {};
 (function(fe) {
   var e = fe;
   e.length = function(me) {
-    for (var be = 0, we = 0, Ee = 0; Ee < me.length; ++Ee)
-      we = me.charCodeAt(Ee), we < 128 ? be += 1 : we < 2048 ? be += 2 : (we & 64512) === 55296 && (me.charCodeAt(Ee + 1) & 64512) === 56320 ? (++Ee, be += 4) : be += 3;
+    for (var be = 0, ve = 0, Ee = 0; Ee < me.length; ++Ee)
+      ve = me.charCodeAt(Ee), ve < 128 ? be += 1 : ve < 2048 ? be += 2 : (ve & 64512) === 55296 && (me.charCodeAt(Ee + 1) & 64512) === 56320 ? (++Ee, be += 4) : be += 3;
     return be;
-  }, e.read = function(me, be, we) {
-    var Ee = we - be;
+  }, e.read = function(me, be, ve) {
+    var Ee = ve - be;
     if (Ee < 1)
       return "";
-    for (var Oe = null, xe = [], gr = 0, ve; be < we; )
-      ve = me[be++], ve < 128 ? xe[gr++] = ve : ve > 191 && ve < 224 ? xe[gr++] = (ve & 31) << 6 | me[be++] & 63 : ve > 239 && ve < 365 ? (ve = ((ve & 7) << 18 | (me[be++] & 63) << 12 | (me[be++] & 63) << 6 | me[be++] & 63) - 65536, xe[gr++] = 55296 + (ve >> 10), xe[gr++] = 56320 + (ve & 1023)) : xe[gr++] = (ve & 15) << 12 | (me[be++] & 63) << 6 | me[be++] & 63, gr > 8191 && ((Oe || (Oe = [])).push(String.fromCharCode.apply(String, xe)), gr = 0);
+    for (var Oe = null, xe = [], gr = 0, we; be < ve; )
+      we = me[be++], we < 128 ? xe[gr++] = we : we > 191 && we < 224 ? xe[gr++] = (we & 31) << 6 | me[be++] & 63 : we > 239 && we < 365 ? (we = ((we & 7) << 18 | (me[be++] & 63) << 12 | (me[be++] & 63) << 6 | me[be++] & 63) - 65536, xe[gr++] = 55296 + (we >> 10), xe[gr++] = 56320 + (we & 1023)) : xe[gr++] = (we & 15) << 12 | (me[be++] & 63) << 6 | me[be++] & 63, gr > 8191 && ((Oe || (Oe = [])).push(String.fromCharCode.apply(String, xe)), gr = 0);
     return Oe ? (gr && Oe.push(String.fromCharCode.apply(String, xe.slice(0, gr))), Oe.join("")) : String.fromCharCode.apply(String, xe.slice(0, gr));
-  }, e.write = function(me, be, we) {
-    for (var Ee = we, Oe, xe, gr = 0; gr < me.length; ++gr)
-      Oe = me.charCodeAt(gr), Oe < 128 ? be[we++] = Oe : Oe < 2048 ? (be[we++] = Oe >> 6 | 192, be[we++] = Oe & 63 | 128) : (Oe & 64512) === 55296 && ((xe = me.charCodeAt(gr + 1)) & 64512) === 56320 ? (Oe = 65536 + ((Oe & 1023) << 10) + (xe & 1023), ++gr, be[we++] = Oe >> 18 | 240, be[we++] = Oe >> 12 & 63 | 128, be[we++] = Oe >> 6 & 63 | 128, be[we++] = Oe & 63 | 128) : (be[we++] = Oe >> 12 | 224, be[we++] = Oe >> 6 & 63 | 128, be[we++] = Oe & 63 | 128);
-    return we - Ee;
+  }, e.write = function(me, be, ve) {
+    for (var Ee = ve, Oe, xe, gr = 0; gr < me.length; ++gr)
+      Oe = me.charCodeAt(gr), Oe < 128 ? be[ve++] = Oe : Oe < 2048 ? (be[ve++] = Oe >> 6 | 192, be[ve++] = Oe & 63 | 128) : (Oe & 64512) === 55296 && ((xe = me.charCodeAt(gr + 1)) & 64512) === 56320 ? (Oe = 65536 + ((Oe & 1023) << 10) + (xe & 1023), ++gr, be[ve++] = Oe >> 18 | 240, be[ve++] = Oe >> 12 & 63 | 128, be[ve++] = Oe >> 6 & 63 | 128, be[ve++] = Oe & 63 | 128) : (be[ve++] = Oe >> 12 | 224, be[ve++] = Oe >> 6 & 63 | 128, be[ve++] = Oe & 63 | 128);
+    return ve - Ee;
   };
 })(utf8$2);
 var pool_1 = pool;
 function pool(fe, e, ye) {
-  var me = ye || 8192, be = me >>> 1, we = null, Ee = me;
+  var me = ye || 8192, be = me >>> 1, ve = null, Ee = me;
   return function(xe) {
     if (xe < 1 || xe > be)
       return fe(xe);
-    Ee + xe > me && (we = fe(me), Ee = 0);
-    var gr = e.call(we, Ee, Ee += xe);
+    Ee + xe > me && (ve = fe(me), Ee = 0);
+    var gr = e.call(ve, Ee, Ee += xe);
     return Ee & 7 && (Ee = (Ee | 7) + 1), gr;
   };
 }
@@ -10081,8 +9854,8 @@ function requireLongbits() {
     return longbits;
   hasRequiredLongbits = 1, longbits = e;
   var fe = requireMinimal$1();
-  function e(we, Ee) {
-    this.lo = we >>> 0, this.hi = Ee >>> 0;
+  function e(ve, Ee) {
+    this.lo = ve >>> 0, this.hi = Ee >>> 0;
   }
   var ye = e.zero = new e(0, 0);
   ye.toNumber = function() {
@@ -10157,21 +9930,21 @@ function requireMinimal$1() {
       /* istanbul ignore next */
       {}
     ), e.isInteger = Number.isInteger || /* istanbul ignore next */
-    function(we) {
-      return typeof we == "number" && isFinite(we) && Math.floor(we) === we;
-    }, e.isString = function(we) {
-      return typeof we == "string" || we instanceof String;
-    }, e.isObject = function(we) {
-      return we && typeof we == "object";
+    function(ve) {
+      return typeof ve == "number" && isFinite(ve) && Math.floor(ve) === ve;
+    }, e.isString = function(ve) {
+      return typeof ve == "string" || ve instanceof String;
+    }, e.isObject = function(ve) {
+      return ve && typeof ve == "object";
     }, e.isset = /**
      * Checks if a property on a message is considered to be present.
      * @param {Object} obj Plain object or message instance
      * @param {string} prop Property name
      * @returns {boolean} `true` if considered to be present, otherwise `false`
      */
-    e.isSet = function(we, Ee) {
-      var Oe = we[Ee];
-      return Oe != null && we.hasOwnProperty(Ee) ? typeof Oe != "object" || (Array.isArray(Oe) ? Oe.length : Object.keys(Oe).length) > 0 : !1;
+    e.isSet = function(ve, Ee) {
+      var Oe = ve[Ee];
+      return Oe != null && ve.hasOwnProperty(Ee) ? typeof Oe != "object" || (Array.isArray(Oe) ? Oe.length : Object.keys(Oe).length) > 0 : !1;
     }, e.Buffer = function() {
       try {
         var be = e.inquire("buffer").Buffer;
@@ -10182,36 +9955,36 @@ function requireMinimal$1() {
       } catch {
         return null;
       }
-    }(), e._Buffer_from = null, e._Buffer_allocUnsafe = null, e.newBuffer = function(we) {
-      return typeof we == "number" ? e.Buffer ? e._Buffer_allocUnsafe(we) : new e.Array(we) : e.Buffer ? e._Buffer_from(we) : typeof Uint8Array > "u" ? we : new Uint8Array(we);
+    }(), e._Buffer_from = null, e._Buffer_allocUnsafe = null, e.newBuffer = function(ve) {
+      return typeof ve == "number" ? e.Buffer ? e._Buffer_allocUnsafe(ve) : new e.Array(ve) : e.Buffer ? e._Buffer_from(ve) : typeof Uint8Array > "u" ? ve : new Uint8Array(ve);
     }, e.Array = typeof Uint8Array < "u" ? Uint8Array : Array, e.Long = /* istanbul ignore next */
     e.global.dcodeIO && /* istanbul ignore next */
     e.global.dcodeIO.Long || /* istanbul ignore next */
-    e.global.Long || e.inquire("long"), e.key2Re = /^true|false|0|1$/, e.key32Re = /^-?(?:0|[1-9][0-9]*)$/, e.key64Re = /^(?:[\\x00-\\xff]{8}|-?(?:0|[1-9][0-9]*))$/, e.longToHash = function(we) {
-      return we ? e.LongBits.from(we).toHash() : e.LongBits.zeroHash;
-    }, e.longFromHash = function(we, Ee) {
-      var Oe = e.LongBits.fromHash(we);
+    e.global.Long || e.inquire("long"), e.key2Re = /^true|false|0|1$/, e.key32Re = /^-?(?:0|[1-9][0-9]*)$/, e.key64Re = /^(?:[\\x00-\\xff]{8}|-?(?:0|[1-9][0-9]*))$/, e.longToHash = function(ve) {
+      return ve ? e.LongBits.from(ve).toHash() : e.LongBits.zeroHash;
+    }, e.longFromHash = function(ve, Ee) {
+      var Oe = e.LongBits.fromHash(ve);
       return e.Long ? e.Long.fromBits(Oe.lo, Oe.hi, Ee) : Oe.toNumber(!!Ee);
     };
-    function ye(be, we, Ee) {
-      for (var Oe = Object.keys(we), xe = 0; xe < Oe.length; ++xe)
-        (be[Oe[xe]] === void 0 || !Ee) && (be[Oe[xe]] = we[Oe[xe]]);
+    function ye(be, ve, Ee) {
+      for (var Oe = Object.keys(ve), xe = 0; xe < Oe.length; ++xe)
+        (be[Oe[xe]] === void 0 || !Ee) && (be[Oe[xe]] = ve[Oe[xe]]);
       return be;
     }
-    e.merge = ye, e.lcFirst = function(we) {
-      return we.charAt(0).toLowerCase() + we.substring(1);
+    e.merge = ye, e.lcFirst = function(ve) {
+      return ve.charAt(0).toLowerCase() + ve.substring(1);
     };
     function me(be) {
-      function we(Ee, Oe) {
-        if (!(this instanceof we))
-          return new we(Ee, Oe);
+      function ve(Ee, Oe) {
+        if (!(this instanceof ve))
+          return new ve(Ee, Oe);
         Object.defineProperty(this, "message", { get: function() {
           return Ee;
-        } }), Error.captureStackTrace ? Error.captureStackTrace(this, we) : Object.defineProperty(this, "stack", { value: new Error().stack || "" }), Oe && ye(this, Oe);
+        } }), Error.captureStackTrace ? Error.captureStackTrace(this, ve) : Object.defineProperty(this, "stack", { value: new Error().stack || "" }), Oe && ye(this, Oe);
       }
-      return we.prototype = Object.create(Error.prototype, {
+      return ve.prototype = Object.create(Error.prototype, {
         constructor: {
-          value: we,
+          value: ve,
           writable: !0,
           enumerable: !1,
           configurable: !0
@@ -10236,20 +10009,20 @@ function requireMinimal$1() {
           enumerable: !1,
           configurable: !0
         }
-      }), we;
+      }), ve;
     }
-    e.newError = me, e.ProtocolError = me("ProtocolError"), e.oneOfGetter = function(we) {
-      for (var Ee = {}, Oe = 0; Oe < we.length; ++Oe)
-        Ee[we[Oe]] = 1;
+    e.newError = me, e.ProtocolError = me("ProtocolError"), e.oneOfGetter = function(ve) {
+      for (var Ee = {}, Oe = 0; Oe < ve.length; ++Oe)
+        Ee[ve[Oe]] = 1;
       return function() {
         for (var xe = Object.keys(this), gr = xe.length - 1; gr > -1; --gr)
           if (Ee[xe[gr]] === 1 && this[xe[gr]] !== void 0 && this[xe[gr]] !== null)
             return xe[gr];
       };
-    }, e.oneOfSetter = function(we) {
+    }, e.oneOfSetter = function(ve) {
       return function(Ee) {
-        for (var Oe = 0; Oe < we.length; ++Oe)
-          we[Oe] !== Ee && delete this[we[Oe]];
+        for (var Oe = 0; Oe < ve.length; ++Oe)
+          ve[Oe] !== Ee && delete this[ve[Oe]];
       };
     }, e.toJSONOptions = {
       longs: String,
@@ -10627,15 +10400,15 @@ function Service$1(fe, e, ye) {
     throw TypeError("rpcImpl must be a function");
   util$4.EventEmitter.call(this), this.rpcImpl = fe, this.requestDelimited = !!e, this.responseDelimited = !!ye;
 }
-Service$1.prototype.rpcCall = function fe(e, ye, me, be, we) {
+Service$1.prototype.rpcCall = function fe(e, ye, me, be, ve) {
   if (!be)
     throw TypeError("request must be specified");
   var Ee = this;
-  if (!we)
+  if (!ve)
     return util$4.asPromise(fe, Ee, e, ye, me, be);
   if (!Ee.rpcImpl) {
     setTimeout(function() {
-      we(Error("already ended"));
+      ve(Error("already ended"));
     }, 0);
     return;
   }
@@ -10645,7 +10418,7 @@ Service$1.prototype.rpcCall = function fe(e, ye, me, be, we) {
       ye[Ee.requestDelimited ? "encodeDelimited" : "encode"](be).finish(),
       function(xe, gr) {
         if (xe)
-          return Ee.emit("error", xe, e), we(xe);
+          return Ee.emit("error", xe, e), ve(xe);
         if (gr === null) {
           Ee.end(
             /* endedByRPC */
@@ -10656,15 +10429,15 @@ Service$1.prototype.rpcCall = function fe(e, ye, me, be, we) {
         if (!(gr instanceof me))
           try {
             gr = me[Ee.responseDelimited ? "decodeDelimited" : "decode"](gr);
-          } catch (ve) {
-            return Ee.emit("error", ve, e), we(ve);
+          } catch (we) {
+            return Ee.emit("error", we, e), ve(we);
           }
-        return Ee.emit("data", gr, e), we(null, gr);
+        return Ee.emit("data", gr, e), ve(null, gr);
       }
     );
   } catch (Oe) {
     Ee.emit("error", Oe, e), setTimeout(function() {
-      we(Oe);
+      ve(Oe);
     }, 0);
     return;
   }
@@ -10689,19 +10462,19 @@ var util$3 = { exports: {} }, codegen_1 = codegen;
 function codegen(fe, e) {
   typeof fe == "string" && (e = fe, fe = void 0);
   var ye = [];
-  function me(we) {
-    if (typeof we != "string") {
+  function me(ve) {
+    if (typeof ve != "string") {
       var Ee = be();
-      if (codegen.verbose && console.log("codegen: " + Ee), Ee = "return " + Ee, we) {
-        for (var Oe = Object.keys(we), xe = new Array(Oe.length + 1), gr = new Array(Oe.length), ve = 0; ve < Oe.length; )
-          xe[ve] = Oe[ve], gr[ve] = we[Oe[ve++]];
-        return xe[ve] = Ee, Function.apply(null, xe).apply(null, gr);
+      if (codegen.verbose && console.log("codegen: " + Ee), Ee = "return " + Ee, ve) {
+        for (var Oe = Object.keys(ve), xe = new Array(Oe.length + 1), gr = new Array(Oe.length), we = 0; we < Oe.length; )
+          xe[we] = Oe[we], gr[we] = ve[Oe[we++]];
+        return xe[we] = Ee, Function.apply(null, xe).apply(null, gr);
       }
       return Function(Ee)();
     }
     for (var Se = new Array(arguments.length - 1), $r = 0; $r < Se.length; )
       Se[$r] = arguments[++$r];
-    if ($r = 0, we = we.replace(/%([%dfijs])/g, function(Br, Vr) {
+    if ($r = 0, ve = ve.replace(/%([%dfijs])/g, function(Br, Vr) {
       var oo = Se[$r++];
       switch (Vr) {
         case "d":
@@ -10717,10 +10490,10 @@ function codegen(fe, e) {
       return "%";
     }), $r !== Se.length)
       throw Error("parameter count mismatch");
-    return ye.push(we), me;
+    return ye.push(ve), me;
   }
-  function be(we) {
-    return "function " + (we || e || "") + "(" + (fe && fe.join(",") || "") + `){
+  function be(ve) {
+    return "function " + (ve || e || "") + "(" + (fe && fe.join(",") || "") + `){
   ` + ye.join(`
   `) + `
 }`;
@@ -10730,8 +10503,8 @@ function codegen(fe, e) {
 codegen.verbose = !1;
 var fetch_1 = fetch$1, asPromise = aspromise, inquire = inquire_1, fs$1 = inquire("fs");
 function fetch$1(fe, e, ye) {
-  return typeof e == "function" ? (ye = e, e = {}) : e || (e = {}), ye ? !e.xhr && fs$1 && fs$1.readFile ? fs$1.readFile(fe, function(be, we) {
-    return be && typeof XMLHttpRequest < "u" ? fetch$1.xhr(fe, e, ye) : be ? ye(be) : ye(null, e.binary ? we : we.toString("utf8"));
+  return typeof e == "function" ? (ye = e, e = {}) : e || (e = {}), ye ? !e.xhr && fs$1 && fs$1.readFile ? fs$1.readFile(fe, function(be, ve) {
+    return be && typeof XMLHttpRequest < "u" ? fetch$1.xhr(fe, e, ye) : be ? ye(be) : ye(null, e.binary ? ve : ve.toString("utf8"));
   }) : fetch$1.xhr(fe, e, ye) : asPromise(fetch$1, this, fe, e);
 }
 fetch$1.xhr = function fe(e, ye, me) {
@@ -10761,8 +10534,8 @@ var path = {};
      * @param {string} path Path to test
      * @returns {boolean} `true` if path is absolute
      */
-    e.isAbsolute = function(we) {
-      return /^(?:\/|\w+:)/.test(we);
+    e.isAbsolute = function(ve) {
+      return /^(?:\/|\w+:)/.test(ve);
     }
   ), me = (
     /**
@@ -10770,17 +10543,17 @@ var path = {};
      * @param {string} path Path to normalize
      * @returns {string} Normalized path
      */
-    e.normalize = function(we) {
-      we = we.replace(/\\/g, "/").replace(/\/{2,}/g, "/");
-      var Ee = we.split("/"), Oe = ye(we), xe = "";
+    e.normalize = function(ve) {
+      ve = ve.replace(/\\/g, "/").replace(/\/{2,}/g, "/");
+      var Ee = ve.split("/"), Oe = ye(ve), xe = "";
       Oe && (xe = Ee.shift() + "/");
       for (var gr = 0; gr < Ee.length; )
         Ee[gr] === ".." ? gr > 0 && Ee[gr - 1] !== ".." ? Ee.splice(--gr, 2) : Oe ? Ee.splice(gr, 1) : ++gr : Ee[gr] === "." ? Ee.splice(gr, 1) : ++gr;
       return xe + Ee.join("/");
     }
   );
-  e.resolve = function(we, Ee, Oe) {
-    return Oe || (Ee = me(Ee)), ye(Ee) ? Ee : (Oe || (we = me(we)), (we = we.replace(/(?:\/|^)[^/]+$/, "")).length ? me(we + "/" + Ee) : Ee);
+  e.resolve = function(ve, Ee, Oe) {
+    return Oe || (Ee = me(Ee)), ye(Ee) ? Ee : (Oe || (ve = me(ve)), (ve = ve.replace(/(?:\/|^)[^/]+$/, "")).length ? me(ve + "/" + Ee) : Ee);
   };
 })(path);
 var types$1 = {}, hasRequiredTypes;
@@ -10818,10 +10591,10 @@ function requireTypes() {
       "bytes"
       // 14
     ];
-    function be(we, Ee) {
+    function be(ve, Ee) {
       var Oe = 0, xe = {};
-      for (Ee |= 0; Oe < we.length; )
-        xe[me[Oe + Ee]] = we[Oe++];
+      for (Ee |= 0; Oe < ve.length; )
+        xe[me[Oe + Ee]] = ve[Oe++];
       return xe;
     }
     e.basic = be([
@@ -10961,20 +10734,20 @@ function requireField() {
   hasRequiredField = 1, field = Ee;
   var fe = requireObject();
   ((Ee.prototype = Object.create(fe.prototype)).constructor = Ee).className = "Field";
-  var e = require_enum(), ye = requireTypes(), me = requireUtil(), be, we = /^required|optional|repeated$/;
+  var e = require_enum(), ye = requireTypes(), me = requireUtil(), be, ve = /^required|optional|repeated$/;
   Ee.fromJSON = function(xe, gr) {
     return new Ee(xe, gr.id, gr.type, gr.rule, gr.extend, gr.options, gr.comment);
   };
-  function Ee(Oe, xe, gr, ve, Se, $r, Fr) {
-    if (me.isObject(ve) ? (Fr = Se, $r = ve, ve = Se = void 0) : me.isObject(Se) && (Fr = $r, $r = Se, Se = void 0), fe.call(this, Oe, $r), !me.isInteger(xe) || xe < 0)
+  function Ee(Oe, xe, gr, we, Se, $r, Fr) {
+    if (me.isObject(we) ? (Fr = Se, $r = we, we = Se = void 0) : me.isObject(Se) && (Fr = $r, $r = Se, Se = void 0), fe.call(this, Oe, $r), !me.isInteger(xe) || xe < 0)
       throw TypeError("id must be a non-negative integer");
     if (!me.isString(gr))
       throw TypeError("type must be a string");
-    if (ve !== void 0 && !we.test(ve = ve.toString().toLowerCase()))
+    if (we !== void 0 && !ve.test(we = we.toString().toLowerCase()))
       throw TypeError("rule must be a string rule");
     if (Se !== void 0 && !me.isString(Se))
       throw TypeError("extend must be a string");
-    ve === "proto3_optional" && (ve = "optional"), this.rule = ve && ve !== "optional" ? ve : void 0, this.type = gr, this.id = xe, this.extend = Se || void 0, this.required = ve === "required", this.optional = !this.required, this.repeated = ve === "repeated", this.map = !1, this.message = null, this.partOf = null, this.typeDefault = null, this.defaultValue = null, this.long = me.Long ? ye.long[gr] !== void 0 : (
+    we === "proto3_optional" && (we = "optional"), this.rule = we && we !== "optional" ? we : void 0, this.type = gr, this.id = xe, this.extend = Se || void 0, this.required = we === "required", this.optional = !this.required, this.repeated = we === "repeated", this.map = !1, this.message = null, this.partOf = null, this.typeDefault = null, this.defaultValue = null, this.long = me.Long ? ye.long[gr] !== void 0 : (
       /* istanbul ignore next */
       !1
     ), this.bytes = gr === "bytes", this.resolvedType = null, this.extensionField = null, this.declaringField = null, this._packed = null, this.comment = Fr;
@@ -10983,8 +10756,8 @@ function requireField() {
     get: function() {
       return this._packed === null && (this._packed = this.getOption("packed") !== !1), this._packed;
     }
-  }), Ee.prototype.setOption = function(xe, gr, ve) {
-    return xe === "packed" && (this._packed = null), fe.prototype.setOption.call(this, xe, gr, ve);
+  }), Ee.prototype.setOption = function(xe, gr, we) {
+    return xe === "packed" && (this._packed = null), fe.prototype.setOption.call(this, xe, gr, we);
   }, Ee.prototype.toJSON = function(xe) {
     var gr = xe ? !!xe.keepComments : !1;
     return me.toObject([
@@ -11011,9 +10784,9 @@ function requireField() {
       me.base64.test(this.typeDefault) ? me.base64.decode(this.typeDefault, xe = me.newBuffer(me.base64.length(this.typeDefault)), 0) : me.utf8.write(this.typeDefault, xe = me.newBuffer(me.utf8.length(this.typeDefault)), 0), this.typeDefault = xe;
     }
     return this.map ? this.defaultValue = me.emptyObject : this.repeated ? this.defaultValue = me.emptyArray : this.defaultValue = this.typeDefault, this.parent instanceof be && (this.parent.ctor.prototype[this.name] = this.defaultValue), fe.prototype.resolve.call(this);
-  }, Ee.d = function(xe, gr, ve, Se) {
+  }, Ee.d = function(xe, gr, we, Se) {
     return typeof gr == "function" ? gr = me.decorateType(gr).name : gr && typeof gr == "object" && (gr = me.decorateEnum(gr).name), function(Fr, Br) {
-      me.decorateType(Fr.constructor).add(new Ee(Br, xe, gr, ve, { default: Se }));
+      me.decorateType(Fr.constructor).add(new Ee(Br, xe, gr, we, { default: Se }));
     };
   }, Ee._configure = function(xe) {
     be = xe;
@@ -11027,8 +10800,8 @@ function requireOneof() {
   var fe = requireObject();
   ((me.prototype = Object.create(fe.prototype)).constructor = me).className = "OneOf";
   var e = requireField(), ye = requireUtil();
-  function me(we, Ee, Oe, xe) {
-    if (Array.isArray(Ee) || (Oe = Ee, Ee = void 0), fe.call(this, we, Oe), !(Ee === void 0 || Array.isArray(Ee)))
+  function me(ve, Ee, Oe, xe) {
+    if (Array.isArray(Ee) || (Oe = Ee, Ee = void 0), fe.call(this, ve, Oe), !(Ee === void 0 || Array.isArray(Ee)))
       throw TypeError("fieldNames must be an Array");
     this.oneof = Ee || [], this.fieldsArray = [], this.comment = xe;
   }
@@ -11045,10 +10818,10 @@ function requireOneof() {
       Oe ? this.comment : void 0
     ]);
   };
-  function be(we) {
-    if (we.parent)
-      for (var Ee = 0; Ee < we.fieldsArray.length; ++Ee)
-        we.fieldsArray[Ee].parent || we.parent.add(we.fieldsArray[Ee]);
+  function be(ve) {
+    if (ve.parent)
+      for (var Ee = 0; Ee < ve.fieldsArray.length; ++Ee)
+        ve.fieldsArray[Ee].parent || ve.parent.add(ve.fieldsArray[Ee]);
   }
   return me.prototype.add = function(Ee) {
     if (!(Ee instanceof e))
@@ -11075,8 +10848,8 @@ function requireOneof() {
   }, me.d = function() {
     for (var Ee = new Array(arguments.length), Oe = 0; Oe < arguments.length; )
       Ee[Oe] = arguments[Oe++];
-    return function(gr, ve) {
-      ye.decorateType(gr.constructor).add(new me(ve, Ee)), Object.defineProperty(gr, ve, {
+    return function(gr, we) {
+      ye.decorateType(gr.constructor).add(new me(we, Ee)), Object.defineProperty(gr, we, {
         get: ye.oneOfGetter(Ee),
         set: ye.oneOfSetter(Ee)
       });
@@ -11090,14 +10863,14 @@ function requireNamespace() {
   hasRequiredNamespace = 1, namespace = xe;
   var fe = requireObject();
   ((xe.prototype = Object.create(fe.prototype)).constructor = xe).className = "Namespace";
-  var e = requireField(), ye = requireUtil(), me = requireOneof(), be, we, Ee;
+  var e = requireField(), ye = requireUtil(), me = requireOneof(), be, ve, Ee;
   xe.fromJSON = function(Se, $r) {
     return new xe(Se, $r.options).addJSON($r.nested);
   };
-  function Oe(ve, Se) {
-    if (ve && ve.length) {
-      for (var $r = {}, Fr = 0; Fr < ve.length; ++Fr)
-        $r[ve[Fr].name] = ve[Fr].toJSON(Se);
+  function Oe(we, Se) {
+    if (we && we.length) {
+      for (var $r = {}, Fr = 0; Fr < we.length; ++Fr)
+        $r[we[Fr].name] = we[Fr].toJSON(Se);
       return $r;
     }
   }
@@ -11116,11 +10889,11 @@ function requireNamespace() {
     }
     return !1;
   };
-  function xe(ve, Se) {
-    fe.call(this, ve, Se), this.nested = void 0, this._nestedArray = null;
+  function xe(we, Se) {
+    fe.call(this, we, Se), this.nested = void 0, this._nestedArray = null;
   }
-  function gr(ve) {
-    return ve._nestedArray = null, ve;
+  function gr(we) {
+    return we._nestedArray = null, we;
   }
   return Object.defineProperty(xe.prototype, "nestedArray", {
     get: function() {
@@ -11139,7 +10912,7 @@ function requireNamespace() {
       for (var Fr = Object.keys(Se), Br = 0, Vr; Br < Fr.length; ++Br)
         Vr = Se[Fr[Br]], $r.add(
           // most to least likely
-          (Vr.fields !== void 0 ? be.fromJSON : Vr.values !== void 0 ? Ee.fromJSON : Vr.methods !== void 0 ? we.fromJSON : Vr.id !== void 0 ? e.fromJSON : xe.fromJSON)(Fr[Br], Vr)
+          (Vr.fields !== void 0 ? be.fromJSON : Vr.values !== void 0 ? Ee.fromJSON : Vr.methods !== void 0 ? ve.fromJSON : Vr.id !== void 0 ? e.fromJSON : xe.fromJSON)(Fr[Br], Vr)
         );
     return this;
   }, xe.prototype.get = function(Se) {
@@ -11149,14 +10922,14 @@ function requireNamespace() {
       return this.nested[Se].values;
     throw Error("no such enum: " + Se);
   }, xe.prototype.add = function(Se) {
-    if (!(Se instanceof e && Se.extend !== void 0 || Se instanceof be || Se instanceof me || Se instanceof Ee || Se instanceof we || Se instanceof xe))
+    if (!(Se instanceof e && Se.extend !== void 0 || Se instanceof be || Se instanceof me || Se instanceof Ee || Se instanceof ve || Se instanceof xe))
       throw TypeError("object must be a valid nested object");
     if (!this.nested)
       this.nested = {};
     else {
       var $r = this.get(Se.name);
       if ($r)
-        if ($r instanceof xe && Se instanceof xe && !($r instanceof be || $r instanceof we)) {
+        if ($r instanceof xe && Se instanceof xe && !($r instanceof be || $r instanceof ve)) {
           for (var Fr = $r.nestedArray, Br = 0; Br < Fr.length; ++Br)
             Se.add(Fr[Br]);
           this.remove($r), this.nested || (this.nested = {}), Se.setOptions($r.options, !0);
@@ -11227,12 +11000,12 @@ function requireNamespace() {
       throw Error("no such Type or Enum '" + Se + "' in " + this);
     return $r;
   }, xe.prototype.lookupService = function(Se) {
-    var $r = this.lookup(Se, [we]);
+    var $r = this.lookup(Se, [ve]);
     if (!$r)
       throw Error("no such Service '" + Se + "' in " + this);
     return $r;
-  }, xe._configure = function(ve, Se, $r) {
-    be = ve, we = Se, Ee = $r;
+  }, xe._configure = function(we, Se, $r) {
+    be = we, ve = Se, Ee = $r;
   }, namespace;
 }
 var mapfield, hasRequiredMapfield;
@@ -11243,15 +11016,15 @@ function requireMapfield() {
   var fe = requireField();
   ((me.prototype = Object.create(fe.prototype)).constructor = me).className = "MapField";
   var e = requireTypes(), ye = requireUtil();
-  function me(be, we, Ee, Oe, xe, gr) {
-    if (fe.call(this, be, we, Oe, void 0, void 0, xe, gr), !ye.isString(Ee))
+  function me(be, ve, Ee, Oe, xe, gr) {
+    if (fe.call(this, be, ve, Oe, void 0, void 0, xe, gr), !ye.isString(Ee))
       throw TypeError("keyType must be a string");
     this.keyType = Ee, this.resolvedKeyType = null, this.map = !0;
   }
-  return me.fromJSON = function(we, Ee) {
-    return new me(we, Ee.id, Ee.keyType, Ee.type, Ee.options, Ee.comment);
-  }, me.prototype.toJSON = function(we) {
-    var Ee = we ? !!we.keepComments : !1;
+  return me.fromJSON = function(ve, Ee) {
+    return new me(ve, Ee.id, Ee.keyType, Ee.type, Ee.options, Ee.comment);
+  }, me.prototype.toJSON = function(ve) {
+    var Ee = ve ? !!ve.keepComments : !1;
     return ye.toObject([
       "keyType",
       this.keyType,
@@ -11272,9 +11045,9 @@ function requireMapfield() {
     if (e.mapKey[this.keyType] === void 0)
       throw Error("invalid key type: " + this.keyType);
     return fe.prototype.resolve.call(this);
-  }, me.d = function(we, Ee, Oe) {
-    return typeof Oe == "function" ? Oe = ye.decorateType(Oe).name : Oe && typeof Oe == "object" && (Oe = ye.decorateEnum(Oe).name), function(gr, ve) {
-      ye.decorateType(gr.constructor).add(new me(ve, we, Ee, Oe));
+  }, me.d = function(ve, Ee, Oe) {
+    return typeof Oe == "function" ? Oe = ye.decorateType(Oe).name : Oe && typeof Oe == "object" && (Oe = ye.decorateEnum(Oe).name), function(gr, we) {
+      ye.decorateType(gr.constructor).add(new me(we, ve, Ee, Oe));
     };
   }, mapfield;
 }
@@ -11286,19 +11059,19 @@ function requireMethod() {
   var fe = requireObject();
   ((ye.prototype = Object.create(fe.prototype)).constructor = ye).className = "Method";
   var e = requireUtil();
-  function ye(me, be, we, Ee, Oe, xe, gr, ve, Se) {
+  function ye(me, be, ve, Ee, Oe, xe, gr, we, Se) {
     if (e.isObject(Oe) ? (gr = Oe, Oe = xe = void 0) : e.isObject(xe) && (gr = xe, xe = void 0), !(be === void 0 || e.isString(be)))
       throw TypeError("type must be a string");
-    if (!e.isString(we))
+    if (!e.isString(ve))
       throw TypeError("requestType must be a string");
     if (!e.isString(Ee))
       throw TypeError("responseType must be a string");
-    fe.call(this, me, gr), this.type = be || "rpc", this.requestType = we, this.requestStream = Oe ? !0 : void 0, this.responseType = Ee, this.responseStream = xe ? !0 : void 0, this.resolvedRequestType = null, this.resolvedResponseType = null, this.comment = ve, this.parsedOptions = Se;
+    fe.call(this, me, gr), this.type = be || "rpc", this.requestType = ve, this.requestStream = Oe ? !0 : void 0, this.responseType = Ee, this.responseStream = xe ? !0 : void 0, this.resolvedRequestType = null, this.resolvedResponseType = null, this.comment = we, this.parsedOptions = Se;
   }
-  return ye.fromJSON = function(be, we) {
-    return new ye(be, we.type, we.requestType, we.responseType, we.requestStream, we.responseStream, we.options, we.comment, we.parsedOptions);
+  return ye.fromJSON = function(be, ve) {
+    return new ye(be, ve.type, ve.requestType, ve.responseType, ve.requestStream, ve.responseStream, ve.options, ve.comment, ve.parsedOptions);
   }, ye.prototype.toJSON = function(be) {
-    var we = be ? !!be.keepComments : !1;
+    var ve = be ? !!be.keepComments : !1;
     return e.toObject([
       "type",
       this.type !== "rpc" && /* istanbul ignore next */
@@ -11314,7 +11087,7 @@ function requireMethod() {
       "options",
       this.options,
       "comment",
-      we ? this.comment : void 0,
+      ve ? this.comment : void 0,
       "parsedOptions",
       this.parsedOptions
     ]);
@@ -11336,8 +11109,8 @@ function requireService() {
   be.fromJSON = function(Oe, xe) {
     var gr = new be(Oe, xe.options);
     if (xe.methods)
-      for (var ve = Object.keys(xe.methods), Se = 0; Se < ve.length; ++Se)
-        gr.add(e.fromJSON(ve[Se], xe.methods[ve[Se]]));
+      for (var we = Object.keys(xe.methods), Se = 0; Se < we.length; ++Se)
+        gr.add(e.fromJSON(we[Se], xe.methods[we[Se]]));
     return xe.nested && gr.addJSON(xe.nested), gr.comment = xe.comment, gr;
   }, be.prototype.toJSON = function(Oe) {
     var xe = fe.prototype.toJSON.call(this, Oe), gr = Oe ? !!Oe.keepComments : !1;
@@ -11357,7 +11130,7 @@ function requireService() {
       return this._methodsArray || (this._methodsArray = ye.toArray(this.methods));
     }
   });
-  function we(Ee) {
+  function ve(Ee) {
     return Ee._methodsArray = null, Ee;
   }
   return be.prototype.get = function(Oe) {
@@ -11369,25 +11142,25 @@ function requireService() {
   }, be.prototype.add = function(Oe) {
     if (this.get(Oe.name))
       throw Error("duplicate name '" + Oe.name + "' in " + this);
-    return Oe instanceof e ? (this.methods[Oe.name] = Oe, Oe.parent = this, we(this)) : fe.prototype.add.call(this, Oe);
+    return Oe instanceof e ? (this.methods[Oe.name] = Oe, Oe.parent = this, ve(this)) : fe.prototype.add.call(this, Oe);
   }, be.prototype.remove = function(Oe) {
     if (Oe instanceof e) {
       if (this.methods[Oe.name] !== Oe)
         throw Error(Oe + " is not a member of " + this);
-      return delete this.methods[Oe.name], Oe.parent = null, we(this);
+      return delete this.methods[Oe.name], Oe.parent = null, ve(this);
     }
     return fe.prototype.remove.call(this, Oe);
   }, be.prototype.create = function(Oe, xe, gr) {
-    for (var ve = new me.Service(Oe, xe, gr), Se = 0, $r; Se < /* initializes */
+    for (var we = new me.Service(Oe, xe, gr), Se = 0, $r; Se < /* initializes */
     this.methodsArray.length; ++Se) {
       var Fr = ye.lcFirst(($r = this._methodsArray[Se]).resolve().name).replace(/[^$\w_]/g, "");
-      ve[Fr] = ye.codegen(["r", "c"], ye.isReserved(Fr) ? Fr + "_" : Fr)("return this.rpcCall(m,q,s,r,c)")({
+      we[Fr] = ye.codegen(["r", "c"], ye.isReserved(Fr) ? Fr + "_" : Fr)("return this.rpcCall(m,q,s,r,c)")({
         m: $r,
         q: $r.resolvedRequestType.ctor,
         s: $r.resolvedResponseType.ctor
       });
     }
-    return ve;
+    return we;
   }, service;
 }
 var message = Message, util$2 = requireMinimal$1();
@@ -11429,21 +11202,21 @@ function requireDecoder() {
     return decoder_1;
   hasRequiredDecoder = 1, decoder_1 = be;
   var fe = require_enum(), e = requireTypes(), ye = requireUtil();
-  function me(we) {
-    return "missing required '" + we.name + "'";
+  function me(ve) {
+    return "missing required '" + ve.name + "'";
   }
-  function be(we) {
-    var Ee = ye.codegen(["r", "l"], we.name + "$decode")("if(!(r instanceof Reader))")("r=Reader.create(r)")("var c=l===undefined?r.len:r.pos+l,m=new this.ctor" + (we.fieldsArray.filter(function($r) {
+  function be(ve) {
+    var Ee = ye.codegen(["r", "l"], ve.name + "$decode")("if(!(r instanceof Reader))")("r=Reader.create(r)")("var c=l===undefined?r.len:r.pos+l,m=new this.ctor" + (ve.fieldsArray.filter(function($r) {
       return $r.map;
     }).length ? ",k,value" : ""))("while(r.pos<c){")("var t=r.uint32()");
-    we.group && Ee("if((t&7)===4)")("break"), Ee("switch(t>>>3){");
+    ve.group && Ee("if((t&7)===4)")("break"), Ee("switch(t>>>3){");
     for (var Oe = 0; Oe < /* initializes */
-    we.fieldsArray.length; ++Oe) {
-      var xe = we._fieldsArray[Oe].resolve(), gr = xe.resolvedType instanceof fe ? "int32" : xe.type, ve = "m" + ye.safeProp(xe.name);
-      Ee("case %i: {", xe.id), xe.map ? (Ee("if(%s===util.emptyObject)", ve)("%s={}", ve)("var c2 = r.uint32()+r.pos"), e.defaults[xe.keyType] !== void 0 ? Ee("k=%j", e.defaults[xe.keyType]) : Ee("k=null"), e.defaults[gr] !== void 0 ? Ee("value=%j", e.defaults[gr]) : Ee("value=null"), Ee("while(r.pos<c2){")("var tag2=r.uint32()")("switch(tag2>>>3){")("case 1: k=r.%s(); break", xe.keyType)("case 2:"), e.basic[gr] === void 0 ? Ee("value=types[%i].decode(r,r.uint32())", Oe) : Ee("value=r.%s()", gr), Ee("break")("default:")("r.skipType(tag2&7)")("break")("}")("}"), e.long[xe.keyType] !== void 0 ? Ee('%s[typeof k==="object"?util.longToHash(k):k]=value', ve) : Ee("%s[k]=value", ve)) : xe.repeated ? (Ee("if(!(%s&&%s.length))", ve, ve)("%s=[]", ve), e.packed[gr] !== void 0 && Ee("if((t&7)===2){")("var c2=r.uint32()+r.pos")("while(r.pos<c2)")("%s.push(r.%s())", ve, gr)("}else"), e.basic[gr] === void 0 ? Ee(xe.resolvedType.group ? "%s.push(types[%i].decode(r))" : "%s.push(types[%i].decode(r,r.uint32()))", ve, Oe) : Ee("%s.push(r.%s())", ve, gr)) : e.basic[gr] === void 0 ? Ee(xe.resolvedType.group ? "%s=types[%i].decode(r)" : "%s=types[%i].decode(r,r.uint32())", ve, Oe) : Ee("%s=r.%s()", ve, gr), Ee("break")("}");
+    ve.fieldsArray.length; ++Oe) {
+      var xe = ve._fieldsArray[Oe].resolve(), gr = xe.resolvedType instanceof fe ? "int32" : xe.type, we = "m" + ye.safeProp(xe.name);
+      Ee("case %i: {", xe.id), xe.map ? (Ee("if(%s===util.emptyObject)", we)("%s={}", we)("var c2 = r.uint32()+r.pos"), e.defaults[xe.keyType] !== void 0 ? Ee("k=%j", e.defaults[xe.keyType]) : Ee("k=null"), e.defaults[gr] !== void 0 ? Ee("value=%j", e.defaults[gr]) : Ee("value=null"), Ee("while(r.pos<c2){")("var tag2=r.uint32()")("switch(tag2>>>3){")("case 1: k=r.%s(); break", xe.keyType)("case 2:"), e.basic[gr] === void 0 ? Ee("value=types[%i].decode(r,r.uint32())", Oe) : Ee("value=r.%s()", gr), Ee("break")("default:")("r.skipType(tag2&7)")("break")("}")("}"), e.long[xe.keyType] !== void 0 ? Ee('%s[typeof k==="object"?util.longToHash(k):k]=value', we) : Ee("%s[k]=value", we)) : xe.repeated ? (Ee("if(!(%s&&%s.length))", we, we)("%s=[]", we), e.packed[gr] !== void 0 && Ee("if((t&7)===2){")("var c2=r.uint32()+r.pos")("while(r.pos<c2)")("%s.push(r.%s())", we, gr)("}else"), e.basic[gr] === void 0 ? Ee(xe.resolvedType.group ? "%s.push(types[%i].decode(r))" : "%s.push(types[%i].decode(r,r.uint32()))", we, Oe) : Ee("%s.push(r.%s())", we, gr)) : e.basic[gr] === void 0 ? Ee(xe.resolvedType.group ? "%s=types[%i].decode(r)" : "%s=types[%i].decode(r,r.uint32())", we, Oe) : Ee("%s=r.%s()", we, gr), Ee("break")("}");
     }
-    for (Ee("default:")("r.skipType(t&7)")("break")("}")("}"), Oe = 0; Oe < we._fieldsArray.length; ++Oe) {
-      var Se = we._fieldsArray[Oe];
+    for (Ee("default:")("r.skipType(t&7)")("break")("}")("}"), Oe = 0; Oe < ve._fieldsArray.length; ++Oe) {
+      var Se = ve._fieldsArray[Oe];
       Se.required && Ee("if(!m.hasOwnProperty(%j))", Se.name)("throw util.ProtocolError(%j,{instance:m})", me(Se));
     }
     return Ee("return m");
@@ -11454,7 +11227,7 @@ var verifier_1, hasRequiredVerifier;
 function requireVerifier() {
   if (hasRequiredVerifier)
     return verifier_1;
-  hasRequiredVerifier = 1, verifier_1 = we;
+  hasRequiredVerifier = 1, verifier_1 = ve;
   var fe = require_enum(), e = requireUtil();
   function ye(Ee, Oe) {
     return Ee.name + ": " + Oe + (Ee.repeated && Oe !== "array" ? "[]" : Ee.map && Oe !== "object" ? "{k:" + Ee.keyType + "}" : "") + " expected";
@@ -11463,8 +11236,8 @@ function requireVerifier() {
     if (Oe.resolvedType)
       if (Oe.resolvedType instanceof fe) {
         Ee("switch(%s){", gr)("default:")("return%j", ye(Oe, "enum value"));
-        for (var ve = Object.keys(Oe.resolvedType.values), Se = 0; Se < ve.length; ++Se)
-          Ee("case %i:", Oe.resolvedType.values[ve[Se]]);
+        for (var we = Object.keys(Oe.resolvedType.values), Se = 0; Se < we.length; ++Se)
+          Ee("case %i:", Oe.resolvedType.values[we[Se]]);
         Ee("break")("}");
       } else
         Ee("{")("var e=types[%i].verify(%s);", xe, gr)("if(e)")("return%j+e", Oe.name + ".")("}");
@@ -11522,22 +11295,22 @@ function requireVerifier() {
     }
     return Ee;
   }
-  function we(Ee) {
+  function ve(Ee) {
     var Oe = e.codegen(["m"], Ee.name + "$verify")('if(typeof m!=="object"||m===null)')("return%j", "object expected"), xe = Ee.oneofsArray, gr = {};
     xe.length && Oe("var p={}");
-    for (var ve = 0; ve < /* initializes */
-    Ee.fieldsArray.length; ++ve) {
-      var Se = Ee._fieldsArray[ve].resolve(), $r = "m" + e.safeProp(Se.name);
+    for (var we = 0; we < /* initializes */
+    Ee.fieldsArray.length; ++we) {
+      var Se = Ee._fieldsArray[we].resolve(), $r = "m" + e.safeProp(Se.name);
       if (Se.optional && Oe("if(%s!=null&&m.hasOwnProperty(%j)){", $r, Se.name), Se.map)
-        Oe("if(!util.isObject(%s))", $r)("return%j", ye(Se, "object"))("var k=Object.keys(%s)", $r)("for(var i=0;i<k.length;++i){"), be(Oe, Se, "k[i]"), me(Oe, Se, ve, $r + "[k[i]]")("}");
+        Oe("if(!util.isObject(%s))", $r)("return%j", ye(Se, "object"))("var k=Object.keys(%s)", $r)("for(var i=0;i<k.length;++i){"), be(Oe, Se, "k[i]"), me(Oe, Se, we, $r + "[k[i]]")("}");
       else if (Se.repeated)
-        Oe("if(!Array.isArray(%s))", $r)("return%j", ye(Se, "array"))("for(var i=0;i<%s.length;++i){", $r), me(Oe, Se, ve, $r + "[i]")("}");
+        Oe("if(!Array.isArray(%s))", $r)("return%j", ye(Se, "array"))("for(var i=0;i<%s.length;++i){", $r), me(Oe, Se, we, $r + "[i]")("}");
       else {
         if (Se.partOf) {
           var Fr = e.safeProp(Se.partOf.name);
           gr[Se.partOf.name] === 1 && Oe("if(p%s===1)", Fr)("return%j", Se.partOf.name + ": multiple values"), gr[Se.partOf.name] = 1, Oe("p%s=1", Fr);
         }
-        me(Oe, Se, ve, $r);
+        me(Oe, Se, we, $r);
       }
       Se.optional && Oe("}");
     }
@@ -11550,12 +11323,12 @@ function requireConverter() {
   return hasRequiredConverter || (hasRequiredConverter = 1, function(fe) {
     var e = fe, ye = require_enum(), me = requireUtil();
     function be(Ee, Oe, xe, gr) {
-      var ve = !1;
+      var we = !1;
       if (Oe.resolvedType)
         if (Oe.resolvedType instanceof ye) {
           Ee("switch(d%s){", gr);
           for (var Se = Oe.resolvedType.values, $r = Object.keys(Se), Fr = 0; Fr < $r.length; ++Fr)
-            Se[$r[Fr]] === Oe.typeDefault && !ve && (Ee("default:")('if(typeof(d%s)==="number"){m%s=d%s;break}', gr, gr, gr), Oe.repeated || Ee("break"), ve = !0), Ee("case%j:", $r[Fr])("case %i:", Se[$r[Fr]])("m%s=%j", gr, Se[$r[Fr]])("break");
+            Se[$r[Fr]] === Oe.typeDefault && !we && (Ee("default:")('if(typeof(d%s)==="number"){m%s=d%s;break}', gr, gr, gr), Oe.repeated || Ee("break"), we = !0), Ee("case%j:", $r[Fr])("case %i:", Se[$r[Fr]])("m%s=%j", gr, Se[$r[Fr]])("break");
           Ee("}");
         } else
           Ee('if(typeof d%s!=="object")', gr)("throw TypeError(%j)", Oe.fullName + ": object expected")("m%s=types[%i].fromObject(d%s)", gr, xe, gr);
@@ -11601,47 +11374,47 @@ function requireConverter() {
       if (!xe.length)
         return gr("return new this.ctor");
       gr("var m=new this.ctor");
-      for (var ve = 0; ve < xe.length; ++ve) {
-        var Se = xe[ve].resolve(), $r = me.safeProp(Se.name);
+      for (var we = 0; we < xe.length; ++we) {
+        var Se = xe[we].resolve(), $r = me.safeProp(Se.name);
         Se.map ? (gr("if(d%s){", $r)('if(typeof d%s!=="object")', $r)("throw TypeError(%j)", Se.fullName + ": object expected")("m%s={}", $r)("for(var ks=Object.keys(d%s),i=0;i<ks.length;++i){", $r), be(
           gr,
           Se,
           /* not sorted */
-          ve,
+          we,
           $r + "[ks[i]]"
         )("}")("}")) : Se.repeated ? (gr("if(d%s){", $r)("if(!Array.isArray(d%s))", $r)("throw TypeError(%j)", Se.fullName + ": array expected")("m%s=[]", $r)("for(var i=0;i<d%s.length;++i){", $r), be(
           gr,
           Se,
           /* not sorted */
-          ve,
+          we,
           $r + "[i]"
         )("}")("}")) : (Se.resolvedType instanceof ye || gr("if(d%s!=null){", $r), be(
           gr,
           Se,
           /* not sorted */
-          ve,
+          we,
           $r
         ), Se.resolvedType instanceof ye || gr("}"));
       }
       return gr("return m");
     };
-    function we(Ee, Oe, xe, gr) {
+    function ve(Ee, Oe, xe, gr) {
       if (Oe.resolvedType)
         Oe.resolvedType instanceof ye ? Ee("d%s=o.enums===String?(types[%i].values[m%s]===undefined?m%s:types[%i].values[m%s]):m%s", gr, xe, gr, gr, xe, gr, gr) : Ee("d%s=types[%i].toObject(m%s,o)", gr, xe, gr);
       else {
-        var ve = !1;
+        var we = !1;
         switch (Oe.type) {
           case "double":
           case "float":
             Ee("d%s=o.json&&!isFinite(m%s)?String(m%s):m%s", gr, gr, gr, gr);
             break;
           case "uint64":
-            ve = !0;
+            we = !0;
           case "int64":
           case "sint64":
           case "fixed64":
           case "sfixed64":
-            Ee('if(typeof m%s==="number")', gr)("d%s=o.longs===String?String(m%s):m%s", gr, gr, gr)("else")("d%s=o.longs===String?util.Long.prototype.toString.call(m%s):o.longs===Number?new util.LongBits(m%s.low>>>0,m%s.high>>>0).toNumber(%s):m%s", gr, gr, gr, gr, ve ? "true" : "", gr);
+            Ee('if(typeof m%s==="number")', gr)("d%s=o.longs===String?String(m%s):m%s", gr, gr, gr)("else")("d%s=o.longs===String?util.Long.prototype.toString.call(m%s):o.longs===Number?new util.LongBits(m%s.low>>>0,m%s.high>>>0).toNumber(%s):m%s", gr, gr, gr, gr, we ? "true" : "", gr);
             break;
           case "bytes":
             Ee("d%s=o.bytes===String?util.base64.encode(m%s,0,m%s.length):o.bytes===Array?Array.prototype.slice.call(m%s):m%s", gr, gr, gr, gr, gr);
@@ -11657,11 +11430,11 @@ function requireConverter() {
       var xe = Oe.fieldsArray.slice().sort(me.compareFieldsById);
       if (!xe.length)
         return me.codegen()("return {}");
-      for (var gr = me.codegen(["m", "o"], Oe.name + "$toObject")("if(!o)")("o={}")("var d={}"), ve = [], Se = [], $r = [], Fr = 0; Fr < xe.length; ++Fr)
-        xe[Fr].partOf || (xe[Fr].resolve().repeated ? ve : xe[Fr].map ? Se : $r).push(xe[Fr]);
-      if (ve.length) {
-        for (gr("if(o.arrays||o.defaults){"), Fr = 0; Fr < ve.length; ++Fr)
-          gr("d%s=[]", me.safeProp(ve[Fr].name));
+      for (var gr = me.codegen(["m", "o"], Oe.name + "$toObject")("if(!o)")("o={}")("var d={}"), we = [], Se = [], $r = [], Fr = 0; Fr < xe.length; ++Fr)
+        xe[Fr].partOf || (xe[Fr].resolve().repeated ? we : xe[Fr].map ? Se : $r).push(xe[Fr]);
+      if (we.length) {
+        for (gr("if(o.arrays||o.defaults){"), Fr = 0; Fr < we.length; ++Fr)
+          gr("d%s=[]", me.safeProp(we[Fr].name));
         gr("}");
       }
       if (Se.length) {
@@ -11687,19 +11460,19 @@ function requireConverter() {
       var so = !1;
       for (Fr = 0; Fr < xe.length; ++Fr) {
         var Br = xe[Fr], kr = Oe._fieldsArray.indexOf(Br), Vr = me.safeProp(Br.name);
-        Br.map ? (so || (so = !0, gr("var ks2")), gr("if(m%s&&(ks2=Object.keys(m%s)).length){", Vr, Vr)("d%s={}", Vr)("for(var j=0;j<ks2.length;++j){"), we(
+        Br.map ? (so || (so = !0, gr("var ks2")), gr("if(m%s&&(ks2=Object.keys(m%s)).length){", Vr, Vr)("d%s={}", Vr)("for(var j=0;j<ks2.length;++j){"), ve(
           gr,
           Br,
           /* sorted */
           kr,
           Vr + "[ks2[j]]"
-        )("}")) : Br.repeated ? (gr("if(m%s&&m%s.length){", Vr, Vr)("d%s=[]", Vr)("for(var j=0;j<m%s.length;++j){", Vr), we(
+        )("}")) : Br.repeated ? (gr("if(m%s&&m%s.length){", Vr, Vr)("d%s=[]", Vr)("for(var j=0;j<m%s.length;++j){", Vr), ve(
           gr,
           Br,
           /* sorted */
           kr,
           Vr + "[j]"
-        )("}")) : (gr("if(m%s!=null&&m.hasOwnProperty(%j)){", Vr, Br.name), we(
+        )("}")) : (gr("if(m%s!=null&&m.hasOwnProperty(%j)){", Vr, Br.name), ve(
           gr,
           Br,
           /* sorted */
@@ -11717,27 +11490,27 @@ var wrappers = {};
   e[".google.protobuf.Any"] = {
     fromObject: function(me) {
       if (me && me["@type"]) {
-        var be = me["@type"].substring(me["@type"].lastIndexOf("/") + 1), we = this.lookup(be);
-        if (we) {
+        var be = me["@type"].substring(me["@type"].lastIndexOf("/") + 1), ve = this.lookup(be);
+        if (ve) {
           var Ee = me["@type"].charAt(0) === "." ? me["@type"].slice(1) : me["@type"];
           return Ee.indexOf("/") === -1 && (Ee = "/" + Ee), this.create({
             type_url: Ee,
-            value: we.encode(we.fromObject(me)).finish()
+            value: ve.encode(ve.fromObject(me)).finish()
           });
         }
       }
       return this.fromObject(me);
     },
     toObject: function(me, be) {
-      var we = "type.googleapis.com/", Ee = "", Oe = "";
+      var ve = "type.googleapis.com/", Ee = "", Oe = "";
       if (be && be.json && me.type_url && me.value) {
         Oe = me.type_url.substring(me.type_url.lastIndexOf("/") + 1), Ee = me.type_url.substring(0, me.type_url.lastIndexOf("/") + 1);
         var xe = this.lookup(Oe);
         xe && (me = xe.decode(me.value));
       }
       if (!(me instanceof this.ctor) && me instanceof ye) {
-        var gr = me.$type.toObject(me, be), ve = me.$type.fullName[0] === "." ? me.$type.fullName.slice(1) : me.$type.fullName;
-        return Ee === "" && (Ee = we), Oe = Ee + ve, gr["@type"] = Oe, gr;
+        var gr = me.$type.toObject(me, be), we = me.$type.fullName[0] === "." ? me.$type.fullName.slice(1) : me.$type.fullName;
+        return Ee === "" && (Ee = ve), Oe = Ee + we, gr["@type"] = Oe, gr;
       }
       return this.toObject(me, be);
     }
@@ -11750,7 +11523,7 @@ function requireType() {
   hasRequiredType = 1, type = Vr;
   var fe = requireNamespace();
   ((Vr.prototype = Object.create(fe.prototype)).constructor = Vr).className = "Type";
-  var e = require_enum(), ye = requireOneof(), me = requireField(), be = requireMapfield(), we = requireService(), Ee = message, Oe = reader, xe = writer, gr = requireUtil(), ve = requireEncoder(), Se = requireDecoder(), $r = requireVerifier(), Fr = requireConverter(), Br = wrappers;
+  var e = require_enum(), ye = requireOneof(), me = requireField(), be = requireMapfield(), ve = requireService(), Ee = message, Oe = reader, xe = writer, gr = requireUtil(), we = requireEncoder(), Se = requireDecoder(), $r = requireVerifier(), Fr = requireConverter(), Br = wrappers;
   function Vr(so, kr) {
     fe.call(this, so, kr), this.fields = {}, this.oneofs = void 0, this.extensions = void 0, this.reserved = void 0, this.group = void 0, this._fieldsById = null, this._fieldsArray = null, this._oneofsArray = null, this._ctor = null;
   }
@@ -11846,7 +11619,7 @@ function requireType() {
         var Mr = qr.nested[Yr[Ur]];
         Hr.add(
           // most to least likely
-          (Mr.id !== void 0 ? me.fromJSON : Mr.fields !== void 0 ? Vr.fromJSON : Mr.values !== void 0 ? e.fromJSON : Mr.methods !== void 0 ? we.fromJSON : fe.fromJSON)(Yr[Ur], Mr)
+          (Mr.id !== void 0 ? me.fromJSON : Mr.fields !== void 0 ? Vr.fromJSON : Mr.values !== void 0 ? e.fromJSON : Mr.methods !== void 0 ? ve.fromJSON : fe.fromJSON)(Yr[Ur], Mr)
         );
       }
     return qr.extensions && qr.extensions.length && (Hr.extensions = qr.extensions), qr.reserved && qr.reserved.length && (Hr.reserved = qr.reserved), qr.group && (Hr.group = !0), qr.comment && (Hr.comment = qr.comment), Hr;
@@ -11919,7 +11692,7 @@ function requireType() {
     for (var kr = this.fullName, qr = [], Hr = 0; Hr < /* initializes */
     this.fieldsArray.length; ++Hr)
       qr.push(this._fieldsArray[Hr].resolve().resolvedType);
-    this.encode = ve(this)({
+    this.encode = we(this)({
       Writer: xe,
       types: qr,
       util: gr
@@ -11970,7 +11743,7 @@ function requireRoot() {
   hasRequiredRoot = 1, root = xe;
   var fe = requireNamespace();
   ((xe.prototype = Object.create(fe.prototype)).constructor = xe).className = "Root";
-  var e = requireField(), ye = require_enum(), me = requireOneof(), be = requireUtil(), we, Ee, Oe;
+  var e = requireField(), ye = require_enum(), me = requireOneof(), be = requireUtil(), ve, Ee, Oe;
   function xe($r) {
     fe.call(this, "", $r), this.deferred = [], this.files = [];
   }
@@ -12068,7 +11841,7 @@ function requireRoot() {
       }).join(", "));
     return fe.prototype.resolveAll.call(this);
   };
-  var ve = /^[A-Z]/;
+  var we = /^[A-Z]/;
   function Se($r, Fr) {
     var Br = Fr.parent.lookup(Fr.extend);
     if (Br) {
@@ -12083,15 +11856,15 @@ function requireRoot() {
       Fr.extend !== void 0 && /* not already handled */
       !Fr.extensionField && (Se(this, Fr) || this.deferred.push(Fr));
     else if (Fr instanceof ye)
-      ve.test(Fr.name) && (Fr.parent[Fr.name] = Fr.values);
+      we.test(Fr.name) && (Fr.parent[Fr.name] = Fr.values);
     else if (!(Fr instanceof me)) {
-      if (Fr instanceof we)
+      if (Fr instanceof ve)
         for (var Br = 0; Br < this.deferred.length; )
           Se(this, this.deferred[Br]) ? this.deferred.splice(Br, 1) : ++Br;
       for (var Vr = 0; Vr < /* initializes */
       Fr.nestedArray.length; ++Vr)
         this._handleAdd(Fr._nestedArray[Vr]);
-      ve.test(Fr.name) && (Fr.parent[Fr.name] = Fr);
+      we.test(Fr.name) && (Fr.parent[Fr.name] = Fr);
     }
   }, xe.prototype._handleRemove = function(Fr) {
     if (Fr instanceof e) {
@@ -12109,15 +11882,15 @@ function requireRoot() {
           Br > -1 && this.deferred.splice(Br, 1);
         }
     } else if (Fr instanceof ye)
-      ve.test(Fr.name) && delete Fr.parent[Fr.name];
+      we.test(Fr.name) && delete Fr.parent[Fr.name];
     else if (Fr instanceof fe) {
       for (var Vr = 0; Vr < /* initializes */
       Fr.nestedArray.length; ++Vr)
         this._handleRemove(Fr._nestedArray[Vr]);
-      ve.test(Fr.name) && delete Fr.parent[Fr.name];
+      we.test(Fr.name) && delete Fr.parent[Fr.name];
     }
   }, xe._configure = function($r, Fr, Br) {
-    we = $r, Ee = Fr, Oe = Br;
+    ve = $r, Ee = Fr, Oe = Br;
   }, root;
 }
 var hasRequiredUtil;
@@ -12128,38 +11901,38 @@ function requireUtil() {
   var fe = util$3.exports = requireMinimal$1(), e = roots, ye, me;
   fe.codegen = codegen_1, fe.fetch = fetch_1, fe.path = path, fe.fs = fe.inquire("fs"), fe.toArray = function(gr) {
     if (gr) {
-      for (var ve = Object.keys(gr), Se = new Array(ve.length), $r = 0; $r < ve.length; )
-        Se[$r] = gr[ve[$r++]];
+      for (var we = Object.keys(gr), Se = new Array(we.length), $r = 0; $r < we.length; )
+        Se[$r] = gr[we[$r++]];
       return Se;
     }
     return [];
   }, fe.toObject = function(gr) {
-    for (var ve = {}, Se = 0; Se < gr.length; ) {
+    for (var we = {}, Se = 0; Se < gr.length; ) {
       var $r = gr[Se++], Fr = gr[Se++];
-      Fr !== void 0 && (ve[$r] = Fr);
+      Fr !== void 0 && (we[$r] = Fr);
     }
-    return ve;
+    return we;
   };
-  var be = /\\/g, we = /"/g;
+  var be = /\\/g, ve = /"/g;
   fe.isReserved = function(gr) {
     return /^(?:do|if|in|for|let|new|try|var|case|else|enum|eval|false|null|this|true|void|with|break|catch|class|const|super|throw|while|yield|delete|export|import|public|return|static|switch|typeof|default|extends|finally|package|private|continue|debugger|function|arguments|interface|protected|implements|instanceof)$/.test(gr);
   }, fe.safeProp = function(gr) {
-    return !/^[$\w_]+$/.test(gr) || fe.isReserved(gr) ? '["' + gr.replace(be, "\\\\").replace(we, '\\"') + '"]' : "." + gr;
+    return !/^[$\w_]+$/.test(gr) || fe.isReserved(gr) ? '["' + gr.replace(be, "\\\\").replace(ve, '\\"') + '"]' : "." + gr;
   }, fe.ucFirst = function(gr) {
     return gr.charAt(0).toUpperCase() + gr.substring(1);
   };
   var Ee = /_([a-z])/g;
   fe.camelCase = function(gr) {
-    return gr.substring(0, 1) + gr.substring(1).replace(Ee, function(ve, Se) {
+    return gr.substring(0, 1) + gr.substring(1).replace(Ee, function(we, Se) {
       return Se.toUpperCase();
     });
-  }, fe.compareFieldsById = function(gr, ve) {
-    return gr.id - ve.id;
-  }, fe.decorateType = function(gr, ve) {
+  }, fe.compareFieldsById = function(gr, we) {
+    return gr.id - we.id;
+  }, fe.decorateType = function(gr, we) {
     if (gr.$type)
-      return ve && gr.$type.name !== ve && (fe.decorateRoot.remove(gr.$type), gr.$type.name = ve, fe.decorateRoot.add(gr.$type)), gr.$type;
+      return we && gr.$type.name !== we && (fe.decorateRoot.remove(gr.$type), gr.$type.name = we, fe.decorateRoot.add(gr.$type)), gr.$type;
     ye || (ye = requireType());
-    var Se = new ye(ve || gr.name);
+    var Se = new ye(we || gr.name);
     return fe.decorateRoot.add(Se), Se.ctor = gr, Object.defineProperty(gr, "$type", { value: Se, enumerable: !1 }), Object.defineProperty(gr.prototype, "$type", { value: Se, enumerable: !1 }), Se;
   };
   var Oe = 0;
@@ -12167,9 +11940,9 @@ function requireUtil() {
     if (gr.$type)
       return gr.$type;
     me || (me = require_enum());
-    var ve = new me("Enum" + Oe++, gr);
-    return fe.decorateRoot.add(ve), Object.defineProperty(gr, "$type", { value: ve, enumerable: !1 }), ve;
-  }, fe.setProperty = function(gr, ve, Se) {
+    var we = new me("Enum" + Oe++, gr);
+    return fe.decorateRoot.add(we), Object.defineProperty(gr, "$type", { value: we, enumerable: !1 }), we;
+  }, fe.setProperty = function(gr, we, Se) {
     function $r(Fr, Br, Vr) {
       var oo = Br.shift();
       if (oo === "__proto__")
@@ -12184,9 +11957,9 @@ function requireUtil() {
     }
     if (typeof gr != "object")
       throw TypeError("dst must be an object");
-    if (!ve)
+    if (!we)
       throw TypeError("path must be specified");
-    return ve = ve.split("."), $r(gr, ve, Se);
+    return we = we.split("."), $r(gr, we, Se);
   }, Object.defineProperty(fe, "decorateRoot", {
     get: function() {
       return e.decorated || (e.decorated = new (requireRoot())());
@@ -12238,19 +12011,19 @@ function requireObject() {
     throw Error();
   }, ye.prototype.onAdd = function(be) {
     this.parent && this.parent !== be && this.parent.remove(this), this.parent = be, this.resolved = !1;
-    var we = be.root;
-    we instanceof e && we._handleAdd(this);
+    var ve = be.root;
+    ve instanceof e && ve._handleAdd(this);
   }, ye.prototype.onRemove = function(be) {
-    var we = be.root;
-    we instanceof e && we._handleRemove(this), this.parent = null, this.resolved = !1;
+    var ve = be.root;
+    ve instanceof e && ve._handleRemove(this), this.parent = null, this.resolved = !1;
   }, ye.prototype.resolve = function() {
     return this.resolved ? this : (this.root instanceof e && (this.resolved = !0), this);
   }, ye.prototype.getOption = function(be) {
     if (this.options)
       return this.options[be];
-  }, ye.prototype.setOption = function(be, we, Ee) {
-    return (!Ee || !this.options || this.options[be] === void 0) && ((this.options || (this.options = {}))[be] = we), this;
-  }, ye.prototype.setParsedOption = function(be, we, Ee) {
+  }, ye.prototype.setOption = function(be, ve, Ee) {
+    return (!Ee || !this.options || this.options[be] === void 0) && ((this.options || (this.options = {}))[be] = ve), this;
+  }, ye.prototype.setParsedOption = function(be, ve, Ee) {
     this.parsedOptions || (this.parsedOptions = []);
     var Oe = this.parsedOptions;
     if (Ee) {
@@ -12259,22 +12032,22 @@ function requireObject() {
       });
       if (xe) {
         var gr = xe[be];
-        fe.setProperty(gr, Ee, we);
+        fe.setProperty(gr, Ee, ve);
       } else
-        xe = {}, xe[be] = fe.setProperty({}, Ee, we), Oe.push(xe);
+        xe = {}, xe[be] = fe.setProperty({}, Ee, ve), Oe.push(xe);
     } else {
-      var ve = {};
-      ve[be] = we, Oe.push(ve);
+      var we = {};
+      we[be] = ve, Oe.push(we);
     }
     return this;
-  }, ye.prototype.setOptions = function(be, we) {
+  }, ye.prototype.setOptions = function(be, ve) {
     if (be)
       for (var Ee = Object.keys(be), Oe = 0; Oe < Ee.length; ++Oe)
-        this.setOption(Ee[Oe], be[Ee[Oe]], we);
+        this.setOption(Ee[Oe], be[Ee[Oe]], ve);
     return this;
   }, ye.prototype.toString = function() {
-    var be = this.constructor.className, we = this.fullName;
-    return we.length ? be + " " + we : be;
+    var be = this.constructor.className, ve = this.fullName;
+    return ve.length ? be + " " + ve : be;
   }, ye._configure = function(me) {
     e = me;
   }, object;
@@ -12287,18 +12060,18 @@ function require_enum() {
   var fe = requireObject();
   ((me.prototype = Object.create(fe.prototype)).constructor = me).className = "Enum";
   var e = requireNamespace(), ye = requireUtil();
-  function me(be, we, Ee, Oe, xe, gr) {
-    if (fe.call(this, be, Ee), we && typeof we != "object")
+  function me(be, ve, Ee, Oe, xe, gr) {
+    if (fe.call(this, be, Ee), ve && typeof ve != "object")
       throw TypeError("values must be an object");
-    if (this.valuesById = {}, this.values = Object.create(this.valuesById), this.comment = Oe, this.comments = xe || {}, this.valuesOptions = gr, this.reserved = void 0, we)
-      for (var ve = Object.keys(we), Se = 0; Se < ve.length; ++Se)
-        typeof we[ve[Se]] == "number" && (this.valuesById[this.values[ve[Se]] = we[ve[Se]]] = ve[Se]);
+    if (this.valuesById = {}, this.values = Object.create(this.valuesById), this.comment = Oe, this.comments = xe || {}, this.valuesOptions = gr, this.reserved = void 0, ve)
+      for (var we = Object.keys(ve), Se = 0; Se < we.length; ++Se)
+        typeof ve[we[Se]] == "number" && (this.valuesById[this.values[we[Se]] = ve[we[Se]]] = we[Se]);
   }
-  return me.fromJSON = function(we, Ee) {
-    var Oe = new me(we, Ee.values, Ee.options, Ee.comment, Ee.comments);
+  return me.fromJSON = function(ve, Ee) {
+    var Oe = new me(ve, Ee.values, Ee.options, Ee.comment, Ee.comments);
     return Oe.reserved = Ee.reserved, Oe;
-  }, me.prototype.toJSON = function(we) {
-    var Ee = we ? !!we.keepComments : !1;
+  }, me.prototype.toJSON = function(ve) {
+    var Ee = ve ? !!ve.keepComments : !1;
     return ye.toObject([
       "options",
       this.options,
@@ -12313,35 +12086,35 @@ function require_enum() {
       "comments",
       Ee ? this.comments : void 0
     ]);
-  }, me.prototype.add = function(we, Ee, Oe, xe) {
-    if (!ye.isString(we))
+  }, me.prototype.add = function(ve, Ee, Oe, xe) {
+    if (!ye.isString(ve))
       throw TypeError("name must be a string");
     if (!ye.isInteger(Ee))
       throw TypeError("id must be an integer");
-    if (this.values[we] !== void 0)
-      throw Error("duplicate name '" + we + "' in " + this);
+    if (this.values[ve] !== void 0)
+      throw Error("duplicate name '" + ve + "' in " + this);
     if (this.isReservedId(Ee))
       throw Error("id " + Ee + " is reserved in " + this);
-    if (this.isReservedName(we))
-      throw Error("name '" + we + "' is reserved in " + this);
+    if (this.isReservedName(ve))
+      throw Error("name '" + ve + "' is reserved in " + this);
     if (this.valuesById[Ee] !== void 0) {
       if (!(this.options && this.options.allow_alias))
         throw Error("duplicate id " + Ee + " in " + this);
-      this.values[we] = Ee;
+      this.values[ve] = Ee;
     } else
-      this.valuesById[this.values[we] = Ee] = we;
-    return xe && (this.valuesOptions === void 0 && (this.valuesOptions = {}), this.valuesOptions[we] = xe || null), this.comments[we] = Oe || null, this;
-  }, me.prototype.remove = function(we) {
-    if (!ye.isString(we))
+      this.valuesById[this.values[ve] = Ee] = ve;
+    return xe && (this.valuesOptions === void 0 && (this.valuesOptions = {}), this.valuesOptions[ve] = xe || null), this.comments[ve] = Oe || null, this;
+  }, me.prototype.remove = function(ve) {
+    if (!ye.isString(ve))
       throw TypeError("name must be a string");
-    var Ee = this.values[we];
+    var Ee = this.values[ve];
     if (Ee == null)
-      throw Error("name '" + we + "' does not exist in " + this);
-    return delete this.valuesById[Ee], delete this.values[we], delete this.comments[we], this.valuesOptions && delete this.valuesOptions[we], this;
-  }, me.prototype.isReservedId = function(we) {
-    return e.isReservedId(this.reserved, we);
-  }, me.prototype.isReservedName = function(we) {
-    return e.isReservedName(this.reserved, we);
+      throw Error("name '" + ve + "' does not exist in " + this);
+    return delete this.valuesById[Ee], delete this.values[ve], delete this.comments[ve], this.valuesOptions && delete this.valuesOptions[ve], this;
+  }, me.prototype.isReservedId = function(ve) {
+    return e.isReservedId(this.reserved, ve);
+  }, me.prototype.isReservedName = function(ve) {
+    return e.isReservedName(this.reserved, ve);
   }, _enum;
 }
 var encoder_1, hasRequiredEncoder;
@@ -12350,16 +12123,16 @@ function requireEncoder() {
     return encoder_1;
   hasRequiredEncoder = 1, encoder_1 = be;
   var fe = require_enum(), e = requireTypes(), ye = requireUtil();
-  function me(we, Ee, Oe, xe) {
-    return Ee.resolvedType.group ? we("types[%i].encode(%s,w.uint32(%i)).uint32(%i)", Oe, xe, (Ee.id << 3 | 3) >>> 0, (Ee.id << 3 | 4) >>> 0) : we("types[%i].encode(%s,w.uint32(%i).fork()).ldelim()", Oe, xe, (Ee.id << 3 | 2) >>> 0);
+  function me(ve, Ee, Oe, xe) {
+    return Ee.resolvedType.group ? ve("types[%i].encode(%s,w.uint32(%i)).uint32(%i)", Oe, xe, (Ee.id << 3 | 3) >>> 0, (Ee.id << 3 | 4) >>> 0) : ve("types[%i].encode(%s,w.uint32(%i).fork()).ldelim()", Oe, xe, (Ee.id << 3 | 2) >>> 0);
   }
-  function be(we) {
-    for (var Ee = ye.codegen(["m", "w"], we.name + "$encode")("if(!w)")("w=Writer.create()"), Oe, xe, gr = (
+  function be(ve) {
+    for (var Ee = ye.codegen(["m", "w"], ve.name + "$encode")("if(!w)")("w=Writer.create()"), Oe, xe, gr = (
       /* initializes */
-      we.fieldsArray.slice().sort(ye.compareFieldsById)
+      ve.fieldsArray.slice().sort(ye.compareFieldsById)
     ), Oe = 0; Oe < gr.length; ++Oe) {
-      var ve = gr[Oe].resolve(), Se = we._fieldsArray.indexOf(ve), $r = ve.resolvedType instanceof fe ? "int32" : ve.type, Fr = e.basic[$r];
-      xe = "m" + ye.safeProp(ve.name), ve.map ? (Ee("if(%s!=null&&Object.hasOwnProperty.call(m,%j)){", xe, ve.name)("for(var ks=Object.keys(%s),i=0;i<ks.length;++i){", xe)("w.uint32(%i).fork().uint32(%i).%s(ks[i])", (ve.id << 3 | 2) >>> 0, 8 | e.mapKey[ve.keyType], ve.keyType), Fr === void 0 ? Ee("types[%i].encode(%s[ks[i]],w.uint32(18).fork()).ldelim().ldelim()", Se, xe) : Ee(".uint32(%i).%s(%s[ks[i]]).ldelim()", 16 | Fr, $r, xe), Ee("}")("}")) : ve.repeated ? (Ee("if(%s!=null&&%s.length){", xe, xe), ve.packed && e.packed[$r] !== void 0 ? Ee("w.uint32(%i).fork()", (ve.id << 3 | 2) >>> 0)("for(var i=0;i<%s.length;++i)", xe)("w.%s(%s[i])", $r, xe)("w.ldelim()") : (Ee("for(var i=0;i<%s.length;++i)", xe), Fr === void 0 ? me(Ee, ve, Se, xe + "[i]") : Ee("w.uint32(%i).%s(%s[i])", (ve.id << 3 | Fr) >>> 0, $r, xe)), Ee("}")) : (ve.optional && Ee("if(%s!=null&&Object.hasOwnProperty.call(m,%j))", xe, ve.name), Fr === void 0 ? me(Ee, ve, Se, xe) : Ee("w.uint32(%i).%s(%s)", (ve.id << 3 | Fr) >>> 0, $r, xe));
+      var we = gr[Oe].resolve(), Se = ve._fieldsArray.indexOf(we), $r = we.resolvedType instanceof fe ? "int32" : we.type, Fr = e.basic[$r];
+      xe = "m" + ye.safeProp(we.name), we.map ? (Ee("if(%s!=null&&Object.hasOwnProperty.call(m,%j)){", xe, we.name)("for(var ks=Object.keys(%s),i=0;i<ks.length;++i){", xe)("w.uint32(%i).fork().uint32(%i).%s(ks[i])", (we.id << 3 | 2) >>> 0, 8 | e.mapKey[we.keyType], we.keyType), Fr === void 0 ? Ee("types[%i].encode(%s[ks[i]],w.uint32(18).fork()).ldelim().ldelim()", Se, xe) : Ee(".uint32(%i).%s(%s[ks[i]]).ldelim()", 16 | Fr, $r, xe), Ee("}")("}")) : we.repeated ? (Ee("if(%s!=null&&%s.length){", xe, xe), we.packed && e.packed[$r] !== void 0 ? Ee("w.uint32(%i).fork()", (we.id << 3 | 2) >>> 0)("for(var i=0;i<%s.length;++i)", xe)("w.%s(%s[i])", $r, xe)("w.ldelim()") : (Ee("for(var i=0;i<%s.length;++i)", xe), Fr === void 0 ? me(Ee, we, Se, xe + "[i]") : Ee("w.uint32(%i).%s(%s[i])", (we.id << 3 | Fr) >>> 0, $r, xe)), Ee("}")) : (we.optional && Ee("if(%s!=null&&Object.hasOwnProperty.call(m,%j))", xe, we.name), Fr === void 0 ? me(Ee, we, Se, xe) : Ee("w.uint32(%i).%s(%s)", (we.id << 3 | Fr) >>> 0, $r, xe));
     }
     return Ee("return w");
   }
@@ -12418,11 +12191,11 @@ function unescape(fe) {
 tokenize$1.unescape = unescape;
 function tokenize$1(fe, e) {
   fe = fe.toString();
-  var ye = 0, me = fe.length, be = 1, we = 0, Ee = {}, Oe = [], xe = null;
+  var ye = 0, me = fe.length, be = 1, ve = 0, Ee = {}, Oe = [], xe = null;
   function gr(Hr) {
     return Error("illegal " + Hr + " (line " + be + ")");
   }
-  function ve() {
+  function we() {
     var Hr = xe === "'" ? stringSingleRe : stringDoubleRe;
     Hr.lastIndex = ye - 1;
     var Yr = Hr.exec(fe);
@@ -12451,7 +12224,7 @@ function tokenize$1(fe, e) {
     for (var to = fe.substring(Hr, Yr).split(setCommentSplitRe), ao = 0; ao < to.length; ++ao)
       to[ao] = to[ao].replace(e ? setCommentAltRe : setCommentRe, "").trim();
     Mr.text = to.join(`
-`).trim(), Ee[be] = Mr, we = be;
+`).trim(), Ee[be] = Mr, ve = be;
   }
   function Fr(Hr) {
     var Yr = Br(Hr), Ur = fe.substring(Hr, Yr), Mr = /^\s*\/{1,2}/.test(Ur);
@@ -12467,7 +12240,7 @@ function tokenize$1(fe, e) {
     if (Oe.length > 0)
       return Oe.shift();
     if (xe)
-      return ve();
+      return we();
     var Hr, Yr, Ur, Mr, Lr, no = ye === 0;
     do {
       if (ye === me)
@@ -12541,7 +12314,7 @@ function tokenize$1(fe, e) {
   }
   function qr(Hr) {
     var Yr = null, Ur;
-    return Hr === void 0 ? (Ur = Ee[be - 1], delete Ee[be - 1], Ur && (e || Ur.type === "*" || Ur.lineEmpty) && (Yr = Ur.leading ? Ur.text : null)) : (we < Hr && so(), Ur = Ee[Hr], delete Ee[Hr], Ur && !Ur.lineEmpty && (e || Ur.type === "/") && (Yr = Ur.leading ? null : Ur.text)), Yr;
+    return Hr === void 0 ? (Ur = Ee[be - 1], delete Ee[be - 1], Ur && (e || Ur.type === "*" || Ur.lineEmpty) && (Yr = Ur.leading ? Ur.text : null)) : (ve < Hr && so(), Ur = Ee[Hr], delete Ee[Hr], Ur && !Ur.lineEmpty && (e || Ur.type === "/") && (Yr = Ur.leading ? null : Ur.text)), Yr;
   }
   return Object.defineProperty({
     next: Vr,
@@ -12561,7 +12334,7 @@ parse.defaults = { keepCase: !1 };
 var tokenize = tokenize_1, Root = requireRoot(), Type = requireType(), Field = requireField(), MapField = requireMapfield(), OneOf = requireOneof(), Enum = require_enum(), Service = requireService(), Method = requireMethod(), types = requireTypes(), util$1 = requireUtil(), base10Re = /^[1-9][0-9]*$/, base10NegRe = /^-?[1-9][0-9]*$/, base16Re = /^0[x][0-9a-fA-F]+$/, base16NegRe = /^-?0[x][0-9a-fA-F]+$/, base8Re = /^0[0-7]+$/, base8NegRe = /^-?0[0-7]+$/, numberRe = /^(?![eE])[0-9]*(?:\.[0-9]*)?(?:[eE][+-]?[0-9]+)?$/, nameRe = /^[a-zA-Z_][a-zA-Z_0-9]*$/, typeRefRe = /^(?:\.?[a-zA-Z_][a-zA-Z_0-9]*)(?:\.[a-zA-Z_][a-zA-Z_0-9]*)*$/, fqTypeRefRe = /^(?:\.[a-zA-Z_][a-zA-Z_0-9]*)+$/;
 function parse(fe, e, ye) {
   e instanceof Root || (ye = e, e = new Root()), ye || (ye = parse.defaults);
-  var me = ye.preferTrailingComment || !1, be = tokenize(fe, ye.alternateCommentMode || !1), we = be.next, Ee = be.push, Oe = be.peek, xe = be.skip, gr = be.cmnt, ve = !0, Se, $r, Fr, Br, Vr = !1, oo = e, so = ye.keepCase ? function(Qr) {
+  var me = ye.preferTrailingComment || !1, be = tokenize(fe, ye.alternateCommentMode || !1), ve = be.next, Ee = be.push, Oe = be.peek, xe = be.skip, gr = be.cmnt, we = !0, Se, $r, Fr, Br, Vr = !1, oo = e, so = ye.keepCase ? function(Qr) {
     return Qr;
   } : util$1.camelCase;
   function kr(Qr, jr, Zr) {
@@ -12571,14 +12344,14 @@ function parse(fe, e, ye) {
   function qr() {
     var Qr = [], jr;
     do {
-      if ((jr = we()) !== '"' && jr !== "'")
+      if ((jr = ve()) !== '"' && jr !== "'")
         throw kr(jr);
-      Qr.push(we()), xe(jr), jr = Oe();
+      Qr.push(ve()), xe(jr), jr = Oe();
     } while (jr === '"' || jr === "'");
     return Qr.join("");
   }
   function Hr(Qr) {
-    var jr = we();
+    var jr = ve();
     switch (jr) {
       case "'":
       case '"':
@@ -12605,7 +12378,7 @@ function parse(fe, e, ye) {
   function Yr(Qr, jr) {
     var Zr, wo;
     do
-      jr && ((Zr = Oe()) === '"' || Zr === "'") ? Qr.push(qr()) : Qr.push([wo = Mr(we()), xe("to", !0) ? Mr(we()) : wo]);
+      jr && ((Zr = Oe()) === '"' || Zr === "'") ? Qr.push(qr()) : Qr.push([wo = Mr(ve()), xe("to", !0) ? Mr(ve()) : wo]);
     while (xe(",", !0));
     xe(";");
   }
@@ -12656,7 +12429,7 @@ function parse(fe, e, ye) {
   function Lr() {
     if (Se !== void 0)
       throw kr("package");
-    if (Se = we(), !typeRefRe.test(Se))
+    if (Se = ve(), !typeRefRe.test(Se))
       throw kr(Se, "name");
     oo = oo.define(Se), xe(";");
   }
@@ -12664,10 +12437,10 @@ function parse(fe, e, ye) {
     var Qr = Oe(), jr;
     switch (Qr) {
       case "weak":
-        jr = Fr || (Fr = []), we();
+        jr = Fr || (Fr = []), ve();
         break;
       case "public":
-        we();
+        ve();
       default:
         jr = $r || ($r = []);
         break;
@@ -12697,14 +12470,14 @@ function parse(fe, e, ye) {
   function ao(Qr, jr, Zr) {
     var wo = be.line;
     if (Qr && (typeof Qr.comment != "string" && (Qr.comment = gr()), Qr.filename = parse.filename), xe("{", !0)) {
-      for (var Eo; (Eo = we()) !== "}"; )
+      for (var Eo; (Eo = ve()) !== "}"; )
         jr(Eo);
       xe(";", !0);
     } else
       Zr && Zr(), xe(";"), Qr && (typeof Qr.comment != "string" || me) && (Qr.comment = gr(wo) || Qr.comment);
   }
   function bo(Qr, jr) {
-    if (!nameRe.test(jr = we()))
+    if (!nameRe.test(jr = ve()))
       throw kr(jr, "type name");
     var Zr = new Type(jr);
     ao(Zr, function(Eo) {
@@ -12738,20 +12511,20 @@ function parse(fe, e, ye) {
     }), Qr.add(Zr);
   }
   function Wr(Qr, jr, Zr) {
-    var wo = we();
+    var wo = ve();
     if (wo === "group") {
       Jr(Qr, jr);
       return;
     }
     for (; wo.endsWith(".") || Oe().startsWith("."); )
-      wo += we();
+      wo += ve();
     if (!typeRefRe.test(wo))
       throw kr(wo, "type");
-    var Eo = we();
+    var Eo = ve();
     if (!nameRe.test(Eo))
       throw kr(Eo, "name");
     Eo = so(Eo), xe("=");
-    var Ao = new Field(Eo, Mr(we()), wo, jr, Zr);
+    var Ao = new Field(Eo, Mr(ve()), wo, jr, Zr);
     if (ao(Ao, function(ko) {
       if (ko === "option")
         yo(Ao, ko), xe(";");
@@ -12772,12 +12545,12 @@ function parse(fe, e, ye) {
     );
   }
   function Jr(Qr, jr) {
-    var Zr = we();
+    var Zr = ve();
     if (!nameRe.test(Zr))
       throw kr(Zr, "name");
     var wo = util$1.lcFirst(Zr);
     Zr === wo && (Zr = util$1.ucFirst(Zr)), xe("=");
-    var Eo = Mr(we()), Ao = new Type(Zr);
+    var Eo = Mr(ve()), Ao = new Type(Zr);
     Ao.group = !0;
     var Co = new Field(wo, Eo, Zr, jr);
     Co.filename = parse.filename, ao(Ao, function(ko) {
@@ -12805,19 +12578,19 @@ function parse(fe, e, ye) {
   }
   function fo(Qr) {
     xe("<");
-    var jr = we();
+    var jr = ve();
     if (types.mapKey[jr] === void 0)
       throw kr(jr, "type");
     xe(",");
-    var Zr = we();
+    var Zr = ve();
     if (!typeRefRe.test(Zr))
       throw kr(Zr, "type");
     xe(">");
-    var wo = we();
+    var wo = ve();
     if (!nameRe.test(wo))
       throw kr(wo, "name");
     xe("=");
-    var Eo = new MapField(so(wo), Mr(we()), jr, Zr);
+    var Eo = new MapField(so(wo), Mr(ve()), jr, Zr);
     ao(Eo, function(Co) {
       if (Co === "option")
         yo(Eo, Co), xe(";");
@@ -12828,7 +12601,7 @@ function parse(fe, e, ye) {
     }), Qr.add(Eo);
   }
   function vo(Qr, jr) {
-    if (!nameRe.test(jr = we()))
+    if (!nameRe.test(jr = ve()))
       throw kr(jr, "name");
     var Zr = new OneOf(so(jr));
     ao(Zr, function(Eo) {
@@ -12836,7 +12609,7 @@ function parse(fe, e, ye) {
     }), Qr.add(Zr);
   }
   function mo(Qr, jr) {
-    if (!nameRe.test(jr = we()))
+    if (!nameRe.test(jr = ve()))
       throw kr(jr, "name");
     var Zr = new Enum(jr);
     ao(Zr, function(Eo) {
@@ -12856,7 +12629,7 @@ function parse(fe, e, ye) {
     if (!nameRe.test(jr))
       throw kr(jr, "name");
     xe("=");
-    var Zr = Mr(we(), !0), wo = {
+    var Zr = Mr(ve(), !0), wo = {
       options: void 0
     };
     wo.setOption = function(Eo, Ao) {
@@ -12872,17 +12645,17 @@ function parse(fe, e, ye) {
   }
   function yo(Qr, jr) {
     var Zr = xe("(", !0);
-    if (!typeRefRe.test(jr = we()))
+    if (!typeRefRe.test(jr = ve()))
       throw kr(jr, "name");
     var wo = jr, Eo = wo, Ao;
-    Zr && (xe(")"), wo = "(" + wo + ")", Eo = wo, jr = Oe(), fqTypeRefRe.test(jr) && (Ao = jr.slice(1), wo += jr, we())), xe("=");
+    Zr && (xe(")"), wo = "(" + wo + ")", Eo = wo, jr = Oe(), fqTypeRefRe.test(jr) && (Ao = jr.slice(1), wo += jr, ve())), xe("=");
     var Co = Oo(Qr, wo);
     go(Qr, Eo, Co, Ao);
   }
   function Oo(Qr, jr) {
     if (xe("{", !0)) {
       for (var Zr = {}; !xe("}", !0); ) {
-        if (!nameRe.test(co = we()))
+        if (!nameRe.test(co = ve()))
           throw kr(co, "name");
         var wo, Eo = co;
         if (xe(":", !0), Oe() === "{")
@@ -12894,19 +12667,19 @@ function parse(fe, e, ye) {
             do
               Ao = Hr(!0), wo.push(Ao);
             while (xe(",", !0));
-            xe("]"), typeof Ao < "u" && Do(Qr, jr + "." + co, Ao);
+            xe("]"), typeof Ao < "u" && Io(Qr, jr + "." + co, Ao);
           }
         } else
-          wo = Hr(!0), Do(Qr, jr + "." + co, wo);
+          wo = Hr(!0), Io(Qr, jr + "." + co, wo);
         var Co = Zr[Eo];
         Co && (wo = [].concat(Co).concat(wo)), Zr[Eo] = wo, xe(",", !0), xe(";", !0);
       }
       return Zr;
     }
     var Uo = Hr(!0);
-    return Do(Qr, jr, Uo), Uo;
+    return Io(Qr, jr, Uo), Uo;
   }
-  function Do(Qr, jr, Zr) {
+  function Io(Qr, jr, Zr) {
     Qr.setOption && Qr.setOption(jr, Zr);
   }
   function go(Qr, jr, Zr, wo) {
@@ -12922,7 +12695,7 @@ function parse(fe, e, ye) {
     return Qr;
   }
   function Po(Qr, jr) {
-    if (!nameRe.test(jr = we()))
+    if (!nameRe.test(jr = ve()))
       throw kr(jr, "service name");
     var Zr = new Service(jr);
     ao(Zr, function(Eo) {
@@ -12935,10 +12708,10 @@ function parse(fe, e, ye) {
   }
   function Bo(Qr, jr) {
     var Zr = gr(), wo = jr;
-    if (!nameRe.test(jr = we()))
+    if (!nameRe.test(jr = ve()))
       throw kr(jr, "name");
     var Eo = jr, Ao, Co, Uo, ko;
-    if (xe("("), xe("stream", !0) && (Co = !0), !typeRefRe.test(jr = we()) || (Ao = jr, xe(")"), xe("returns"), xe("("), xe("stream", !0) && (ko = !0), !typeRefRe.test(jr = we())))
+    if (xe("("), xe("stream", !0) && (Co = !0), !typeRefRe.test(jr = ve()) || (Ao = jr, xe(")"), xe("returns"), xe("("), xe("stream", !0) && (ko = !0), !typeRefRe.test(jr = ve())))
       throw kr(jr);
     Uo = jr, xe(")");
     var si = new Method(Eo, wo, Ao, Uo, Co, ko);
@@ -12950,7 +12723,7 @@ function parse(fe, e, ye) {
     }), Qr.add(si);
   }
   function ho(Qr, jr) {
-    if (!typeRefRe.test(jr = we()))
+    if (!typeRefRe.test(jr = ve()))
       throw kr(jr, "reference");
     var Zr = jr;
     ao(null, function(Eo) {
@@ -12970,20 +12743,20 @@ function parse(fe, e, ye) {
       }
     });
   }
-  for (var co; (co = we()) !== null; )
+  for (var co; (co = ve()) !== null; )
     switch (co) {
       case "package":
-        if (!ve)
+        if (!we)
           throw kr(co);
         Lr();
         break;
       case "import":
-        if (!ve)
+        if (!we)
           throw kr(co);
         no();
         break;
       case "syntax":
-        if (!ve)
+        if (!we)
           throw kr(co);
         Xr();
         break;
@@ -12992,7 +12765,7 @@ function parse(fe, e, ye) {
         break;
       default:
         if (to(oo, co)) {
-          ve = !1;
+          we = !1;
           continue;
         }
         throw kr(co);
@@ -13337,9 +13110,9 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   $jscomp.scope = {}, $jscomp.findInternal = function(fe, e, ye) {
     fe instanceof String && (fe = String(fe));
     for (var me = fe.length, be = 0; be < me; be++) {
-      var we = fe[be];
-      if (e.call(ye, we, be, fe))
-        return { i: be, v: we };
+      var ve = fe[be];
+      if (e.call(ye, ve, be, fe))
+        return { i: be, v: ve };
     }
     return { i: -1, v: void 0 };
   }, $jscomp.ASSUME_ES5 = !1, $jscomp.ASSUME_NO_NATIVE_MAP = !1, $jscomp.ASSUME_NO_NATIVE_SET = !1, $jscomp.SIMPLE_FROUND_POLYFILL = !1, $jscomp.defineProperty = $jscomp.ASSUME_ES5 || typeof Object.defineProperties == "function" ? Object.defineProperty : function(fe, e, ye) {
@@ -13381,12 +13154,12 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     return fe || function(e, ye) {
       var me = $jscomp.checkStringArgs(this, e, "startsWith");
       e += "";
-      var be = me.length, we = e.length;
+      var be = me.length, ve = e.length;
       ye = Math.max(0, Math.min(ye | 0, me.length));
-      for (var Ee = 0; Ee < we && ye < be; )
+      for (var Ee = 0; Ee < ve && ye < be; )
         if (me[ye++] != e[Ee++])
           return !1;
-      return Ee >= we;
+      return Ee >= ve;
     };
   }, "es6", "es3"), $jscomp.polyfill("String.prototype.repeat", function(fe) {
     return fe || function(e) {
@@ -13530,11 +13303,11 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     me || (goog.global.$jscomp = me = {});
     var be = me.transpile;
     if (!be) {
-      var we = goog.basePath + goog.TRANSPILER, Ee = goog.loadFileSync_(we);
+      var ve = goog.basePath + goog.TRANSPILER, Ee = goog.loadFileSync_(ve);
       if (Ee) {
         if (function() {
           (0, eval)(Ee + `
-//# sourceURL=` + we);
+//# sourceURL=` + ve);
         }.call(goog.global), goog.global.$gwtExport && goog.global.$gwtExport.$jscomp && !goog.global.$gwtExport.$jscomp.transpile)
           throw Error('The transpiler did not properly export the "transpile" method. $gwtExport: ' + JSON.stringify(goog.global.$gwtExport));
         goog.global.$jscomp.transpile = goog.global.$gwtExport.$jscomp.transpile, me = goog.global.$jscomp, be = me.transpile;
@@ -13657,9 +13430,9 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
       return goog.cssNameMapping_[be] || be;
     }, me = function(be) {
       be = be.split("-");
-      for (var we = [], Ee = 0; Ee < be.length; Ee++)
-        we.push(ye(be[Ee]));
-      return we.join("-");
+      for (var ve = [], Ee = 0; Ee < be.length; Ee++)
+        ve.push(ye(be[Ee]));
+      return ve.join("-");
     };
     return me = goog.cssNameMapping_ ? goog.cssNameMappingStyle_ == "BY_WHOLE" ? ye : me : function(be) {
       return be;
@@ -13679,7 +13452,7 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, goog.inherits = function(fe, e) {
     function ye() {
     }
-    ye.prototype = e.prototype, fe.superClass_ = e.prototype, fe.prototype = new ye(), fe.prototype.constructor = fe, fe.base = function(me, be, we) {
+    ye.prototype = e.prototype, fe.superClass_ = e.prototype, fe.prototype = new ye(), fe.prototype.constructor = fe, fe.base = function(me, be, ve) {
       for (var Ee = Array(arguments.length - 2), Oe = 2; Oe < arguments.length; Oe++)
         Ee[Oe - 2] = arguments[Oe];
       return e.prototype[be].apply(me, Ee);
@@ -13846,8 +13619,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
       me = arguments[be];
       for (ye in me)
         fe[ye] = me[ye];
-      for (var we = 0; we < goog.object.PROTOTYPE_FIELDS_.length; we++)
-        ye = goog.object.PROTOTYPE_FIELDS_[we], Object.prototype.hasOwnProperty.call(me, ye) && (fe[ye] = me[ye]);
+      for (var ve = 0; ve < goog.object.PROTOTYPE_FIELDS_.length; ve++)
+        ye = goog.object.PROTOTYPE_FIELDS_[ve], Object.prototype.hasOwnProperty.call(me, ye) && (fe[ye] = me[ye]);
     }
   }, goog.object.create = function(fe) {
     var e = arguments.length;
@@ -13876,8 +13649,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     if (!Object.getOwnPropertyNames || !Object.getPrototypeOf)
       return goog.object.getKeys(fe);
     for (var me = {}; fe && (fe !== Object.prototype || e) && (fe !== Function.prototype || ye); ) {
-      for (var be = Object.getOwnPropertyNames(fe), we = 0; we < be.length; we++)
-        me[be[we]] = !0;
+      for (var be = Object.getOwnPropertyNames(fe), ve = 0; ve < be.length; ve++)
+        me[be[ve]] = !0;
       fe = Object.getPrototypeOf(fe);
     }
     return goog.object.getKeys(me);
@@ -13889,10 +13662,10 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     var be = "Assertion failed";
     if (ye) {
       be += ": " + ye;
-      var we = me;
+      var ve = me;
     } else
-      fe && (be += ": " + fe, we = e);
-    throw Error("" + be, we || []);
+      fe && (be += ": " + fe, ve = e);
+    throw Error("" + be, ve || []);
   }, jspb.asserts.assert = function(fe, e, ye) {
     for (var me = [], be = 2; be < arguments.length; ++be)
       me[be - 2] = arguments[be];
@@ -13910,8 +13683,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
       ye[me - 1] = arguments[me];
     throw Error("Failure" + (fe ? ": " + fe : ""), ye);
   }, jspb.asserts.assertInstanceof = function(fe, e, ye, me) {
-    for (var be = [], we = 3; we < arguments.length; ++we)
-      be[we - 3] = arguments[we];
+    for (var be = [], ve = 3; ve < arguments.length; ++ve)
+      be[ve - 3] = arguments[ve];
     return fe instanceof e || jspb.asserts.doAssertFailure("Expected instanceof %s but got %s.", [jspb.asserts.getType(e), jspb.asserts.getType(fe)], ye, be), fe;
   }, jspb.asserts.getType = function(fe) {
     return fe instanceof Function ? fe.displayName || fe.name || "unknown type name" : fe instanceof Object ? fe.constructor.displayName || fe.constructor.name || Object.prototype.toString.call(fe) : fe === null ? "null" : typeof fe;
@@ -13967,10 +13740,10 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     var be = "Assertion failed";
     if (ye) {
       be += ": " + ye;
-      var we = me;
+      var ve = me;
     } else
-      fe && (be += ": " + fe, we = e);
-    fe = new goog.asserts.AssertionError("" + be, we || []), goog.asserts.errorHandler_(fe);
+      fe && (be += ": " + fe, ve = e);
+    fe = new goog.asserts.AssertionError("" + be, ve || []), goog.asserts.errorHandler_(fe);
   }, goog.asserts.setErrorHandler = function(fe) {
     goog.asserts.ENABLE_ASSERTS && (goog.asserts.errorHandler_ = fe);
   }, goog.asserts.assert = function(fe, e, ye) {
@@ -14025,8 +13798,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, goog.array.forEach = goog.NATIVE_ARRAY_PROTOTYPES && (goog.array.ASSUME_NATIVE_FUNCTIONS || Array.prototype.forEach) ? function(fe, e, ye) {
     goog.asserts.assert(fe.length != null), Array.prototype.forEach.call(fe, e, ye);
   } : function(fe, e, ye) {
-    for (var me = fe.length, be = typeof fe == "string" ? fe.split("") : fe, we = 0; we < me; we++)
-      we in be && e.call(ye, be[we], we, fe);
+    for (var me = fe.length, be = typeof fe == "string" ? fe.split("") : fe, ve = 0; ve < me; ve++)
+      ve in be && e.call(ye, be[ve], ve, fe);
   }, goog.array.forEachRight = function(fe, e, ye) {
     var me = fe.length, be = typeof fe == "string" ? fe.split("") : fe;
     for (--me; 0 <= me; --me)
@@ -14034,57 +13807,57 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, goog.array.filter = goog.NATIVE_ARRAY_PROTOTYPES && (goog.array.ASSUME_NATIVE_FUNCTIONS || Array.prototype.filter) ? function(fe, e, ye) {
     return goog.asserts.assert(fe.length != null), Array.prototype.filter.call(fe, e, ye);
   } : function(fe, e, ye) {
-    for (var me = fe.length, be = [], we = 0, Ee = typeof fe == "string" ? fe.split("") : fe, Oe = 0; Oe < me; Oe++)
+    for (var me = fe.length, be = [], ve = 0, Ee = typeof fe == "string" ? fe.split("") : fe, Oe = 0; Oe < me; Oe++)
       if (Oe in Ee) {
         var xe = Ee[Oe];
-        e.call(ye, xe, Oe, fe) && (be[we++] = xe);
+        e.call(ye, xe, Oe, fe) && (be[ve++] = xe);
       }
     return be;
   }, goog.array.map = goog.NATIVE_ARRAY_PROTOTYPES && (goog.array.ASSUME_NATIVE_FUNCTIONS || Array.prototype.map) ? function(fe, e, ye) {
     return goog.asserts.assert(fe.length != null), Array.prototype.map.call(fe, e, ye);
   } : function(fe, e, ye) {
-    for (var me = fe.length, be = Array(me), we = typeof fe == "string" ? fe.split("") : fe, Ee = 0; Ee < me; Ee++)
-      Ee in we && (be[Ee] = e.call(ye, we[Ee], Ee, fe));
+    for (var me = fe.length, be = Array(me), ve = typeof fe == "string" ? fe.split("") : fe, Ee = 0; Ee < me; Ee++)
+      Ee in ve && (be[Ee] = e.call(ye, ve[Ee], Ee, fe));
     return be;
   }, goog.array.reduce = goog.NATIVE_ARRAY_PROTOTYPES && (goog.array.ASSUME_NATIVE_FUNCTIONS || Array.prototype.reduce) ? function(fe, e, ye, me) {
     return goog.asserts.assert(fe.length != null), me && (e = goog.bind(e, me)), Array.prototype.reduce.call(fe, e, ye);
   } : function(fe, e, ye, me) {
     var be = ye;
-    return goog.array.forEach(fe, function(we, Ee) {
-      be = e.call(me, be, we, Ee, fe);
+    return goog.array.forEach(fe, function(ve, Ee) {
+      be = e.call(me, be, ve, Ee, fe);
     }), be;
   }, goog.array.reduceRight = goog.NATIVE_ARRAY_PROTOTYPES && (goog.array.ASSUME_NATIVE_FUNCTIONS || Array.prototype.reduceRight) ? function(fe, e, ye, me) {
     return goog.asserts.assert(fe.length != null), goog.asserts.assert(e != null), me && (e = goog.bind(e, me)), Array.prototype.reduceRight.call(fe, e, ye);
   } : function(fe, e, ye, me) {
     var be = ye;
-    return goog.array.forEachRight(fe, function(we, Ee) {
-      be = e.call(me, be, we, Ee, fe);
+    return goog.array.forEachRight(fe, function(ve, Ee) {
+      be = e.call(me, be, ve, Ee, fe);
     }), be;
   }, goog.array.some = goog.NATIVE_ARRAY_PROTOTYPES && (goog.array.ASSUME_NATIVE_FUNCTIONS || Array.prototype.some) ? function(fe, e, ye) {
     return goog.asserts.assert(fe.length != null), Array.prototype.some.call(fe, e, ye);
   } : function(fe, e, ye) {
-    for (var me = fe.length, be = typeof fe == "string" ? fe.split("") : fe, we = 0; we < me; we++)
-      if (we in be && e.call(ye, be[we], we, fe))
+    for (var me = fe.length, be = typeof fe == "string" ? fe.split("") : fe, ve = 0; ve < me; ve++)
+      if (ve in be && e.call(ye, be[ve], ve, fe))
         return !0;
     return !1;
   }, goog.array.every = goog.NATIVE_ARRAY_PROTOTYPES && (goog.array.ASSUME_NATIVE_FUNCTIONS || Array.prototype.every) ? function(fe, e, ye) {
     return goog.asserts.assert(fe.length != null), Array.prototype.every.call(fe, e, ye);
   } : function(fe, e, ye) {
-    for (var me = fe.length, be = typeof fe == "string" ? fe.split("") : fe, we = 0; we < me; we++)
-      if (we in be && !e.call(ye, be[we], we, fe))
+    for (var me = fe.length, be = typeof fe == "string" ? fe.split("") : fe, ve = 0; ve < me; ve++)
+      if (ve in be && !e.call(ye, be[ve], ve, fe))
         return !1;
     return !0;
   }, goog.array.count = function(fe, e, ye) {
     var me = 0;
-    return goog.array.forEach(fe, function(be, we, Ee) {
-      e.call(ye, be, we, Ee) && ++me;
+    return goog.array.forEach(fe, function(be, ve, Ee) {
+      e.call(ye, be, ve, Ee) && ++me;
     }, ye), me;
   }, goog.array.find = function(fe, e, ye) {
     return e = goog.array.findIndex(fe, e, ye), 0 > e ? null : typeof fe == "string" ? fe.charAt(e) : fe[e];
   }, goog.array.findIndex = function(fe, e, ye) {
-    for (var me = fe.length, be = typeof fe == "string" ? fe.split("") : fe, we = 0; we < me; we++)
-      if (we in be && e.call(ye, be[we], we, fe))
-        return we;
+    for (var me = fe.length, be = typeof fe == "string" ? fe.split("") : fe, ve = 0; ve < me; ve++)
+      if (ve in be && e.call(ye, be[ve], ve, fe))
+        return ve;
     return -1;
   }, goog.array.findRight = function(fe, e, ye) {
     return e = goog.array.findIndexRight(fe, e, ye), 0 > e ? null : typeof fe == "string" ? fe.charAt(e) : fe[e];
@@ -14124,8 +13897,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     return e = goog.array.findIndex(fe, e, ye), 0 <= e ? (goog.array.removeAt(fe, e), !0) : !1;
   }, goog.array.removeAllIf = function(fe, e, ye) {
     var me = 0;
-    return goog.array.forEachRight(fe, function(be, we) {
-      e.call(ye, be, we, fe) && goog.array.removeAt(fe, we) && me++;
+    return goog.array.forEachRight(fe, function(be, ve) {
+      e.call(ye, be, ve, fe) && goog.array.removeAt(fe, ve) && me++;
     }), me;
   }, goog.array.concat = function(fe) {
     return Array.prototype.concat.apply([], arguments);
@@ -14143,9 +13916,9 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     for (var ye = 1; ye < arguments.length; ye++) {
       var me = arguments[ye];
       if (goog.isArrayLike(me)) {
-        var be = fe.length || 0, we = me.length || 0;
-        fe.length = be + we;
-        for (var Ee = 0; Ee < we; Ee++)
+        var be = fe.length || 0, ve = me.length || 0;
+        fe.length = be + ve;
+        for (var Ee = 0; Ee < ve; Ee++)
           fe[be + Ee] = me[Ee];
       } else
         fe.push(me);
@@ -14160,8 +13933,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
       return goog.isObject(xe) ? "o" + goog.getUid(xe) : (typeof xe).charAt(0) + xe;
     };
     ye = ye || me, me = {};
-    for (var be = 0, we = 0; we < fe.length; ) {
-      var Ee = fe[we++], Oe = ye(Ee);
+    for (var be = 0, ve = 0; ve < fe.length; ) {
+      var Ee = fe[ve++], Oe = ye(Ee);
       Object.prototype.hasOwnProperty.call(me, Oe) || (me[Oe] = !0, e[be++] = Ee);
     }
     e.length = be;
@@ -14170,25 +13943,25 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, goog.array.binarySelect = function(fe, e, ye) {
     return goog.array.binarySearch_(fe, e, !0, void 0, ye);
   }, goog.array.binarySearch_ = function(fe, e, ye, me, be) {
-    for (var we = 0, Ee = fe.length, Oe; we < Ee; ) {
-      var xe = we + (Ee - we >>> 1), gr = ye ? e.call(be, fe[xe], xe, fe) : e(me, fe[xe]);
-      0 < gr ? we = xe + 1 : (Ee = xe, Oe = !gr);
+    for (var ve = 0, Ee = fe.length, Oe; ve < Ee; ) {
+      var xe = ve + (Ee - ve >>> 1), gr = ye ? e.call(be, fe[xe], xe, fe) : e(me, fe[xe]);
+      0 < gr ? ve = xe + 1 : (Ee = xe, Oe = !gr);
     }
-    return Oe ? we : -we - 1;
+    return Oe ? ve : -ve - 1;
   }, goog.array.sort = function(fe, e) {
     fe.sort(e || goog.array.defaultCompare);
   }, goog.array.stableSort = function(fe, e) {
     for (var ye = Array(fe.length), me = 0; me < fe.length; me++)
       ye[me] = { index: me, value: fe[me] };
     var be = e || goog.array.defaultCompare;
-    for (goog.array.sort(ye, function(we, Ee) {
-      return be(we.value, Ee.value) || we.index - Ee.index;
+    for (goog.array.sort(ye, function(ve, Ee) {
+      return be(ve.value, Ee.value) || ve.index - Ee.index;
     }), me = 0; me < fe.length; me++)
       fe[me] = ye[me].value;
   }, goog.array.sortByKey = function(fe, e, ye) {
     var me = ye || goog.array.defaultCompare;
-    goog.array.sort(fe, function(be, we) {
-      return me(e(be), e(we));
+    goog.array.sort(fe, function(be, ve) {
+      return me(e(be), e(ve));
     });
   }, goog.array.sortObjectsByKey = function(fe, e, ye) {
     goog.array.sortByKey(fe, function(me) {
@@ -14214,9 +13987,9 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, goog.array.compare3 = function(fe, e, ye) {
     ye = ye || goog.array.defaultCompare;
     for (var me = Math.min(fe.length, e.length), be = 0; be < me; be++) {
-      var we = ye(fe[be], e[be]);
-      if (we != 0)
-        return we;
+      var ve = ye(fe[be], e[be]);
+      if (ve != 0)
+        return ve;
     }
     return goog.array.defaultCompare(fe.length, e.length);
   }, goog.array.defaultCompare = function(fe, e) {
@@ -14231,24 +14004,24 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     return e = goog.array.binarySearch(fe, e, ye), 0 <= e ? goog.array.removeAt(fe, e) : !1;
   }, goog.array.bucket = function(fe, e, ye) {
     for (var me = {}, be = 0; be < fe.length; be++) {
-      var we = fe[be], Ee = e.call(ye, we, be, fe);
-      Ee !== void 0 && (me[Ee] || (me[Ee] = [])).push(we);
+      var ve = fe[be], Ee = e.call(ye, ve, be, fe);
+      Ee !== void 0 && (me[Ee] || (me[Ee] = [])).push(ve);
     }
     return me;
   }, goog.array.toObject = function(fe, e, ye) {
     var me = {};
-    return goog.array.forEach(fe, function(be, we) {
-      me[e.call(ye, be, we, fe)] = be;
+    return goog.array.forEach(fe, function(be, ve) {
+      me[e.call(ye, be, ve, fe)] = be;
     }), me;
   }, goog.array.range = function(fe, e, ye) {
-    var me = [], be = 0, we = fe;
-    if (ye = ye || 1, e !== void 0 && (be = fe, we = e), 0 > ye * (we - be))
+    var me = [], be = 0, ve = fe;
+    if (ye = ye || 1, e !== void 0 && (be = fe, ve = e), 0 > ye * (ve - be))
       return [];
     if (0 < ye)
-      for (fe = be; fe < we; fe += ye)
+      for (fe = be; fe < ve; fe += ye)
         me.push(fe);
     else
-      for (fe = be; fe > we; fe += ye)
+      for (fe = be; fe > ve; fe += ye)
         me.push(fe);
     return me;
   }, goog.array.repeat = function(fe, e) {
@@ -14260,10 +14033,10 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
       var me = arguments[ye];
       if (Array.isArray(me))
         for (var be = 0; be < me.length; be += 8192) {
-          var we = goog.array.slice(me, be, be + 8192);
-          we = goog.array.flatten.apply(null, we);
-          for (var Ee = 0; Ee < we.length; Ee++)
-            e.push(we[Ee]);
+          var ve = goog.array.slice(me, be, be + 8192);
+          ve = goog.array.flatten.apply(null, ve);
+          for (var Ee = 0; Ee < ve.length; Ee++)
+            e.push(ve[Ee]);
         }
       else
         e.push(me);
@@ -14279,8 +14052,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     for (var e = [], ye = arguments[0].length, me = 1; me < arguments.length; me++)
       arguments[me].length < ye && (ye = arguments[me].length);
     for (me = 0; me < ye; me++) {
-      for (var be = [], we = 0; we < arguments.length; we++)
-        be.push(arguments[we][me]);
+      for (var be = [], ve = 0; ve < arguments.length; ve++)
+        be.push(arguments[ve][me]);
       e.push(be);
     }
     return e;
@@ -14332,14 +14105,14 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
       if (128 > be)
         e[me++] = String.fromCharCode(be);
       else if (191 < be && 224 > be) {
-        var we = fe[ye++];
-        e[me++] = String.fromCharCode((be & 31) << 6 | we & 63);
+        var ve = fe[ye++];
+        e[me++] = String.fromCharCode((be & 31) << 6 | ve & 63);
       } else if (239 < be && 365 > be) {
-        we = fe[ye++];
+        ve = fe[ye++];
         var Ee = fe[ye++], Oe = fe[ye++];
-        be = ((be & 7) << 18 | (we & 63) << 12 | (Ee & 63) << 6 | Oe & 63) - 65536, e[me++] = String.fromCharCode(55296 + (be >> 10)), e[me++] = String.fromCharCode(56320 + (be & 1023));
+        be = ((be & 7) << 18 | (ve & 63) << 12 | (Ee & 63) << 6 | Oe & 63) - 65536, e[me++] = String.fromCharCode(55296 + (be >> 10)), e[me++] = String.fromCharCode(56320 + (be & 1023));
       } else
-        we = fe[ye++], Ee = fe[ye++], e[me++] = String.fromCharCode((be & 15) << 12 | (we & 63) << 6 | Ee & 63);
+        ve = fe[ye++], Ee = fe[ye++], e[me++] = String.fromCharCode((be & 15) << 12 | (ve & 63) << 6 | Ee & 63);
     }
     return e.join("");
   }, goog.crypt.xorByteArray = function(fe, e) {
@@ -14451,8 +14224,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     return function() {
       var be;
       me && (be = ye[me - 1].apply(this, arguments));
-      for (var we = me - 2; 0 <= we; we--)
-        be = ye[we].call(this, be);
+      for (var ve = me - 2; 0 <= ve; ve--)
+        be = ye[ve].call(this, be);
       return be;
     };
   }, goog.functions.sequence = function(fe) {
@@ -14503,25 +14276,25 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     var me = 0;
     return function(be) {
       goog.global.clearTimeout(me);
-      var we = arguments;
+      var ve = arguments;
       me = goog.global.setTimeout(function() {
-        fe.apply(ye, we);
+        fe.apply(ye, ve);
       }, e);
     };
   }, goog.functions.throttle = function(fe, e, ye) {
-    var me = 0, be = !1, we = [], Ee = function() {
+    var me = 0, be = !1, ve = [], Ee = function() {
       me = 0, be && (be = !1, Oe());
     }, Oe = function() {
-      me = goog.global.setTimeout(Ee, e), fe.apply(ye, we);
+      me = goog.global.setTimeout(Ee, e), fe.apply(ye, ve);
     };
     return function(xe) {
-      we = arguments, me ? be = !0 : Oe();
+      ve = arguments, me ? be = !0 : Oe();
     };
   }, goog.functions.rateLimit = function(fe, e, ye) {
     var me = 0, be = function() {
       me = 0;
     };
-    return function(we) {
+    return function(ve) {
       me || (me = goog.global.setTimeout(be, e), fe.apply(ye, arguments));
     };
   }, goog.dom.HtmlElement = function() {
@@ -14650,8 +14423,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, goog.i18n.bidi.wordSeparatorRe_ = /\s+/, goog.i18n.bidi.hasNumeralsRe_ = /[\d\u06f0-\u06f9]/, goog.i18n.bidi.rtlDetectionThreshold_ = 0.4, goog.i18n.bidi.estimateDirection = function(fe, e) {
     var ye = 0, me = 0, be = !1;
     for (fe = goog.i18n.bidi.stripHtmlIfNeeded_(fe, e).split(goog.i18n.bidi.wordSeparatorRe_), e = 0; e < fe.length; e++) {
-      var we = fe[e];
-      goog.i18n.bidi.startsWithRtl(we) ? (ye++, me++) : goog.i18n.bidi.isRequiredLtrRe_.test(we) ? be = !0 : goog.i18n.bidi.hasAnyLtr(we) ? me++ : goog.i18n.bidi.hasNumeralsRe_.test(we) && (be = !0);
+      var ve = fe[e];
+      goog.i18n.bidi.startsWithRtl(ve) ? (ye++, me++) : goog.i18n.bidi.isRequiredLtrRe_.test(ve) ? be = !0 : goog.i18n.bidi.hasAnyLtr(ve) ? me++ : goog.i18n.bidi.hasNumeralsRe_.test(ve) && (be = !0);
     }
     return me == 0 ? be ? goog.i18n.bidi.Dir.LTR : goog.i18n.bidi.Dir.NEUTRAL : ye / me > goog.i18n.bidi.rtlDetectionThreshold_ ? goog.i18n.bidi.Dir.RTL : goog.i18n.bidi.Dir.LTR;
   }, goog.i18n.bidi.detectRtlDirectionality = function(fe, e) {
@@ -14716,8 +14489,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     for (var me in ye) {
       var be = ye[me];
       be = Array.isArray(be) ? be : [be];
-      for (var we = 0; we < be.length; we++) {
-        var Ee = be[we];
+      for (var ve = 0; ve < be.length; ve++) {
+        var Ee = be[ve];
         Ee != null && (e || (e = fe), e += (e.length > fe.length ? "&" : "") + encodeURIComponent(me) + "=" + encodeURIComponent(String(Ee)));
       }
     }
@@ -14765,13 +14538,13 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     var ye = 0;
     fe = goog.string.internal.trim(String(fe)).split("."), e = goog.string.internal.trim(String(e)).split(".");
     for (var me = Math.max(fe.length, e.length), be = 0; ye == 0 && be < me; be++) {
-      var we = fe[be] || "", Ee = e[be] || "";
+      var ve = fe[be] || "", Ee = e[be] || "";
       do {
-        if (we = /(\d*)(\D*)(.*)/.exec(we) || ["", "", "", ""], Ee = /(\d*)(\D*)(.*)/.exec(Ee) || ["", "", "", ""], we[0].length == 0 && Ee[0].length == 0)
+        if (ve = /(\d*)(\D*)(.*)/.exec(ve) || ["", "", "", ""], Ee = /(\d*)(\D*)(.*)/.exec(Ee) || ["", "", "", ""], ve[0].length == 0 && Ee[0].length == 0)
           break;
-        ye = we[1].length == 0 ? 0 : parseInt(we[1], 10);
+        ye = ve[1].length == 0 ? 0 : parseInt(ve[1], 10);
         var Oe = Ee[1].length == 0 ? 0 : parseInt(Ee[1], 10);
-        ye = goog.string.internal.compareElements_(ye, Oe) || goog.string.internal.compareElements_(we[2].length == 0, Ee[2].length == 0) || goog.string.internal.compareElements_(we[2], Ee[2]), we = we[3], Ee = Ee[3];
+        ye = goog.string.internal.compareElements_(ye, Oe) || goog.string.internal.compareElements_(ve[2].length == 0, Ee[2].length == 0) || goog.string.internal.compareElements_(ve[2], Ee[2]), ve = ve[3], Ee = Ee[3];
       } while (ye == 0);
     }
     return ye;
@@ -14907,10 +14680,10 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     return e;
   }, goog.html.SafeStyle.VALUE_ALLOWED_CHARS_ = `[-,."'%_!# a-zA-Z0-9\\[\\]]`, goog.html.SafeStyle.VALUE_RE_ = new RegExp("^" + goog.html.SafeStyle.VALUE_ALLOWED_CHARS_ + "+$"), goog.html.SafeStyle.URL_RE_ = /\b(url\([ \t\n]*)('[ -&(-\[\]-~]*'|"[ !#-\[\]-~]*"|[!#-&*-\[\]-~]*)([ \t\n]*\))/g, goog.html.SafeStyle.ALLOWED_FUNCTIONS_ = "calc cubic-bezier fit-content hsl hsla linear-gradient matrix minmax repeat rgb rgba (rotate|scale|translate)(X|Y|Z|3d)?".split(" "), goog.html.SafeStyle.FUNCTIONS_RE_ = new RegExp("\\b(" + goog.html.SafeStyle.ALLOWED_FUNCTIONS_.join("|") + ")\\([-+*/0-9a-z.%\\[\\], ]+\\)", "g"), goog.html.SafeStyle.COMMENT_RE_ = /\/\*/, goog.html.SafeStyle.sanitizeUrl_ = function(fe) {
     return fe.replace(goog.html.SafeStyle.URL_RE_, function(e, ye, me, be) {
-      var we = "";
+      var ve = "";
       return me = me.replace(/^(['"])(.*)\1$/, function(Ee, Oe, xe) {
-        return we = Oe, xe;
-      }), e = goog.html.SafeUrl.sanitize(me).getTypedStringValue(), ye + we + e + we + be;
+        return ve = Oe, xe;
+      }), e = goog.html.SafeUrl.sanitize(me).getTypedStringValue(), ye + ve + e + ve + be;
     });
   }, goog.html.SafeStyle.concat = function(fe) {
     var e = "", ye = function(me) {
@@ -15131,8 +14904,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     return e = goog.html.SafeHtml.create(e, ye, me), e.dir_ = fe, e;
   }, goog.html.SafeHtml.join = function(fe, e) {
     fe = goog.html.SafeHtml.htmlEscape(fe);
-    var ye = fe.getDirection(), me = [], be = function(we) {
-      Array.isArray(we) ? goog.array.forEach(we, be) : (we = goog.html.SafeHtml.htmlEscape(we), me.push(goog.html.SafeHtml.unwrap(we)), we = we.getDirection(), ye == goog.i18n.bidi.Dir.NEUTRAL ? ye = we : we != goog.i18n.bidi.Dir.NEUTRAL && ye != we && (ye = null));
+    var ye = fe.getDirection(), me = [], be = function(ve) {
+      Array.isArray(ve) ? goog.array.forEach(ve, be) : (ve = goog.html.SafeHtml.htmlEscape(ve), me.push(goog.html.SafeHtml.unwrap(ve)), ve = ve.getDirection(), ye == goog.i18n.bidi.Dir.NEUTRAL ? ye = ve : ve != goog.i18n.bidi.Dir.NEUTRAL && ye != ve && (ye = null));
     };
     return goog.array.forEach(e, be), goog.html.SafeHtml.createSafeHtmlSecurityPrivateDoNotAccessOrElse(me.join(goog.html.SafeHtml.unwrap(fe)), ye);
   }, goog.html.SafeHtml.concat = function(fe) {
@@ -15168,10 +14941,10 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
       goog.asserts.assert(be.toLowerCase() == be, "Must be lower case"), me[be] = e[be];
     if (ye)
       for (be in ye) {
-        var we = be.toLowerCase();
-        if (we in fe)
-          throw Error(goog.html.SafeHtml.ENABLE_ERROR_MESSAGES ? 'Cannot override "' + we + '" attribute, got "' + be + '" with value "' + ye[be] + '"' : "");
-        we in e && delete me[we], me[be] = ye[be];
+        var ve = be.toLowerCase();
+        if (ve in fe)
+          throw Error(goog.html.SafeHtml.ENABLE_ERROR_MESSAGES ? 'Cannot override "' + ve + '" attribute, got "' + be + '" with value "' + ye[be] + '"' : "");
+        ve in e && delete me[ve], me[be] = ye[be];
       }
     return me;
   }, goog.html.SafeHtml.DOCTYPE_HTML = goog.html.SafeHtml.createSafeHtmlSecurityPrivateDoNotAccessOrElse("<!DOCTYPE html>", goog.i18n.bidi.Dir.NEUTRAL), goog.html.SafeHtml.EMPTY = goog.html.SafeHtml.createSafeHtmlSecurityPrivateDoNotAccessOrElse("", goog.i18n.bidi.Dir.NEUTRAL), goog.html.SafeHtml.BR = goog.html.SafeHtml.createSafeHtmlSecurityPrivateDoNotAccessOrElse("<br>", goog.i18n.bidi.Dir.NEUTRAL), goog.html.uncheckedconversions = {}, goog.html.uncheckedconversions.safeHtmlFromStringKnownToSatisfyTypeContract = function(fe, e, ye) {
@@ -15316,7 +15089,7 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
       return -1;
     if (!e)
       return 1;
-    for (var me = fe.toLowerCase().match(ye), be = e.toLowerCase().match(ye), we = Math.min(me.length, be.length), Ee = 0; Ee < we; Ee++) {
+    for (var me = fe.toLowerCase().match(ye), be = e.toLowerCase().match(ye), ve = Math.min(me.length, be.length), Ee = 0; Ee < ve; Ee++) {
       ye = me[Ee];
       var Oe = be[Ee];
       if (ye != Oe)
@@ -15339,9 +15112,9 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     return goog.string.contains(fe, "&") ? goog.string.unescapeEntitiesUsingDom_(fe, e) : fe;
   }, goog.string.unescapeEntitiesUsingDom_ = function(fe, e) {
     var ye = { "&amp;": "&", "&lt;": "<", "&gt;": ">", "&quot;": '"' }, me = e ? e.createElement("div") : goog.global.document.createElement("div");
-    return fe.replace(goog.string.HTML_ENTITY_PATTERN_, function(be, we) {
+    return fe.replace(goog.string.HTML_ENTITY_PATTERN_, function(be, ve) {
       var Ee = ye[be];
-      return Ee || (we.charAt(0) == "#" && (we = +("0" + we.substr(1)), isNaN(we) || (Ee = String.fromCharCode(we))), Ee || (goog.dom.safe.setInnerHtml(me, goog.html.uncheckedconversions.safeHtmlFromStringKnownToSatisfyTypeContract(
+      return Ee || (ve.charAt(0) == "#" && (ve = +("0" + ve.substr(1)), isNaN(ve) || (Ee = String.fromCharCode(ve))), Ee || (goog.dom.safe.setInnerHtml(me, goog.html.uncheckedconversions.safeHtmlFromStringKnownToSatisfyTypeContract(
         goog.string.Const.from("Single HTML entity."),
         be + " "
       )), Ee = me.firstChild.nodeValue.slice(0, -1)), ye[be] = Ee);
@@ -15482,10 +15255,10 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
       ye[be] = be;
     for (be = 0; be < fe.length; be++) {
       me[0] = be + 1;
-      for (var we = 0; we < e.length; we++)
-        me[we + 1] = Math.min(me[we] + 1, ye[we + 1] + 1, ye[we] + +(fe[be] != e[we]));
-      for (we = 0; we < ye.length; we++)
-        ye[we] = me[we];
+      for (var ve = 0; ve < e.length; ve++)
+        me[ve + 1] = Math.min(me[ve] + 1, ye[ve + 1] + 1, ye[ve] + +(fe[be] != e[ve]));
+      for (ve = 0; ve < ye.length; ve++)
+        ye[ve] = me[ve];
     }
     return me[e.length];
   }, goog.labs.userAgent.engine = {}, goog.labs.userAgent.engine.isPresto = function() {
@@ -15622,8 +15395,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, goog.crypt.base64.byteToCharMaps_ = {}, goog.crypt.base64.charToByteMap_ = null, goog.crypt.base64.ASSUME_NATIVE_SUPPORT_ = goog.userAgent.GECKO || goog.userAgent.WEBKIT && !goog.userAgent.product.SAFARI || goog.userAgent.OPERA, goog.crypt.base64.HAS_NATIVE_ENCODE_ = goog.crypt.base64.ASSUME_NATIVE_SUPPORT_ || typeof goog.global.btoa == "function", goog.crypt.base64.HAS_NATIVE_DECODE_ = goog.crypt.base64.ASSUME_NATIVE_SUPPORT_ || !goog.userAgent.product.SAFARI && !goog.userAgent.IE && typeof goog.global.atob == "function", goog.crypt.base64.encodeByteArray = function(fe, e) {
     goog.asserts.assert(goog.isArrayLike(fe), "encodeByteArray takes an array as a parameter"), e === void 0 && (e = goog.crypt.base64.Alphabet.DEFAULT), goog.crypt.base64.init_(), e = goog.crypt.base64.byteToCharMaps_[e];
     for (var ye = [], me = 0; me < fe.length; me += 3) {
-      var be = fe[me], we = me + 1 < fe.length, Ee = we ? fe[me + 1] : 0, Oe = me + 2 < fe.length, xe = Oe ? fe[me + 2] : 0, gr = be >> 2;
-      be = (be & 3) << 4 | Ee >> 4, Ee = (Ee & 15) << 2 | xe >> 6, xe &= 63, Oe || (xe = 64, we || (Ee = 64)), ye.push(e[gr], e[be], e[Ee] || "", e[xe] || "");
+      var be = fe[me], ve = me + 1 < fe.length, Ee = ve ? fe[me + 1] : 0, Oe = me + 2 < fe.length, xe = Oe ? fe[me + 2] : 0, gr = be >> 2;
+      be = (be & 3) << 4 | Ee >> 4, Ee = (Ee & 15) << 2 | xe >> 6, xe &= 63, Oe || (xe = 64, ve || (Ee = 64)), ye.push(e[gr], e[be], e[Ee] || "", e[xe] || "");
     }
     return ye.join("");
   }, goog.crypt.base64.encodeString = function(fe, e) {
@@ -15645,15 +15418,15 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     var e = fe.length, ye = 3 * e / 4;
     ye % 3 ? ye = Math.floor(ye) : goog.crypt.base64.isPadding_(fe[e - 1]) && (ye = goog.crypt.base64.isPadding_(fe[e - 2]) ? ye - 2 : ye - 1);
     var me = new Uint8Array(ye), be = 0;
-    return goog.crypt.base64.decodeStringInternal_(fe, function(we) {
-      me[be++] = we;
+    return goog.crypt.base64.decodeStringInternal_(fe, function(ve) {
+      me[be++] = ve;
     }), me.subarray(0, be);
   }, goog.crypt.base64.decodeStringInternal_ = function(fe, e) {
     function ye(xe) {
       for (; me < fe.length; ) {
-        var gr = fe.charAt(me++), ve = goog.crypt.base64.charToByteMap_[gr];
-        if (ve != null)
-          return ve;
+        var gr = fe.charAt(me++), we = goog.crypt.base64.charToByteMap_[gr];
+        if (we != null)
+          return we;
         if (!goog.string.isEmptyOrWhitespace(gr))
           throw Error("Unknown base64 encoding at char: " + gr);
       }
@@ -15661,10 +15434,10 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     }
     goog.crypt.base64.init_();
     for (var me = 0; ; ) {
-      var be = ye(-1), we = ye(0), Ee = ye(64), Oe = ye(64);
+      var be = ye(-1), ve = ye(0), Ee = ye(64), Oe = ye(64);
       if (Oe === 64 && be === -1)
         break;
-      e(be << 2 | we >> 4), Ee != 64 && (e(we << 4 & 240 | Ee >> 2), Oe != 64 && e(Ee << 6 & 192 | Oe));
+      e(be << 2 | ve >> 4), Ee != 64 && (e(ve << 4 & 240 | Ee >> 2), Oe != 64 && e(Ee << 6 & 192 | Oe));
     }
   }, goog.crypt.base64.init_ = function() {
     if (!goog.crypt.base64.charToByteMap_) {
@@ -15673,8 +15446,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
         var me = fe.concat(e[ye].split(""));
         goog.crypt.base64.byteToCharMaps_[ye] = me;
         for (var be = 0; be < me.length; be++) {
-          var we = me[be], Ee = goog.crypt.base64.charToByteMap_[we];
-          Ee === void 0 ? goog.crypt.base64.charToByteMap_[we] = be : goog.asserts.assert(Ee === be);
+          var ve = me[be], Ee = goog.crypt.base64.charToByteMap_[ve];
+          Ee === void 0 ? goog.crypt.base64.charToByteMap_[ve] = be : goog.asserts.assert(Ee === be);
         }
       }
     }
@@ -15728,8 +15501,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
       ye = fe * Math.pow(2, -me), fe = ye * jspb.BinaryConstants.TWO_TO_20 & 1048575, ye = ye * jspb.BinaryConstants.TWO_TO_52 >>> 0, jspb.utils.split64High = (e << 31 | me + 1023 << 20 | fe) >>> 0, jspb.utils.split64Low = ye;
     }
   }, jspb.utils.splitHash64 = function(fe) {
-    var e = fe.charCodeAt(0), ye = fe.charCodeAt(1), me = fe.charCodeAt(2), be = fe.charCodeAt(3), we = fe.charCodeAt(4), Ee = fe.charCodeAt(5), Oe = fe.charCodeAt(6);
-    fe = fe.charCodeAt(7), jspb.utils.split64Low = e + (ye << 8) + (me << 16) + (be << 24) >>> 0, jspb.utils.split64High = we + (Ee << 8) + (Oe << 16) + (fe << 24) >>> 0;
+    var e = fe.charCodeAt(0), ye = fe.charCodeAt(1), me = fe.charCodeAt(2), be = fe.charCodeAt(3), ve = fe.charCodeAt(4), Ee = fe.charCodeAt(5), Oe = fe.charCodeAt(6);
+    fe = fe.charCodeAt(7), jspb.utils.split64Low = e + (ye << 8) + (me << 16) + (be << 24) >>> 0, jspb.utils.split64High = ve + (Ee << 8) + (Oe << 16) + (fe << 24) >>> 0;
   }, jspb.utils.joinUint64 = function(fe, e) {
     return e * jspb.BinaryConstants.TWO_TO_32 + (fe >>> 0);
   }, jspb.utils.joinInt64 = function(fe, e) {
@@ -15753,8 +15526,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, jspb.utils.joinHash64 = function(fe, e) {
     return String.fromCharCode(fe >>> 0 & 255, fe >>> 8 & 255, fe >>> 16 & 255, fe >>> 24 & 255, e >>> 0 & 255, e >>> 8 & 255, e >>> 16 & 255, e >>> 24 & 255);
   }, jspb.utils.DIGITS = "0123456789abcdef".split(""), jspb.utils.ZERO_CHAR_CODE_ = 48, jspb.utils.A_CHAR_CODE_ = 97, jspb.utils.joinUnsignedDecimalString = function(fe, e) {
-    function ye(be, we) {
-      return be = be ? String(be) : "", we ? "0000000".slice(be.length) + be : be;
+    function ye(be, ve) {
+      return be = be ? String(be) : "", ve ? "0000000".slice(be.length) + be : be;
     }
     if (2097151 >= e)
       return "" + jspb.utils.joinUint64(fe, e);
@@ -15783,8 +15556,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     jspb.asserts.assert(0 < fe.length);
     var me = !1;
     fe[0] === "-" && (me = !0, fe = fe.slice(1));
-    for (var be = [0, 0, 0, 0, 0, 0, 0, 0], we = 0; we < fe.length; we++)
-      e(10, fe.charCodeAt(we) - jspb.utils.ZERO_CHAR_CODE_);
+    for (var be = [0, 0, 0, 0, 0, 0, 0, 0], ve = 0; ve < fe.length; ve++)
+      e(10, fe.charCodeAt(ve) - jspb.utils.ZERO_CHAR_CODE_);
     return me && (ye(), e(1, 1)), goog.crypt.byteArrayToString(be);
   }, jspb.utils.splitDecimalString = function(fe) {
     jspb.utils.splitHash64(jspb.utils.decimalStringToHash64(fe));
@@ -15822,40 +15595,40 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     if (me = 8 * me + jspb.BinaryConstants.WireType.VARINT, 128 > me)
       for (; e < ye && fe[e++] == me; )
         for (be++; ; ) {
-          var we = fe[e++];
-          if (!(we & 128))
+          var ve = fe[e++];
+          if (!(ve & 128))
             break;
         }
     else
       for (; e < ye; ) {
-        for (we = me; 128 < we; ) {
-          if (fe[e] != (we & 127 | 128))
+        for (ve = me; 128 < ve; ) {
+          if (fe[e] != (ve & 127 | 128))
             return be;
-          e++, we >>= 7;
+          e++, ve >>= 7;
         }
-        if (fe[e++] != we)
+        if (fe[e++] != ve)
           break;
-        for (be++; we = fe[e++], (we & 128) != 0; )
+        for (be++; ve = fe[e++], (ve & 128) != 0; )
           ;
       }
     return be;
   }, jspb.utils.countFixedFields_ = function(fe, e, ye, me, be) {
-    var we = 0;
+    var ve = 0;
     if (128 > me)
       for (; e < ye && fe[e++] == me; )
-        we++, e += be;
+        ve++, e += be;
     else
       for (; e < ye; ) {
         for (var Ee = me; 128 < Ee; ) {
           if (fe[e++] != (Ee & 127 | 128))
-            return we;
+            return ve;
           Ee >>= 7;
         }
         if (fe[e++] != Ee)
           break;
-        we++, e += be;
+        ve++, e += be;
       }
-    return we;
+    return ve;
   }, jspb.utils.countFixed32Fields = function(fe, e, ye, me) {
     return jspb.utils.countFixedFields_(fe, e, ye, 8 * me + jspb.BinaryConstants.WireType.FIXED32, 4);
   }, jspb.utils.countFixed64Fields = function(fe, e, ye, me) {
@@ -15863,15 +15636,15 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, jspb.utils.countDelimitedFields = function(fe, e, ye, me) {
     var be = 0;
     for (me = 8 * me + jspb.BinaryConstants.WireType.DELIMITED; e < ye; ) {
-      for (var we = me; 128 < we; ) {
-        if (fe[e++] != (we & 127 | 128))
+      for (var ve = me; 128 < ve; ) {
+        if (fe[e++] != (ve & 127 | 128))
           return be;
-        we >>= 7;
+        ve >>= 7;
       }
-      if (fe[e++] != we)
+      if (fe[e++] != ve)
         break;
       be++;
-      for (var Ee = 0, Oe = 1; we = fe[e++], Ee += (we & 127) * Oe, Oe *= 128, (we & 128) != 0; )
+      for (var Ee = 0, Oe = 1; ve = fe[e++], Ee += (ve & 127) * Oe, Oe *= 128, (ve & 128) != 0; )
         ;
       e += Ee;
     }
@@ -15948,8 +15721,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, jspb.BinaryDecoder.prototype.readSplitFixed64 = function(fe) {
     var e = this.bytes_, ye = this.cursor_;
     this.cursor_ += 8;
-    for (var me = 0, be = 0, we = ye + 7; we >= ye; we--)
-      me = me << 8 | e[we], be = be << 8 | e[we + 4];
+    for (var me = 0, be = 0, ve = ye + 7; ve >= ye; ve--)
+      me = me << 8 | e[ve], be = be << 8 | e[ve + 4];
     return fe(me, be);
   }, jspb.BinaryDecoder.prototype.skipVarint = function() {
     for (; this.bytes_[this.cursor_] & 128; )
@@ -16029,23 +15802,23 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     var e = this.bytes_, ye = this.cursor_;
     fe = ye + fe;
     for (var me = [], be = ""; ye < fe; ) {
-      var we = e[ye++];
-      if (128 > we)
-        me.push(we);
+      var ve = e[ye++];
+      if (128 > ve)
+        me.push(ve);
       else {
-        if (192 > we)
+        if (192 > ve)
           continue;
-        if (224 > we) {
+        if (224 > ve) {
           var Ee = e[ye++];
-          me.push((we & 31) << 6 | Ee & 63);
-        } else if (240 > we) {
+          me.push((ve & 31) << 6 | Ee & 63);
+        } else if (240 > ve) {
           Ee = e[ye++];
           var Oe = e[ye++];
-          me.push((we & 15) << 12 | (Ee & 63) << 6 | Oe & 63);
-        } else if (248 > we) {
+          me.push((ve & 15) << 12 | (Ee & 63) << 6 | Oe & 63);
+        } else if (248 > ve) {
           Ee = e[ye++], Oe = e[ye++];
           var xe = e[ye++];
-          we = (we & 7) << 18 | (Ee & 63) << 12 | (Oe & 63) << 6 | xe & 63, we -= 65536, me.push((we >> 10 & 1023) + 55296, (we & 1023) + 56320);
+          ve = (ve & 7) << 18 | (Ee & 63) << 12 | (Oe & 63) << 6 | xe & 63, ve -= 65536, me.push((ve >> 10 & 1023) + 55296, (ve & 1023) + 56320);
         }
       }
       8192 <= me.length && (be += String.fromCharCode.apply(null, me), me.length = 0);
@@ -16062,8 +15835,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, jspb.BinaryDecoder.prototype.readVarintHash64 = function() {
     return this.readSplitVarint64(jspb.utils.joinHash64);
   }, jspb.BinaryDecoder.prototype.readFixedHash64 = function() {
-    var fe = this.bytes_, e = this.cursor_, ye = fe[e + 0], me = fe[e + 1], be = fe[e + 2], we = fe[e + 3], Ee = fe[e + 4], Oe = fe[e + 5], xe = fe[e + 6];
-    return fe = fe[e + 7], this.cursor_ += 8, String.fromCharCode(ye, me, be, we, Ee, Oe, xe, fe);
+    var fe = this.bytes_, e = this.cursor_, ye = fe[e + 0], me = fe[e + 1], be = fe[e + 2], ve = fe[e + 3], Ee = fe[e + 4], Oe = fe[e + 5], xe = fe[e + 6];
+    return fe = fe[e + 7], this.cursor_ += 8, String.fromCharCode(ye, me, be, ve, Ee, Oe, xe, fe);
   }, jspb.BinaryReader = function(fe, e, ye) {
     this.decoder_ = jspb.BinaryDecoder.alloc(fe, e, ye), this.fieldCursor_ = this.decoder_.getCursor(), this.nextField_ = jspb.BinaryConstants.INVALID_FIELD_NUMBER, this.nextWireType_ = jspb.BinaryConstants.WireType.INVALID, this.error_ = !1, this.readCallbacks_ = null;
   }, jspb.BinaryReader.instanceCache_ = [], jspb.BinaryReader.alloc = function(fe, e, ye) {
@@ -16521,8 +16294,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, jspb.BinaryWriter.prototype.getResultBuffer = function() {
     jspb.asserts.assert(this.bookmarks_.length == 0);
     for (var fe = new Uint8Array(this.totalLength_ + this.encoder_.length()), e = this.blocks_, ye = e.length, me = 0, be = 0; be < ye; be++) {
-      var we = e[be];
-      fe.set(we, me), me += we.length;
+      var ve = e[be];
+      fe.set(ve, me), me += ve.length;
     }
     return e = this.encoder_.end(), fe.set(e, me), me += e.length, jspb.asserts.assert(me == fe.length), this.blocks_ = [fe], fe;
   }, goog.exportProperty(jspb.BinaryWriter.prototype, "getResultBuffer", jspb.BinaryWriter.prototype.getResultBuffer), jspb.BinaryWriter.prototype.getResultBase64String = function(fe) {
@@ -16680,8 +16453,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, jspb.BinaryWriter.prototype.writeSplitZigzagVarint64 = function(fe, e, ye) {
     this.writeFieldHeader_(fe, jspb.BinaryConstants.WireType.VARINT);
     var me = this.encoder_;
-    jspb.utils.toZigzag64(e, ye, function(be, we) {
-      me.writeSplitVarint64(be >>> 0, we >>> 0);
+    jspb.utils.toZigzag64(e, ye, function(be, ve) {
+      me.writeSplitVarint64(be >>> 0, ve >>> 0);
     });
   }, jspb.BinaryWriter.prototype.writeRepeatedInt32 = function(fe, e) {
     if (e != null)
@@ -16847,8 +16620,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, jspb.BinaryWriter.prototype.writePackedSplitZigzagVarint64 = function(fe, e, ye, me) {
     if (e != null) {
       fe = this.beginDelimited_(fe);
-      for (var be = this.encoder_, we = 0; we < e.length; we++)
-        jspb.utils.toZigzag64(ye(e[we]), me(e[we]), function(Ee, Oe) {
+      for (var be = this.encoder_, ve = 0; ve < e.length; ve++)
+        jspb.utils.toZigzag64(ye(e[ve]), me(e[ve]), function(Ee, Oe) {
           be.writeSplitVarint64(Ee >>> 0, Oe >>> 0);
         });
       this.endDelimited_(fe);
@@ -17004,17 +16777,17 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     return this.arr_;
   }, goog.exportProperty(jspb.Map.prototype, "toArray", jspb.Map.prototype.toArray), jspb.Map.prototype.toObject = function(fe, e) {
     for (var ye = this.toArray(), me = [], be = 0; be < ye.length; be++) {
-      var we = this.map_[ye[be][0].toString()];
-      this.wrapEntry_(we);
-      var Ee = we.valueWrapper;
-      Ee ? (jspb.asserts.assert(e), me.push([we.key, e(fe, Ee)])) : me.push([we.key, we.value]);
+      var ve = this.map_[ye[be][0].toString()];
+      this.wrapEntry_(ve);
+      var Ee = ve.valueWrapper;
+      Ee ? (jspb.asserts.assert(e), me.push([ve.key, e(fe, Ee)])) : me.push([ve.key, ve.value]);
     }
     return me;
   }, goog.exportProperty(jspb.Map.prototype, "toObject", jspb.Map.prototype.toObject), jspb.Map.fromObject = function(fe, e, ye) {
     e = new jspb.Map([], e);
     for (var me = 0; me < fe.length; me++) {
-      var be = fe[me][0], we = ye(fe[me][1]);
-      e.set(be, we);
+      var be = fe[me][0], ve = ye(fe[me][1]);
+      e.set(be, ve);
     }
     return e;
   }, goog.exportProperty(jspb.Map, "fromObject", jspb.Map.fromObject), jspb.Map.ArrayIteratorIterable_ = function(fe) {
@@ -17077,18 +16850,18 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, goog.exportProperty(jspb.Map.prototype, "get", jspb.Map.prototype.get), jspb.Map.prototype.has = function(fe) {
     return fe.toString() in this.map_;
   }, goog.exportProperty(jspb.Map.prototype, "has", jspb.Map.prototype.has), jspb.Map.prototype.serializeBinary = function(fe, e, ye, me, be) {
-    var we = this.stringKeys_();
-    we.sort();
-    for (var Ee = 0; Ee < we.length; Ee++) {
-      var Oe = this.map_[we[Ee]];
+    var ve = this.stringKeys_();
+    ve.sort();
+    for (var Ee = 0; Ee < ve.length; Ee++) {
+      var Oe = this.map_[ve[Ee]];
       e.beginSubMessage(fe), ye.call(e, 1, Oe.key), this.valueCtor_ ? me.call(e, 2, this.wrapEntry_(Oe), be) : me.call(e, 2, Oe.value), e.endSubMessage();
     }
-  }, goog.exportProperty(jspb.Map.prototype, "serializeBinary", jspb.Map.prototype.serializeBinary), jspb.Map.deserializeBinary = function(fe, e, ye, me, be, we, Ee) {
+  }, goog.exportProperty(jspb.Map.prototype, "serializeBinary", jspb.Map.prototype.serializeBinary), jspb.Map.deserializeBinary = function(fe, e, ye, me, be, ve, Ee) {
     for (; e.nextField() && !e.isEndGroup(); ) {
       var Oe = e.getFieldNumber();
-      Oe == 1 ? we = ye.call(e) : Oe == 2 && (fe.valueCtor_ ? (jspb.asserts.assert(be), Ee || (Ee = new fe.valueCtor_()), me.call(e, Ee, be)) : Ee = me.call(e));
+      Oe == 1 ? ve = ye.call(e) : Oe == 2 && (fe.valueCtor_ ? (jspb.asserts.assert(be), Ee || (Ee = new fe.valueCtor_()), me.call(e, Ee, be)) : Ee = me.call(e));
     }
-    jspb.asserts.assert(we != null), jspb.asserts.assert(Ee != null), fe.set(we, Ee);
+    jspb.asserts.assert(ve != null), jspb.asserts.assert(Ee != null), fe.set(ve, Ee);
   }, goog.exportProperty(jspb.Map, "deserializeBinary", jspb.Map.deserializeBinary), jspb.Map.prototype.stringKeys_ = function() {
     var fe = this.map_, e = [], ye;
     for (ye in fe)
@@ -17098,8 +16871,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     this.key = fe, this.value = e, this.valueWrapper = void 0;
   }, jspb.ExtensionFieldInfo = function(fe, e, ye, me, be) {
     this.fieldIndex = fe, this.fieldName = e, this.ctor = ye, this.toObjectFn = me, this.isRepeated = be;
-  }, goog.exportSymbol("jspb.ExtensionFieldInfo", jspb.ExtensionFieldInfo), jspb.ExtensionFieldBinaryInfo = function(fe, e, ye, me, be, we) {
-    this.fieldInfo = fe, this.binaryReaderFn = e, this.binaryWriterFn = ye, this.binaryMessageSerializeFn = me, this.binaryMessageDeserializeFn = be, this.isPacked = we;
+  }, goog.exportSymbol("jspb.ExtensionFieldInfo", jspb.ExtensionFieldInfo), jspb.ExtensionFieldBinaryInfo = function(fe, e, ye, me, be, ve) {
+    this.fieldInfo = fe, this.binaryReaderFn = e, this.binaryWriterFn = ye, this.binaryMessageSerializeFn = me, this.binaryMessageDeserializeFn = be, this.isPacked = ve;
   }, goog.exportSymbol("jspb.ExtensionFieldBinaryInfo", jspb.ExtensionFieldBinaryInfo), jspb.ExtensionFieldInfo.prototype.isMessageType = function() {
     return !!this.ctor;
   }, goog.exportProperty(jspb.ExtensionFieldInfo.prototype, "isMessageType", jspb.ExtensionFieldInfo.prototype.isMessageType), jspb.Message = function() {
@@ -17110,13 +16883,13 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, jspb.Message.hiddenES6Property_ = function() {
   }, jspb.Message.getFieldNumber_ = function(fe, e) {
     return e - fe.arrayIndexOffset_;
-  }, jspb.Message.initialize = function(fe, e, ye, me, be, we) {
+  }, jspb.Message.initialize = function(fe, e, ye, me, be, ve) {
     if (fe.wrappers_ = null, e || (e = ye ? [ye] : []), fe.messageId_ = ye ? String(ye) : void 0, fe.arrayIndexOffset_ = ye === 0 ? -1 : 0, fe.array = e, jspb.Message.initPivotAndExtensionObject_(fe, me), fe.convertedPrimitiveFields_ = {}, jspb.Message.SERIALIZE_EMPTY_TRAILING_FIELDS || (fe.repeatedFields = be), be)
       for (e = 0; e < be.length; e++)
         ye = be[e], ye < fe.pivot_ ? (ye = jspb.Message.getIndex_(fe, ye), fe.array[ye] = fe.array[ye] || jspb.Message.EMPTY_LIST_SENTINEL_) : (jspb.Message.maybeInitEmptyExtensionObject_(fe), fe.extensionObject_[ye] = fe.extensionObject_[ye] || jspb.Message.EMPTY_LIST_SENTINEL_);
-    if (we && we.length)
-      for (e = 0; e < we.length; e++)
-        jspb.Message.computeOneofCase(fe, we[e]);
+    if (ve && ve.length)
+      for (e = 0; e < ve.length; e++)
+        jspb.Message.computeOneofCase(fe, ve[e]);
   }, goog.exportProperty(jspb.Message, "initialize", jspb.Message.initialize), jspb.Message.EMPTY_LIST_SENTINEL_ = goog.DEBUG && Object.freeze ? Object.freeze([]) : [], jspb.Message.isArray_ = function(fe) {
     return jspb.Message.ASSUME_LOCAL_ARRAYS ? fe instanceof Array : Array.isArray(fe);
   }, jspb.Message.isExtensionObject_ = function(fe) {
@@ -17136,8 +16909,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
       me[be] = e.call(fe[be], ye, fe[be]);
     return me;
   }, goog.exportProperty(jspb.Message, "toObjectList", jspb.Message.toObjectList), jspb.Message.toObjectExtension = function(fe, e, ye, me, be) {
-    for (var we in ye) {
-      var Ee = ye[we], Oe = me.call(fe, Ee);
+    for (var ve in ye) {
+      var Ee = ye[ve], Oe = me.call(fe, Ee);
       if (Oe != null) {
         for (var xe in Ee.fieldName)
           if (Ee.fieldName.hasOwnProperty(xe))
@@ -17147,30 +16920,30 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     }
   }, goog.exportProperty(jspb.Message, "toObjectExtension", jspb.Message.toObjectExtension), jspb.Message.serializeBinaryExtensions = function(fe, e, ye, me) {
     for (var be in ye) {
-      var we = ye[be], Ee = we.fieldInfo;
-      if (!we.binaryWriterFn)
+      var ve = ye[be], Ee = ve.fieldInfo;
+      if (!ve.binaryWriterFn)
         throw Error("Message extension present that was generated without binary serialization support");
       var Oe = me.call(fe, Ee);
       if (Oe != null)
         if (Ee.isMessageType())
-          if (we.binaryMessageSerializeFn)
-            we.binaryWriterFn.call(e, Ee.fieldIndex, Oe, we.binaryMessageSerializeFn);
+          if (ve.binaryMessageSerializeFn)
+            ve.binaryWriterFn.call(e, Ee.fieldIndex, Oe, ve.binaryMessageSerializeFn);
           else
             throw Error("Message extension present holding submessage without binary support enabled, and message is being serialized to binary format");
         else
-          we.binaryWriterFn.call(e, Ee.fieldIndex, Oe);
+          ve.binaryWriterFn.call(e, Ee.fieldIndex, Oe);
     }
   }, goog.exportProperty(jspb.Message, "serializeBinaryExtensions", jspb.Message.serializeBinaryExtensions), jspb.Message.readBinaryExtension = function(fe, e, ye, me, be) {
-    var we = ye[e.getFieldNumber()];
-    if (we) {
-      if (ye = we.fieldInfo, !we.binaryReaderFn)
+    var ve = ye[e.getFieldNumber()];
+    if (ve) {
+      if (ye = ve.fieldInfo, !ve.binaryReaderFn)
         throw Error("Deserializing extension whose generated code does not support binary format");
       if (ye.isMessageType()) {
         var Ee = new ye.ctor();
-        we.binaryReaderFn.call(e, Ee, we.binaryMessageDeserializeFn);
+        ve.binaryReaderFn.call(e, Ee, ve.binaryMessageDeserializeFn);
       } else
-        Ee = we.binaryReaderFn.call(e);
-      ye.isRepeated && !we.isPacked ? (e = me.call(fe, ye)) ? e.push(Ee) : be.call(fe, ye, [Ee]) : be.call(fe, ye, Ee);
+        Ee = ve.binaryReaderFn.call(e);
+      ye.isRepeated && !ve.isPacked ? (e = me.call(fe, ye)) ? e.push(Ee) : be.call(fe, ye, [Ee]) : be.call(fe, ye, Ee);
     } else
       e.skipField();
   }, goog.exportProperty(jspb.Message, "readBinaryExtension", jspb.Message.readBinaryExtension), jspb.Message.getField = function(fe, e) {
@@ -17258,8 +17031,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     return jspb.asserts.assertInstanceof(fe, jspb.Message), (ye = jspb.Message.computeOneofCase(fe, ye)) && ye !== e && me !== void 0 && (fe.wrappers_ && ye in fe.wrappers_ && (fe.wrappers_[ye] = void 0), jspb.Message.setField(fe, ye, void 0)), jspb.Message.setField(fe, e, me);
   }, goog.exportProperty(jspb.Message, "setOneofField", jspb.Message.setOneofField), jspb.Message.computeOneofCase = function(fe, e) {
     for (var ye, me, be = 0; be < e.length; be++) {
-      var we = e[be], Ee = jspb.Message.getField(fe, we);
-      Ee != null && (ye = we, me = Ee, jspb.Message.setField(fe, we, void 0));
+      var ve = e[be], Ee = jspb.Message.getField(fe, ve);
+      Ee != null && (ye = ve, me = Ee, jspb.Message.setField(fe, ve, void 0));
     }
     return ye ? (jspb.Message.setField(fe, ye, me), ye) : 0;
   }, goog.exportProperty(jspb.Message, "computeOneofCase", jspb.Message.computeOneofCase), jspb.Message.getWrapperField = function(fe, e, ye, me) {
@@ -17272,8 +17045,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     return jspb.Message.wrapRepeatedField_(fe, e, ye), e = fe.wrappers_[ye], e == jspb.Message.EMPTY_LIST_SENTINEL_ && (e = fe.wrappers_[ye] = []), e;
   }, goog.exportProperty(jspb.Message, "getRepeatedWrapperField", jspb.Message.getRepeatedWrapperField), jspb.Message.wrapRepeatedField_ = function(fe, e, ye) {
     if (fe.wrappers_ || (fe.wrappers_ = {}), !fe.wrappers_[ye]) {
-      for (var me = jspb.Message.getRepeatedField(fe, ye), be = [], we = 0; we < me.length; we++)
-        be[we] = new e(me[we]);
+      for (var me = jspb.Message.getRepeatedField(fe, ye), be = [], ve = 0; ve < me.length; ve++)
+        be[ve] = new e(me[ve]);
       fe.wrappers_[ye] = be;
     }
   }, jspb.Message.setWrapperField = function(fe, e, ye) {
@@ -17291,11 +17064,11 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     return fe.wrappers_[e] = ye, jspb.Message.setField(fe, e, me);
   }, goog.exportProperty(jspb.Message, "setRepeatedWrapperField", jspb.Message.setRepeatedWrapperField), jspb.Message.addToRepeatedWrapperField = function(fe, e, ye, me, be) {
     jspb.Message.wrapRepeatedField_(fe, me, e);
-    var we = fe.wrappers_[e];
-    return we || (we = fe.wrappers_[e] = []), ye = ye || new me(), fe = jspb.Message.getRepeatedField(fe, e), be != null ? (we.splice(be, 0, ye), fe.splice(be, 0, ye.toArray())) : (we.push(ye), fe.push(ye.toArray())), ye;
+    var ve = fe.wrappers_[e];
+    return ve || (ve = fe.wrappers_[e] = []), ye = ye || new me(), fe = jspb.Message.getRepeatedField(fe, e), be != null ? (ve.splice(be, 0, ye), fe.splice(be, 0, ye.toArray())) : (ve.push(ye), fe.push(ye.toArray())), ye;
   }, goog.exportProperty(jspb.Message, "addToRepeatedWrapperField", jspb.Message.addToRepeatedWrapperField), jspb.Message.toMap = function(fe, e, ye, me) {
-    for (var be = {}, we = 0; we < fe.length; we++)
-      be[e.call(fe[we])] = ye ? ye.call(fe[we], me, fe[we]) : fe[we];
+    for (var be = {}, ve = 0; ve < fe.length; ve++)
+      be[e.call(fe[ve])] = ye ? ye.call(fe[ve], me, fe[ve]) : fe[ve];
     return be;
   }, goog.exportProperty(jspb.Message, "toMap", jspb.Message.toMap), jspb.Message.prototype.syncMapFields_ = function() {
     if (this.wrappers_)
@@ -17335,8 +17108,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
       throw Error("Messages have different types.");
     var ye = fe.toArray();
     e = e.toArray();
-    var me = [], be = 0, we = ye.length > e.length ? ye.length : e.length;
-    for (fe.getJsPbMessageId() && (me[0] = fe.getJsPbMessageId(), be = 1); be < we; be++)
+    var me = [], be = 0, ve = ye.length > e.length ? ye.length : e.length;
+    for (fe.getJsPbMessageId() && (me[0] = fe.getJsPbMessageId(), be = 1); be < ve; be++)
       jspb.Message.compareFields(ye[be], e[be]) || (me[be] = e[be]);
     return new fe.constructor(me);
   }, goog.exportProperty(jspb.Message, "difference", jspb.Message.difference), jspb.Message.equals = function(fe, e) {
@@ -17368,8 +17141,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
       return !0;
     }
     if (fe.constructor === Array) {
-      var me = void 0, be = void 0, we = Math.max(fe.length, e.length);
-      for (ye = 0; ye < we; ye++) {
+      var me = void 0, be = void 0, ve = Math.max(fe.length, e.length);
+      for (ye = 0; ye < ve; ye++) {
         var Ee = fe[ye], Oe = e[ye];
         if (Ee && Ee.constructor == Object && (jspb.asserts.assert(me === void 0), jspb.asserts.assert(ye === fe.length - 1), me = Ee, Ee = void 0), Oe && Oe.constructor == Object && (jspb.asserts.assert(be === void 0), jspb.asserts.assert(ye === e.length - 1), be = Oe, Oe = void 0), !jspb.Message.compareFields(Ee, Oe))
           return !1;
@@ -17470,28 +17243,28 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     e.Message.initialize(this, be, 0, -1, proto.google.protobuf.GeneratedCodeInfo.Annotation.repeatedFields_, null);
   }, ye.inherits(proto.google.protobuf.GeneratedCodeInfo.Annotation, e.Message), ye.DEBUG && !COMPILED && (proto.google.protobuf.GeneratedCodeInfo.Annotation.displayName = "proto.google.protobuf.GeneratedCodeInfo.Annotation"), proto.google.protobuf.FileDescriptorSet.repeatedFields_ = [1], e.Message.GENERATE_TO_OBJECT && (proto.google.protobuf.FileDescriptorSet.prototype.toObject = function(be) {
     return proto.google.protobuf.FileDescriptorSet.toObject(be, this);
-  }, proto.google.protobuf.FileDescriptorSet.toObject = function(be, we) {
+  }, proto.google.protobuf.FileDescriptorSet.toObject = function(be, ve) {
     var Ee = {
       fileList: e.Message.toObjectList(
-        we.getFileList(),
+        ve.getFileList(),
         proto.google.protobuf.FileDescriptorProto.toObject,
         be
       )
     };
-    return be && (Ee.$jspbMessageInstance = we), Ee;
+    return be && (Ee.$jspbMessageInstance = ve), Ee;
   }), proto.google.protobuf.FileDescriptorSet.deserializeBinary = function(be) {
-    var we = new e.BinaryReader(be), Ee = new proto.google.protobuf.FileDescriptorSet();
-    return proto.google.protobuf.FileDescriptorSet.deserializeBinaryFromReader(Ee, we);
-  }, proto.google.protobuf.FileDescriptorSet.deserializeBinaryFromReader = function(be, we) {
-    for (; we.nextField() && !we.isEndGroup(); ) {
-      var Ee = we.getFieldNumber();
+    var ve = new e.BinaryReader(be), Ee = new proto.google.protobuf.FileDescriptorSet();
+    return proto.google.protobuf.FileDescriptorSet.deserializeBinaryFromReader(Ee, ve);
+  }, proto.google.protobuf.FileDescriptorSet.deserializeBinaryFromReader = function(be, ve) {
+    for (; ve.nextField() && !ve.isEndGroup(); ) {
+      var Ee = ve.getFieldNumber();
       switch (Ee) {
         case 1:
           var Oe = new proto.google.protobuf.FileDescriptorProto();
-          we.readMessage(Oe, proto.google.protobuf.FileDescriptorProto.deserializeBinaryFromReader), be.addFile(Oe);
+          ve.readMessage(Oe, proto.google.protobuf.FileDescriptorProto.deserializeBinaryFromReader), be.addFile(Oe);
           break;
         default:
-          we.skipField();
+          ve.skipField();
           break;
       }
     }
@@ -17499,9 +17272,9 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, proto.google.protobuf.FileDescriptorSet.prototype.serializeBinary = function() {
     var be = new e.BinaryWriter();
     return proto.google.protobuf.FileDescriptorSet.serializeBinaryToWriter(this, be), be.getResultBuffer();
-  }, proto.google.protobuf.FileDescriptorSet.serializeBinaryToWriter = function(be, we) {
+  }, proto.google.protobuf.FileDescriptorSet.serializeBinaryToWriter = function(be, ve) {
     var Ee = void 0;
-    Ee = be.getFileList(), Ee.length > 0 && we.writeRepeatedMessage(
+    Ee = be.getFileList(), Ee.length > 0 && ve.writeRepeatedMessage(
       1,
       Ee,
       proto.google.protobuf.FileDescriptorProto.serializeBinaryToWriter
@@ -17513,119 +17286,119 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     );
   }, proto.google.protobuf.FileDescriptorSet.prototype.setFileList = function(be) {
     return e.Message.setRepeatedWrapperField(this, 1, be);
-  }, proto.google.protobuf.FileDescriptorSet.prototype.addFile = function(be, we) {
-    return e.Message.addToRepeatedWrapperField(this, 1, be, proto.google.protobuf.FileDescriptorProto, we);
+  }, proto.google.protobuf.FileDescriptorSet.prototype.addFile = function(be, ve) {
+    return e.Message.addToRepeatedWrapperField(this, 1, be, proto.google.protobuf.FileDescriptorProto, ve);
   }, proto.google.protobuf.FileDescriptorSet.prototype.clearFileList = function() {
     return this.setFileList([]);
   }, proto.google.protobuf.FileDescriptorProto.repeatedFields_ = [3, 10, 11, 4, 5, 6, 7], e.Message.GENERATE_TO_OBJECT && (proto.google.protobuf.FileDescriptorProto.prototype.toObject = function(be) {
     return proto.google.protobuf.FileDescriptorProto.toObject(be, this);
-  }, proto.google.protobuf.FileDescriptorProto.toObject = function(be, we) {
+  }, proto.google.protobuf.FileDescriptorProto.toObject = function(be, ve) {
     var Ee, Oe = {
-      name: (Ee = e.Message.getField(we, 1)) == null ? void 0 : Ee,
-      pb_package: (Ee = e.Message.getField(we, 2)) == null ? void 0 : Ee,
-      dependencyList: (Ee = e.Message.getRepeatedField(we, 3)) == null ? void 0 : Ee,
-      publicDependencyList: (Ee = e.Message.getRepeatedField(we, 10)) == null ? void 0 : Ee,
-      weakDependencyList: (Ee = e.Message.getRepeatedField(we, 11)) == null ? void 0 : Ee,
+      name: (Ee = e.Message.getField(ve, 1)) == null ? void 0 : Ee,
+      pb_package: (Ee = e.Message.getField(ve, 2)) == null ? void 0 : Ee,
+      dependencyList: (Ee = e.Message.getRepeatedField(ve, 3)) == null ? void 0 : Ee,
+      publicDependencyList: (Ee = e.Message.getRepeatedField(ve, 10)) == null ? void 0 : Ee,
+      weakDependencyList: (Ee = e.Message.getRepeatedField(ve, 11)) == null ? void 0 : Ee,
       messageTypeList: e.Message.toObjectList(
-        we.getMessageTypeList(),
+        ve.getMessageTypeList(),
         proto.google.protobuf.DescriptorProto.toObject,
         be
       ),
       enumTypeList: e.Message.toObjectList(
-        we.getEnumTypeList(),
+        ve.getEnumTypeList(),
         proto.google.protobuf.EnumDescriptorProto.toObject,
         be
       ),
       serviceList: e.Message.toObjectList(
-        we.getServiceList(),
+        ve.getServiceList(),
         proto.google.protobuf.ServiceDescriptorProto.toObject,
         be
       ),
       extensionList: e.Message.toObjectList(
-        we.getExtensionList(),
+        ve.getExtensionList(),
         proto.google.protobuf.FieldDescriptorProto.toObject,
         be
       ),
-      options: (Ee = we.getOptions()) && proto.google.protobuf.FileOptions.toObject(be, Ee),
-      sourceCodeInfo: (Ee = we.getSourceCodeInfo()) && proto.google.protobuf.SourceCodeInfo.toObject(be, Ee),
-      syntax: (Ee = e.Message.getField(we, 12)) == null ? void 0 : Ee
+      options: (Ee = ve.getOptions()) && proto.google.protobuf.FileOptions.toObject(be, Ee),
+      sourceCodeInfo: (Ee = ve.getSourceCodeInfo()) && proto.google.protobuf.SourceCodeInfo.toObject(be, Ee),
+      syntax: (Ee = e.Message.getField(ve, 12)) == null ? void 0 : Ee
     };
-    return be && (Oe.$jspbMessageInstance = we), Oe;
+    return be && (Oe.$jspbMessageInstance = ve), Oe;
   }), proto.google.protobuf.FileDescriptorProto.deserializeBinary = function(be) {
-    var we = new e.BinaryReader(be), Ee = new proto.google.protobuf.FileDescriptorProto();
-    return proto.google.protobuf.FileDescriptorProto.deserializeBinaryFromReader(Ee, we);
-  }, proto.google.protobuf.FileDescriptorProto.deserializeBinaryFromReader = function(be, we) {
-    for (; we.nextField() && !we.isEndGroup(); ) {
-      var Ee = we.getFieldNumber();
+    var ve = new e.BinaryReader(be), Ee = new proto.google.protobuf.FileDescriptorProto();
+    return proto.google.protobuf.FileDescriptorProto.deserializeBinaryFromReader(Ee, ve);
+  }, proto.google.protobuf.FileDescriptorProto.deserializeBinaryFromReader = function(be, ve) {
+    for (; ve.nextField() && !ve.isEndGroup(); ) {
+      var Ee = ve.getFieldNumber();
       switch (Ee) {
         case 1:
           var gr = (
             /** @type {string} */
-            we.readString()
+            ve.readString()
           );
           be.setName(gr);
           break;
         case 2:
           var gr = (
             /** @type {string} */
-            we.readString()
+            ve.readString()
           );
           be.setPackage(gr);
           break;
         case 3:
           var gr = (
             /** @type {string} */
-            we.readString()
+            ve.readString()
           );
           be.addDependency(gr);
           break;
         case 10:
           for (var xe = (
             /** @type {!Array<number>} */
-            we.isDelimited() ? we.readPackedInt32() : [we.readInt32()]
+            ve.isDelimited() ? ve.readPackedInt32() : [ve.readInt32()]
           ), Oe = 0; Oe < xe.length; Oe++)
             be.addPublicDependency(xe[Oe]);
           break;
         case 11:
           for (var xe = (
             /** @type {!Array<number>} */
-            we.isDelimited() ? we.readPackedInt32() : [we.readInt32()]
+            ve.isDelimited() ? ve.readPackedInt32() : [ve.readInt32()]
           ), Oe = 0; Oe < xe.length; Oe++)
             be.addWeakDependency(xe[Oe]);
           break;
         case 4:
           var gr = new proto.google.protobuf.DescriptorProto();
-          we.readMessage(gr, proto.google.protobuf.DescriptorProto.deserializeBinaryFromReader), be.addMessageType(gr);
+          ve.readMessage(gr, proto.google.protobuf.DescriptorProto.deserializeBinaryFromReader), be.addMessageType(gr);
           break;
         case 5:
           var gr = new proto.google.protobuf.EnumDescriptorProto();
-          we.readMessage(gr, proto.google.protobuf.EnumDescriptorProto.deserializeBinaryFromReader), be.addEnumType(gr);
+          ve.readMessage(gr, proto.google.protobuf.EnumDescriptorProto.deserializeBinaryFromReader), be.addEnumType(gr);
           break;
         case 6:
           var gr = new proto.google.protobuf.ServiceDescriptorProto();
-          we.readMessage(gr, proto.google.protobuf.ServiceDescriptorProto.deserializeBinaryFromReader), be.addService(gr);
+          ve.readMessage(gr, proto.google.protobuf.ServiceDescriptorProto.deserializeBinaryFromReader), be.addService(gr);
           break;
         case 7:
           var gr = new proto.google.protobuf.FieldDescriptorProto();
-          we.readMessage(gr, proto.google.protobuf.FieldDescriptorProto.deserializeBinaryFromReader), be.addExtension$(gr);
+          ve.readMessage(gr, proto.google.protobuf.FieldDescriptorProto.deserializeBinaryFromReader), be.addExtension$(gr);
           break;
         case 8:
           var gr = new proto.google.protobuf.FileOptions();
-          we.readMessage(gr, proto.google.protobuf.FileOptions.deserializeBinaryFromReader), be.setOptions(gr);
+          ve.readMessage(gr, proto.google.protobuf.FileOptions.deserializeBinaryFromReader), be.setOptions(gr);
           break;
         case 9:
           var gr = new proto.google.protobuf.SourceCodeInfo();
-          we.readMessage(gr, proto.google.protobuf.SourceCodeInfo.deserializeBinaryFromReader), be.setSourceCodeInfo(gr);
+          ve.readMessage(gr, proto.google.protobuf.SourceCodeInfo.deserializeBinaryFromReader), be.setSourceCodeInfo(gr);
           break;
         case 12:
           var gr = (
             /** @type {string} */
-            we.readString()
+            ve.readString()
           );
           be.setSyntax(gr);
           break;
         default:
-          we.skipField();
+          ve.skipField();
           break;
       }
     }
@@ -17633,51 +17406,51 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, proto.google.protobuf.FileDescriptorProto.prototype.serializeBinary = function() {
     var be = new e.BinaryWriter();
     return proto.google.protobuf.FileDescriptorProto.serializeBinaryToWriter(this, be), be.getResultBuffer();
-  }, proto.google.protobuf.FileDescriptorProto.serializeBinaryToWriter = function(be, we) {
+  }, proto.google.protobuf.FileDescriptorProto.serializeBinaryToWriter = function(be, ve) {
     var Ee = void 0;
     Ee = /** @type {string} */
-    e.Message.getField(be, 1), Ee != null && we.writeString(
+    e.Message.getField(be, 1), Ee != null && ve.writeString(
       1,
       Ee
     ), Ee = /** @type {string} */
-    e.Message.getField(be, 2), Ee != null && we.writeString(
+    e.Message.getField(be, 2), Ee != null && ve.writeString(
       2,
       Ee
-    ), Ee = be.getDependencyList(), Ee.length > 0 && we.writeRepeatedString(
+    ), Ee = be.getDependencyList(), Ee.length > 0 && ve.writeRepeatedString(
       3,
       Ee
-    ), Ee = be.getPublicDependencyList(), Ee.length > 0 && we.writeRepeatedInt32(
+    ), Ee = be.getPublicDependencyList(), Ee.length > 0 && ve.writeRepeatedInt32(
       10,
       Ee
-    ), Ee = be.getWeakDependencyList(), Ee.length > 0 && we.writeRepeatedInt32(
+    ), Ee = be.getWeakDependencyList(), Ee.length > 0 && ve.writeRepeatedInt32(
       11,
       Ee
-    ), Ee = be.getMessageTypeList(), Ee.length > 0 && we.writeRepeatedMessage(
+    ), Ee = be.getMessageTypeList(), Ee.length > 0 && ve.writeRepeatedMessage(
       4,
       Ee,
       proto.google.protobuf.DescriptorProto.serializeBinaryToWriter
-    ), Ee = be.getEnumTypeList(), Ee.length > 0 && we.writeRepeatedMessage(
+    ), Ee = be.getEnumTypeList(), Ee.length > 0 && ve.writeRepeatedMessage(
       5,
       Ee,
       proto.google.protobuf.EnumDescriptorProto.serializeBinaryToWriter
-    ), Ee = be.getServiceList(), Ee.length > 0 && we.writeRepeatedMessage(
+    ), Ee = be.getServiceList(), Ee.length > 0 && ve.writeRepeatedMessage(
       6,
       Ee,
       proto.google.protobuf.ServiceDescriptorProto.serializeBinaryToWriter
-    ), Ee = be.getExtensionList(), Ee.length > 0 && we.writeRepeatedMessage(
+    ), Ee = be.getExtensionList(), Ee.length > 0 && ve.writeRepeatedMessage(
       7,
       Ee,
       proto.google.protobuf.FieldDescriptorProto.serializeBinaryToWriter
-    ), Ee = be.getOptions(), Ee != null && we.writeMessage(
+    ), Ee = be.getOptions(), Ee != null && ve.writeMessage(
       8,
       Ee,
       proto.google.protobuf.FileOptions.serializeBinaryToWriter
-    ), Ee = be.getSourceCodeInfo(), Ee != null && we.writeMessage(
+    ), Ee = be.getSourceCodeInfo(), Ee != null && ve.writeMessage(
       9,
       Ee,
       proto.google.protobuf.SourceCodeInfo.serializeBinaryToWriter
     ), Ee = /** @type {string} */
-    e.Message.getField(be, 12), Ee != null && we.writeString(
+    e.Message.getField(be, 12), Ee != null && ve.writeString(
       12,
       Ee
     );
@@ -17710,8 +17483,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     );
   }, proto.google.protobuf.FileDescriptorProto.prototype.setDependencyList = function(be) {
     return e.Message.setField(this, 3, be || []);
-  }, proto.google.protobuf.FileDescriptorProto.prototype.addDependency = function(be, we) {
-    return e.Message.addToRepeatedField(this, 3, be, we);
+  }, proto.google.protobuf.FileDescriptorProto.prototype.addDependency = function(be, ve) {
+    return e.Message.addToRepeatedField(this, 3, be, ve);
   }, proto.google.protobuf.FileDescriptorProto.prototype.clearDependencyList = function() {
     return this.setDependencyList([]);
   }, proto.google.protobuf.FileDescriptorProto.prototype.getPublicDependencyList = function() {
@@ -17721,8 +17494,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     );
   }, proto.google.protobuf.FileDescriptorProto.prototype.setPublicDependencyList = function(be) {
     return e.Message.setField(this, 10, be || []);
-  }, proto.google.protobuf.FileDescriptorProto.prototype.addPublicDependency = function(be, we) {
-    return e.Message.addToRepeatedField(this, 10, be, we);
+  }, proto.google.protobuf.FileDescriptorProto.prototype.addPublicDependency = function(be, ve) {
+    return e.Message.addToRepeatedField(this, 10, be, ve);
   }, proto.google.protobuf.FileDescriptorProto.prototype.clearPublicDependencyList = function() {
     return this.setPublicDependencyList([]);
   }, proto.google.protobuf.FileDescriptorProto.prototype.getWeakDependencyList = function() {
@@ -17732,8 +17505,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     );
   }, proto.google.protobuf.FileDescriptorProto.prototype.setWeakDependencyList = function(be) {
     return e.Message.setField(this, 11, be || []);
-  }, proto.google.protobuf.FileDescriptorProto.prototype.addWeakDependency = function(be, we) {
-    return e.Message.addToRepeatedField(this, 11, be, we);
+  }, proto.google.protobuf.FileDescriptorProto.prototype.addWeakDependency = function(be, ve) {
+    return e.Message.addToRepeatedField(this, 11, be, ve);
   }, proto.google.protobuf.FileDescriptorProto.prototype.clearWeakDependencyList = function() {
     return this.setWeakDependencyList([]);
   }, proto.google.protobuf.FileDescriptorProto.prototype.getMessageTypeList = function() {
@@ -17743,8 +17516,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     );
   }, proto.google.protobuf.FileDescriptorProto.prototype.setMessageTypeList = function(be) {
     return e.Message.setRepeatedWrapperField(this, 4, be);
-  }, proto.google.protobuf.FileDescriptorProto.prototype.addMessageType = function(be, we) {
-    return e.Message.addToRepeatedWrapperField(this, 4, be, proto.google.protobuf.DescriptorProto, we);
+  }, proto.google.protobuf.FileDescriptorProto.prototype.addMessageType = function(be, ve) {
+    return e.Message.addToRepeatedWrapperField(this, 4, be, proto.google.protobuf.DescriptorProto, ve);
   }, proto.google.protobuf.FileDescriptorProto.prototype.clearMessageTypeList = function() {
     return this.setMessageTypeList([]);
   }, proto.google.protobuf.FileDescriptorProto.prototype.getEnumTypeList = function() {
@@ -17754,8 +17527,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     );
   }, proto.google.protobuf.FileDescriptorProto.prototype.setEnumTypeList = function(be) {
     return e.Message.setRepeatedWrapperField(this, 5, be);
-  }, proto.google.protobuf.FileDescriptorProto.prototype.addEnumType = function(be, we) {
-    return e.Message.addToRepeatedWrapperField(this, 5, be, proto.google.protobuf.EnumDescriptorProto, we);
+  }, proto.google.protobuf.FileDescriptorProto.prototype.addEnumType = function(be, ve) {
+    return e.Message.addToRepeatedWrapperField(this, 5, be, proto.google.protobuf.EnumDescriptorProto, ve);
   }, proto.google.protobuf.FileDescriptorProto.prototype.clearEnumTypeList = function() {
     return this.setEnumTypeList([]);
   }, proto.google.protobuf.FileDescriptorProto.prototype.getServiceList = function() {
@@ -17765,8 +17538,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     );
   }, proto.google.protobuf.FileDescriptorProto.prototype.setServiceList = function(be) {
     return e.Message.setRepeatedWrapperField(this, 6, be);
-  }, proto.google.protobuf.FileDescriptorProto.prototype.addService = function(be, we) {
-    return e.Message.addToRepeatedWrapperField(this, 6, be, proto.google.protobuf.ServiceDescriptorProto, we);
+  }, proto.google.protobuf.FileDescriptorProto.prototype.addService = function(be, ve) {
+    return e.Message.addToRepeatedWrapperField(this, 6, be, proto.google.protobuf.ServiceDescriptorProto, ve);
   }, proto.google.protobuf.FileDescriptorProto.prototype.clearServiceList = function() {
     return this.setServiceList([]);
   }, proto.google.protobuf.FileDescriptorProto.prototype.getExtensionList = function() {
@@ -17776,8 +17549,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     );
   }, proto.google.protobuf.FileDescriptorProto.prototype.setExtensionList = function(be) {
     return e.Message.setRepeatedWrapperField(this, 7, be);
-  }, proto.google.protobuf.FileDescriptorProto.prototype.addExtension$ = function(be, we) {
-    return e.Message.addToRepeatedWrapperField(this, 7, be, proto.google.protobuf.FieldDescriptorProto, we);
+  }, proto.google.protobuf.FileDescriptorProto.prototype.addExtension$ = function(be, ve) {
+    return e.Message.addToRepeatedWrapperField(this, 7, be, proto.google.protobuf.FieldDescriptorProto, ve);
   }, proto.google.protobuf.FileDescriptorProto.prototype.clearExtensionList = function() {
     return this.setExtensionList([]);
   }, proto.google.protobuf.FileDescriptorProto.prototype.getOptions = function() {
@@ -17815,103 +17588,103 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     return e.Message.getField(this, 12) != null;
   }, proto.google.protobuf.DescriptorProto.repeatedFields_ = [2, 6, 3, 4, 5, 8, 9, 10], e.Message.GENERATE_TO_OBJECT && (proto.google.protobuf.DescriptorProto.prototype.toObject = function(be) {
     return proto.google.protobuf.DescriptorProto.toObject(be, this);
-  }, proto.google.protobuf.DescriptorProto.toObject = function(be, we) {
+  }, proto.google.protobuf.DescriptorProto.toObject = function(be, ve) {
     var Ee, Oe = {
-      name: (Ee = e.Message.getField(we, 1)) == null ? void 0 : Ee,
+      name: (Ee = e.Message.getField(ve, 1)) == null ? void 0 : Ee,
       fieldList: e.Message.toObjectList(
-        we.getFieldList(),
+        ve.getFieldList(),
         proto.google.protobuf.FieldDescriptorProto.toObject,
         be
       ),
       extensionList: e.Message.toObjectList(
-        we.getExtensionList(),
+        ve.getExtensionList(),
         proto.google.protobuf.FieldDescriptorProto.toObject,
         be
       ),
       nestedTypeList: e.Message.toObjectList(
-        we.getNestedTypeList(),
+        ve.getNestedTypeList(),
         proto.google.protobuf.DescriptorProto.toObject,
         be
       ),
       enumTypeList: e.Message.toObjectList(
-        we.getEnumTypeList(),
+        ve.getEnumTypeList(),
         proto.google.protobuf.EnumDescriptorProto.toObject,
         be
       ),
       extensionRangeList: e.Message.toObjectList(
-        we.getExtensionRangeList(),
+        ve.getExtensionRangeList(),
         proto.google.protobuf.DescriptorProto.ExtensionRange.toObject,
         be
       ),
       oneofDeclList: e.Message.toObjectList(
-        we.getOneofDeclList(),
+        ve.getOneofDeclList(),
         proto.google.protobuf.OneofDescriptorProto.toObject,
         be
       ),
-      options: (Ee = we.getOptions()) && proto.google.protobuf.MessageOptions.toObject(be, Ee),
+      options: (Ee = ve.getOptions()) && proto.google.protobuf.MessageOptions.toObject(be, Ee),
       reservedRangeList: e.Message.toObjectList(
-        we.getReservedRangeList(),
+        ve.getReservedRangeList(),
         proto.google.protobuf.DescriptorProto.ReservedRange.toObject,
         be
       ),
-      reservedNameList: (Ee = e.Message.getRepeatedField(we, 10)) == null ? void 0 : Ee
+      reservedNameList: (Ee = e.Message.getRepeatedField(ve, 10)) == null ? void 0 : Ee
     };
-    return be && (Oe.$jspbMessageInstance = we), Oe;
+    return be && (Oe.$jspbMessageInstance = ve), Oe;
   }), proto.google.protobuf.DescriptorProto.deserializeBinary = function(be) {
-    var we = new e.BinaryReader(be), Ee = new proto.google.protobuf.DescriptorProto();
-    return proto.google.protobuf.DescriptorProto.deserializeBinaryFromReader(Ee, we);
-  }, proto.google.protobuf.DescriptorProto.deserializeBinaryFromReader = function(be, we) {
-    for (; we.nextField() && !we.isEndGroup(); ) {
-      var Ee = we.getFieldNumber();
+    var ve = new e.BinaryReader(be), Ee = new proto.google.protobuf.DescriptorProto();
+    return proto.google.protobuf.DescriptorProto.deserializeBinaryFromReader(Ee, ve);
+  }, proto.google.protobuf.DescriptorProto.deserializeBinaryFromReader = function(be, ve) {
+    for (; ve.nextField() && !ve.isEndGroup(); ) {
+      var Ee = ve.getFieldNumber();
       switch (Ee) {
         case 1:
           var Oe = (
             /** @type {string} */
-            we.readString()
+            ve.readString()
           );
           be.setName(Oe);
           break;
         case 2:
           var Oe = new proto.google.protobuf.FieldDescriptorProto();
-          we.readMessage(Oe, proto.google.protobuf.FieldDescriptorProto.deserializeBinaryFromReader), be.addField(Oe);
+          ve.readMessage(Oe, proto.google.protobuf.FieldDescriptorProto.deserializeBinaryFromReader), be.addField(Oe);
           break;
         case 6:
           var Oe = new proto.google.protobuf.FieldDescriptorProto();
-          we.readMessage(Oe, proto.google.protobuf.FieldDescriptorProto.deserializeBinaryFromReader), be.addExtension$(Oe);
+          ve.readMessage(Oe, proto.google.protobuf.FieldDescriptorProto.deserializeBinaryFromReader), be.addExtension$(Oe);
           break;
         case 3:
           var Oe = new proto.google.protobuf.DescriptorProto();
-          we.readMessage(Oe, proto.google.protobuf.DescriptorProto.deserializeBinaryFromReader), be.addNestedType(Oe);
+          ve.readMessage(Oe, proto.google.protobuf.DescriptorProto.deserializeBinaryFromReader), be.addNestedType(Oe);
           break;
         case 4:
           var Oe = new proto.google.protobuf.EnumDescriptorProto();
-          we.readMessage(Oe, proto.google.protobuf.EnumDescriptorProto.deserializeBinaryFromReader), be.addEnumType(Oe);
+          ve.readMessage(Oe, proto.google.protobuf.EnumDescriptorProto.deserializeBinaryFromReader), be.addEnumType(Oe);
           break;
         case 5:
           var Oe = new proto.google.protobuf.DescriptorProto.ExtensionRange();
-          we.readMessage(Oe, proto.google.protobuf.DescriptorProto.ExtensionRange.deserializeBinaryFromReader), be.addExtensionRange(Oe);
+          ve.readMessage(Oe, proto.google.protobuf.DescriptorProto.ExtensionRange.deserializeBinaryFromReader), be.addExtensionRange(Oe);
           break;
         case 8:
           var Oe = new proto.google.protobuf.OneofDescriptorProto();
-          we.readMessage(Oe, proto.google.protobuf.OneofDescriptorProto.deserializeBinaryFromReader), be.addOneofDecl(Oe);
+          ve.readMessage(Oe, proto.google.protobuf.OneofDescriptorProto.deserializeBinaryFromReader), be.addOneofDecl(Oe);
           break;
         case 7:
           var Oe = new proto.google.protobuf.MessageOptions();
-          we.readMessage(Oe, proto.google.protobuf.MessageOptions.deserializeBinaryFromReader), be.setOptions(Oe);
+          ve.readMessage(Oe, proto.google.protobuf.MessageOptions.deserializeBinaryFromReader), be.setOptions(Oe);
           break;
         case 9:
           var Oe = new proto.google.protobuf.DescriptorProto.ReservedRange();
-          we.readMessage(Oe, proto.google.protobuf.DescriptorProto.ReservedRange.deserializeBinaryFromReader), be.addReservedRange(Oe);
+          ve.readMessage(Oe, proto.google.protobuf.DescriptorProto.ReservedRange.deserializeBinaryFromReader), be.addReservedRange(Oe);
           break;
         case 10:
           var Oe = (
             /** @type {string} */
-            we.readString()
+            ve.readString()
           );
           be.addReservedName(Oe);
           break;
         default:
-          we.skipField();
+          ve.skipField();
           break;
       }
     }
@@ -17919,84 +17692,84 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, proto.google.protobuf.DescriptorProto.prototype.serializeBinary = function() {
     var be = new e.BinaryWriter();
     return proto.google.protobuf.DescriptorProto.serializeBinaryToWriter(this, be), be.getResultBuffer();
-  }, proto.google.protobuf.DescriptorProto.serializeBinaryToWriter = function(be, we) {
+  }, proto.google.protobuf.DescriptorProto.serializeBinaryToWriter = function(be, ve) {
     var Ee = void 0;
     Ee = /** @type {string} */
-    e.Message.getField(be, 1), Ee != null && we.writeString(
+    e.Message.getField(be, 1), Ee != null && ve.writeString(
       1,
       Ee
-    ), Ee = be.getFieldList(), Ee.length > 0 && we.writeRepeatedMessage(
+    ), Ee = be.getFieldList(), Ee.length > 0 && ve.writeRepeatedMessage(
       2,
       Ee,
       proto.google.protobuf.FieldDescriptorProto.serializeBinaryToWriter
-    ), Ee = be.getExtensionList(), Ee.length > 0 && we.writeRepeatedMessage(
+    ), Ee = be.getExtensionList(), Ee.length > 0 && ve.writeRepeatedMessage(
       6,
       Ee,
       proto.google.protobuf.FieldDescriptorProto.serializeBinaryToWriter
-    ), Ee = be.getNestedTypeList(), Ee.length > 0 && we.writeRepeatedMessage(
+    ), Ee = be.getNestedTypeList(), Ee.length > 0 && ve.writeRepeatedMessage(
       3,
       Ee,
       proto.google.protobuf.DescriptorProto.serializeBinaryToWriter
-    ), Ee = be.getEnumTypeList(), Ee.length > 0 && we.writeRepeatedMessage(
+    ), Ee = be.getEnumTypeList(), Ee.length > 0 && ve.writeRepeatedMessage(
       4,
       Ee,
       proto.google.protobuf.EnumDescriptorProto.serializeBinaryToWriter
-    ), Ee = be.getExtensionRangeList(), Ee.length > 0 && we.writeRepeatedMessage(
+    ), Ee = be.getExtensionRangeList(), Ee.length > 0 && ve.writeRepeatedMessage(
       5,
       Ee,
       proto.google.protobuf.DescriptorProto.ExtensionRange.serializeBinaryToWriter
-    ), Ee = be.getOneofDeclList(), Ee.length > 0 && we.writeRepeatedMessage(
+    ), Ee = be.getOneofDeclList(), Ee.length > 0 && ve.writeRepeatedMessage(
       8,
       Ee,
       proto.google.protobuf.OneofDescriptorProto.serializeBinaryToWriter
-    ), Ee = be.getOptions(), Ee != null && we.writeMessage(
+    ), Ee = be.getOptions(), Ee != null && ve.writeMessage(
       7,
       Ee,
       proto.google.protobuf.MessageOptions.serializeBinaryToWriter
-    ), Ee = be.getReservedRangeList(), Ee.length > 0 && we.writeRepeatedMessage(
+    ), Ee = be.getReservedRangeList(), Ee.length > 0 && ve.writeRepeatedMessage(
       9,
       Ee,
       proto.google.protobuf.DescriptorProto.ReservedRange.serializeBinaryToWriter
-    ), Ee = be.getReservedNameList(), Ee.length > 0 && we.writeRepeatedString(
+    ), Ee = be.getReservedNameList(), Ee.length > 0 && ve.writeRepeatedString(
       10,
       Ee
     );
   }, e.Message.GENERATE_TO_OBJECT && (proto.google.protobuf.DescriptorProto.ExtensionRange.prototype.toObject = function(be) {
     return proto.google.protobuf.DescriptorProto.ExtensionRange.toObject(be, this);
-  }, proto.google.protobuf.DescriptorProto.ExtensionRange.toObject = function(be, we) {
+  }, proto.google.protobuf.DescriptorProto.ExtensionRange.toObject = function(be, ve) {
     var Ee, Oe = {
-      start: (Ee = e.Message.getField(we, 1)) == null ? void 0 : Ee,
-      end: (Ee = e.Message.getField(we, 2)) == null ? void 0 : Ee,
-      options: (Ee = we.getOptions()) && proto.google.protobuf.ExtensionRangeOptions.toObject(be, Ee)
+      start: (Ee = e.Message.getField(ve, 1)) == null ? void 0 : Ee,
+      end: (Ee = e.Message.getField(ve, 2)) == null ? void 0 : Ee,
+      options: (Ee = ve.getOptions()) && proto.google.protobuf.ExtensionRangeOptions.toObject(be, Ee)
     };
-    return be && (Oe.$jspbMessageInstance = we), Oe;
+    return be && (Oe.$jspbMessageInstance = ve), Oe;
   }), proto.google.protobuf.DescriptorProto.ExtensionRange.deserializeBinary = function(be) {
-    var we = new e.BinaryReader(be), Ee = new proto.google.protobuf.DescriptorProto.ExtensionRange();
-    return proto.google.protobuf.DescriptorProto.ExtensionRange.deserializeBinaryFromReader(Ee, we);
-  }, proto.google.protobuf.DescriptorProto.ExtensionRange.deserializeBinaryFromReader = function(be, we) {
-    for (; we.nextField() && !we.isEndGroup(); ) {
-      var Ee = we.getFieldNumber();
+    var ve = new e.BinaryReader(be), Ee = new proto.google.protobuf.DescriptorProto.ExtensionRange();
+    return proto.google.protobuf.DescriptorProto.ExtensionRange.deserializeBinaryFromReader(Ee, ve);
+  }, proto.google.protobuf.DescriptorProto.ExtensionRange.deserializeBinaryFromReader = function(be, ve) {
+    for (; ve.nextField() && !ve.isEndGroup(); ) {
+      var Ee = ve.getFieldNumber();
       switch (Ee) {
         case 1:
           var Oe = (
             /** @type {number} */
-            we.readInt32()
+            ve.readInt32()
           );
           be.setStart(Oe);
           break;
         case 2:
           var Oe = (
             /** @type {number} */
-            we.readInt32()
+            ve.readInt32()
           );
           be.setEnd(Oe);
           break;
         case 3:
           var Oe = new proto.google.protobuf.ExtensionRangeOptions();
-          we.readMessage(Oe, proto.google.protobuf.ExtensionRangeOptions.deserializeBinaryFromReader), be.setOptions(Oe);
+          ve.readMessage(Oe, proto.google.protobuf.ExtensionRangeOptions.deserializeBinaryFromReader), be.setOptions(Oe);
           break;
         default:
-          we.skipField();
+          ve.skipField();
           break;
       }
     }
@@ -18004,17 +17777,17 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, proto.google.protobuf.DescriptorProto.ExtensionRange.prototype.serializeBinary = function() {
     var be = new e.BinaryWriter();
     return proto.google.protobuf.DescriptorProto.ExtensionRange.serializeBinaryToWriter(this, be), be.getResultBuffer();
-  }, proto.google.protobuf.DescriptorProto.ExtensionRange.serializeBinaryToWriter = function(be, we) {
+  }, proto.google.protobuf.DescriptorProto.ExtensionRange.serializeBinaryToWriter = function(be, ve) {
     var Ee = void 0;
     Ee = /** @type {number} */
-    e.Message.getField(be, 1), Ee != null && we.writeInt32(
+    e.Message.getField(be, 1), Ee != null && ve.writeInt32(
       1,
       Ee
     ), Ee = /** @type {number} */
-    e.Message.getField(be, 2), Ee != null && we.writeInt32(
+    e.Message.getField(be, 2), Ee != null && ve.writeInt32(
       2,
       Ee
-    ), Ee = be.getOptions(), Ee != null && we.writeMessage(
+    ), Ee = be.getOptions(), Ee != null && ve.writeMessage(
       3,
       Ee,
       proto.google.protobuf.ExtensionRangeOptions.serializeBinaryToWriter
@@ -18054,35 +17827,35 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     return e.Message.getField(this, 3) != null;
   }, e.Message.GENERATE_TO_OBJECT && (proto.google.protobuf.DescriptorProto.ReservedRange.prototype.toObject = function(be) {
     return proto.google.protobuf.DescriptorProto.ReservedRange.toObject(be, this);
-  }, proto.google.protobuf.DescriptorProto.ReservedRange.toObject = function(be, we) {
+  }, proto.google.protobuf.DescriptorProto.ReservedRange.toObject = function(be, ve) {
     var Ee, Oe = {
-      start: (Ee = e.Message.getField(we, 1)) == null ? void 0 : Ee,
-      end: (Ee = e.Message.getField(we, 2)) == null ? void 0 : Ee
+      start: (Ee = e.Message.getField(ve, 1)) == null ? void 0 : Ee,
+      end: (Ee = e.Message.getField(ve, 2)) == null ? void 0 : Ee
     };
-    return be && (Oe.$jspbMessageInstance = we), Oe;
+    return be && (Oe.$jspbMessageInstance = ve), Oe;
   }), proto.google.protobuf.DescriptorProto.ReservedRange.deserializeBinary = function(be) {
-    var we = new e.BinaryReader(be), Ee = new proto.google.protobuf.DescriptorProto.ReservedRange();
-    return proto.google.protobuf.DescriptorProto.ReservedRange.deserializeBinaryFromReader(Ee, we);
-  }, proto.google.protobuf.DescriptorProto.ReservedRange.deserializeBinaryFromReader = function(be, we) {
-    for (; we.nextField() && !we.isEndGroup(); ) {
-      var Ee = we.getFieldNumber();
+    var ve = new e.BinaryReader(be), Ee = new proto.google.protobuf.DescriptorProto.ReservedRange();
+    return proto.google.protobuf.DescriptorProto.ReservedRange.deserializeBinaryFromReader(Ee, ve);
+  }, proto.google.protobuf.DescriptorProto.ReservedRange.deserializeBinaryFromReader = function(be, ve) {
+    for (; ve.nextField() && !ve.isEndGroup(); ) {
+      var Ee = ve.getFieldNumber();
       switch (Ee) {
         case 1:
           var Oe = (
             /** @type {number} */
-            we.readInt32()
+            ve.readInt32()
           );
           be.setStart(Oe);
           break;
         case 2:
           var Oe = (
             /** @type {number} */
-            we.readInt32()
+            ve.readInt32()
           );
           be.setEnd(Oe);
           break;
         default:
-          we.skipField();
+          ve.skipField();
           break;
       }
     }
@@ -18090,14 +17863,14 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, proto.google.protobuf.DescriptorProto.ReservedRange.prototype.serializeBinary = function() {
     var be = new e.BinaryWriter();
     return proto.google.protobuf.DescriptorProto.ReservedRange.serializeBinaryToWriter(this, be), be.getResultBuffer();
-  }, proto.google.protobuf.DescriptorProto.ReservedRange.serializeBinaryToWriter = function(be, we) {
+  }, proto.google.protobuf.DescriptorProto.ReservedRange.serializeBinaryToWriter = function(be, ve) {
     var Ee = void 0;
     Ee = /** @type {number} */
-    e.Message.getField(be, 1), Ee != null && we.writeInt32(
+    e.Message.getField(be, 1), Ee != null && ve.writeInt32(
       1,
       Ee
     ), Ee = /** @type {number} */
-    e.Message.getField(be, 2), Ee != null && we.writeInt32(
+    e.Message.getField(be, 2), Ee != null && ve.writeInt32(
       2,
       Ee
     );
@@ -18141,8 +17914,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     );
   }, proto.google.protobuf.DescriptorProto.prototype.setFieldList = function(be) {
     return e.Message.setRepeatedWrapperField(this, 2, be);
-  }, proto.google.protobuf.DescriptorProto.prototype.addField = function(be, we) {
-    return e.Message.addToRepeatedWrapperField(this, 2, be, proto.google.protobuf.FieldDescriptorProto, we);
+  }, proto.google.protobuf.DescriptorProto.prototype.addField = function(be, ve) {
+    return e.Message.addToRepeatedWrapperField(this, 2, be, proto.google.protobuf.FieldDescriptorProto, ve);
   }, proto.google.protobuf.DescriptorProto.prototype.clearFieldList = function() {
     return this.setFieldList([]);
   }, proto.google.protobuf.DescriptorProto.prototype.getExtensionList = function() {
@@ -18152,8 +17925,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     );
   }, proto.google.protobuf.DescriptorProto.prototype.setExtensionList = function(be) {
     return e.Message.setRepeatedWrapperField(this, 6, be);
-  }, proto.google.protobuf.DescriptorProto.prototype.addExtension$ = function(be, we) {
-    return e.Message.addToRepeatedWrapperField(this, 6, be, proto.google.protobuf.FieldDescriptorProto, we);
+  }, proto.google.protobuf.DescriptorProto.prototype.addExtension$ = function(be, ve) {
+    return e.Message.addToRepeatedWrapperField(this, 6, be, proto.google.protobuf.FieldDescriptorProto, ve);
   }, proto.google.protobuf.DescriptorProto.prototype.clearExtensionList = function() {
     return this.setExtensionList([]);
   }, proto.google.protobuf.DescriptorProto.prototype.getNestedTypeList = function() {
@@ -18163,8 +17936,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     );
   }, proto.google.protobuf.DescriptorProto.prototype.setNestedTypeList = function(be) {
     return e.Message.setRepeatedWrapperField(this, 3, be);
-  }, proto.google.protobuf.DescriptorProto.prototype.addNestedType = function(be, we) {
-    return e.Message.addToRepeatedWrapperField(this, 3, be, proto.google.protobuf.DescriptorProto, we);
+  }, proto.google.protobuf.DescriptorProto.prototype.addNestedType = function(be, ve) {
+    return e.Message.addToRepeatedWrapperField(this, 3, be, proto.google.protobuf.DescriptorProto, ve);
   }, proto.google.protobuf.DescriptorProto.prototype.clearNestedTypeList = function() {
     return this.setNestedTypeList([]);
   }, proto.google.protobuf.DescriptorProto.prototype.getEnumTypeList = function() {
@@ -18174,8 +17947,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     );
   }, proto.google.protobuf.DescriptorProto.prototype.setEnumTypeList = function(be) {
     return e.Message.setRepeatedWrapperField(this, 4, be);
-  }, proto.google.protobuf.DescriptorProto.prototype.addEnumType = function(be, we) {
-    return e.Message.addToRepeatedWrapperField(this, 4, be, proto.google.protobuf.EnumDescriptorProto, we);
+  }, proto.google.protobuf.DescriptorProto.prototype.addEnumType = function(be, ve) {
+    return e.Message.addToRepeatedWrapperField(this, 4, be, proto.google.protobuf.EnumDescriptorProto, ve);
   }, proto.google.protobuf.DescriptorProto.prototype.clearEnumTypeList = function() {
     return this.setEnumTypeList([]);
   }, proto.google.protobuf.DescriptorProto.prototype.getExtensionRangeList = function() {
@@ -18185,8 +17958,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     );
   }, proto.google.protobuf.DescriptorProto.prototype.setExtensionRangeList = function(be) {
     return e.Message.setRepeatedWrapperField(this, 5, be);
-  }, proto.google.protobuf.DescriptorProto.prototype.addExtensionRange = function(be, we) {
-    return e.Message.addToRepeatedWrapperField(this, 5, be, proto.google.protobuf.DescriptorProto.ExtensionRange, we);
+  }, proto.google.protobuf.DescriptorProto.prototype.addExtensionRange = function(be, ve) {
+    return e.Message.addToRepeatedWrapperField(this, 5, be, proto.google.protobuf.DescriptorProto.ExtensionRange, ve);
   }, proto.google.protobuf.DescriptorProto.prototype.clearExtensionRangeList = function() {
     return this.setExtensionRangeList([]);
   }, proto.google.protobuf.DescriptorProto.prototype.getOneofDeclList = function() {
@@ -18196,8 +17969,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     );
   }, proto.google.protobuf.DescriptorProto.prototype.setOneofDeclList = function(be) {
     return e.Message.setRepeatedWrapperField(this, 8, be);
-  }, proto.google.protobuf.DescriptorProto.prototype.addOneofDecl = function(be, we) {
-    return e.Message.addToRepeatedWrapperField(this, 8, be, proto.google.protobuf.OneofDescriptorProto, we);
+  }, proto.google.protobuf.DescriptorProto.prototype.addOneofDecl = function(be, ve) {
+    return e.Message.addToRepeatedWrapperField(this, 8, be, proto.google.protobuf.OneofDescriptorProto, ve);
   }, proto.google.protobuf.DescriptorProto.prototype.clearOneofDeclList = function() {
     return this.setOneofDeclList([]);
   }, proto.google.protobuf.DescriptorProto.prototype.getOptions = function() {
@@ -18218,8 +17991,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     );
   }, proto.google.protobuf.DescriptorProto.prototype.setReservedRangeList = function(be) {
     return e.Message.setRepeatedWrapperField(this, 9, be);
-  }, proto.google.protobuf.DescriptorProto.prototype.addReservedRange = function(be, we) {
-    return e.Message.addToRepeatedWrapperField(this, 9, be, proto.google.protobuf.DescriptorProto.ReservedRange, we);
+  }, proto.google.protobuf.DescriptorProto.prototype.addReservedRange = function(be, ve) {
+    return e.Message.addToRepeatedWrapperField(this, 9, be, proto.google.protobuf.DescriptorProto.ReservedRange, ve);
   }, proto.google.protobuf.DescriptorProto.prototype.clearReservedRangeList = function() {
     return this.setReservedRangeList([]);
   }, proto.google.protobuf.DescriptorProto.prototype.getReservedNameList = function() {
@@ -18229,43 +18002,43 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     );
   }, proto.google.protobuf.DescriptorProto.prototype.setReservedNameList = function(be) {
     return e.Message.setField(this, 10, be || []);
-  }, proto.google.protobuf.DescriptorProto.prototype.addReservedName = function(be, we) {
-    return e.Message.addToRepeatedField(this, 10, be, we);
+  }, proto.google.protobuf.DescriptorProto.prototype.addReservedName = function(be, ve) {
+    return e.Message.addToRepeatedField(this, 10, be, ve);
   }, proto.google.protobuf.DescriptorProto.prototype.clearReservedNameList = function() {
     return this.setReservedNameList([]);
   }, proto.google.protobuf.ExtensionRangeOptions.repeatedFields_ = [999], e.Message.GENERATE_TO_OBJECT && (proto.google.protobuf.ExtensionRangeOptions.prototype.toObject = function(be) {
     return proto.google.protobuf.ExtensionRangeOptions.toObject(be, this);
-  }, proto.google.protobuf.ExtensionRangeOptions.toObject = function(be, we) {
+  }, proto.google.protobuf.ExtensionRangeOptions.toObject = function(be, ve) {
     var Ee = {
       uninterpretedOptionList: e.Message.toObjectList(
-        we.getUninterpretedOptionList(),
+        ve.getUninterpretedOptionList(),
         proto.google.protobuf.UninterpretedOption.toObject,
         be
       )
     };
     return e.Message.toObjectExtension(
       /** @type {!jspb.Message} */
-      we,
+      ve,
       Ee,
       proto.google.protobuf.ExtensionRangeOptions.extensions,
       proto.google.protobuf.ExtensionRangeOptions.prototype.getExtension,
       be
-    ), be && (Ee.$jspbMessageInstance = we), Ee;
+    ), be && (Ee.$jspbMessageInstance = ve), Ee;
   }), proto.google.protobuf.ExtensionRangeOptions.deserializeBinary = function(be) {
-    var we = new e.BinaryReader(be), Ee = new proto.google.protobuf.ExtensionRangeOptions();
-    return proto.google.protobuf.ExtensionRangeOptions.deserializeBinaryFromReader(Ee, we);
-  }, proto.google.protobuf.ExtensionRangeOptions.deserializeBinaryFromReader = function(be, we) {
-    for (; we.nextField() && !we.isEndGroup(); ) {
-      var Ee = we.getFieldNumber();
+    var ve = new e.BinaryReader(be), Ee = new proto.google.protobuf.ExtensionRangeOptions();
+    return proto.google.protobuf.ExtensionRangeOptions.deserializeBinaryFromReader(Ee, ve);
+  }, proto.google.protobuf.ExtensionRangeOptions.deserializeBinaryFromReader = function(be, ve) {
+    for (; ve.nextField() && !ve.isEndGroup(); ) {
+      var Ee = ve.getFieldNumber();
       switch (Ee) {
         case 999:
           var Oe = new proto.google.protobuf.UninterpretedOption();
-          we.readMessage(Oe, proto.google.protobuf.UninterpretedOption.deserializeBinaryFromReader), be.addUninterpretedOption(Oe);
+          ve.readMessage(Oe, proto.google.protobuf.UninterpretedOption.deserializeBinaryFromReader), be.addUninterpretedOption(Oe);
           break;
         default:
           e.Message.readBinaryExtension(
             be,
-            we,
+            ve,
             proto.google.protobuf.ExtensionRangeOptions.extensionsBinary,
             proto.google.protobuf.ExtensionRangeOptions.prototype.getExtension,
             proto.google.protobuf.ExtensionRangeOptions.prototype.setExtension
@@ -18277,15 +18050,15 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, proto.google.protobuf.ExtensionRangeOptions.prototype.serializeBinary = function() {
     var be = new e.BinaryWriter();
     return proto.google.protobuf.ExtensionRangeOptions.serializeBinaryToWriter(this, be), be.getResultBuffer();
-  }, proto.google.protobuf.ExtensionRangeOptions.serializeBinaryToWriter = function(be, we) {
+  }, proto.google.protobuf.ExtensionRangeOptions.serializeBinaryToWriter = function(be, ve) {
     var Ee = void 0;
-    Ee = be.getUninterpretedOptionList(), Ee.length > 0 && we.writeRepeatedMessage(
+    Ee = be.getUninterpretedOptionList(), Ee.length > 0 && ve.writeRepeatedMessage(
       999,
       Ee,
       proto.google.protobuf.UninterpretedOption.serializeBinaryToWriter
     ), e.Message.serializeBinaryExtensions(
       be,
-      we,
+      ve,
       proto.google.protobuf.ExtensionRangeOptions.extensionsBinary,
       proto.google.protobuf.ExtensionRangeOptions.prototype.getExtension
     );
@@ -18296,110 +18069,110 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     );
   }, proto.google.protobuf.ExtensionRangeOptions.prototype.setUninterpretedOptionList = function(be) {
     return e.Message.setRepeatedWrapperField(this, 999, be);
-  }, proto.google.protobuf.ExtensionRangeOptions.prototype.addUninterpretedOption = function(be, we) {
-    return e.Message.addToRepeatedWrapperField(this, 999, be, proto.google.protobuf.UninterpretedOption, we);
+  }, proto.google.protobuf.ExtensionRangeOptions.prototype.addUninterpretedOption = function(be, ve) {
+    return e.Message.addToRepeatedWrapperField(this, 999, be, proto.google.protobuf.UninterpretedOption, ve);
   }, proto.google.protobuf.ExtensionRangeOptions.prototype.clearUninterpretedOptionList = function() {
     return this.setUninterpretedOptionList([]);
   }, e.Message.GENERATE_TO_OBJECT && (proto.google.protobuf.FieldDescriptorProto.prototype.toObject = function(be) {
     return proto.google.protobuf.FieldDescriptorProto.toObject(be, this);
-  }, proto.google.protobuf.FieldDescriptorProto.toObject = function(be, we) {
+  }, proto.google.protobuf.FieldDescriptorProto.toObject = function(be, ve) {
     var Ee, Oe = {
-      name: (Ee = e.Message.getField(we, 1)) == null ? void 0 : Ee,
-      number: (Ee = e.Message.getField(we, 3)) == null ? void 0 : Ee,
-      label: (Ee = e.Message.getField(we, 4)) == null ? void 0 : Ee,
-      type: (Ee = e.Message.getField(we, 5)) == null ? void 0 : Ee,
-      typeName: (Ee = e.Message.getField(we, 6)) == null ? void 0 : Ee,
-      extendee: (Ee = e.Message.getField(we, 2)) == null ? void 0 : Ee,
-      defaultValue: (Ee = e.Message.getField(we, 7)) == null ? void 0 : Ee,
-      oneofIndex: (Ee = e.Message.getField(we, 9)) == null ? void 0 : Ee,
-      jsonName: (Ee = e.Message.getField(we, 10)) == null ? void 0 : Ee,
-      options: (Ee = we.getOptions()) && proto.google.protobuf.FieldOptions.toObject(be, Ee),
-      proto3Optional: (Ee = e.Message.getBooleanField(we, 17)) == null ? void 0 : Ee
+      name: (Ee = e.Message.getField(ve, 1)) == null ? void 0 : Ee,
+      number: (Ee = e.Message.getField(ve, 3)) == null ? void 0 : Ee,
+      label: (Ee = e.Message.getField(ve, 4)) == null ? void 0 : Ee,
+      type: (Ee = e.Message.getField(ve, 5)) == null ? void 0 : Ee,
+      typeName: (Ee = e.Message.getField(ve, 6)) == null ? void 0 : Ee,
+      extendee: (Ee = e.Message.getField(ve, 2)) == null ? void 0 : Ee,
+      defaultValue: (Ee = e.Message.getField(ve, 7)) == null ? void 0 : Ee,
+      oneofIndex: (Ee = e.Message.getField(ve, 9)) == null ? void 0 : Ee,
+      jsonName: (Ee = e.Message.getField(ve, 10)) == null ? void 0 : Ee,
+      options: (Ee = ve.getOptions()) && proto.google.protobuf.FieldOptions.toObject(be, Ee),
+      proto3Optional: (Ee = e.Message.getBooleanField(ve, 17)) == null ? void 0 : Ee
     };
-    return be && (Oe.$jspbMessageInstance = we), Oe;
+    return be && (Oe.$jspbMessageInstance = ve), Oe;
   }), proto.google.protobuf.FieldDescriptorProto.deserializeBinary = function(be) {
-    var we = new e.BinaryReader(be), Ee = new proto.google.protobuf.FieldDescriptorProto();
-    return proto.google.protobuf.FieldDescriptorProto.deserializeBinaryFromReader(Ee, we);
-  }, proto.google.protobuf.FieldDescriptorProto.deserializeBinaryFromReader = function(be, we) {
-    for (; we.nextField() && !we.isEndGroup(); ) {
-      var Ee = we.getFieldNumber();
+    var ve = new e.BinaryReader(be), Ee = new proto.google.protobuf.FieldDescriptorProto();
+    return proto.google.protobuf.FieldDescriptorProto.deserializeBinaryFromReader(Ee, ve);
+  }, proto.google.protobuf.FieldDescriptorProto.deserializeBinaryFromReader = function(be, ve) {
+    for (; ve.nextField() && !ve.isEndGroup(); ) {
+      var Ee = ve.getFieldNumber();
       switch (Ee) {
         case 1:
           var Oe = (
             /** @type {string} */
-            we.readString()
+            ve.readString()
           );
           be.setName(Oe);
           break;
         case 3:
           var Oe = (
             /** @type {number} */
-            we.readInt32()
+            ve.readInt32()
           );
           be.setNumber(Oe);
           break;
         case 4:
           var Oe = (
             /** @type {!proto.google.protobuf.FieldDescriptorProto.Label} */
-            we.readEnum()
+            ve.readEnum()
           );
           be.setLabel(Oe);
           break;
         case 5:
           var Oe = (
             /** @type {!proto.google.protobuf.FieldDescriptorProto.Type} */
-            we.readEnum()
+            ve.readEnum()
           );
           be.setType(Oe);
           break;
         case 6:
           var Oe = (
             /** @type {string} */
-            we.readString()
+            ve.readString()
           );
           be.setTypeName(Oe);
           break;
         case 2:
           var Oe = (
             /** @type {string} */
-            we.readString()
+            ve.readString()
           );
           be.setExtendee(Oe);
           break;
         case 7:
           var Oe = (
             /** @type {string} */
-            we.readString()
+            ve.readString()
           );
           be.setDefaultValue(Oe);
           break;
         case 9:
           var Oe = (
             /** @type {number} */
-            we.readInt32()
+            ve.readInt32()
           );
           be.setOneofIndex(Oe);
           break;
         case 10:
           var Oe = (
             /** @type {string} */
-            we.readString()
+            ve.readString()
           );
           be.setJsonName(Oe);
           break;
         case 8:
           var Oe = new proto.google.protobuf.FieldOptions();
-          we.readMessage(Oe, proto.google.protobuf.FieldOptions.deserializeBinaryFromReader), be.setOptions(Oe);
+          ve.readMessage(Oe, proto.google.protobuf.FieldOptions.deserializeBinaryFromReader), be.setOptions(Oe);
           break;
         case 17:
           var Oe = (
             /** @type {boolean} */
-            we.readBool()
+            ve.readBool()
           );
           be.setProto3Optional(Oe);
           break;
         default:
-          we.skipField();
+          ve.skipField();
           break;
       }
     }
@@ -18407,50 +18180,50 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, proto.google.protobuf.FieldDescriptorProto.prototype.serializeBinary = function() {
     var be = new e.BinaryWriter();
     return proto.google.protobuf.FieldDescriptorProto.serializeBinaryToWriter(this, be), be.getResultBuffer();
-  }, proto.google.protobuf.FieldDescriptorProto.serializeBinaryToWriter = function(be, we) {
+  }, proto.google.protobuf.FieldDescriptorProto.serializeBinaryToWriter = function(be, ve) {
     var Ee = void 0;
     Ee = /** @type {string} */
-    e.Message.getField(be, 1), Ee != null && we.writeString(
+    e.Message.getField(be, 1), Ee != null && ve.writeString(
       1,
       Ee
     ), Ee = /** @type {number} */
-    e.Message.getField(be, 3), Ee != null && we.writeInt32(
+    e.Message.getField(be, 3), Ee != null && ve.writeInt32(
       3,
       Ee
     ), Ee = /** @type {!proto.google.protobuf.FieldDescriptorProto.Label} */
-    e.Message.getField(be, 4), Ee != null && we.writeEnum(
+    e.Message.getField(be, 4), Ee != null && ve.writeEnum(
       4,
       Ee
     ), Ee = /** @type {!proto.google.protobuf.FieldDescriptorProto.Type} */
-    e.Message.getField(be, 5), Ee != null && we.writeEnum(
+    e.Message.getField(be, 5), Ee != null && ve.writeEnum(
       5,
       Ee
     ), Ee = /** @type {string} */
-    e.Message.getField(be, 6), Ee != null && we.writeString(
+    e.Message.getField(be, 6), Ee != null && ve.writeString(
       6,
       Ee
     ), Ee = /** @type {string} */
-    e.Message.getField(be, 2), Ee != null && we.writeString(
+    e.Message.getField(be, 2), Ee != null && ve.writeString(
       2,
       Ee
     ), Ee = /** @type {string} */
-    e.Message.getField(be, 7), Ee != null && we.writeString(
+    e.Message.getField(be, 7), Ee != null && ve.writeString(
       7,
       Ee
     ), Ee = /** @type {number} */
-    e.Message.getField(be, 9), Ee != null && we.writeInt32(
+    e.Message.getField(be, 9), Ee != null && ve.writeInt32(
       9,
       Ee
     ), Ee = /** @type {string} */
-    e.Message.getField(be, 10), Ee != null && we.writeString(
+    e.Message.getField(be, 10), Ee != null && ve.writeString(
       10,
       Ee
-    ), Ee = be.getOptions(), Ee != null && we.writeMessage(
+    ), Ee = be.getOptions(), Ee != null && ve.writeMessage(
       8,
       Ee,
       proto.google.protobuf.FieldOptions.serializeBinaryToWriter
     ), Ee = /** @type {boolean} */
-    e.Message.getField(be, 17), Ee != null && we.writeBool(
+    e.Message.getField(be, 17), Ee != null && ve.writeBool(
       17,
       Ee
     );
@@ -18600,32 +18373,32 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     return e.Message.getField(this, 17) != null;
   }, e.Message.GENERATE_TO_OBJECT && (proto.google.protobuf.OneofDescriptorProto.prototype.toObject = function(be) {
     return proto.google.protobuf.OneofDescriptorProto.toObject(be, this);
-  }, proto.google.protobuf.OneofDescriptorProto.toObject = function(be, we) {
+  }, proto.google.protobuf.OneofDescriptorProto.toObject = function(be, ve) {
     var Ee, Oe = {
-      name: (Ee = e.Message.getField(we, 1)) == null ? void 0 : Ee,
-      options: (Ee = we.getOptions()) && proto.google.protobuf.OneofOptions.toObject(be, Ee)
+      name: (Ee = e.Message.getField(ve, 1)) == null ? void 0 : Ee,
+      options: (Ee = ve.getOptions()) && proto.google.protobuf.OneofOptions.toObject(be, Ee)
     };
-    return be && (Oe.$jspbMessageInstance = we), Oe;
+    return be && (Oe.$jspbMessageInstance = ve), Oe;
   }), proto.google.protobuf.OneofDescriptorProto.deserializeBinary = function(be) {
-    var we = new e.BinaryReader(be), Ee = new proto.google.protobuf.OneofDescriptorProto();
-    return proto.google.protobuf.OneofDescriptorProto.deserializeBinaryFromReader(Ee, we);
-  }, proto.google.protobuf.OneofDescriptorProto.deserializeBinaryFromReader = function(be, we) {
-    for (; we.nextField() && !we.isEndGroup(); ) {
-      var Ee = we.getFieldNumber();
+    var ve = new e.BinaryReader(be), Ee = new proto.google.protobuf.OneofDescriptorProto();
+    return proto.google.protobuf.OneofDescriptorProto.deserializeBinaryFromReader(Ee, ve);
+  }, proto.google.protobuf.OneofDescriptorProto.deserializeBinaryFromReader = function(be, ve) {
+    for (; ve.nextField() && !ve.isEndGroup(); ) {
+      var Ee = ve.getFieldNumber();
       switch (Ee) {
         case 1:
           var Oe = (
             /** @type {string} */
-            we.readString()
+            ve.readString()
           );
           be.setName(Oe);
           break;
         case 2:
           var Oe = new proto.google.protobuf.OneofOptions();
-          we.readMessage(Oe, proto.google.protobuf.OneofOptions.deserializeBinaryFromReader), be.setOptions(Oe);
+          ve.readMessage(Oe, proto.google.protobuf.OneofOptions.deserializeBinaryFromReader), be.setOptions(Oe);
           break;
         default:
-          we.skipField();
+          ve.skipField();
           break;
       }
     }
@@ -18633,13 +18406,13 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, proto.google.protobuf.OneofDescriptorProto.prototype.serializeBinary = function() {
     var be = new e.BinaryWriter();
     return proto.google.protobuf.OneofDescriptorProto.serializeBinaryToWriter(this, be), be.getResultBuffer();
-  }, proto.google.protobuf.OneofDescriptorProto.serializeBinaryToWriter = function(be, we) {
+  }, proto.google.protobuf.OneofDescriptorProto.serializeBinaryToWriter = function(be, ve) {
     var Ee = void 0;
     Ee = /** @type {string} */
-    e.Message.getField(be, 1), Ee != null && we.writeString(
+    e.Message.getField(be, 1), Ee != null && ve.writeString(
       1,
       Ee
-    ), Ee = be.getOptions(), Ee != null && we.writeMessage(
+    ), Ee = be.getOptions(), Ee != null && ve.writeMessage(
       2,
       Ee,
       proto.google.protobuf.OneofOptions.serializeBinaryToWriter
@@ -18668,58 +18441,58 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     return e.Message.getField(this, 2) != null;
   }, proto.google.protobuf.EnumDescriptorProto.repeatedFields_ = [2, 4, 5], e.Message.GENERATE_TO_OBJECT && (proto.google.protobuf.EnumDescriptorProto.prototype.toObject = function(be) {
     return proto.google.protobuf.EnumDescriptorProto.toObject(be, this);
-  }, proto.google.protobuf.EnumDescriptorProto.toObject = function(be, we) {
+  }, proto.google.protobuf.EnumDescriptorProto.toObject = function(be, ve) {
     var Ee, Oe = {
-      name: (Ee = e.Message.getField(we, 1)) == null ? void 0 : Ee,
+      name: (Ee = e.Message.getField(ve, 1)) == null ? void 0 : Ee,
       valueList: e.Message.toObjectList(
-        we.getValueList(),
+        ve.getValueList(),
         proto.google.protobuf.EnumValueDescriptorProto.toObject,
         be
       ),
-      options: (Ee = we.getOptions()) && proto.google.protobuf.EnumOptions.toObject(be, Ee),
+      options: (Ee = ve.getOptions()) && proto.google.protobuf.EnumOptions.toObject(be, Ee),
       reservedRangeList: e.Message.toObjectList(
-        we.getReservedRangeList(),
+        ve.getReservedRangeList(),
         proto.google.protobuf.EnumDescriptorProto.EnumReservedRange.toObject,
         be
       ),
-      reservedNameList: (Ee = e.Message.getRepeatedField(we, 5)) == null ? void 0 : Ee
+      reservedNameList: (Ee = e.Message.getRepeatedField(ve, 5)) == null ? void 0 : Ee
     };
-    return be && (Oe.$jspbMessageInstance = we), Oe;
+    return be && (Oe.$jspbMessageInstance = ve), Oe;
   }), proto.google.protobuf.EnumDescriptorProto.deserializeBinary = function(be) {
-    var we = new e.BinaryReader(be), Ee = new proto.google.protobuf.EnumDescriptorProto();
-    return proto.google.protobuf.EnumDescriptorProto.deserializeBinaryFromReader(Ee, we);
-  }, proto.google.protobuf.EnumDescriptorProto.deserializeBinaryFromReader = function(be, we) {
-    for (; we.nextField() && !we.isEndGroup(); ) {
-      var Ee = we.getFieldNumber();
+    var ve = new e.BinaryReader(be), Ee = new proto.google.protobuf.EnumDescriptorProto();
+    return proto.google.protobuf.EnumDescriptorProto.deserializeBinaryFromReader(Ee, ve);
+  }, proto.google.protobuf.EnumDescriptorProto.deserializeBinaryFromReader = function(be, ve) {
+    for (; ve.nextField() && !ve.isEndGroup(); ) {
+      var Ee = ve.getFieldNumber();
       switch (Ee) {
         case 1:
           var Oe = (
             /** @type {string} */
-            we.readString()
+            ve.readString()
           );
           be.setName(Oe);
           break;
         case 2:
           var Oe = new proto.google.protobuf.EnumValueDescriptorProto();
-          we.readMessage(Oe, proto.google.protobuf.EnumValueDescriptorProto.deserializeBinaryFromReader), be.addValue(Oe);
+          ve.readMessage(Oe, proto.google.protobuf.EnumValueDescriptorProto.deserializeBinaryFromReader), be.addValue(Oe);
           break;
         case 3:
           var Oe = new proto.google.protobuf.EnumOptions();
-          we.readMessage(Oe, proto.google.protobuf.EnumOptions.deserializeBinaryFromReader), be.setOptions(Oe);
+          ve.readMessage(Oe, proto.google.protobuf.EnumOptions.deserializeBinaryFromReader), be.setOptions(Oe);
           break;
         case 4:
           var Oe = new proto.google.protobuf.EnumDescriptorProto.EnumReservedRange();
-          we.readMessage(Oe, proto.google.protobuf.EnumDescriptorProto.EnumReservedRange.deserializeBinaryFromReader), be.addReservedRange(Oe);
+          ve.readMessage(Oe, proto.google.protobuf.EnumDescriptorProto.EnumReservedRange.deserializeBinaryFromReader), be.addReservedRange(Oe);
           break;
         case 5:
           var Oe = (
             /** @type {string} */
-            we.readString()
+            ve.readString()
           );
           be.addReservedName(Oe);
           break;
         default:
-          we.skipField();
+          ve.skipField();
           break;
       }
     }
@@ -18727,59 +18500,59 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, proto.google.protobuf.EnumDescriptorProto.prototype.serializeBinary = function() {
     var be = new e.BinaryWriter();
     return proto.google.protobuf.EnumDescriptorProto.serializeBinaryToWriter(this, be), be.getResultBuffer();
-  }, proto.google.protobuf.EnumDescriptorProto.serializeBinaryToWriter = function(be, we) {
+  }, proto.google.protobuf.EnumDescriptorProto.serializeBinaryToWriter = function(be, ve) {
     var Ee = void 0;
     Ee = /** @type {string} */
-    e.Message.getField(be, 1), Ee != null && we.writeString(
+    e.Message.getField(be, 1), Ee != null && ve.writeString(
       1,
       Ee
-    ), Ee = be.getValueList(), Ee.length > 0 && we.writeRepeatedMessage(
+    ), Ee = be.getValueList(), Ee.length > 0 && ve.writeRepeatedMessage(
       2,
       Ee,
       proto.google.protobuf.EnumValueDescriptorProto.serializeBinaryToWriter
-    ), Ee = be.getOptions(), Ee != null && we.writeMessage(
+    ), Ee = be.getOptions(), Ee != null && ve.writeMessage(
       3,
       Ee,
       proto.google.protobuf.EnumOptions.serializeBinaryToWriter
-    ), Ee = be.getReservedRangeList(), Ee.length > 0 && we.writeRepeatedMessage(
+    ), Ee = be.getReservedRangeList(), Ee.length > 0 && ve.writeRepeatedMessage(
       4,
       Ee,
       proto.google.protobuf.EnumDescriptorProto.EnumReservedRange.serializeBinaryToWriter
-    ), Ee = be.getReservedNameList(), Ee.length > 0 && we.writeRepeatedString(
+    ), Ee = be.getReservedNameList(), Ee.length > 0 && ve.writeRepeatedString(
       5,
       Ee
     );
   }, e.Message.GENERATE_TO_OBJECT && (proto.google.protobuf.EnumDescriptorProto.EnumReservedRange.prototype.toObject = function(be) {
     return proto.google.protobuf.EnumDescriptorProto.EnumReservedRange.toObject(be, this);
-  }, proto.google.protobuf.EnumDescriptorProto.EnumReservedRange.toObject = function(be, we) {
+  }, proto.google.protobuf.EnumDescriptorProto.EnumReservedRange.toObject = function(be, ve) {
     var Ee, Oe = {
-      start: (Ee = e.Message.getField(we, 1)) == null ? void 0 : Ee,
-      end: (Ee = e.Message.getField(we, 2)) == null ? void 0 : Ee
+      start: (Ee = e.Message.getField(ve, 1)) == null ? void 0 : Ee,
+      end: (Ee = e.Message.getField(ve, 2)) == null ? void 0 : Ee
     };
-    return be && (Oe.$jspbMessageInstance = we), Oe;
+    return be && (Oe.$jspbMessageInstance = ve), Oe;
   }), proto.google.protobuf.EnumDescriptorProto.EnumReservedRange.deserializeBinary = function(be) {
-    var we = new e.BinaryReader(be), Ee = new proto.google.protobuf.EnumDescriptorProto.EnumReservedRange();
-    return proto.google.protobuf.EnumDescriptorProto.EnumReservedRange.deserializeBinaryFromReader(Ee, we);
-  }, proto.google.protobuf.EnumDescriptorProto.EnumReservedRange.deserializeBinaryFromReader = function(be, we) {
-    for (; we.nextField() && !we.isEndGroup(); ) {
-      var Ee = we.getFieldNumber();
+    var ve = new e.BinaryReader(be), Ee = new proto.google.protobuf.EnumDescriptorProto.EnumReservedRange();
+    return proto.google.protobuf.EnumDescriptorProto.EnumReservedRange.deserializeBinaryFromReader(Ee, ve);
+  }, proto.google.protobuf.EnumDescriptorProto.EnumReservedRange.deserializeBinaryFromReader = function(be, ve) {
+    for (; ve.nextField() && !ve.isEndGroup(); ) {
+      var Ee = ve.getFieldNumber();
       switch (Ee) {
         case 1:
           var Oe = (
             /** @type {number} */
-            we.readInt32()
+            ve.readInt32()
           );
           be.setStart(Oe);
           break;
         case 2:
           var Oe = (
             /** @type {number} */
-            we.readInt32()
+            ve.readInt32()
           );
           be.setEnd(Oe);
           break;
         default:
-          we.skipField();
+          ve.skipField();
           break;
       }
     }
@@ -18787,14 +18560,14 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, proto.google.protobuf.EnumDescriptorProto.EnumReservedRange.prototype.serializeBinary = function() {
     var be = new e.BinaryWriter();
     return proto.google.protobuf.EnumDescriptorProto.EnumReservedRange.serializeBinaryToWriter(this, be), be.getResultBuffer();
-  }, proto.google.protobuf.EnumDescriptorProto.EnumReservedRange.serializeBinaryToWriter = function(be, we) {
+  }, proto.google.protobuf.EnumDescriptorProto.EnumReservedRange.serializeBinaryToWriter = function(be, ve) {
     var Ee = void 0;
     Ee = /** @type {number} */
-    e.Message.getField(be, 1), Ee != null && we.writeInt32(
+    e.Message.getField(be, 1), Ee != null && ve.writeInt32(
       1,
       Ee
     ), Ee = /** @type {number} */
-    e.Message.getField(be, 2), Ee != null && we.writeInt32(
+    e.Message.getField(be, 2), Ee != null && ve.writeInt32(
       2,
       Ee
     );
@@ -18838,8 +18611,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     );
   }, proto.google.protobuf.EnumDescriptorProto.prototype.setValueList = function(be) {
     return e.Message.setRepeatedWrapperField(this, 2, be);
-  }, proto.google.protobuf.EnumDescriptorProto.prototype.addValue = function(be, we) {
-    return e.Message.addToRepeatedWrapperField(this, 2, be, proto.google.protobuf.EnumValueDescriptorProto, we);
+  }, proto.google.protobuf.EnumDescriptorProto.prototype.addValue = function(be, ve) {
+    return e.Message.addToRepeatedWrapperField(this, 2, be, proto.google.protobuf.EnumValueDescriptorProto, ve);
   }, proto.google.protobuf.EnumDescriptorProto.prototype.clearValueList = function() {
     return this.setValueList([]);
   }, proto.google.protobuf.EnumDescriptorProto.prototype.getOptions = function() {
@@ -18860,8 +18633,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     );
   }, proto.google.protobuf.EnumDescriptorProto.prototype.setReservedRangeList = function(be) {
     return e.Message.setRepeatedWrapperField(this, 4, be);
-  }, proto.google.protobuf.EnumDescriptorProto.prototype.addReservedRange = function(be, we) {
-    return e.Message.addToRepeatedWrapperField(this, 4, be, proto.google.protobuf.EnumDescriptorProto.EnumReservedRange, we);
+  }, proto.google.protobuf.EnumDescriptorProto.prototype.addReservedRange = function(be, ve) {
+    return e.Message.addToRepeatedWrapperField(this, 4, be, proto.google.protobuf.EnumDescriptorProto.EnumReservedRange, ve);
   }, proto.google.protobuf.EnumDescriptorProto.prototype.clearReservedRangeList = function() {
     return this.setReservedRangeList([]);
   }, proto.google.protobuf.EnumDescriptorProto.prototype.getReservedNameList = function() {
@@ -18871,46 +18644,46 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     );
   }, proto.google.protobuf.EnumDescriptorProto.prototype.setReservedNameList = function(be) {
     return e.Message.setField(this, 5, be || []);
-  }, proto.google.protobuf.EnumDescriptorProto.prototype.addReservedName = function(be, we) {
-    return e.Message.addToRepeatedField(this, 5, be, we);
+  }, proto.google.protobuf.EnumDescriptorProto.prototype.addReservedName = function(be, ve) {
+    return e.Message.addToRepeatedField(this, 5, be, ve);
   }, proto.google.protobuf.EnumDescriptorProto.prototype.clearReservedNameList = function() {
     return this.setReservedNameList([]);
   }, e.Message.GENERATE_TO_OBJECT && (proto.google.protobuf.EnumValueDescriptorProto.prototype.toObject = function(be) {
     return proto.google.protobuf.EnumValueDescriptorProto.toObject(be, this);
-  }, proto.google.protobuf.EnumValueDescriptorProto.toObject = function(be, we) {
+  }, proto.google.protobuf.EnumValueDescriptorProto.toObject = function(be, ve) {
     var Ee, Oe = {
-      name: (Ee = e.Message.getField(we, 1)) == null ? void 0 : Ee,
-      number: (Ee = e.Message.getField(we, 2)) == null ? void 0 : Ee,
-      options: (Ee = we.getOptions()) && proto.google.protobuf.EnumValueOptions.toObject(be, Ee)
+      name: (Ee = e.Message.getField(ve, 1)) == null ? void 0 : Ee,
+      number: (Ee = e.Message.getField(ve, 2)) == null ? void 0 : Ee,
+      options: (Ee = ve.getOptions()) && proto.google.protobuf.EnumValueOptions.toObject(be, Ee)
     };
-    return be && (Oe.$jspbMessageInstance = we), Oe;
+    return be && (Oe.$jspbMessageInstance = ve), Oe;
   }), proto.google.protobuf.EnumValueDescriptorProto.deserializeBinary = function(be) {
-    var we = new e.BinaryReader(be), Ee = new proto.google.protobuf.EnumValueDescriptorProto();
-    return proto.google.protobuf.EnumValueDescriptorProto.deserializeBinaryFromReader(Ee, we);
-  }, proto.google.protobuf.EnumValueDescriptorProto.deserializeBinaryFromReader = function(be, we) {
-    for (; we.nextField() && !we.isEndGroup(); ) {
-      var Ee = we.getFieldNumber();
+    var ve = new e.BinaryReader(be), Ee = new proto.google.protobuf.EnumValueDescriptorProto();
+    return proto.google.protobuf.EnumValueDescriptorProto.deserializeBinaryFromReader(Ee, ve);
+  }, proto.google.protobuf.EnumValueDescriptorProto.deserializeBinaryFromReader = function(be, ve) {
+    for (; ve.nextField() && !ve.isEndGroup(); ) {
+      var Ee = ve.getFieldNumber();
       switch (Ee) {
         case 1:
           var Oe = (
             /** @type {string} */
-            we.readString()
+            ve.readString()
           );
           be.setName(Oe);
           break;
         case 2:
           var Oe = (
             /** @type {number} */
-            we.readInt32()
+            ve.readInt32()
           );
           be.setNumber(Oe);
           break;
         case 3:
           var Oe = new proto.google.protobuf.EnumValueOptions();
-          we.readMessage(Oe, proto.google.protobuf.EnumValueOptions.deserializeBinaryFromReader), be.setOptions(Oe);
+          ve.readMessage(Oe, proto.google.protobuf.EnumValueOptions.deserializeBinaryFromReader), be.setOptions(Oe);
           break;
         default:
-          we.skipField();
+          ve.skipField();
           break;
       }
     }
@@ -18918,17 +18691,17 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, proto.google.protobuf.EnumValueDescriptorProto.prototype.serializeBinary = function() {
     var be = new e.BinaryWriter();
     return proto.google.protobuf.EnumValueDescriptorProto.serializeBinaryToWriter(this, be), be.getResultBuffer();
-  }, proto.google.protobuf.EnumValueDescriptorProto.serializeBinaryToWriter = function(be, we) {
+  }, proto.google.protobuf.EnumValueDescriptorProto.serializeBinaryToWriter = function(be, ve) {
     var Ee = void 0;
     Ee = /** @type {string} */
-    e.Message.getField(be, 1), Ee != null && we.writeString(
+    e.Message.getField(be, 1), Ee != null && ve.writeString(
       1,
       Ee
     ), Ee = /** @type {number} */
-    e.Message.getField(be, 2), Ee != null && we.writeInt32(
+    e.Message.getField(be, 2), Ee != null && ve.writeInt32(
       2,
       Ee
-    ), Ee = be.getOptions(), Ee != null && we.writeMessage(
+    ), Ee = be.getOptions(), Ee != null && ve.writeMessage(
       3,
       Ee,
       proto.google.protobuf.EnumValueOptions.serializeBinaryToWriter
@@ -18968,41 +18741,41 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     return e.Message.getField(this, 3) != null;
   }, proto.google.protobuf.ServiceDescriptorProto.repeatedFields_ = [2], e.Message.GENERATE_TO_OBJECT && (proto.google.protobuf.ServiceDescriptorProto.prototype.toObject = function(be) {
     return proto.google.protobuf.ServiceDescriptorProto.toObject(be, this);
-  }, proto.google.protobuf.ServiceDescriptorProto.toObject = function(be, we) {
+  }, proto.google.protobuf.ServiceDescriptorProto.toObject = function(be, ve) {
     var Ee, Oe = {
-      name: (Ee = e.Message.getField(we, 1)) == null ? void 0 : Ee,
+      name: (Ee = e.Message.getField(ve, 1)) == null ? void 0 : Ee,
       methodList: e.Message.toObjectList(
-        we.getMethodList(),
+        ve.getMethodList(),
         proto.google.protobuf.MethodDescriptorProto.toObject,
         be
       ),
-      options: (Ee = we.getOptions()) && proto.google.protobuf.ServiceOptions.toObject(be, Ee)
+      options: (Ee = ve.getOptions()) && proto.google.protobuf.ServiceOptions.toObject(be, Ee)
     };
-    return be && (Oe.$jspbMessageInstance = we), Oe;
+    return be && (Oe.$jspbMessageInstance = ve), Oe;
   }), proto.google.protobuf.ServiceDescriptorProto.deserializeBinary = function(be) {
-    var we = new e.BinaryReader(be), Ee = new proto.google.protobuf.ServiceDescriptorProto();
-    return proto.google.protobuf.ServiceDescriptorProto.deserializeBinaryFromReader(Ee, we);
-  }, proto.google.protobuf.ServiceDescriptorProto.deserializeBinaryFromReader = function(be, we) {
-    for (; we.nextField() && !we.isEndGroup(); ) {
-      var Ee = we.getFieldNumber();
+    var ve = new e.BinaryReader(be), Ee = new proto.google.protobuf.ServiceDescriptorProto();
+    return proto.google.protobuf.ServiceDescriptorProto.deserializeBinaryFromReader(Ee, ve);
+  }, proto.google.protobuf.ServiceDescriptorProto.deserializeBinaryFromReader = function(be, ve) {
+    for (; ve.nextField() && !ve.isEndGroup(); ) {
+      var Ee = ve.getFieldNumber();
       switch (Ee) {
         case 1:
           var Oe = (
             /** @type {string} */
-            we.readString()
+            ve.readString()
           );
           be.setName(Oe);
           break;
         case 2:
           var Oe = new proto.google.protobuf.MethodDescriptorProto();
-          we.readMessage(Oe, proto.google.protobuf.MethodDescriptorProto.deserializeBinaryFromReader), be.addMethod(Oe);
+          ve.readMessage(Oe, proto.google.protobuf.MethodDescriptorProto.deserializeBinaryFromReader), be.addMethod(Oe);
           break;
         case 3:
           var Oe = new proto.google.protobuf.ServiceOptions();
-          we.readMessage(Oe, proto.google.protobuf.ServiceOptions.deserializeBinaryFromReader), be.setOptions(Oe);
+          ve.readMessage(Oe, proto.google.protobuf.ServiceOptions.deserializeBinaryFromReader), be.setOptions(Oe);
           break;
         default:
-          we.skipField();
+          ve.skipField();
           break;
       }
     }
@@ -19010,17 +18783,17 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, proto.google.protobuf.ServiceDescriptorProto.prototype.serializeBinary = function() {
     var be = new e.BinaryWriter();
     return proto.google.protobuf.ServiceDescriptorProto.serializeBinaryToWriter(this, be), be.getResultBuffer();
-  }, proto.google.protobuf.ServiceDescriptorProto.serializeBinaryToWriter = function(be, we) {
+  }, proto.google.protobuf.ServiceDescriptorProto.serializeBinaryToWriter = function(be, ve) {
     var Ee = void 0;
     Ee = /** @type {string} */
-    e.Message.getField(be, 1), Ee != null && we.writeString(
+    e.Message.getField(be, 1), Ee != null && ve.writeString(
       1,
       Ee
-    ), Ee = be.getMethodList(), Ee.length > 0 && we.writeRepeatedMessage(
+    ), Ee = be.getMethodList(), Ee.length > 0 && ve.writeRepeatedMessage(
       2,
       Ee,
       proto.google.protobuf.MethodDescriptorProto.serializeBinaryToWriter
-    ), Ee = be.getOptions(), Ee != null && we.writeMessage(
+    ), Ee = be.getOptions(), Ee != null && ve.writeMessage(
       3,
       Ee,
       proto.google.protobuf.ServiceOptions.serializeBinaryToWriter
@@ -19043,8 +18816,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     );
   }, proto.google.protobuf.ServiceDescriptorProto.prototype.setMethodList = function(be) {
     return e.Message.setRepeatedWrapperField(this, 2, be);
-  }, proto.google.protobuf.ServiceDescriptorProto.prototype.addMethod = function(be, we) {
-    return e.Message.addToRepeatedWrapperField(this, 2, be, proto.google.protobuf.MethodDescriptorProto, we);
+  }, proto.google.protobuf.ServiceDescriptorProto.prototype.addMethod = function(be, ve) {
+    return e.Message.addToRepeatedWrapperField(this, 2, be, proto.google.protobuf.MethodDescriptorProto, ve);
   }, proto.google.protobuf.ServiceDescriptorProto.prototype.clearMethodList = function() {
     return this.setMethodList([]);
   }, proto.google.protobuf.ServiceDescriptorProto.prototype.getOptions = function() {
@@ -19060,64 +18833,64 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     return e.Message.getField(this, 3) != null;
   }, e.Message.GENERATE_TO_OBJECT && (proto.google.protobuf.MethodDescriptorProto.prototype.toObject = function(be) {
     return proto.google.protobuf.MethodDescriptorProto.toObject(be, this);
-  }, proto.google.protobuf.MethodDescriptorProto.toObject = function(be, we) {
+  }, proto.google.protobuf.MethodDescriptorProto.toObject = function(be, ve) {
     var Ee, Oe = {
-      name: (Ee = e.Message.getField(we, 1)) == null ? void 0 : Ee,
-      inputType: (Ee = e.Message.getField(we, 2)) == null ? void 0 : Ee,
-      outputType: (Ee = e.Message.getField(we, 3)) == null ? void 0 : Ee,
-      options: (Ee = we.getOptions()) && proto.google.protobuf.MethodOptions.toObject(be, Ee),
-      clientStreaming: e.Message.getBooleanFieldWithDefault(we, 5, !1),
-      serverStreaming: e.Message.getBooleanFieldWithDefault(we, 6, !1)
+      name: (Ee = e.Message.getField(ve, 1)) == null ? void 0 : Ee,
+      inputType: (Ee = e.Message.getField(ve, 2)) == null ? void 0 : Ee,
+      outputType: (Ee = e.Message.getField(ve, 3)) == null ? void 0 : Ee,
+      options: (Ee = ve.getOptions()) && proto.google.protobuf.MethodOptions.toObject(be, Ee),
+      clientStreaming: e.Message.getBooleanFieldWithDefault(ve, 5, !1),
+      serverStreaming: e.Message.getBooleanFieldWithDefault(ve, 6, !1)
     };
-    return be && (Oe.$jspbMessageInstance = we), Oe;
+    return be && (Oe.$jspbMessageInstance = ve), Oe;
   }), proto.google.protobuf.MethodDescriptorProto.deserializeBinary = function(be) {
-    var we = new e.BinaryReader(be), Ee = new proto.google.protobuf.MethodDescriptorProto();
-    return proto.google.protobuf.MethodDescriptorProto.deserializeBinaryFromReader(Ee, we);
-  }, proto.google.protobuf.MethodDescriptorProto.deserializeBinaryFromReader = function(be, we) {
-    for (; we.nextField() && !we.isEndGroup(); ) {
-      var Ee = we.getFieldNumber();
+    var ve = new e.BinaryReader(be), Ee = new proto.google.protobuf.MethodDescriptorProto();
+    return proto.google.protobuf.MethodDescriptorProto.deserializeBinaryFromReader(Ee, ve);
+  }, proto.google.protobuf.MethodDescriptorProto.deserializeBinaryFromReader = function(be, ve) {
+    for (; ve.nextField() && !ve.isEndGroup(); ) {
+      var Ee = ve.getFieldNumber();
       switch (Ee) {
         case 1:
           var Oe = (
             /** @type {string} */
-            we.readString()
+            ve.readString()
           );
           be.setName(Oe);
           break;
         case 2:
           var Oe = (
             /** @type {string} */
-            we.readString()
+            ve.readString()
           );
           be.setInputType(Oe);
           break;
         case 3:
           var Oe = (
             /** @type {string} */
-            we.readString()
+            ve.readString()
           );
           be.setOutputType(Oe);
           break;
         case 4:
           var Oe = new proto.google.protobuf.MethodOptions();
-          we.readMessage(Oe, proto.google.protobuf.MethodOptions.deserializeBinaryFromReader), be.setOptions(Oe);
+          ve.readMessage(Oe, proto.google.protobuf.MethodOptions.deserializeBinaryFromReader), be.setOptions(Oe);
           break;
         case 5:
           var Oe = (
             /** @type {boolean} */
-            we.readBool()
+            ve.readBool()
           );
           be.setClientStreaming(Oe);
           break;
         case 6:
           var Oe = (
             /** @type {boolean} */
-            we.readBool()
+            ve.readBool()
           );
           be.setServerStreaming(Oe);
           break;
         default:
-          we.skipField();
+          ve.skipField();
           break;
       }
     }
@@ -19125,30 +18898,30 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, proto.google.protobuf.MethodDescriptorProto.prototype.serializeBinary = function() {
     var be = new e.BinaryWriter();
     return proto.google.protobuf.MethodDescriptorProto.serializeBinaryToWriter(this, be), be.getResultBuffer();
-  }, proto.google.protobuf.MethodDescriptorProto.serializeBinaryToWriter = function(be, we) {
+  }, proto.google.protobuf.MethodDescriptorProto.serializeBinaryToWriter = function(be, ve) {
     var Ee = void 0;
     Ee = /** @type {string} */
-    e.Message.getField(be, 1), Ee != null && we.writeString(
+    e.Message.getField(be, 1), Ee != null && ve.writeString(
       1,
       Ee
     ), Ee = /** @type {string} */
-    e.Message.getField(be, 2), Ee != null && we.writeString(
+    e.Message.getField(be, 2), Ee != null && ve.writeString(
       2,
       Ee
     ), Ee = /** @type {string} */
-    e.Message.getField(be, 3), Ee != null && we.writeString(
+    e.Message.getField(be, 3), Ee != null && ve.writeString(
       3,
       Ee
-    ), Ee = be.getOptions(), Ee != null && we.writeMessage(
+    ), Ee = be.getOptions(), Ee != null && ve.writeMessage(
       4,
       Ee,
       proto.google.protobuf.MethodOptions.serializeBinaryToWriter
     ), Ee = /** @type {boolean} */
-    e.Message.getField(be, 5), Ee != null && we.writeBool(
+    e.Message.getField(be, 5), Ee != null && ve.writeBool(
       5,
       Ee
     ), Ee = /** @type {boolean} */
-    e.Message.getField(be, 6), Ee != null && we.writeBool(
+    e.Message.getField(be, 6), Ee != null && ve.writeBool(
       6,
       Ee
     );
@@ -19220,197 +18993,197 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     return e.Message.getField(this, 6) != null;
   }, proto.google.protobuf.FileOptions.repeatedFields_ = [999], e.Message.GENERATE_TO_OBJECT && (proto.google.protobuf.FileOptions.prototype.toObject = function(be) {
     return proto.google.protobuf.FileOptions.toObject(be, this);
-  }, proto.google.protobuf.FileOptions.toObject = function(be, we) {
+  }, proto.google.protobuf.FileOptions.toObject = function(be, ve) {
     var Ee, Oe = {
-      javaPackage: (Ee = e.Message.getField(we, 1)) == null ? void 0 : Ee,
-      javaOuterClassname: (Ee = e.Message.getField(we, 8)) == null ? void 0 : Ee,
-      javaMultipleFiles: e.Message.getBooleanFieldWithDefault(we, 10, !1),
-      javaGenerateEqualsAndHash: (Ee = e.Message.getBooleanField(we, 20)) == null ? void 0 : Ee,
-      javaStringCheckUtf8: e.Message.getBooleanFieldWithDefault(we, 27, !1),
-      optimizeFor: e.Message.getFieldWithDefault(we, 9, 1),
-      goPackage: (Ee = e.Message.getField(we, 11)) == null ? void 0 : Ee,
-      ccGenericServices: e.Message.getBooleanFieldWithDefault(we, 16, !1),
-      javaGenericServices: e.Message.getBooleanFieldWithDefault(we, 17, !1),
-      pyGenericServices: e.Message.getBooleanFieldWithDefault(we, 18, !1),
-      phpGenericServices: e.Message.getBooleanFieldWithDefault(we, 42, !1),
-      deprecated: e.Message.getBooleanFieldWithDefault(we, 23, !1),
-      ccEnableArenas: e.Message.getBooleanFieldWithDefault(we, 31, !0),
-      objcClassPrefix: (Ee = e.Message.getField(we, 36)) == null ? void 0 : Ee,
-      csharpNamespace: (Ee = e.Message.getField(we, 37)) == null ? void 0 : Ee,
-      swiftPrefix: (Ee = e.Message.getField(we, 39)) == null ? void 0 : Ee,
-      phpClassPrefix: (Ee = e.Message.getField(we, 40)) == null ? void 0 : Ee,
-      phpNamespace: (Ee = e.Message.getField(we, 41)) == null ? void 0 : Ee,
-      phpMetadataNamespace: (Ee = e.Message.getField(we, 44)) == null ? void 0 : Ee,
-      rubyPackage: (Ee = e.Message.getField(we, 45)) == null ? void 0 : Ee,
+      javaPackage: (Ee = e.Message.getField(ve, 1)) == null ? void 0 : Ee,
+      javaOuterClassname: (Ee = e.Message.getField(ve, 8)) == null ? void 0 : Ee,
+      javaMultipleFiles: e.Message.getBooleanFieldWithDefault(ve, 10, !1),
+      javaGenerateEqualsAndHash: (Ee = e.Message.getBooleanField(ve, 20)) == null ? void 0 : Ee,
+      javaStringCheckUtf8: e.Message.getBooleanFieldWithDefault(ve, 27, !1),
+      optimizeFor: e.Message.getFieldWithDefault(ve, 9, 1),
+      goPackage: (Ee = e.Message.getField(ve, 11)) == null ? void 0 : Ee,
+      ccGenericServices: e.Message.getBooleanFieldWithDefault(ve, 16, !1),
+      javaGenericServices: e.Message.getBooleanFieldWithDefault(ve, 17, !1),
+      pyGenericServices: e.Message.getBooleanFieldWithDefault(ve, 18, !1),
+      phpGenericServices: e.Message.getBooleanFieldWithDefault(ve, 42, !1),
+      deprecated: e.Message.getBooleanFieldWithDefault(ve, 23, !1),
+      ccEnableArenas: e.Message.getBooleanFieldWithDefault(ve, 31, !0),
+      objcClassPrefix: (Ee = e.Message.getField(ve, 36)) == null ? void 0 : Ee,
+      csharpNamespace: (Ee = e.Message.getField(ve, 37)) == null ? void 0 : Ee,
+      swiftPrefix: (Ee = e.Message.getField(ve, 39)) == null ? void 0 : Ee,
+      phpClassPrefix: (Ee = e.Message.getField(ve, 40)) == null ? void 0 : Ee,
+      phpNamespace: (Ee = e.Message.getField(ve, 41)) == null ? void 0 : Ee,
+      phpMetadataNamespace: (Ee = e.Message.getField(ve, 44)) == null ? void 0 : Ee,
+      rubyPackage: (Ee = e.Message.getField(ve, 45)) == null ? void 0 : Ee,
       uninterpretedOptionList: e.Message.toObjectList(
-        we.getUninterpretedOptionList(),
+        ve.getUninterpretedOptionList(),
         proto.google.protobuf.UninterpretedOption.toObject,
         be
       )
     };
     return e.Message.toObjectExtension(
       /** @type {!jspb.Message} */
-      we,
+      ve,
       Oe,
       proto.google.protobuf.FileOptions.extensions,
       proto.google.protobuf.FileOptions.prototype.getExtension,
       be
-    ), be && (Oe.$jspbMessageInstance = we), Oe;
+    ), be && (Oe.$jspbMessageInstance = ve), Oe;
   }), proto.google.protobuf.FileOptions.deserializeBinary = function(be) {
-    var we = new e.BinaryReader(be), Ee = new proto.google.protobuf.FileOptions();
-    return proto.google.protobuf.FileOptions.deserializeBinaryFromReader(Ee, we);
-  }, proto.google.protobuf.FileOptions.deserializeBinaryFromReader = function(be, we) {
-    for (; we.nextField() && !we.isEndGroup(); ) {
-      var Ee = we.getFieldNumber();
+    var ve = new e.BinaryReader(be), Ee = new proto.google.protobuf.FileOptions();
+    return proto.google.protobuf.FileOptions.deserializeBinaryFromReader(Ee, ve);
+  }, proto.google.protobuf.FileOptions.deserializeBinaryFromReader = function(be, ve) {
+    for (; ve.nextField() && !ve.isEndGroup(); ) {
+      var Ee = ve.getFieldNumber();
       switch (Ee) {
         case 1:
           var Oe = (
             /** @type {string} */
-            we.readString()
+            ve.readString()
           );
           be.setJavaPackage(Oe);
           break;
         case 8:
           var Oe = (
             /** @type {string} */
-            we.readString()
+            ve.readString()
           );
           be.setJavaOuterClassname(Oe);
           break;
         case 10:
           var Oe = (
             /** @type {boolean} */
-            we.readBool()
+            ve.readBool()
           );
           be.setJavaMultipleFiles(Oe);
           break;
         case 20:
           var Oe = (
             /** @type {boolean} */
-            we.readBool()
+            ve.readBool()
           );
           be.setJavaGenerateEqualsAndHash(Oe);
           break;
         case 27:
           var Oe = (
             /** @type {boolean} */
-            we.readBool()
+            ve.readBool()
           );
           be.setJavaStringCheckUtf8(Oe);
           break;
         case 9:
           var Oe = (
             /** @type {!proto.google.protobuf.FileOptions.OptimizeMode} */
-            we.readEnum()
+            ve.readEnum()
           );
           be.setOptimizeFor(Oe);
           break;
         case 11:
           var Oe = (
             /** @type {string} */
-            we.readString()
+            ve.readString()
           );
           be.setGoPackage(Oe);
           break;
         case 16:
           var Oe = (
             /** @type {boolean} */
-            we.readBool()
+            ve.readBool()
           );
           be.setCcGenericServices(Oe);
           break;
         case 17:
           var Oe = (
             /** @type {boolean} */
-            we.readBool()
+            ve.readBool()
           );
           be.setJavaGenericServices(Oe);
           break;
         case 18:
           var Oe = (
             /** @type {boolean} */
-            we.readBool()
+            ve.readBool()
           );
           be.setPyGenericServices(Oe);
           break;
         case 42:
           var Oe = (
             /** @type {boolean} */
-            we.readBool()
+            ve.readBool()
           );
           be.setPhpGenericServices(Oe);
           break;
         case 23:
           var Oe = (
             /** @type {boolean} */
-            we.readBool()
+            ve.readBool()
           );
           be.setDeprecated(Oe);
           break;
         case 31:
           var Oe = (
             /** @type {boolean} */
-            we.readBool()
+            ve.readBool()
           );
           be.setCcEnableArenas(Oe);
           break;
         case 36:
           var Oe = (
             /** @type {string} */
-            we.readString()
+            ve.readString()
           );
           be.setObjcClassPrefix(Oe);
           break;
         case 37:
           var Oe = (
             /** @type {string} */
-            we.readString()
+            ve.readString()
           );
           be.setCsharpNamespace(Oe);
           break;
         case 39:
           var Oe = (
             /** @type {string} */
-            we.readString()
+            ve.readString()
           );
           be.setSwiftPrefix(Oe);
           break;
         case 40:
           var Oe = (
             /** @type {string} */
-            we.readString()
+            ve.readString()
           );
           be.setPhpClassPrefix(Oe);
           break;
         case 41:
           var Oe = (
             /** @type {string} */
-            we.readString()
+            ve.readString()
           );
           be.setPhpNamespace(Oe);
           break;
         case 44:
           var Oe = (
             /** @type {string} */
-            we.readString()
+            ve.readString()
           );
           be.setPhpMetadataNamespace(Oe);
           break;
         case 45:
           var Oe = (
             /** @type {string} */
-            we.readString()
+            ve.readString()
           );
           be.setRubyPackage(Oe);
           break;
         case 999:
           var Oe = new proto.google.protobuf.UninterpretedOption();
-          we.readMessage(Oe, proto.google.protobuf.UninterpretedOption.deserializeBinaryFromReader), be.addUninterpretedOption(Oe);
+          ve.readMessage(Oe, proto.google.protobuf.UninterpretedOption.deserializeBinaryFromReader), be.addUninterpretedOption(Oe);
           break;
         default:
           e.Message.readBinaryExtension(
             be,
-            we,
+            ve,
             proto.google.protobuf.FileOptions.extensionsBinary,
             proto.google.protobuf.FileOptions.prototype.getExtension,
             proto.google.protobuf.FileOptions.prototype.setExtension
@@ -19422,95 +19195,95 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, proto.google.protobuf.FileOptions.prototype.serializeBinary = function() {
     var be = new e.BinaryWriter();
     return proto.google.protobuf.FileOptions.serializeBinaryToWriter(this, be), be.getResultBuffer();
-  }, proto.google.protobuf.FileOptions.serializeBinaryToWriter = function(be, we) {
+  }, proto.google.protobuf.FileOptions.serializeBinaryToWriter = function(be, ve) {
     var Ee = void 0;
     Ee = /** @type {string} */
-    e.Message.getField(be, 1), Ee != null && we.writeString(
+    e.Message.getField(be, 1), Ee != null && ve.writeString(
       1,
       Ee
     ), Ee = /** @type {string} */
-    e.Message.getField(be, 8), Ee != null && we.writeString(
+    e.Message.getField(be, 8), Ee != null && ve.writeString(
       8,
       Ee
     ), Ee = /** @type {boolean} */
-    e.Message.getField(be, 10), Ee != null && we.writeBool(
+    e.Message.getField(be, 10), Ee != null && ve.writeBool(
       10,
       Ee
     ), Ee = /** @type {boolean} */
-    e.Message.getField(be, 20), Ee != null && we.writeBool(
+    e.Message.getField(be, 20), Ee != null && ve.writeBool(
       20,
       Ee
     ), Ee = /** @type {boolean} */
-    e.Message.getField(be, 27), Ee != null && we.writeBool(
+    e.Message.getField(be, 27), Ee != null && ve.writeBool(
       27,
       Ee
     ), Ee = /** @type {!proto.google.protobuf.FileOptions.OptimizeMode} */
-    e.Message.getField(be, 9), Ee != null && we.writeEnum(
+    e.Message.getField(be, 9), Ee != null && ve.writeEnum(
       9,
       Ee
     ), Ee = /** @type {string} */
-    e.Message.getField(be, 11), Ee != null && we.writeString(
+    e.Message.getField(be, 11), Ee != null && ve.writeString(
       11,
       Ee
     ), Ee = /** @type {boolean} */
-    e.Message.getField(be, 16), Ee != null && we.writeBool(
+    e.Message.getField(be, 16), Ee != null && ve.writeBool(
       16,
       Ee
     ), Ee = /** @type {boolean} */
-    e.Message.getField(be, 17), Ee != null && we.writeBool(
+    e.Message.getField(be, 17), Ee != null && ve.writeBool(
       17,
       Ee
     ), Ee = /** @type {boolean} */
-    e.Message.getField(be, 18), Ee != null && we.writeBool(
+    e.Message.getField(be, 18), Ee != null && ve.writeBool(
       18,
       Ee
     ), Ee = /** @type {boolean} */
-    e.Message.getField(be, 42), Ee != null && we.writeBool(
+    e.Message.getField(be, 42), Ee != null && ve.writeBool(
       42,
       Ee
     ), Ee = /** @type {boolean} */
-    e.Message.getField(be, 23), Ee != null && we.writeBool(
+    e.Message.getField(be, 23), Ee != null && ve.writeBool(
       23,
       Ee
     ), Ee = /** @type {boolean} */
-    e.Message.getField(be, 31), Ee != null && we.writeBool(
+    e.Message.getField(be, 31), Ee != null && ve.writeBool(
       31,
       Ee
     ), Ee = /** @type {string} */
-    e.Message.getField(be, 36), Ee != null && we.writeString(
+    e.Message.getField(be, 36), Ee != null && ve.writeString(
       36,
       Ee
     ), Ee = /** @type {string} */
-    e.Message.getField(be, 37), Ee != null && we.writeString(
+    e.Message.getField(be, 37), Ee != null && ve.writeString(
       37,
       Ee
     ), Ee = /** @type {string} */
-    e.Message.getField(be, 39), Ee != null && we.writeString(
+    e.Message.getField(be, 39), Ee != null && ve.writeString(
       39,
       Ee
     ), Ee = /** @type {string} */
-    e.Message.getField(be, 40), Ee != null && we.writeString(
+    e.Message.getField(be, 40), Ee != null && ve.writeString(
       40,
       Ee
     ), Ee = /** @type {string} */
-    e.Message.getField(be, 41), Ee != null && we.writeString(
+    e.Message.getField(be, 41), Ee != null && ve.writeString(
       41,
       Ee
     ), Ee = /** @type {string} */
-    e.Message.getField(be, 44), Ee != null && we.writeString(
+    e.Message.getField(be, 44), Ee != null && ve.writeString(
       44,
       Ee
     ), Ee = /** @type {string} */
-    e.Message.getField(be, 45), Ee != null && we.writeString(
+    e.Message.getField(be, 45), Ee != null && ve.writeString(
       45,
       Ee
-    ), Ee = be.getUninterpretedOptionList(), Ee.length > 0 && we.writeRepeatedMessage(
+    ), Ee = be.getUninterpretedOptionList(), Ee.length > 0 && ve.writeRepeatedMessage(
       999,
       Ee,
       proto.google.protobuf.UninterpretedOption.serializeBinaryToWriter
     ), e.Message.serializeBinaryExtensions(
       be,
-      we,
+      ve,
       proto.google.protobuf.FileOptions.extensionsBinary,
       proto.google.protobuf.FileOptions.prototype.getExtension
     );
@@ -19745,75 +19518,75 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     );
   }, proto.google.protobuf.FileOptions.prototype.setUninterpretedOptionList = function(be) {
     return e.Message.setRepeatedWrapperField(this, 999, be);
-  }, proto.google.protobuf.FileOptions.prototype.addUninterpretedOption = function(be, we) {
-    return e.Message.addToRepeatedWrapperField(this, 999, be, proto.google.protobuf.UninterpretedOption, we);
+  }, proto.google.protobuf.FileOptions.prototype.addUninterpretedOption = function(be, ve) {
+    return e.Message.addToRepeatedWrapperField(this, 999, be, proto.google.protobuf.UninterpretedOption, ve);
   }, proto.google.protobuf.FileOptions.prototype.clearUninterpretedOptionList = function() {
     return this.setUninterpretedOptionList([]);
   }, proto.google.protobuf.MessageOptions.repeatedFields_ = [999], e.Message.GENERATE_TO_OBJECT && (proto.google.protobuf.MessageOptions.prototype.toObject = function(be) {
     return proto.google.protobuf.MessageOptions.toObject(be, this);
-  }, proto.google.protobuf.MessageOptions.toObject = function(be, we) {
+  }, proto.google.protobuf.MessageOptions.toObject = function(be, ve) {
     var Ee, Oe = {
-      messageSetWireFormat: e.Message.getBooleanFieldWithDefault(we, 1, !1),
-      noStandardDescriptorAccessor: e.Message.getBooleanFieldWithDefault(we, 2, !1),
-      deprecated: e.Message.getBooleanFieldWithDefault(we, 3, !1),
-      mapEntry: (Ee = e.Message.getBooleanField(we, 7)) == null ? void 0 : Ee,
+      messageSetWireFormat: e.Message.getBooleanFieldWithDefault(ve, 1, !1),
+      noStandardDescriptorAccessor: e.Message.getBooleanFieldWithDefault(ve, 2, !1),
+      deprecated: e.Message.getBooleanFieldWithDefault(ve, 3, !1),
+      mapEntry: (Ee = e.Message.getBooleanField(ve, 7)) == null ? void 0 : Ee,
       uninterpretedOptionList: e.Message.toObjectList(
-        we.getUninterpretedOptionList(),
+        ve.getUninterpretedOptionList(),
         proto.google.protobuf.UninterpretedOption.toObject,
         be
       )
     };
     return e.Message.toObjectExtension(
       /** @type {!jspb.Message} */
-      we,
+      ve,
       Oe,
       proto.google.protobuf.MessageOptions.extensions,
       proto.google.protobuf.MessageOptions.prototype.getExtension,
       be
-    ), be && (Oe.$jspbMessageInstance = we), Oe;
+    ), be && (Oe.$jspbMessageInstance = ve), Oe;
   }), proto.google.protobuf.MessageOptions.deserializeBinary = function(be) {
-    var we = new e.BinaryReader(be), Ee = new proto.google.protobuf.MessageOptions();
-    return proto.google.protobuf.MessageOptions.deserializeBinaryFromReader(Ee, we);
-  }, proto.google.protobuf.MessageOptions.deserializeBinaryFromReader = function(be, we) {
-    for (; we.nextField() && !we.isEndGroup(); ) {
-      var Ee = we.getFieldNumber();
+    var ve = new e.BinaryReader(be), Ee = new proto.google.protobuf.MessageOptions();
+    return proto.google.protobuf.MessageOptions.deserializeBinaryFromReader(Ee, ve);
+  }, proto.google.protobuf.MessageOptions.deserializeBinaryFromReader = function(be, ve) {
+    for (; ve.nextField() && !ve.isEndGroup(); ) {
+      var Ee = ve.getFieldNumber();
       switch (Ee) {
         case 1:
           var Oe = (
             /** @type {boolean} */
-            we.readBool()
+            ve.readBool()
           );
           be.setMessageSetWireFormat(Oe);
           break;
         case 2:
           var Oe = (
             /** @type {boolean} */
-            we.readBool()
+            ve.readBool()
           );
           be.setNoStandardDescriptorAccessor(Oe);
           break;
         case 3:
           var Oe = (
             /** @type {boolean} */
-            we.readBool()
+            ve.readBool()
           );
           be.setDeprecated(Oe);
           break;
         case 7:
           var Oe = (
             /** @type {boolean} */
-            we.readBool()
+            ve.readBool()
           );
           be.setMapEntry(Oe);
           break;
         case 999:
           var Oe = new proto.google.protobuf.UninterpretedOption();
-          we.readMessage(Oe, proto.google.protobuf.UninterpretedOption.deserializeBinaryFromReader), be.addUninterpretedOption(Oe);
+          ve.readMessage(Oe, proto.google.protobuf.UninterpretedOption.deserializeBinaryFromReader), be.addUninterpretedOption(Oe);
           break;
         default:
           e.Message.readBinaryExtension(
             be,
-            we,
+            ve,
             proto.google.protobuf.MessageOptions.extensionsBinary,
             proto.google.protobuf.MessageOptions.prototype.getExtension,
             proto.google.protobuf.MessageOptions.prototype.setExtension
@@ -19825,31 +19598,31 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, proto.google.protobuf.MessageOptions.prototype.serializeBinary = function() {
     var be = new e.BinaryWriter();
     return proto.google.protobuf.MessageOptions.serializeBinaryToWriter(this, be), be.getResultBuffer();
-  }, proto.google.protobuf.MessageOptions.serializeBinaryToWriter = function(be, we) {
+  }, proto.google.protobuf.MessageOptions.serializeBinaryToWriter = function(be, ve) {
     var Ee = void 0;
     Ee = /** @type {boolean} */
-    e.Message.getField(be, 1), Ee != null && we.writeBool(
+    e.Message.getField(be, 1), Ee != null && ve.writeBool(
       1,
       Ee
     ), Ee = /** @type {boolean} */
-    e.Message.getField(be, 2), Ee != null && we.writeBool(
+    e.Message.getField(be, 2), Ee != null && ve.writeBool(
       2,
       Ee
     ), Ee = /** @type {boolean} */
-    e.Message.getField(be, 3), Ee != null && we.writeBool(
+    e.Message.getField(be, 3), Ee != null && ve.writeBool(
       3,
       Ee
     ), Ee = /** @type {boolean} */
-    e.Message.getField(be, 7), Ee != null && we.writeBool(
+    e.Message.getField(be, 7), Ee != null && ve.writeBool(
       7,
       Ee
-    ), Ee = be.getUninterpretedOptionList(), Ee.length > 0 && we.writeRepeatedMessage(
+    ), Ee = be.getUninterpretedOptionList(), Ee.length > 0 && ve.writeRepeatedMessage(
       999,
       Ee,
       proto.google.protobuf.UninterpretedOption.serializeBinaryToWriter
     ), e.Message.serializeBinaryExtensions(
       be,
-      we,
+      ve,
       proto.google.protobuf.MessageOptions.extensionsBinary,
       proto.google.protobuf.MessageOptions.prototype.getExtension
     );
@@ -19904,99 +19677,99 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     );
   }, proto.google.protobuf.MessageOptions.prototype.setUninterpretedOptionList = function(be) {
     return e.Message.setRepeatedWrapperField(this, 999, be);
-  }, proto.google.protobuf.MessageOptions.prototype.addUninterpretedOption = function(be, we) {
-    return e.Message.addToRepeatedWrapperField(this, 999, be, proto.google.protobuf.UninterpretedOption, we);
+  }, proto.google.protobuf.MessageOptions.prototype.addUninterpretedOption = function(be, ve) {
+    return e.Message.addToRepeatedWrapperField(this, 999, be, proto.google.protobuf.UninterpretedOption, ve);
   }, proto.google.protobuf.MessageOptions.prototype.clearUninterpretedOptionList = function() {
     return this.setUninterpretedOptionList([]);
   }, proto.google.protobuf.FieldOptions.repeatedFields_ = [999], e.Message.GENERATE_TO_OBJECT && (proto.google.protobuf.FieldOptions.prototype.toObject = function(be) {
     return proto.google.protobuf.FieldOptions.toObject(be, this);
-  }, proto.google.protobuf.FieldOptions.toObject = function(be, we) {
+  }, proto.google.protobuf.FieldOptions.toObject = function(be, ve) {
     var Ee, Oe = {
-      ctype: e.Message.getFieldWithDefault(we, 1, 0),
-      packed: (Ee = e.Message.getBooleanField(we, 2)) == null ? void 0 : Ee,
-      jstype: e.Message.getFieldWithDefault(we, 6, 0),
-      lazy: e.Message.getBooleanFieldWithDefault(we, 5, !1),
-      unverifiedLazy: e.Message.getBooleanFieldWithDefault(we, 15, !1),
-      deprecated: e.Message.getBooleanFieldWithDefault(we, 3, !1),
-      weak: e.Message.getBooleanFieldWithDefault(we, 10, !1),
+      ctype: e.Message.getFieldWithDefault(ve, 1, 0),
+      packed: (Ee = e.Message.getBooleanField(ve, 2)) == null ? void 0 : Ee,
+      jstype: e.Message.getFieldWithDefault(ve, 6, 0),
+      lazy: e.Message.getBooleanFieldWithDefault(ve, 5, !1),
+      unverifiedLazy: e.Message.getBooleanFieldWithDefault(ve, 15, !1),
+      deprecated: e.Message.getBooleanFieldWithDefault(ve, 3, !1),
+      weak: e.Message.getBooleanFieldWithDefault(ve, 10, !1),
       uninterpretedOptionList: e.Message.toObjectList(
-        we.getUninterpretedOptionList(),
+        ve.getUninterpretedOptionList(),
         proto.google.protobuf.UninterpretedOption.toObject,
         be
       )
     };
     return e.Message.toObjectExtension(
       /** @type {!jspb.Message} */
-      we,
+      ve,
       Oe,
       proto.google.protobuf.FieldOptions.extensions,
       proto.google.protobuf.FieldOptions.prototype.getExtension,
       be
-    ), be && (Oe.$jspbMessageInstance = we), Oe;
+    ), be && (Oe.$jspbMessageInstance = ve), Oe;
   }), proto.google.protobuf.FieldOptions.deserializeBinary = function(be) {
-    var we = new e.BinaryReader(be), Ee = new proto.google.protobuf.FieldOptions();
-    return proto.google.protobuf.FieldOptions.deserializeBinaryFromReader(Ee, we);
-  }, proto.google.protobuf.FieldOptions.deserializeBinaryFromReader = function(be, we) {
-    for (; we.nextField() && !we.isEndGroup(); ) {
-      var Ee = we.getFieldNumber();
+    var ve = new e.BinaryReader(be), Ee = new proto.google.protobuf.FieldOptions();
+    return proto.google.protobuf.FieldOptions.deserializeBinaryFromReader(Ee, ve);
+  }, proto.google.protobuf.FieldOptions.deserializeBinaryFromReader = function(be, ve) {
+    for (; ve.nextField() && !ve.isEndGroup(); ) {
+      var Ee = ve.getFieldNumber();
       switch (Ee) {
         case 1:
           var Oe = (
             /** @type {!proto.google.protobuf.FieldOptions.CType} */
-            we.readEnum()
+            ve.readEnum()
           );
           be.setCtype(Oe);
           break;
         case 2:
           var Oe = (
             /** @type {boolean} */
-            we.readBool()
+            ve.readBool()
           );
           be.setPacked(Oe);
           break;
         case 6:
           var Oe = (
             /** @type {!proto.google.protobuf.FieldOptions.JSType} */
-            we.readEnum()
+            ve.readEnum()
           );
           be.setJstype(Oe);
           break;
         case 5:
           var Oe = (
             /** @type {boolean} */
-            we.readBool()
+            ve.readBool()
           );
           be.setLazy(Oe);
           break;
         case 15:
           var Oe = (
             /** @type {boolean} */
-            we.readBool()
+            ve.readBool()
           );
           be.setUnverifiedLazy(Oe);
           break;
         case 3:
           var Oe = (
             /** @type {boolean} */
-            we.readBool()
+            ve.readBool()
           );
           be.setDeprecated(Oe);
           break;
         case 10:
           var Oe = (
             /** @type {boolean} */
-            we.readBool()
+            ve.readBool()
           );
           be.setWeak(Oe);
           break;
         case 999:
           var Oe = new proto.google.protobuf.UninterpretedOption();
-          we.readMessage(Oe, proto.google.protobuf.UninterpretedOption.deserializeBinaryFromReader), be.addUninterpretedOption(Oe);
+          ve.readMessage(Oe, proto.google.protobuf.UninterpretedOption.deserializeBinaryFromReader), be.addUninterpretedOption(Oe);
           break;
         default:
           e.Message.readBinaryExtension(
             be,
-            we,
+            ve,
             proto.google.protobuf.FieldOptions.extensionsBinary,
             proto.google.protobuf.FieldOptions.prototype.getExtension,
             proto.google.protobuf.FieldOptions.prototype.setExtension
@@ -20008,43 +19781,43 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, proto.google.protobuf.FieldOptions.prototype.serializeBinary = function() {
     var be = new e.BinaryWriter();
     return proto.google.protobuf.FieldOptions.serializeBinaryToWriter(this, be), be.getResultBuffer();
-  }, proto.google.protobuf.FieldOptions.serializeBinaryToWriter = function(be, we) {
+  }, proto.google.protobuf.FieldOptions.serializeBinaryToWriter = function(be, ve) {
     var Ee = void 0;
     Ee = /** @type {!proto.google.protobuf.FieldOptions.CType} */
-    e.Message.getField(be, 1), Ee != null && we.writeEnum(
+    e.Message.getField(be, 1), Ee != null && ve.writeEnum(
       1,
       Ee
     ), Ee = /** @type {boolean} */
-    e.Message.getField(be, 2), Ee != null && we.writeBool(
+    e.Message.getField(be, 2), Ee != null && ve.writeBool(
       2,
       Ee
     ), Ee = /** @type {!proto.google.protobuf.FieldOptions.JSType} */
-    e.Message.getField(be, 6), Ee != null && we.writeEnum(
+    e.Message.getField(be, 6), Ee != null && ve.writeEnum(
       6,
       Ee
     ), Ee = /** @type {boolean} */
-    e.Message.getField(be, 5), Ee != null && we.writeBool(
+    e.Message.getField(be, 5), Ee != null && ve.writeBool(
       5,
       Ee
     ), Ee = /** @type {boolean} */
-    e.Message.getField(be, 15), Ee != null && we.writeBool(
+    e.Message.getField(be, 15), Ee != null && ve.writeBool(
       15,
       Ee
     ), Ee = /** @type {boolean} */
-    e.Message.getField(be, 3), Ee != null && we.writeBool(
+    e.Message.getField(be, 3), Ee != null && ve.writeBool(
       3,
       Ee
     ), Ee = /** @type {boolean} */
-    e.Message.getField(be, 10), Ee != null && we.writeBool(
+    e.Message.getField(be, 10), Ee != null && ve.writeBool(
       10,
       Ee
-    ), Ee = be.getUninterpretedOptionList(), Ee.length > 0 && we.writeRepeatedMessage(
+    ), Ee = be.getUninterpretedOptionList(), Ee.length > 0 && ve.writeRepeatedMessage(
       999,
       Ee,
       proto.google.protobuf.UninterpretedOption.serializeBinaryToWriter
     ), e.Message.serializeBinaryExtensions(
       be,
-      we,
+      ve,
       proto.google.protobuf.FieldOptions.extensionsBinary,
       proto.google.protobuf.FieldOptions.prototype.getExtension
     );
@@ -20140,43 +19913,43 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     );
   }, proto.google.protobuf.FieldOptions.prototype.setUninterpretedOptionList = function(be) {
     return e.Message.setRepeatedWrapperField(this, 999, be);
-  }, proto.google.protobuf.FieldOptions.prototype.addUninterpretedOption = function(be, we) {
-    return e.Message.addToRepeatedWrapperField(this, 999, be, proto.google.protobuf.UninterpretedOption, we);
+  }, proto.google.protobuf.FieldOptions.prototype.addUninterpretedOption = function(be, ve) {
+    return e.Message.addToRepeatedWrapperField(this, 999, be, proto.google.protobuf.UninterpretedOption, ve);
   }, proto.google.protobuf.FieldOptions.prototype.clearUninterpretedOptionList = function() {
     return this.setUninterpretedOptionList([]);
   }, proto.google.protobuf.OneofOptions.repeatedFields_ = [999], e.Message.GENERATE_TO_OBJECT && (proto.google.protobuf.OneofOptions.prototype.toObject = function(be) {
     return proto.google.protobuf.OneofOptions.toObject(be, this);
-  }, proto.google.protobuf.OneofOptions.toObject = function(be, we) {
+  }, proto.google.protobuf.OneofOptions.toObject = function(be, ve) {
     var Ee = {
       uninterpretedOptionList: e.Message.toObjectList(
-        we.getUninterpretedOptionList(),
+        ve.getUninterpretedOptionList(),
         proto.google.protobuf.UninterpretedOption.toObject,
         be
       )
     };
     return e.Message.toObjectExtension(
       /** @type {!jspb.Message} */
-      we,
+      ve,
       Ee,
       proto.google.protobuf.OneofOptions.extensions,
       proto.google.protobuf.OneofOptions.prototype.getExtension,
       be
-    ), be && (Ee.$jspbMessageInstance = we), Ee;
+    ), be && (Ee.$jspbMessageInstance = ve), Ee;
   }), proto.google.protobuf.OneofOptions.deserializeBinary = function(be) {
-    var we = new e.BinaryReader(be), Ee = new proto.google.protobuf.OneofOptions();
-    return proto.google.protobuf.OneofOptions.deserializeBinaryFromReader(Ee, we);
-  }, proto.google.protobuf.OneofOptions.deserializeBinaryFromReader = function(be, we) {
-    for (; we.nextField() && !we.isEndGroup(); ) {
-      var Ee = we.getFieldNumber();
+    var ve = new e.BinaryReader(be), Ee = new proto.google.protobuf.OneofOptions();
+    return proto.google.protobuf.OneofOptions.deserializeBinaryFromReader(Ee, ve);
+  }, proto.google.protobuf.OneofOptions.deserializeBinaryFromReader = function(be, ve) {
+    for (; ve.nextField() && !ve.isEndGroup(); ) {
+      var Ee = ve.getFieldNumber();
       switch (Ee) {
         case 999:
           var Oe = new proto.google.protobuf.UninterpretedOption();
-          we.readMessage(Oe, proto.google.protobuf.UninterpretedOption.deserializeBinaryFromReader), be.addUninterpretedOption(Oe);
+          ve.readMessage(Oe, proto.google.protobuf.UninterpretedOption.deserializeBinaryFromReader), be.addUninterpretedOption(Oe);
           break;
         default:
           e.Message.readBinaryExtension(
             be,
-            we,
+            ve,
             proto.google.protobuf.OneofOptions.extensionsBinary,
             proto.google.protobuf.OneofOptions.prototype.getExtension,
             proto.google.protobuf.OneofOptions.prototype.setExtension
@@ -20188,15 +19961,15 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, proto.google.protobuf.OneofOptions.prototype.serializeBinary = function() {
     var be = new e.BinaryWriter();
     return proto.google.protobuf.OneofOptions.serializeBinaryToWriter(this, be), be.getResultBuffer();
-  }, proto.google.protobuf.OneofOptions.serializeBinaryToWriter = function(be, we) {
+  }, proto.google.protobuf.OneofOptions.serializeBinaryToWriter = function(be, ve) {
     var Ee = void 0;
-    Ee = be.getUninterpretedOptionList(), Ee.length > 0 && we.writeRepeatedMessage(
+    Ee = be.getUninterpretedOptionList(), Ee.length > 0 && ve.writeRepeatedMessage(
       999,
       Ee,
       proto.google.protobuf.UninterpretedOption.serializeBinaryToWriter
     ), e.Message.serializeBinaryExtensions(
       be,
-      we,
+      ve,
       proto.google.protobuf.OneofOptions.extensionsBinary,
       proto.google.protobuf.OneofOptions.prototype.getExtension
     );
@@ -20207,59 +19980,59 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     );
   }, proto.google.protobuf.OneofOptions.prototype.setUninterpretedOptionList = function(be) {
     return e.Message.setRepeatedWrapperField(this, 999, be);
-  }, proto.google.protobuf.OneofOptions.prototype.addUninterpretedOption = function(be, we) {
-    return e.Message.addToRepeatedWrapperField(this, 999, be, proto.google.protobuf.UninterpretedOption, we);
+  }, proto.google.protobuf.OneofOptions.prototype.addUninterpretedOption = function(be, ve) {
+    return e.Message.addToRepeatedWrapperField(this, 999, be, proto.google.protobuf.UninterpretedOption, ve);
   }, proto.google.protobuf.OneofOptions.prototype.clearUninterpretedOptionList = function() {
     return this.setUninterpretedOptionList([]);
   }, proto.google.protobuf.EnumOptions.repeatedFields_ = [999], e.Message.GENERATE_TO_OBJECT && (proto.google.protobuf.EnumOptions.prototype.toObject = function(be) {
     return proto.google.protobuf.EnumOptions.toObject(be, this);
-  }, proto.google.protobuf.EnumOptions.toObject = function(be, we) {
+  }, proto.google.protobuf.EnumOptions.toObject = function(be, ve) {
     var Ee, Oe = {
-      allowAlias: (Ee = e.Message.getBooleanField(we, 2)) == null ? void 0 : Ee,
-      deprecated: e.Message.getBooleanFieldWithDefault(we, 3, !1),
+      allowAlias: (Ee = e.Message.getBooleanField(ve, 2)) == null ? void 0 : Ee,
+      deprecated: e.Message.getBooleanFieldWithDefault(ve, 3, !1),
       uninterpretedOptionList: e.Message.toObjectList(
-        we.getUninterpretedOptionList(),
+        ve.getUninterpretedOptionList(),
         proto.google.protobuf.UninterpretedOption.toObject,
         be
       )
     };
     return e.Message.toObjectExtension(
       /** @type {!jspb.Message} */
-      we,
+      ve,
       Oe,
       proto.google.protobuf.EnumOptions.extensions,
       proto.google.protobuf.EnumOptions.prototype.getExtension,
       be
-    ), be && (Oe.$jspbMessageInstance = we), Oe;
+    ), be && (Oe.$jspbMessageInstance = ve), Oe;
   }), proto.google.protobuf.EnumOptions.deserializeBinary = function(be) {
-    var we = new e.BinaryReader(be), Ee = new proto.google.protobuf.EnumOptions();
-    return proto.google.protobuf.EnumOptions.deserializeBinaryFromReader(Ee, we);
-  }, proto.google.protobuf.EnumOptions.deserializeBinaryFromReader = function(be, we) {
-    for (; we.nextField() && !we.isEndGroup(); ) {
-      var Ee = we.getFieldNumber();
+    var ve = new e.BinaryReader(be), Ee = new proto.google.protobuf.EnumOptions();
+    return proto.google.protobuf.EnumOptions.deserializeBinaryFromReader(Ee, ve);
+  }, proto.google.protobuf.EnumOptions.deserializeBinaryFromReader = function(be, ve) {
+    for (; ve.nextField() && !ve.isEndGroup(); ) {
+      var Ee = ve.getFieldNumber();
       switch (Ee) {
         case 2:
           var Oe = (
             /** @type {boolean} */
-            we.readBool()
+            ve.readBool()
           );
           be.setAllowAlias(Oe);
           break;
         case 3:
           var Oe = (
             /** @type {boolean} */
-            we.readBool()
+            ve.readBool()
           );
           be.setDeprecated(Oe);
           break;
         case 999:
           var Oe = new proto.google.protobuf.UninterpretedOption();
-          we.readMessage(Oe, proto.google.protobuf.UninterpretedOption.deserializeBinaryFromReader), be.addUninterpretedOption(Oe);
+          ve.readMessage(Oe, proto.google.protobuf.UninterpretedOption.deserializeBinaryFromReader), be.addUninterpretedOption(Oe);
           break;
         default:
           e.Message.readBinaryExtension(
             be,
-            we,
+            ve,
             proto.google.protobuf.EnumOptions.extensionsBinary,
             proto.google.protobuf.EnumOptions.prototype.getExtension,
             proto.google.protobuf.EnumOptions.prototype.setExtension
@@ -20271,23 +20044,23 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, proto.google.protobuf.EnumOptions.prototype.serializeBinary = function() {
     var be = new e.BinaryWriter();
     return proto.google.protobuf.EnumOptions.serializeBinaryToWriter(this, be), be.getResultBuffer();
-  }, proto.google.protobuf.EnumOptions.serializeBinaryToWriter = function(be, we) {
+  }, proto.google.protobuf.EnumOptions.serializeBinaryToWriter = function(be, ve) {
     var Ee = void 0;
     Ee = /** @type {boolean} */
-    e.Message.getField(be, 2), Ee != null && we.writeBool(
+    e.Message.getField(be, 2), Ee != null && ve.writeBool(
       2,
       Ee
     ), Ee = /** @type {boolean} */
-    e.Message.getField(be, 3), Ee != null && we.writeBool(
+    e.Message.getField(be, 3), Ee != null && ve.writeBool(
       3,
       Ee
-    ), Ee = be.getUninterpretedOptionList(), Ee.length > 0 && we.writeRepeatedMessage(
+    ), Ee = be.getUninterpretedOptionList(), Ee.length > 0 && ve.writeRepeatedMessage(
       999,
       Ee,
       proto.google.protobuf.UninterpretedOption.serializeBinaryToWriter
     ), e.Message.serializeBinaryExtensions(
       be,
-      we,
+      ve,
       proto.google.protobuf.EnumOptions.extensionsBinary,
       proto.google.protobuf.EnumOptions.prototype.getExtension
     );
@@ -20320,51 +20093,51 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     );
   }, proto.google.protobuf.EnumOptions.prototype.setUninterpretedOptionList = function(be) {
     return e.Message.setRepeatedWrapperField(this, 999, be);
-  }, proto.google.protobuf.EnumOptions.prototype.addUninterpretedOption = function(be, we) {
-    return e.Message.addToRepeatedWrapperField(this, 999, be, proto.google.protobuf.UninterpretedOption, we);
+  }, proto.google.protobuf.EnumOptions.prototype.addUninterpretedOption = function(be, ve) {
+    return e.Message.addToRepeatedWrapperField(this, 999, be, proto.google.protobuf.UninterpretedOption, ve);
   }, proto.google.protobuf.EnumOptions.prototype.clearUninterpretedOptionList = function() {
     return this.setUninterpretedOptionList([]);
   }, proto.google.protobuf.EnumValueOptions.repeatedFields_ = [999], e.Message.GENERATE_TO_OBJECT && (proto.google.protobuf.EnumValueOptions.prototype.toObject = function(be) {
     return proto.google.protobuf.EnumValueOptions.toObject(be, this);
-  }, proto.google.protobuf.EnumValueOptions.toObject = function(be, we) {
+  }, proto.google.protobuf.EnumValueOptions.toObject = function(be, ve) {
     var Ee = {
-      deprecated: e.Message.getBooleanFieldWithDefault(we, 1, !1),
+      deprecated: e.Message.getBooleanFieldWithDefault(ve, 1, !1),
       uninterpretedOptionList: e.Message.toObjectList(
-        we.getUninterpretedOptionList(),
+        ve.getUninterpretedOptionList(),
         proto.google.protobuf.UninterpretedOption.toObject,
         be
       )
     };
     return e.Message.toObjectExtension(
       /** @type {!jspb.Message} */
-      we,
+      ve,
       Ee,
       proto.google.protobuf.EnumValueOptions.extensions,
       proto.google.protobuf.EnumValueOptions.prototype.getExtension,
       be
-    ), be && (Ee.$jspbMessageInstance = we), Ee;
+    ), be && (Ee.$jspbMessageInstance = ve), Ee;
   }), proto.google.protobuf.EnumValueOptions.deserializeBinary = function(be) {
-    var we = new e.BinaryReader(be), Ee = new proto.google.protobuf.EnumValueOptions();
-    return proto.google.protobuf.EnumValueOptions.deserializeBinaryFromReader(Ee, we);
-  }, proto.google.protobuf.EnumValueOptions.deserializeBinaryFromReader = function(be, we) {
-    for (; we.nextField() && !we.isEndGroup(); ) {
-      var Ee = we.getFieldNumber();
+    var ve = new e.BinaryReader(be), Ee = new proto.google.protobuf.EnumValueOptions();
+    return proto.google.protobuf.EnumValueOptions.deserializeBinaryFromReader(Ee, ve);
+  }, proto.google.protobuf.EnumValueOptions.deserializeBinaryFromReader = function(be, ve) {
+    for (; ve.nextField() && !ve.isEndGroup(); ) {
+      var Ee = ve.getFieldNumber();
       switch (Ee) {
         case 1:
           var Oe = (
             /** @type {boolean} */
-            we.readBool()
+            ve.readBool()
           );
           be.setDeprecated(Oe);
           break;
         case 999:
           var Oe = new proto.google.protobuf.UninterpretedOption();
-          we.readMessage(Oe, proto.google.protobuf.UninterpretedOption.deserializeBinaryFromReader), be.addUninterpretedOption(Oe);
+          ve.readMessage(Oe, proto.google.protobuf.UninterpretedOption.deserializeBinaryFromReader), be.addUninterpretedOption(Oe);
           break;
         default:
           e.Message.readBinaryExtension(
             be,
-            we,
+            ve,
             proto.google.protobuf.EnumValueOptions.extensionsBinary,
             proto.google.protobuf.EnumValueOptions.prototype.getExtension,
             proto.google.protobuf.EnumValueOptions.prototype.setExtension
@@ -20376,19 +20149,19 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, proto.google.protobuf.EnumValueOptions.prototype.serializeBinary = function() {
     var be = new e.BinaryWriter();
     return proto.google.protobuf.EnumValueOptions.serializeBinaryToWriter(this, be), be.getResultBuffer();
-  }, proto.google.protobuf.EnumValueOptions.serializeBinaryToWriter = function(be, we) {
+  }, proto.google.protobuf.EnumValueOptions.serializeBinaryToWriter = function(be, ve) {
     var Ee = void 0;
     Ee = /** @type {boolean} */
-    e.Message.getField(be, 1), Ee != null && we.writeBool(
+    e.Message.getField(be, 1), Ee != null && ve.writeBool(
       1,
       Ee
-    ), Ee = be.getUninterpretedOptionList(), Ee.length > 0 && we.writeRepeatedMessage(
+    ), Ee = be.getUninterpretedOptionList(), Ee.length > 0 && ve.writeRepeatedMessage(
       999,
       Ee,
       proto.google.protobuf.UninterpretedOption.serializeBinaryToWriter
     ), e.Message.serializeBinaryExtensions(
       be,
-      we,
+      ve,
       proto.google.protobuf.EnumValueOptions.extensionsBinary,
       proto.google.protobuf.EnumValueOptions.prototype.getExtension
     );
@@ -20410,51 +20183,51 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     );
   }, proto.google.protobuf.EnumValueOptions.prototype.setUninterpretedOptionList = function(be) {
     return e.Message.setRepeatedWrapperField(this, 999, be);
-  }, proto.google.protobuf.EnumValueOptions.prototype.addUninterpretedOption = function(be, we) {
-    return e.Message.addToRepeatedWrapperField(this, 999, be, proto.google.protobuf.UninterpretedOption, we);
+  }, proto.google.protobuf.EnumValueOptions.prototype.addUninterpretedOption = function(be, ve) {
+    return e.Message.addToRepeatedWrapperField(this, 999, be, proto.google.protobuf.UninterpretedOption, ve);
   }, proto.google.protobuf.EnumValueOptions.prototype.clearUninterpretedOptionList = function() {
     return this.setUninterpretedOptionList([]);
   }, proto.google.protobuf.ServiceOptions.repeatedFields_ = [999], e.Message.GENERATE_TO_OBJECT && (proto.google.protobuf.ServiceOptions.prototype.toObject = function(be) {
     return proto.google.protobuf.ServiceOptions.toObject(be, this);
-  }, proto.google.protobuf.ServiceOptions.toObject = function(be, we) {
+  }, proto.google.protobuf.ServiceOptions.toObject = function(be, ve) {
     var Ee = {
-      deprecated: e.Message.getBooleanFieldWithDefault(we, 33, !1),
+      deprecated: e.Message.getBooleanFieldWithDefault(ve, 33, !1),
       uninterpretedOptionList: e.Message.toObjectList(
-        we.getUninterpretedOptionList(),
+        ve.getUninterpretedOptionList(),
         proto.google.protobuf.UninterpretedOption.toObject,
         be
       )
     };
     return e.Message.toObjectExtension(
       /** @type {!jspb.Message} */
-      we,
+      ve,
       Ee,
       proto.google.protobuf.ServiceOptions.extensions,
       proto.google.protobuf.ServiceOptions.prototype.getExtension,
       be
-    ), be && (Ee.$jspbMessageInstance = we), Ee;
+    ), be && (Ee.$jspbMessageInstance = ve), Ee;
   }), proto.google.protobuf.ServiceOptions.deserializeBinary = function(be) {
-    var we = new e.BinaryReader(be), Ee = new proto.google.protobuf.ServiceOptions();
-    return proto.google.protobuf.ServiceOptions.deserializeBinaryFromReader(Ee, we);
-  }, proto.google.protobuf.ServiceOptions.deserializeBinaryFromReader = function(be, we) {
-    for (; we.nextField() && !we.isEndGroup(); ) {
-      var Ee = we.getFieldNumber();
+    var ve = new e.BinaryReader(be), Ee = new proto.google.protobuf.ServiceOptions();
+    return proto.google.protobuf.ServiceOptions.deserializeBinaryFromReader(Ee, ve);
+  }, proto.google.protobuf.ServiceOptions.deserializeBinaryFromReader = function(be, ve) {
+    for (; ve.nextField() && !ve.isEndGroup(); ) {
+      var Ee = ve.getFieldNumber();
       switch (Ee) {
         case 33:
           var Oe = (
             /** @type {boolean} */
-            we.readBool()
+            ve.readBool()
           );
           be.setDeprecated(Oe);
           break;
         case 999:
           var Oe = new proto.google.protobuf.UninterpretedOption();
-          we.readMessage(Oe, proto.google.protobuf.UninterpretedOption.deserializeBinaryFromReader), be.addUninterpretedOption(Oe);
+          ve.readMessage(Oe, proto.google.protobuf.UninterpretedOption.deserializeBinaryFromReader), be.addUninterpretedOption(Oe);
           break;
         default:
           e.Message.readBinaryExtension(
             be,
-            we,
+            ve,
             proto.google.protobuf.ServiceOptions.extensionsBinary,
             proto.google.protobuf.ServiceOptions.prototype.getExtension,
             proto.google.protobuf.ServiceOptions.prototype.setExtension
@@ -20466,19 +20239,19 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, proto.google.protobuf.ServiceOptions.prototype.serializeBinary = function() {
     var be = new e.BinaryWriter();
     return proto.google.protobuf.ServiceOptions.serializeBinaryToWriter(this, be), be.getResultBuffer();
-  }, proto.google.protobuf.ServiceOptions.serializeBinaryToWriter = function(be, we) {
+  }, proto.google.protobuf.ServiceOptions.serializeBinaryToWriter = function(be, ve) {
     var Ee = void 0;
     Ee = /** @type {boolean} */
-    e.Message.getField(be, 33), Ee != null && we.writeBool(
+    e.Message.getField(be, 33), Ee != null && ve.writeBool(
       33,
       Ee
-    ), Ee = be.getUninterpretedOptionList(), Ee.length > 0 && we.writeRepeatedMessage(
+    ), Ee = be.getUninterpretedOptionList(), Ee.length > 0 && ve.writeRepeatedMessage(
       999,
       Ee,
       proto.google.protobuf.UninterpretedOption.serializeBinaryToWriter
     ), e.Message.serializeBinaryExtensions(
       be,
-      we,
+      ve,
       proto.google.protobuf.ServiceOptions.extensionsBinary,
       proto.google.protobuf.ServiceOptions.prototype.getExtension
     );
@@ -20500,59 +20273,59 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     );
   }, proto.google.protobuf.ServiceOptions.prototype.setUninterpretedOptionList = function(be) {
     return e.Message.setRepeatedWrapperField(this, 999, be);
-  }, proto.google.protobuf.ServiceOptions.prototype.addUninterpretedOption = function(be, we) {
-    return e.Message.addToRepeatedWrapperField(this, 999, be, proto.google.protobuf.UninterpretedOption, we);
+  }, proto.google.protobuf.ServiceOptions.prototype.addUninterpretedOption = function(be, ve) {
+    return e.Message.addToRepeatedWrapperField(this, 999, be, proto.google.protobuf.UninterpretedOption, ve);
   }, proto.google.protobuf.ServiceOptions.prototype.clearUninterpretedOptionList = function() {
     return this.setUninterpretedOptionList([]);
   }, proto.google.protobuf.MethodOptions.repeatedFields_ = [999], e.Message.GENERATE_TO_OBJECT && (proto.google.protobuf.MethodOptions.prototype.toObject = function(be) {
     return proto.google.protobuf.MethodOptions.toObject(be, this);
-  }, proto.google.protobuf.MethodOptions.toObject = function(be, we) {
+  }, proto.google.protobuf.MethodOptions.toObject = function(be, ve) {
     var Ee = {
-      deprecated: e.Message.getBooleanFieldWithDefault(we, 33, !1),
-      idempotencyLevel: e.Message.getFieldWithDefault(we, 34, 0),
+      deprecated: e.Message.getBooleanFieldWithDefault(ve, 33, !1),
+      idempotencyLevel: e.Message.getFieldWithDefault(ve, 34, 0),
       uninterpretedOptionList: e.Message.toObjectList(
-        we.getUninterpretedOptionList(),
+        ve.getUninterpretedOptionList(),
         proto.google.protobuf.UninterpretedOption.toObject,
         be
       )
     };
     return e.Message.toObjectExtension(
       /** @type {!jspb.Message} */
-      we,
+      ve,
       Ee,
       proto.google.protobuf.MethodOptions.extensions,
       proto.google.protobuf.MethodOptions.prototype.getExtension,
       be
-    ), be && (Ee.$jspbMessageInstance = we), Ee;
+    ), be && (Ee.$jspbMessageInstance = ve), Ee;
   }), proto.google.protobuf.MethodOptions.deserializeBinary = function(be) {
-    var we = new e.BinaryReader(be), Ee = new proto.google.protobuf.MethodOptions();
-    return proto.google.protobuf.MethodOptions.deserializeBinaryFromReader(Ee, we);
-  }, proto.google.protobuf.MethodOptions.deserializeBinaryFromReader = function(be, we) {
-    for (; we.nextField() && !we.isEndGroup(); ) {
-      var Ee = we.getFieldNumber();
+    var ve = new e.BinaryReader(be), Ee = new proto.google.protobuf.MethodOptions();
+    return proto.google.protobuf.MethodOptions.deserializeBinaryFromReader(Ee, ve);
+  }, proto.google.protobuf.MethodOptions.deserializeBinaryFromReader = function(be, ve) {
+    for (; ve.nextField() && !ve.isEndGroup(); ) {
+      var Ee = ve.getFieldNumber();
       switch (Ee) {
         case 33:
           var Oe = (
             /** @type {boolean} */
-            we.readBool()
+            ve.readBool()
           );
           be.setDeprecated(Oe);
           break;
         case 34:
           var Oe = (
             /** @type {!proto.google.protobuf.MethodOptions.IdempotencyLevel} */
-            we.readEnum()
+            ve.readEnum()
           );
           be.setIdempotencyLevel(Oe);
           break;
         case 999:
           var Oe = new proto.google.protobuf.UninterpretedOption();
-          we.readMessage(Oe, proto.google.protobuf.UninterpretedOption.deserializeBinaryFromReader), be.addUninterpretedOption(Oe);
+          ve.readMessage(Oe, proto.google.protobuf.UninterpretedOption.deserializeBinaryFromReader), be.addUninterpretedOption(Oe);
           break;
         default:
           e.Message.readBinaryExtension(
             be,
-            we,
+            ve,
             proto.google.protobuf.MethodOptions.extensionsBinary,
             proto.google.protobuf.MethodOptions.prototype.getExtension,
             proto.google.protobuf.MethodOptions.prototype.setExtension
@@ -20564,23 +20337,23 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, proto.google.protobuf.MethodOptions.prototype.serializeBinary = function() {
     var be = new e.BinaryWriter();
     return proto.google.protobuf.MethodOptions.serializeBinaryToWriter(this, be), be.getResultBuffer();
-  }, proto.google.protobuf.MethodOptions.serializeBinaryToWriter = function(be, we) {
+  }, proto.google.protobuf.MethodOptions.serializeBinaryToWriter = function(be, ve) {
     var Ee = void 0;
     Ee = /** @type {boolean} */
-    e.Message.getField(be, 33), Ee != null && we.writeBool(
+    e.Message.getField(be, 33), Ee != null && ve.writeBool(
       33,
       Ee
     ), Ee = /** @type {!proto.google.protobuf.MethodOptions.IdempotencyLevel} */
-    e.Message.getField(be, 34), Ee != null && we.writeEnum(
+    e.Message.getField(be, 34), Ee != null && ve.writeEnum(
       34,
       Ee
-    ), Ee = be.getUninterpretedOptionList(), Ee.length > 0 && we.writeRepeatedMessage(
+    ), Ee = be.getUninterpretedOptionList(), Ee.length > 0 && ve.writeRepeatedMessage(
       999,
       Ee,
       proto.google.protobuf.UninterpretedOption.serializeBinaryToWriter
     ), e.Message.serializeBinaryExtensions(
       be,
-      we,
+      ve,
       proto.google.protobuf.MethodOptions.extensionsBinary,
       proto.google.protobuf.MethodOptions.prototype.getExtension
     );
@@ -20617,82 +20390,82 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     );
   }, proto.google.protobuf.MethodOptions.prototype.setUninterpretedOptionList = function(be) {
     return e.Message.setRepeatedWrapperField(this, 999, be);
-  }, proto.google.protobuf.MethodOptions.prototype.addUninterpretedOption = function(be, we) {
-    return e.Message.addToRepeatedWrapperField(this, 999, be, proto.google.protobuf.UninterpretedOption, we);
+  }, proto.google.protobuf.MethodOptions.prototype.addUninterpretedOption = function(be, ve) {
+    return e.Message.addToRepeatedWrapperField(this, 999, be, proto.google.protobuf.UninterpretedOption, ve);
   }, proto.google.protobuf.MethodOptions.prototype.clearUninterpretedOptionList = function() {
     return this.setUninterpretedOptionList([]);
   }, proto.google.protobuf.UninterpretedOption.repeatedFields_ = [2], e.Message.GENERATE_TO_OBJECT && (proto.google.protobuf.UninterpretedOption.prototype.toObject = function(be) {
     return proto.google.protobuf.UninterpretedOption.toObject(be, this);
-  }, proto.google.protobuf.UninterpretedOption.toObject = function(be, we) {
+  }, proto.google.protobuf.UninterpretedOption.toObject = function(be, ve) {
     var Ee, Oe = {
       nameList: e.Message.toObjectList(
-        we.getNameList(),
+        ve.getNameList(),
         proto.google.protobuf.UninterpretedOption.NamePart.toObject,
         be
       ),
-      identifierValue: (Ee = e.Message.getField(we, 3)) == null ? void 0 : Ee,
-      positiveIntValue: (Ee = e.Message.getField(we, 4)) == null ? void 0 : Ee,
-      negativeIntValue: (Ee = e.Message.getField(we, 5)) == null ? void 0 : Ee,
-      doubleValue: (Ee = e.Message.getOptionalFloatingPointField(we, 6)) == null ? void 0 : Ee,
-      stringValue: we.getStringValue_asB64(),
-      aggregateValue: (Ee = e.Message.getField(we, 8)) == null ? void 0 : Ee
+      identifierValue: (Ee = e.Message.getField(ve, 3)) == null ? void 0 : Ee,
+      positiveIntValue: (Ee = e.Message.getField(ve, 4)) == null ? void 0 : Ee,
+      negativeIntValue: (Ee = e.Message.getField(ve, 5)) == null ? void 0 : Ee,
+      doubleValue: (Ee = e.Message.getOptionalFloatingPointField(ve, 6)) == null ? void 0 : Ee,
+      stringValue: ve.getStringValue_asB64(),
+      aggregateValue: (Ee = e.Message.getField(ve, 8)) == null ? void 0 : Ee
     };
-    return be && (Oe.$jspbMessageInstance = we), Oe;
+    return be && (Oe.$jspbMessageInstance = ve), Oe;
   }), proto.google.protobuf.UninterpretedOption.deserializeBinary = function(be) {
-    var we = new e.BinaryReader(be), Ee = new proto.google.protobuf.UninterpretedOption();
-    return proto.google.protobuf.UninterpretedOption.deserializeBinaryFromReader(Ee, we);
-  }, proto.google.protobuf.UninterpretedOption.deserializeBinaryFromReader = function(be, we) {
-    for (; we.nextField() && !we.isEndGroup(); ) {
-      var Ee = we.getFieldNumber();
+    var ve = new e.BinaryReader(be), Ee = new proto.google.protobuf.UninterpretedOption();
+    return proto.google.protobuf.UninterpretedOption.deserializeBinaryFromReader(Ee, ve);
+  }, proto.google.protobuf.UninterpretedOption.deserializeBinaryFromReader = function(be, ve) {
+    for (; ve.nextField() && !ve.isEndGroup(); ) {
+      var Ee = ve.getFieldNumber();
       switch (Ee) {
         case 2:
           var Oe = new proto.google.protobuf.UninterpretedOption.NamePart();
-          we.readMessage(Oe, proto.google.protobuf.UninterpretedOption.NamePart.deserializeBinaryFromReader), be.addName(Oe);
+          ve.readMessage(Oe, proto.google.protobuf.UninterpretedOption.NamePart.deserializeBinaryFromReader), be.addName(Oe);
           break;
         case 3:
           var Oe = (
             /** @type {string} */
-            we.readString()
+            ve.readString()
           );
           be.setIdentifierValue(Oe);
           break;
         case 4:
           var Oe = (
             /** @type {number} */
-            we.readUint64()
+            ve.readUint64()
           );
           be.setPositiveIntValue(Oe);
           break;
         case 5:
           var Oe = (
             /** @type {number} */
-            we.readInt64()
+            ve.readInt64()
           );
           be.setNegativeIntValue(Oe);
           break;
         case 6:
           var Oe = (
             /** @type {number} */
-            we.readDouble()
+            ve.readDouble()
           );
           be.setDoubleValue(Oe);
           break;
         case 7:
           var Oe = (
             /** @type {!Uint8Array} */
-            we.readBytes()
+            ve.readBytes()
           );
           be.setStringValue(Oe);
           break;
         case 8:
           var Oe = (
             /** @type {string} */
-            we.readString()
+            ve.readString()
           );
           be.setAggregateValue(Oe);
           break;
         default:
-          we.skipField();
+          ve.skipField();
           break;
       }
     }
@@ -20700,68 +20473,68 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, proto.google.protobuf.UninterpretedOption.prototype.serializeBinary = function() {
     var be = new e.BinaryWriter();
     return proto.google.protobuf.UninterpretedOption.serializeBinaryToWriter(this, be), be.getResultBuffer();
-  }, proto.google.protobuf.UninterpretedOption.serializeBinaryToWriter = function(be, we) {
+  }, proto.google.protobuf.UninterpretedOption.serializeBinaryToWriter = function(be, ve) {
     var Ee = void 0;
-    Ee = be.getNameList(), Ee.length > 0 && we.writeRepeatedMessage(
+    Ee = be.getNameList(), Ee.length > 0 && ve.writeRepeatedMessage(
       2,
       Ee,
       proto.google.protobuf.UninterpretedOption.NamePart.serializeBinaryToWriter
     ), Ee = /** @type {string} */
-    e.Message.getField(be, 3), Ee != null && we.writeString(
+    e.Message.getField(be, 3), Ee != null && ve.writeString(
       3,
       Ee
     ), Ee = /** @type {number} */
-    e.Message.getField(be, 4), Ee != null && we.writeUint64(
+    e.Message.getField(be, 4), Ee != null && ve.writeUint64(
       4,
       Ee
     ), Ee = /** @type {number} */
-    e.Message.getField(be, 5), Ee != null && we.writeInt64(
+    e.Message.getField(be, 5), Ee != null && ve.writeInt64(
       5,
       Ee
     ), Ee = /** @type {number} */
-    e.Message.getField(be, 6), Ee != null && we.writeDouble(
+    e.Message.getField(be, 6), Ee != null && ve.writeDouble(
       6,
       Ee
     ), Ee = /** @type {!(string|Uint8Array)} */
-    e.Message.getField(be, 7), Ee != null && we.writeBytes(
+    e.Message.getField(be, 7), Ee != null && ve.writeBytes(
       7,
       Ee
     ), Ee = /** @type {string} */
-    e.Message.getField(be, 8), Ee != null && we.writeString(
+    e.Message.getField(be, 8), Ee != null && ve.writeString(
       8,
       Ee
     );
   }, e.Message.GENERATE_TO_OBJECT && (proto.google.protobuf.UninterpretedOption.NamePart.prototype.toObject = function(be) {
     return proto.google.protobuf.UninterpretedOption.NamePart.toObject(be, this);
-  }, proto.google.protobuf.UninterpretedOption.NamePart.toObject = function(be, we) {
+  }, proto.google.protobuf.UninterpretedOption.NamePart.toObject = function(be, ve) {
     var Ee, Oe = {
-      namePart: (Ee = e.Message.getField(we, 1)) == null ? void 0 : Ee,
-      isExtension: (Ee = e.Message.getBooleanField(we, 2)) == null ? void 0 : Ee
+      namePart: (Ee = e.Message.getField(ve, 1)) == null ? void 0 : Ee,
+      isExtension: (Ee = e.Message.getBooleanField(ve, 2)) == null ? void 0 : Ee
     };
-    return be && (Oe.$jspbMessageInstance = we), Oe;
+    return be && (Oe.$jspbMessageInstance = ve), Oe;
   }), proto.google.protobuf.UninterpretedOption.NamePart.deserializeBinary = function(be) {
-    var we = new e.BinaryReader(be), Ee = new proto.google.protobuf.UninterpretedOption.NamePart();
-    return proto.google.protobuf.UninterpretedOption.NamePart.deserializeBinaryFromReader(Ee, we);
-  }, proto.google.protobuf.UninterpretedOption.NamePart.deserializeBinaryFromReader = function(be, we) {
-    for (; we.nextField() && !we.isEndGroup(); ) {
-      var Ee = we.getFieldNumber();
+    var ve = new e.BinaryReader(be), Ee = new proto.google.protobuf.UninterpretedOption.NamePart();
+    return proto.google.protobuf.UninterpretedOption.NamePart.deserializeBinaryFromReader(Ee, ve);
+  }, proto.google.protobuf.UninterpretedOption.NamePart.deserializeBinaryFromReader = function(be, ve) {
+    for (; ve.nextField() && !ve.isEndGroup(); ) {
+      var Ee = ve.getFieldNumber();
       switch (Ee) {
         case 1:
           var Oe = (
             /** @type {string} */
-            we.readString()
+            ve.readString()
           );
           be.setNamePart(Oe);
           break;
         case 2:
           var Oe = (
             /** @type {boolean} */
-            we.readBool()
+            ve.readBool()
           );
           be.setIsExtension(Oe);
           break;
         default:
-          we.skipField();
+          ve.skipField();
           break;
       }
     }
@@ -20769,14 +20542,14 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, proto.google.protobuf.UninterpretedOption.NamePart.prototype.serializeBinary = function() {
     var be = new e.BinaryWriter();
     return proto.google.protobuf.UninterpretedOption.NamePart.serializeBinaryToWriter(this, be), be.getResultBuffer();
-  }, proto.google.protobuf.UninterpretedOption.NamePart.serializeBinaryToWriter = function(be, we) {
+  }, proto.google.protobuf.UninterpretedOption.NamePart.serializeBinaryToWriter = function(be, ve) {
     var Ee = void 0;
     Ee = /** @type {string} */
-    e.Message.getField(be, 1), Ee != null && we.writeString(
+    e.Message.getField(be, 1), Ee != null && ve.writeString(
       1,
       Ee
     ), Ee = /** @type {boolean} */
-    e.Message.getField(be, 2), Ee != null && we.writeBool(
+    e.Message.getField(be, 2), Ee != null && ve.writeBool(
       2,
       Ee
     );
@@ -20809,8 +20582,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     );
   }, proto.google.protobuf.UninterpretedOption.prototype.setNameList = function(be) {
     return e.Message.setRepeatedWrapperField(this, 2, be);
-  }, proto.google.protobuf.UninterpretedOption.prototype.addName = function(be, we) {
-    return e.Message.addToRepeatedWrapperField(this, 2, be, proto.google.protobuf.UninterpretedOption.NamePart, we);
+  }, proto.google.protobuf.UninterpretedOption.prototype.addName = function(be, ve) {
+    return e.Message.addToRepeatedWrapperField(this, 2, be, proto.google.protobuf.UninterpretedOption.NamePart, ve);
   }, proto.google.protobuf.UninterpretedOption.prototype.clearNameList = function() {
     return this.setNameList([]);
   }, proto.google.protobuf.UninterpretedOption.prototype.getIdentifierValue = function() {
@@ -20895,28 +20668,28 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     return e.Message.getField(this, 8) != null;
   }, proto.google.protobuf.SourceCodeInfo.repeatedFields_ = [1], e.Message.GENERATE_TO_OBJECT && (proto.google.protobuf.SourceCodeInfo.prototype.toObject = function(be) {
     return proto.google.protobuf.SourceCodeInfo.toObject(be, this);
-  }, proto.google.protobuf.SourceCodeInfo.toObject = function(be, we) {
+  }, proto.google.protobuf.SourceCodeInfo.toObject = function(be, ve) {
     var Ee = {
       locationList: e.Message.toObjectList(
-        we.getLocationList(),
+        ve.getLocationList(),
         proto.google.protobuf.SourceCodeInfo.Location.toObject,
         be
       )
     };
-    return be && (Ee.$jspbMessageInstance = we), Ee;
+    return be && (Ee.$jspbMessageInstance = ve), Ee;
   }), proto.google.protobuf.SourceCodeInfo.deserializeBinary = function(be) {
-    var we = new e.BinaryReader(be), Ee = new proto.google.protobuf.SourceCodeInfo();
-    return proto.google.protobuf.SourceCodeInfo.deserializeBinaryFromReader(Ee, we);
-  }, proto.google.protobuf.SourceCodeInfo.deserializeBinaryFromReader = function(be, we) {
-    for (; we.nextField() && !we.isEndGroup(); ) {
-      var Ee = we.getFieldNumber();
+    var ve = new e.BinaryReader(be), Ee = new proto.google.protobuf.SourceCodeInfo();
+    return proto.google.protobuf.SourceCodeInfo.deserializeBinaryFromReader(Ee, ve);
+  }, proto.google.protobuf.SourceCodeInfo.deserializeBinaryFromReader = function(be, ve) {
+    for (; ve.nextField() && !ve.isEndGroup(); ) {
+      var Ee = ve.getFieldNumber();
       switch (Ee) {
         case 1:
           var Oe = new proto.google.protobuf.SourceCodeInfo.Location();
-          we.readMessage(Oe, proto.google.protobuf.SourceCodeInfo.Location.deserializeBinaryFromReader), be.addLocation(Oe);
+          ve.readMessage(Oe, proto.google.protobuf.SourceCodeInfo.Location.deserializeBinaryFromReader), be.addLocation(Oe);
           break;
         default:
-          we.skipField();
+          ve.skipField();
           break;
       }
     }
@@ -20924,68 +20697,68 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, proto.google.protobuf.SourceCodeInfo.prototype.serializeBinary = function() {
     var be = new e.BinaryWriter();
     return proto.google.protobuf.SourceCodeInfo.serializeBinaryToWriter(this, be), be.getResultBuffer();
-  }, proto.google.protobuf.SourceCodeInfo.serializeBinaryToWriter = function(be, we) {
+  }, proto.google.protobuf.SourceCodeInfo.serializeBinaryToWriter = function(be, ve) {
     var Ee = void 0;
-    Ee = be.getLocationList(), Ee.length > 0 && we.writeRepeatedMessage(
+    Ee = be.getLocationList(), Ee.length > 0 && ve.writeRepeatedMessage(
       1,
       Ee,
       proto.google.protobuf.SourceCodeInfo.Location.serializeBinaryToWriter
     );
   }, proto.google.protobuf.SourceCodeInfo.Location.repeatedFields_ = [1, 2, 6], e.Message.GENERATE_TO_OBJECT && (proto.google.protobuf.SourceCodeInfo.Location.prototype.toObject = function(be) {
     return proto.google.protobuf.SourceCodeInfo.Location.toObject(be, this);
-  }, proto.google.protobuf.SourceCodeInfo.Location.toObject = function(be, we) {
+  }, proto.google.protobuf.SourceCodeInfo.Location.toObject = function(be, ve) {
     var Ee, Oe = {
-      pathList: (Ee = e.Message.getRepeatedField(we, 1)) == null ? void 0 : Ee,
-      spanList: (Ee = e.Message.getRepeatedField(we, 2)) == null ? void 0 : Ee,
-      leadingComments: (Ee = e.Message.getField(we, 3)) == null ? void 0 : Ee,
-      trailingComments: (Ee = e.Message.getField(we, 4)) == null ? void 0 : Ee,
-      leadingDetachedCommentsList: (Ee = e.Message.getRepeatedField(we, 6)) == null ? void 0 : Ee
+      pathList: (Ee = e.Message.getRepeatedField(ve, 1)) == null ? void 0 : Ee,
+      spanList: (Ee = e.Message.getRepeatedField(ve, 2)) == null ? void 0 : Ee,
+      leadingComments: (Ee = e.Message.getField(ve, 3)) == null ? void 0 : Ee,
+      trailingComments: (Ee = e.Message.getField(ve, 4)) == null ? void 0 : Ee,
+      leadingDetachedCommentsList: (Ee = e.Message.getRepeatedField(ve, 6)) == null ? void 0 : Ee
     };
-    return be && (Oe.$jspbMessageInstance = we), Oe;
+    return be && (Oe.$jspbMessageInstance = ve), Oe;
   }), proto.google.protobuf.SourceCodeInfo.Location.deserializeBinary = function(be) {
-    var we = new e.BinaryReader(be), Ee = new proto.google.protobuf.SourceCodeInfo.Location();
-    return proto.google.protobuf.SourceCodeInfo.Location.deserializeBinaryFromReader(Ee, we);
-  }, proto.google.protobuf.SourceCodeInfo.Location.deserializeBinaryFromReader = function(be, we) {
-    for (; we.nextField() && !we.isEndGroup(); ) {
-      var Ee = we.getFieldNumber();
+    var ve = new e.BinaryReader(be), Ee = new proto.google.protobuf.SourceCodeInfo.Location();
+    return proto.google.protobuf.SourceCodeInfo.Location.deserializeBinaryFromReader(Ee, ve);
+  }, proto.google.protobuf.SourceCodeInfo.Location.deserializeBinaryFromReader = function(be, ve) {
+    for (; ve.nextField() && !ve.isEndGroup(); ) {
+      var Ee = ve.getFieldNumber();
       switch (Ee) {
         case 1:
           for (var xe = (
             /** @type {!Array<number>} */
-            we.isDelimited() ? we.readPackedInt32() : [we.readInt32()]
+            ve.isDelimited() ? ve.readPackedInt32() : [ve.readInt32()]
           ), Oe = 0; Oe < xe.length; Oe++)
             be.addPath(xe[Oe]);
           break;
         case 2:
           for (var xe = (
             /** @type {!Array<number>} */
-            we.isDelimited() ? we.readPackedInt32() : [we.readInt32()]
+            ve.isDelimited() ? ve.readPackedInt32() : [ve.readInt32()]
           ), Oe = 0; Oe < xe.length; Oe++)
             be.addSpan(xe[Oe]);
           break;
         case 3:
           var gr = (
             /** @type {string} */
-            we.readString()
+            ve.readString()
           );
           be.setLeadingComments(gr);
           break;
         case 4:
           var gr = (
             /** @type {string} */
-            we.readString()
+            ve.readString()
           );
           be.setTrailingComments(gr);
           break;
         case 6:
           var gr = (
             /** @type {string} */
-            we.readString()
+            ve.readString()
           );
           be.addLeadingDetachedComments(gr);
           break;
         default:
-          we.skipField();
+          ve.skipField();
           break;
       }
     }
@@ -20993,23 +20766,23 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, proto.google.protobuf.SourceCodeInfo.Location.prototype.serializeBinary = function() {
     var be = new e.BinaryWriter();
     return proto.google.protobuf.SourceCodeInfo.Location.serializeBinaryToWriter(this, be), be.getResultBuffer();
-  }, proto.google.protobuf.SourceCodeInfo.Location.serializeBinaryToWriter = function(be, we) {
+  }, proto.google.protobuf.SourceCodeInfo.Location.serializeBinaryToWriter = function(be, ve) {
     var Ee = void 0;
-    Ee = be.getPathList(), Ee.length > 0 && we.writePackedInt32(
+    Ee = be.getPathList(), Ee.length > 0 && ve.writePackedInt32(
       1,
       Ee
-    ), Ee = be.getSpanList(), Ee.length > 0 && we.writePackedInt32(
+    ), Ee = be.getSpanList(), Ee.length > 0 && ve.writePackedInt32(
       2,
       Ee
     ), Ee = /** @type {string} */
-    e.Message.getField(be, 3), Ee != null && we.writeString(
+    e.Message.getField(be, 3), Ee != null && ve.writeString(
       3,
       Ee
     ), Ee = /** @type {string} */
-    e.Message.getField(be, 4), Ee != null && we.writeString(
+    e.Message.getField(be, 4), Ee != null && ve.writeString(
       4,
       Ee
-    ), Ee = be.getLeadingDetachedCommentsList(), Ee.length > 0 && we.writeRepeatedString(
+    ), Ee = be.getLeadingDetachedCommentsList(), Ee.length > 0 && ve.writeRepeatedString(
       6,
       Ee
     );
@@ -21020,8 +20793,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     );
   }, proto.google.protobuf.SourceCodeInfo.Location.prototype.setPathList = function(be) {
     return e.Message.setField(this, 1, be || []);
-  }, proto.google.protobuf.SourceCodeInfo.Location.prototype.addPath = function(be, we) {
-    return e.Message.addToRepeatedField(this, 1, be, we);
+  }, proto.google.protobuf.SourceCodeInfo.Location.prototype.addPath = function(be, ve) {
+    return e.Message.addToRepeatedField(this, 1, be, ve);
   }, proto.google.protobuf.SourceCodeInfo.Location.prototype.clearPathList = function() {
     return this.setPathList([]);
   }, proto.google.protobuf.SourceCodeInfo.Location.prototype.getSpanList = function() {
@@ -21031,8 +20804,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     );
   }, proto.google.protobuf.SourceCodeInfo.Location.prototype.setSpanList = function(be) {
     return e.Message.setField(this, 2, be || []);
-  }, proto.google.protobuf.SourceCodeInfo.Location.prototype.addSpan = function(be, we) {
-    return e.Message.addToRepeatedField(this, 2, be, we);
+  }, proto.google.protobuf.SourceCodeInfo.Location.prototype.addSpan = function(be, ve) {
+    return e.Message.addToRepeatedField(this, 2, be, ve);
   }, proto.google.protobuf.SourceCodeInfo.Location.prototype.clearSpanList = function() {
     return this.setSpanList([]);
   }, proto.google.protobuf.SourceCodeInfo.Location.prototype.getLeadingComments = function() {
@@ -21064,8 +20837,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     );
   }, proto.google.protobuf.SourceCodeInfo.Location.prototype.setLeadingDetachedCommentsList = function(be) {
     return e.Message.setField(this, 6, be || []);
-  }, proto.google.protobuf.SourceCodeInfo.Location.prototype.addLeadingDetachedComments = function(be, we) {
-    return e.Message.addToRepeatedField(this, 6, be, we);
+  }, proto.google.protobuf.SourceCodeInfo.Location.prototype.addLeadingDetachedComments = function(be, ve) {
+    return e.Message.addToRepeatedField(this, 6, be, ve);
   }, proto.google.protobuf.SourceCodeInfo.Location.prototype.clearLeadingDetachedCommentsList = function() {
     return this.setLeadingDetachedCommentsList([]);
   }, proto.google.protobuf.SourceCodeInfo.prototype.getLocationList = function() {
@@ -21075,34 +20848,34 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     );
   }, proto.google.protobuf.SourceCodeInfo.prototype.setLocationList = function(be) {
     return e.Message.setRepeatedWrapperField(this, 1, be);
-  }, proto.google.protobuf.SourceCodeInfo.prototype.addLocation = function(be, we) {
-    return e.Message.addToRepeatedWrapperField(this, 1, be, proto.google.protobuf.SourceCodeInfo.Location, we);
+  }, proto.google.protobuf.SourceCodeInfo.prototype.addLocation = function(be, ve) {
+    return e.Message.addToRepeatedWrapperField(this, 1, be, proto.google.protobuf.SourceCodeInfo.Location, ve);
   }, proto.google.protobuf.SourceCodeInfo.prototype.clearLocationList = function() {
     return this.setLocationList([]);
   }, proto.google.protobuf.GeneratedCodeInfo.repeatedFields_ = [1], e.Message.GENERATE_TO_OBJECT && (proto.google.protobuf.GeneratedCodeInfo.prototype.toObject = function(be) {
     return proto.google.protobuf.GeneratedCodeInfo.toObject(be, this);
-  }, proto.google.protobuf.GeneratedCodeInfo.toObject = function(be, we) {
+  }, proto.google.protobuf.GeneratedCodeInfo.toObject = function(be, ve) {
     var Ee = {
       annotationList: e.Message.toObjectList(
-        we.getAnnotationList(),
+        ve.getAnnotationList(),
         proto.google.protobuf.GeneratedCodeInfo.Annotation.toObject,
         be
       )
     };
-    return be && (Ee.$jspbMessageInstance = we), Ee;
+    return be && (Ee.$jspbMessageInstance = ve), Ee;
   }), proto.google.protobuf.GeneratedCodeInfo.deserializeBinary = function(be) {
-    var we = new e.BinaryReader(be), Ee = new proto.google.protobuf.GeneratedCodeInfo();
-    return proto.google.protobuf.GeneratedCodeInfo.deserializeBinaryFromReader(Ee, we);
-  }, proto.google.protobuf.GeneratedCodeInfo.deserializeBinaryFromReader = function(be, we) {
-    for (; we.nextField() && !we.isEndGroup(); ) {
-      var Ee = we.getFieldNumber();
+    var ve = new e.BinaryReader(be), Ee = new proto.google.protobuf.GeneratedCodeInfo();
+    return proto.google.protobuf.GeneratedCodeInfo.deserializeBinaryFromReader(Ee, ve);
+  }, proto.google.protobuf.GeneratedCodeInfo.deserializeBinaryFromReader = function(be, ve) {
+    for (; ve.nextField() && !ve.isEndGroup(); ) {
+      var Ee = ve.getFieldNumber();
       switch (Ee) {
         case 1:
           var Oe = new proto.google.protobuf.GeneratedCodeInfo.Annotation();
-          we.readMessage(Oe, proto.google.protobuf.GeneratedCodeInfo.Annotation.deserializeBinaryFromReader), be.addAnnotation(Oe);
+          ve.readMessage(Oe, proto.google.protobuf.GeneratedCodeInfo.Annotation.deserializeBinaryFromReader), be.addAnnotation(Oe);
           break;
         default:
-          we.skipField();
+          ve.skipField();
           break;
       }
     }
@@ -21110,60 +20883,60 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, proto.google.protobuf.GeneratedCodeInfo.prototype.serializeBinary = function() {
     var be = new e.BinaryWriter();
     return proto.google.protobuf.GeneratedCodeInfo.serializeBinaryToWriter(this, be), be.getResultBuffer();
-  }, proto.google.protobuf.GeneratedCodeInfo.serializeBinaryToWriter = function(be, we) {
+  }, proto.google.protobuf.GeneratedCodeInfo.serializeBinaryToWriter = function(be, ve) {
     var Ee = void 0;
-    Ee = be.getAnnotationList(), Ee.length > 0 && we.writeRepeatedMessage(
+    Ee = be.getAnnotationList(), Ee.length > 0 && ve.writeRepeatedMessage(
       1,
       Ee,
       proto.google.protobuf.GeneratedCodeInfo.Annotation.serializeBinaryToWriter
     );
   }, proto.google.protobuf.GeneratedCodeInfo.Annotation.repeatedFields_ = [1], e.Message.GENERATE_TO_OBJECT && (proto.google.protobuf.GeneratedCodeInfo.Annotation.prototype.toObject = function(be) {
     return proto.google.protobuf.GeneratedCodeInfo.Annotation.toObject(be, this);
-  }, proto.google.protobuf.GeneratedCodeInfo.Annotation.toObject = function(be, we) {
+  }, proto.google.protobuf.GeneratedCodeInfo.Annotation.toObject = function(be, ve) {
     var Ee, Oe = {
-      pathList: (Ee = e.Message.getRepeatedField(we, 1)) == null ? void 0 : Ee,
-      sourceFile: (Ee = e.Message.getField(we, 2)) == null ? void 0 : Ee,
-      begin: (Ee = e.Message.getField(we, 3)) == null ? void 0 : Ee,
-      end: (Ee = e.Message.getField(we, 4)) == null ? void 0 : Ee
+      pathList: (Ee = e.Message.getRepeatedField(ve, 1)) == null ? void 0 : Ee,
+      sourceFile: (Ee = e.Message.getField(ve, 2)) == null ? void 0 : Ee,
+      begin: (Ee = e.Message.getField(ve, 3)) == null ? void 0 : Ee,
+      end: (Ee = e.Message.getField(ve, 4)) == null ? void 0 : Ee
     };
-    return be && (Oe.$jspbMessageInstance = we), Oe;
+    return be && (Oe.$jspbMessageInstance = ve), Oe;
   }), proto.google.protobuf.GeneratedCodeInfo.Annotation.deserializeBinary = function(be) {
-    var we = new e.BinaryReader(be), Ee = new proto.google.protobuf.GeneratedCodeInfo.Annotation();
-    return proto.google.protobuf.GeneratedCodeInfo.Annotation.deserializeBinaryFromReader(Ee, we);
-  }, proto.google.protobuf.GeneratedCodeInfo.Annotation.deserializeBinaryFromReader = function(be, we) {
-    for (; we.nextField() && !we.isEndGroup(); ) {
-      var Ee = we.getFieldNumber();
+    var ve = new e.BinaryReader(be), Ee = new proto.google.protobuf.GeneratedCodeInfo.Annotation();
+    return proto.google.protobuf.GeneratedCodeInfo.Annotation.deserializeBinaryFromReader(Ee, ve);
+  }, proto.google.protobuf.GeneratedCodeInfo.Annotation.deserializeBinaryFromReader = function(be, ve) {
+    for (; ve.nextField() && !ve.isEndGroup(); ) {
+      var Ee = ve.getFieldNumber();
       switch (Ee) {
         case 1:
           for (var Oe = (
             /** @type {!Array<number>} */
-            we.isDelimited() ? we.readPackedInt32() : [we.readInt32()]
+            ve.isDelimited() ? ve.readPackedInt32() : [ve.readInt32()]
           ), xe = 0; xe < Oe.length; xe++)
             be.addPath(Oe[xe]);
           break;
         case 2:
           var gr = (
             /** @type {string} */
-            we.readString()
+            ve.readString()
           );
           be.setSourceFile(gr);
           break;
         case 3:
           var gr = (
             /** @type {number} */
-            we.readInt32()
+            ve.readInt32()
           );
           be.setBegin(gr);
           break;
         case 4:
           var gr = (
             /** @type {number} */
-            we.readInt32()
+            ve.readInt32()
           );
           be.setEnd(gr);
           break;
         default:
-          we.skipField();
+          ve.skipField();
           break;
       }
     }
@@ -21171,21 +20944,21 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
   }, proto.google.protobuf.GeneratedCodeInfo.Annotation.prototype.serializeBinary = function() {
     var be = new e.BinaryWriter();
     return proto.google.protobuf.GeneratedCodeInfo.Annotation.serializeBinaryToWriter(this, be), be.getResultBuffer();
-  }, proto.google.protobuf.GeneratedCodeInfo.Annotation.serializeBinaryToWriter = function(be, we) {
+  }, proto.google.protobuf.GeneratedCodeInfo.Annotation.serializeBinaryToWriter = function(be, ve) {
     var Ee = void 0;
-    Ee = be.getPathList(), Ee.length > 0 && we.writePackedInt32(
+    Ee = be.getPathList(), Ee.length > 0 && ve.writePackedInt32(
       1,
       Ee
     ), Ee = /** @type {string} */
-    e.Message.getField(be, 2), Ee != null && we.writeString(
+    e.Message.getField(be, 2), Ee != null && ve.writeString(
       2,
       Ee
     ), Ee = /** @type {number} */
-    e.Message.getField(be, 3), Ee != null && we.writeInt32(
+    e.Message.getField(be, 3), Ee != null && ve.writeInt32(
       3,
       Ee
     ), Ee = /** @type {number} */
-    e.Message.getField(be, 4), Ee != null && we.writeInt32(
+    e.Message.getField(be, 4), Ee != null && ve.writeInt32(
       4,
       Ee
     );
@@ -21196,8 +20969,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     );
   }, proto.google.protobuf.GeneratedCodeInfo.Annotation.prototype.setPathList = function(be) {
     return e.Message.setField(this, 1, be || []);
-  }, proto.google.protobuf.GeneratedCodeInfo.Annotation.prototype.addPath = function(be, we) {
-    return e.Message.addToRepeatedField(this, 1, be, we);
+  }, proto.google.protobuf.GeneratedCodeInfo.Annotation.prototype.addPath = function(be, ve) {
+    return e.Message.addToRepeatedField(this, 1, be, ve);
   }, proto.google.protobuf.GeneratedCodeInfo.Annotation.prototype.clearPathList = function() {
     return this.setPathList([]);
   }, proto.google.protobuf.GeneratedCodeInfo.Annotation.prototype.getSourceFile = function() {
@@ -21240,8 +21013,8 @@ var srcExports = src.exports, protobufjs = srcExports, lib$1 = {}, descriptor_pb
     );
   }, proto.google.protobuf.GeneratedCodeInfo.prototype.setAnnotationList = function(be) {
     return e.Message.setRepeatedWrapperField(this, 1, be);
-  }, proto.google.protobuf.GeneratedCodeInfo.prototype.addAnnotation = function(be, we) {
-    return e.Message.addToRepeatedWrapperField(this, 1, be, proto.google.protobuf.GeneratedCodeInfo.Annotation, we);
+  }, proto.google.protobuf.GeneratedCodeInfo.prototype.addAnnotation = function(be, ve) {
+    return e.Message.addToRepeatedWrapperField(this, 1, be, proto.google.protobuf.GeneratedCodeInfo.Annotation, ve);
   }, proto.google.protobuf.GeneratedCodeInfo.prototype.clearAnnotationList = function() {
     return this.setAnnotationList([]);
   }, ye.object.extend(fe, proto.google.protobuf);
@@ -21425,16 +21198,16 @@ function getFieldType(fe) {
 }
 util.getFieldType = getFieldType;
 function getField(fe) {
-  const e = fe.getOptions(), ye = fe.getName(), me = fe.getNumber(), be = fe.hasProto3Optional() ? "optional" : "", we = getJSType(e), Ee = getbType(e), Oe = we ? `[${we}]` : Ee ? `[${Ee}]` : "";
+  const e = fe.getOptions(), ye = fe.getName(), me = fe.getNumber(), be = fe.hasProto3Optional() ? "optional" : "", ve = getJSType(e), Ee = getbType(e), Oe = ve ? `[${ve}]` : Ee ? `[${Ee}]` : "";
   return `${be} ${getFieldLabel(fe)} ${getFieldType(fe)} ${ye} = ${me} ${Oe};`;
 }
 util.getField = getField;
 function getOneofs(fe, e) {
   const ye = [];
   for (const [me, be] of fe.getOneofDeclList().entries()) {
-    const we = be.getName();
+    const ve = be.getName();
     e[me] && ye.push(`
-    oneof ${we} {
+    oneof ${ve} {
       ${e[me].join(`
     `)}
     }
@@ -21446,12 +21219,12 @@ function getOneofs(fe, e) {
 util.getOneofs = getOneofs;
 function getMessage(fe) {
   const e = [], ye = [], me = [];
-  for (const we of fe.getNestedTypeList())
-    e.push(getMessage(we));
-  for (const we of fe.getFieldList()) {
-    const Ee = getField(we);
-    if (we.hasOneofIndex() && !we.hasProto3Optional()) {
-      const Oe = we.getOneofIndex();
+  for (const ve of fe.getNestedTypeList())
+    e.push(getMessage(ve));
+  for (const ve of fe.getFieldList()) {
+    const Ee = getField(ve);
+    if (ve.hasOneofIndex() && !ve.hasProto3Optional()) {
+      const Oe = ve.getOneofIndex();
       if (Oe === void 0)
         throw new Error("Missing one_of index.");
       let xe = me[Oe];
@@ -21478,7 +21251,7 @@ lib$1.convert = void 0;
 const descriptor_pb_js_1 = descriptor_pb, util_1 = util, convert = (fe) => {
   const e = typeof fe == "string" ? Buffer.from(fe, "base64") : fe, ye = descriptor_pb_js_1.FileDescriptorSet.deserializeBinary(e), me = [];
   for (const be of ye.getFileList()) {
-    const we = be.getName() || "";
+    const ve = be.getName() || "";
     let Ee = "";
     be.hasSyntax() && (Ee += (0, util_1.getSyntax)(be)), be.hasPackage() && (Ee += (0, util_1.getPackage)(be)), be.hasOptions();
     for (const Oe of be.getDependencyList())
@@ -21489,7 +21262,7 @@ const descriptor_pb_js_1 = descriptor_pb, util_1 = util, convert = (fe) => {
       Ee += (0, util_1.getExtension)(Oe);
     for (const Oe of be.getMessageTypeList())
       Ee += (0, util_1.getMessage)(Oe);
-    me.push({ file: we, definition: Ee });
+    me.push({ file: ve, definition: Ee });
   }
   return me;
 };
@@ -21550,18 +21323,18 @@ class Serializer {
   }
   btypeDecode(e, ye, me) {
     const be = {};
-    return Object.keys(ye.fields).forEach((we) => {
-      const { options: Ee, name: Oe, type: xe, rule: gr } = ye.fields[we];
+    return Object.keys(ye.fields).forEach((ve) => {
+      const { options: Ee, name: Oe, type: xe, rule: gr } = ye.fields[ve];
       if (!e[Oe])
         return;
-      const ve = { type: xe };
-      if (Ee && (Ee[OP_BYTES_1] ? ve.btype = Ee[OP_BYTES_1] : Ee[OP_BYTES_2] && (ve.btype = Ee[OP_BYTES_2])), gr === "repeated") {
+      const we = { type: xe };
+      if (Ee && (Ee[OP_BYTES_1] ? we.btype = Ee[OP_BYTES_1] : Ee[OP_BYTES_2] && (we.btype = Ee[OP_BYTES_2])), gr === "repeated") {
         be[Oe] = e[Oe].map((Se) => {
           if (!nativeTypes.includes(xe)) {
             const $r = this.root.lookupTypeOrEnum(xe);
             return $r.fields ? this.btypeDecode(Se, $r, me) : Se;
           }
-          return (0, utils_1$4.btypeDecodeValue)(Se, ve, me);
+          return (0, utils_1$4.btypeDecodeValue)(Se, we, me);
         });
         return;
       }
@@ -21574,23 +21347,23 @@ class Serializer {
         be[Oe] = this.btypeDecode(e[Oe], Se, me);
         return;
       }
-      be[Oe] = (0, utils_1$4.btypeDecodeValue)(e[Oe], ve, me);
+      be[Oe] = (0, utils_1$4.btypeDecodeValue)(e[Oe], we, me);
     }), be;
   }
   btypeEncode(e, ye, me) {
     const be = {};
-    return Object.keys(ye.fields).forEach((we) => {
-      const { options: Ee, name: Oe, type: xe, rule: gr } = ye.fields[we];
+    return Object.keys(ye.fields).forEach((ve) => {
+      const { options: Ee, name: Oe, type: xe, rule: gr } = ye.fields[ve];
       if (!e[Oe])
         return;
-      const ve = { type: xe };
-      if (Ee && (Ee[OP_BYTES_1] ? ve.btype = Ee[OP_BYTES_1] : Ee[OP_BYTES_2] && (ve.btype = Ee[OP_BYTES_2])), gr === "repeated") {
+      const we = { type: xe };
+      if (Ee && (Ee[OP_BYTES_1] ? we.btype = Ee[OP_BYTES_1] : Ee[OP_BYTES_2] && (we.btype = Ee[OP_BYTES_2])), gr === "repeated") {
         be[Oe] = e[Oe].map((Se) => {
           if (!nativeTypes.includes(xe)) {
             const $r = this.root.lookupTypeOrEnum(xe);
             return $r.fields ? this.btypeEncode(Se, $r, me) : Se;
           }
-          return (0, utils_1$4.btypeEncodeValue)(Se, ve, me);
+          return (0, utils_1$4.btypeEncodeValue)(Se, we, me);
         });
         return;
       }
@@ -21603,7 +21376,7 @@ class Serializer {
         be[Oe] = this.btypeEncode(e[Oe], Se, me);
         return;
       }
-      be[Oe] = (0, utils_1$4.btypeEncodeValue)(e[Oe], ve, me);
+      be[Oe] = (0, utils_1$4.btypeEncodeValue)(e[Oe], we, me);
     }), be;
   }
   /**
@@ -21619,10 +21392,10 @@ class Serializer {
       be = this.root.lookupType(ye);
     else
       throw new Error("no typeName defined");
-    let we = {};
+    let ve = {};
     const Ee = (me == null ? void 0 : me.bytesConversion) === void 0 ? this.bytesConversion : me.bytesConversion, Oe = (me == null ? void 0 : me.verifyChecksum) === void 0 ? this.verifyChecksum.serialize : me.verifyChecksum;
-    Ee ? we = this.btypeDecode(e, be, Oe) : we = e;
-    const xe = be.create(we);
+    Ee ? ve = this.btypeDecode(e, be, Oe) : ve = e;
+    const xe = be.create(ve);
     return be.encode(xe).finish();
   }
   /**
@@ -21632,18 +21405,18 @@ class Serializer {
    */
   async deserialize(e, ye, me) {
     const be = typeof e == "string" ? (0, utils_1$4.decodeBase64url)(e) : e;
-    let we;
+    let ve;
     if (this.defaultType)
-      we = this.defaultType;
+      ve = this.defaultType;
     else if (ye)
-      we = this.root.lookupType(ye);
+      ve = this.root.lookupType(ye);
     else
       throw new Error("no typeName defined");
-    const Ee = we.decode(be), Oe = we.toObject(Ee, {
+    const Ee = ve.decode(be), Oe = ve.toObject(Ee, {
       longs: String,
       defaults: !0
     }), xe = (me == null ? void 0 : me.bytesConversion) === void 0 ? this.bytesConversion : me.bytesConversion, gr = (me == null ? void 0 : me.verifyChecksum) === void 0 ? this.verifyChecksum.deserialize : me.verifyChecksum;
-    return xe ? this.btypeEncode(Oe, we, gr) : Oe;
+    return xe ? this.btypeEncode(Oe, ve, gr) : Oe;
   }
 }
 Serializer$1.Serializer = Serializer;
@@ -22400,8 +22173,8 @@ const sha256_1$1 = sha256, Serializer_1$1 = Serializer$1, utils_1$3 = utils$1, c
 function prepareDictionary(fe) {
   const e = new Serializer_1$1.Serializer(chain_proto_json_1.default, { bytesConversion: !0 }), ye = {};
   return Object.keys(defaultAlias).forEach((be) => {
-    const we = (0, utils_1$3.encodeBase64)((0, utils_1$3.multihash)((0, sha256_1$1.sha256)(be)));
-    ye[we] = {
+    const ve = (0, utils_1$3.encodeBase64)((0, utils_1$3.multihash)((0, sha256_1$1.sha256)(be)));
+    ye[ve] = {
       serializer: e,
       alias: be,
       ...defaultAlias[be]
@@ -22417,20 +22190,20 @@ async function encodeGenesisData(fe, e = {}) {
     return ye;
   const me = prepareDictionary(e);
   return ye.entries = await Promise.all(fe.entries.map(async (be) => {
-    const we = Object.keys(me).find((Se) => Se === be.key || be.alias && me[Se].alias === be.alias);
-    if (!we)
+    const ve = Object.keys(me).find((Se) => Se === be.key || be.alias && me[Se].alias === be.alias);
+    if (!ve)
       return {
         error: `key ${be.key} not found in the dictionary`,
         space: be.space,
         key: be.key,
         value: (0, utils_1$3.encodeBase64)(new Uint8Array())
       };
-    const { isAddress: Ee, serializer: Oe, typeName: xe } = me[we];
-    let gr, ve = "";
-    return Ee ? gr = (0, utils_1$3.decodeBase58)(be.value) : Oe && xe ? gr = await Oe.serialize(be.value, xe) : (gr = new Uint8Array(), ve = "no serializer or typeName defined in the dictionary"), {
-      ...ve && { error: ve },
+    const { isAddress: Ee, serializer: Oe, typeName: xe } = me[ve];
+    let gr, we = "";
+    return Ee ? gr = (0, utils_1$3.decodeBase58)(be.value) : Oe && xe ? gr = await Oe.serialize(be.value, xe) : (gr = new Uint8Array(), we = "no serializer or typeName defined in the dictionary"), {
+      ...we && { error: we },
       space: be.space,
-      key: we,
+      key: ve,
       value: (0, utils_1$3.encodeBase64)(gr)
     };
   })), ye;
@@ -22442,18 +22215,18 @@ async function decodeGenesisData(fe, e = {}) {
     return ye;
   const me = prepareDictionary(e);
   return ye.entries = await Promise.all(fe.entries.map(async (be) => {
-    const we = Object.keys(me).find((Fr) => Fr === be.key);
-    if (!we)
+    const ve = Object.keys(me).find((Fr) => Fr === be.key);
+    if (!ve)
       return {
         error: `key ${be.key} not found in the dictionary`,
         ...be
       };
-    const { isAddress: Ee, serializer: Oe, typeName: xe, alias: gr } = me[we], ve = (0, utils_1$3.encodeBase64url)((0, utils_1$3.decodeBase64)(be.value));
+    const { isAddress: Ee, serializer: Oe, typeName: xe, alias: gr } = me[ve], we = (0, utils_1$3.encodeBase64url)((0, utils_1$3.decodeBase64)(be.value));
     let Se, $r = "";
-    return Ee ? Se = (0, utils_1$3.encodeBase58)((0, utils_1$3.decodeBase64url)(ve)) : Oe && xe ? Se = await Oe.deserialize(ve, xe) : (Se = ve, $r = "no serializer or typeName defined in the dictionary"), {
+    return Ee ? Se = (0, utils_1$3.encodeBase58)((0, utils_1$3.decodeBase64url)(we)) : Oe && xe ? Se = await Oe.deserialize(we, xe) : (Se = we, $r = "no serializer or typeName defined in the dictionary"), {
       ...$r && { error: $r },
       space: be.space,
-      key: we,
+      key: ve,
       value: Se,
       ...gr && { alias: gr }
     };
@@ -22462,17 +22235,17 @@ async function decodeGenesisData(fe, e = {}) {
 utilsNode.decodeGenesisData = decodeGenesisData;
 utilsNode.ChainTypes = chain_proto_json_1.default;
 (function(fe) {
-  var e = commonjsGlobal && commonjsGlobal.__createBinding || (Object.create ? function(me, be, we, Ee) {
-    Ee === void 0 && (Ee = we);
-    var Oe = Object.getOwnPropertyDescriptor(be, we);
+  var e = commonjsGlobal && commonjsGlobal.__createBinding || (Object.create ? function(me, be, ve, Ee) {
+    Ee === void 0 && (Ee = ve);
+    var Oe = Object.getOwnPropertyDescriptor(be, ve);
     (!Oe || ("get" in Oe ? !be.__esModule : Oe.writable || Oe.configurable)) && (Oe = { enumerable: !0, get: function() {
-      return be[we];
+      return be[ve];
     } }), Object.defineProperty(me, Ee, Oe);
-  } : function(me, be, we, Ee) {
-    Ee === void 0 && (Ee = we), me[Ee] = be[we];
+  } : function(me, be, ve, Ee) {
+    Ee === void 0 && (Ee = ve), me[Ee] = be[ve];
   }), ye = commonjsGlobal && commonjsGlobal.__exportStar || function(me, be) {
-    for (var we in me)
-      we !== "default" && !Object.prototype.hasOwnProperty.call(be, we) && e(be, me, we);
+    for (var ve in me)
+      ve !== "default" && !Object.prototype.hasOwnProperty.call(be, ve) && e(be, me, ve);
   };
   Object.defineProperty(fe, "__esModule", { value: !0 }), ye(utils$1, fe), ye(utilsNode, fe);
 })(indexUtils);
@@ -22543,13 +22316,13 @@ class Contract {
         const be = {
           ...this.options,
           ...me
-        }, { read_only: we, return: Ee, default_output: Oe, preformat_argument: xe, preformat_return: gr } = this.abi.methods[e];
-        let ve;
-        typeof xe == "function" ? ve = xe(ye) : ve = ye;
-        const Se = await this.encodeOperation({ name: e, args: ve });
+        }, { read_only: ve, return: Ee, default_output: Oe, preformat_argument: xe, preformat_return: gr } = this.abi.methods[e];
+        let we;
+        typeof xe == "function" ? we = xe(ye) : we = ye;
+        const Se = await this.encodeOperation({ name: e, args: we });
         if (be.onlyOperation)
           return { operation: Se };
-        if (we) {
+        if (ve) {
           if (!Ee)
             throw new Error(`No output defined for ${e}`);
           const { result: Vr } = await this.provider.readContract(Se.call_contract);
@@ -22658,7 +22431,7 @@ class Contract {
     };
     if (ye.onlyOperation)
       return { operation: be };
-    let we = await this.signer.prepareTransaction({
+    let ve = await this.signer.prepareTransaction({
       header: {
         ...ye.chainId && { chain_id: ye.chainId },
         ...ye.rcLimit && { rc_limit: ye.rcLimit },
@@ -22676,9 +22449,9 @@ class Contract {
       const xe = () => {
         throw new Error("This transaction was not broadcasted");
       };
-      return ye.signTransaction && (we = await this.signer.signTransaction(we, ye.sendAbis ? ye.abis : void 0)), { operation: be, transaction: { ...we, wait: xe } };
+      return ye.signTransaction && (ve = await this.signer.signTransaction(ve, ye.sendAbis ? ye.abis : void 0)), { operation: be, transaction: { ...ve, wait: xe } };
     }
-    const { transaction: Ee, receipt: Oe } = await this.signer.sendTransaction(we, ye);
+    const { transaction: Ee, receipt: Oe } = await this.signer.sendTransaction(ve, ye);
     return { operation: be, transaction: Ee, receipt: Oe };
   }
   /**
@@ -22814,7 +22587,7 @@ var Signer$1 = {}, lib = {};
 (function(fe) {
   /*! noble-secp256k1 - MIT License (c) 2019 Paul Miller (paulmillr.com) */
   Object.defineProperty(fe, "__esModule", { value: !0 }), fe.utils = fe.schnorr = fe.verify = fe.signSync = fe.sign = fe.getSharedSecret = fe.recoverPublicKey = fe.getPublicKey = fe.Signature = fe.Point = fe.CURVE = void 0;
-  const e = require$$0, ye = BigInt(0), me = BigInt(1), be = BigInt(2), we = BigInt(3), Ee = BigInt(8), Oe = Object.freeze({
+  const e = require$$1, ye = BigInt(0), me = BigInt(1), be = BigInt(2), ve = BigInt(3), Ee = BigInt(8), Oe = Object.freeze({
     a: ye,
     b: BigInt(7),
     P: BigInt("0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc2f"),
@@ -22829,13 +22602,13 @@ var Signer$1 = {}, lib = {};
     beta: BigInt("0x7ae96a2b657c07106e64479eac3434e99cf0497512f58995c1396c28719501ee"),
     splitScalar(io) {
       const { n: Gr } = Oe, ro = BigInt("0x3086d221a7d46bcde86c90e49284eb15"), lo = -me * BigInt("0xe4437ed6010e88286f547fa90abfe4c3"), _o = BigInt("0x114ca50f7a8e2f3f657c1108d9d44cfd8"), So = ro, $o = BigInt("0x100000000000000000000000000000000"), Ro = xe(So * io, Gr), Fo = xe(-lo * io, Gr);
-      let Io = go(io - Ro * ro - Fo * _o, Gr), xo = go(-Ro * lo - Fo * So, Gr);
-      const jo = Io > $o, Lo = xo > $o;
-      if (jo && (Io = Gr - Io), Lo && (xo = Gr - xo), Io > $o || xo > $o)
+      let Do = go(io - Ro * ro - Fo * _o, Gr), xo = go(-Ro * lo - Fo * So, Gr);
+      const jo = Do > $o, Lo = xo > $o;
+      if (jo && (Do = Gr - Do), Lo && (xo = Gr - xo), Do > $o || xo > $o)
         throw new Error("splitScalarEndo: Endomorphism failed, k=" + io);
-      return { k1neg: jo, k1: Io, k2neg: Lo, k2: xo };
+      return { k1neg: jo, k1: Do, k2neg: Lo, k2: xo };
     }
-  }, ve = 32, Se = 32, $r = 32, Fr = ve + 1, Br = 2 * ve + 1;
+  }, we = 32, Se = 32, $r = 32, Fr = we + 1, Br = 2 * we + 1;
   function Vr(io) {
     const { a: Gr, b: ro } = Oe, lo = go(io * io), _o = go(lo * io);
     return go(_o + Gr * io + ro);
@@ -22868,14 +22641,14 @@ var Signer$1 = {}, lib = {};
     }
     equals(Gr) {
       kr(Gr);
-      const { x: ro, y: lo, z: _o } = this, { x: So, y: $o, z: Ro } = Gr, Fo = go(_o * _o), Io = go(Ro * Ro), xo = go(ro * Io), jo = go(So * Fo), Lo = go(go(lo * Ro) * Io), Qo = go(go($o * _o) * Fo);
+      const { x: ro, y: lo, z: _o } = this, { x: So, y: $o, z: Ro } = Gr, Fo = go(_o * _o), Do = go(Ro * Ro), xo = go(ro * Do), jo = go(So * Fo), Lo = go(go(lo * Ro) * Do), Qo = go(go($o * _o) * Fo);
       return xo === jo && Lo === Qo;
     }
     negate() {
       return new qr(this.x, go(-this.y), this.z);
     }
     double() {
-      const { x: Gr, y: ro, z: lo } = this, _o = go(Gr * Gr), So = go(ro * ro), $o = go(So * So), Ro = Gr + So, Fo = go(be * (go(Ro * Ro) - _o - $o)), Io = go(we * _o), xo = go(Io * Io), jo = go(xo - be * Fo), Lo = go(Io * (Fo - jo) - Ee * $o), Qo = go(be * ro * lo);
+      const { x: Gr, y: ro, z: lo } = this, _o = go(Gr * Gr), So = go(ro * ro), $o = go(So * So), Ro = Gr + So, Fo = go(be * (go(Ro * Ro) - _o - $o)), Do = go(ve * _o), xo = go(Do * Do), jo = go(xo - be * Fo), Lo = go(Do * (Fo - jo) - Ee * $o), Qo = go(be * ro * lo);
       return new qr(jo, Lo, Qo);
     }
     add(Gr) {
@@ -22885,7 +22658,7 @@ var Signer$1 = {}, lib = {};
         return this;
       if (ro === ye || lo === ye)
         return Gr;
-      const Fo = go(_o * _o), Io = go(Ro * Ro), xo = go(ro * Io), jo = go(So * Fo), Lo = go(go(lo * Ro) * Io), Qo = go(go($o * _o) * Fo), gi = go(jo - xo), vi = go(Qo - Lo);
+      const Fo = go(_o * _o), Do = go(Ro * Ro), xo = go(ro * Do), jo = go(So * Fo), Lo = go(go(lo * Ro) * Do), Qo = go(go($o * _o) * Fo), gi = go(jo - xo), vi = go(Qo - Lo);
       if (gi === ye)
         return vi === ye ? this.double() : qr.ZERO;
       const Fi = go(gi * gi), _i = go(gi * Fi), Mi = go(xo * Fi), wn = go(vi * vi - _i - be * Mi), En = go(vi * (Mi - wn) - Lo * _i), Li = go(_o * Ro * gi);
@@ -22898,7 +22671,7 @@ var Signer$1 = {}, lib = {};
       const ro = qr.ZERO;
       if (typeof Gr == "bigint" && Gr === ye)
         return ro;
-      let lo = Do(Gr);
+      let lo = Io(Gr);
       if (lo === me)
         return this;
       if (!oo) {
@@ -22907,10 +22680,10 @@ var Signer$1 = {}, lib = {};
           lo & me && (jo = jo.add(Lo)), Lo = Lo.double(), lo >>= me;
         return jo;
       }
-      let { k1neg: _o, k1: So, k2neg: $o, k2: Ro } = gr.splitScalar(lo), Fo = ro, Io = ro, xo = this;
+      let { k1neg: _o, k1: So, k2neg: $o, k2: Ro } = gr.splitScalar(lo), Fo = ro, Do = ro, xo = this;
       for (; So > ye || Ro > ye; )
-        So & me && (Fo = Fo.add(xo)), Ro & me && (Io = Io.add(xo)), xo = xo.double(), So >>= me, Ro >>= me;
-      return _o && (Fo = Fo.negate()), $o && (Io = Io.negate()), Io = new qr(go(Io.x * gr.beta), Io.y, Io.z), Fo.add(Io);
+        So & me && (Fo = Fo.add(xo)), Ro & me && (Do = Do.add(xo)), xo = xo.double(), So >>= me, Ro >>= me;
+      return _o && (Fo = Fo.negate()), $o && (Do = Do.negate()), Do = new qr(go(Do.x * gr.beta), Do.y, Do.z), Fo.add(Do);
     }
     precomputeWindow(Gr) {
       const ro = oo ? 128 / Gr + 1 : 256 / Gr + 1, lo = [];
@@ -22931,10 +22704,10 @@ var Signer$1 = {}, lib = {};
       let _o = ro && Yr.get(ro);
       _o || (_o = this.precomputeWindow(lo), ro && lo !== 1 && (_o = qr.normalizeZ(_o), Yr.set(ro, _o)));
       let So = qr.ZERO, $o = qr.BASE;
-      const Ro = 1 + (oo ? 128 / lo : 256 / lo), Fo = 2 ** (lo - 1), Io = BigInt(2 ** lo - 1), xo = 2 ** lo, jo = BigInt(lo);
+      const Ro = 1 + (oo ? 128 / lo : 256 / lo), Fo = 2 ** (lo - 1), Do = BigInt(2 ** lo - 1), xo = 2 ** lo, jo = BigInt(lo);
       for (let Lo = 0; Lo < Ro; Lo++) {
         const Qo = Lo * Fo;
-        let gi = Number(Gr & Io);
+        let gi = Number(Gr & Do);
         Gr >>= jo, gi > Fo && (gi -= xo, Gr += me);
         const vi = Qo, Fi = Qo + Math.abs(gi) - 1, _i = Lo % 2 !== 0, Mi = gi < 0;
         gi === 0 ? $o = $o.add(Hr(_i, _o[vi])) : So = So.add(Hr(Mi, _o[Fi]));
@@ -22942,10 +22715,10 @@ var Signer$1 = {}, lib = {};
       return { p: So, f: $o };
     }
     multiply(Gr, ro) {
-      let lo = Do(Gr), _o, So;
+      let lo = Io(Gr), _o, So;
       if (oo) {
-        const { k1neg: $o, k1: Ro, k2neg: Fo, k2: Io } = gr.splitScalar(lo);
-        let { p: xo, f: jo } = this.wNAF(Ro, ro), { p: Lo, f: Qo } = this.wNAF(Io, ro);
+        const { k1neg: $o, k1: Ro, k2neg: Fo, k2: Do } = gr.splitScalar(lo);
+        let { p: xo, f: jo } = this.wNAF(Ro, ro), { p: Lo, f: Qo } = this.wNAF(Do, ro);
         xo = Hr($o, xo), Lo = Hr(Fo, Lo), Lo = new qr(go(Lo.x * gr.beta), Lo.y, Lo.z), _o = xo.add(Lo), So = jo.add(Qo);
       } else {
         const { p: $o, f: Ro } = this.wNAF(lo, ro);
@@ -22956,12 +22729,12 @@ var Signer$1 = {}, lib = {};
     toAffine(Gr) {
       const { x: ro, y: lo, z: _o } = this, So = this.equals(qr.ZERO);
       Gr == null && (Gr = So ? Ee : Bo(_o));
-      const $o = Gr, Ro = go($o * $o), Fo = go(Ro * $o), Io = go(ro * Ro), xo = go(lo * Fo), jo = go(_o * $o);
+      const $o = Gr, Ro = go($o * $o), Fo = go(Ro * $o), Do = go(ro * Ro), xo = go(lo * Fo), jo = go(_o * $o);
       if (So)
         return Ur.ZERO;
       if (jo !== me)
         throw new Error("invZ was invalid");
-      return new Ur(Io, xo);
+      return new Ur(Do, xo);
     }
   }
   qr.BASE = new qr(Oe.Gx, Oe.Gy, me), qr.ZERO = new qr(ye, me, ye);
@@ -22992,12 +22765,12 @@ var Signer$1 = {}, lib = {};
       return Ro.assertValidity(), Ro;
     }
     static fromUncompressedHex(Gr) {
-      const ro = yo(Gr.subarray(1, ve + 1)), lo = yo(Gr.subarray(ve + 1, ve * 2 + 1)), _o = new Ur(ro, lo);
+      const ro = yo(Gr.subarray(1, we + 1)), lo = yo(Gr.subarray(we + 1, we * 2 + 1)), _o = new Ur(ro, lo);
       return _o.assertValidity(), _o;
     }
     static fromHex(Gr) {
       const ro = Oo(Gr), lo = ro.length, _o = ro[0];
-      if (lo === ve)
+      if (lo === we)
         return this.fromCompressedHex(ro);
       if (lo === Fr && (_o === 2 || _o === 3))
         return this.fromCompressedHex(ro);
@@ -23012,7 +22785,7 @@ var Signer$1 = {}, lib = {};
       const { r: _o, s: So } = si(ro);
       if (![0, 1, 2, 3].includes(lo))
         throw new Error("Cannot recover: invalid recovery bit");
-      const $o = Qr(Oo(Gr)), { n: Ro } = Oe, Fo = lo === 2 || lo === 3 ? _o + Ro : _o, Io = Bo(Fo, Ro), xo = go(-$o * Io, Ro), jo = go(So * Io, Ro), Lo = lo & 1 ? "03" : "02", Qo = Ur.fromHex(Lo + Jr(Fo)), gi = Ur.BASE.multiplyAndAddUnsafe(Qo, xo, jo);
+      const $o = Qr(Oo(Gr)), { n: Ro } = Oe, Fo = lo === 2 || lo === 3 ? _o + Ro : _o, Do = Bo(Fo, Ro), xo = go(-$o * Do, Ro), jo = go(So * Do, Ro), Lo = lo & 1 ? "03" : "02", Qo = Ur.fromHex(Lo + Jr(Fo)), gi = Ur.BASE.multiplyAndAddUnsafe(Qo, xo, jo);
       if (!gi)
         throw new Error("Cannot recover signature: point at infinify");
       return gi.assertValidity(), gi;
@@ -23207,7 +22980,7 @@ var Signer$1 = {}, lib = {};
   function Oo(io) {
     return io instanceof Uint8Array ? Uint8Array.from(io) : po(io);
   }
-  function Do(io) {
+  function Io(io) {
     if (typeof io == "number" && Number.isSafeInteger(io) && io > 0)
       return BigInt(io);
     if (typeof io == "bigint" && Eo(io))
@@ -23226,7 +22999,7 @@ var Signer$1 = {}, lib = {};
     return lo;
   }
   function Po(io) {
-    const { P: Gr } = Oe, ro = BigInt(6), lo = BigInt(11), _o = BigInt(22), So = BigInt(23), $o = BigInt(44), Ro = BigInt(88), Fo = io * io * io % Gr, Io = Fo * Fo * io % Gr, xo = No(Io, we) * Io % Gr, jo = No(xo, we) * Io % Gr, Lo = No(jo, be) * Fo % Gr, Qo = No(Lo, lo) * Lo % Gr, gi = No(Qo, _o) * Qo % Gr, vi = No(gi, $o) * gi % Gr, Fi = No(vi, Ro) * vi % Gr, _i = No(Fi, $o) * gi % Gr, Mi = No(_i, we) * Io % Gr, wn = No(Mi, So) * Qo % Gr, En = No(wn, ro) * Fo % Gr, Li = No(En, be);
+    const { P: Gr } = Oe, ro = BigInt(6), lo = BigInt(11), _o = BigInt(22), So = BigInt(23), $o = BigInt(44), Ro = BigInt(88), Fo = io * io * io % Gr, Do = Fo * Fo * io % Gr, xo = No(Do, ve) * Do % Gr, jo = No(xo, ve) * Do % Gr, Lo = No(jo, be) * Fo % Gr, Qo = No(Lo, lo) * Lo % Gr, gi = No(Qo, _o) * Qo % Gr, vi = No(gi, $o) * gi % Gr, Fi = No(vi, Ro) * vi % Gr, _i = No(Fi, $o) * gi % Gr, Mi = No(_i, ve) * Do % Gr, wn = No(Mi, So) * Qo % Gr, En = No(wn, ro) * Fo % Gr, Li = No(En, be);
     if (Li * Li % Gr !== io)
       throw new Error("Cannot find square root");
     return Li;
@@ -23236,8 +23009,8 @@ var Signer$1 = {}, lib = {};
       throw new Error(`invert: expected positive integers, got n=${io} mod=${Gr}`);
     let ro = go(io, Gr), lo = Gr, _o = ye, So = me;
     for (; ro !== ye; ) {
-      const Ro = lo / ro, Fo = lo % ro, Io = _o - So * Ro;
-      lo = ro, ro = Fo, _o = So, So = Io;
+      const Ro = lo / ro, Fo = lo % ro, Do = _o - So * Ro;
+      lo = ro, ro = Fo, _o = So, So = Do;
     }
     if (lo !== me)
       throw new Error("invert: does not exist");
@@ -23324,10 +23097,10 @@ var Signer$1 = {}, lib = {};
     const $o = Bo(So, _o), Ro = Ur.BASE.multiply(So), Fo = go(Ro.x, _o);
     if (Fo === ye)
       return;
-    const Io = go($o * go(Gr + ro * Fo, _o), _o);
-    if (Io === ye)
+    const Do = go($o * go(Gr + ro * Fo, _o), _o);
+    if (Do === ye)
       return;
-    let xo = new Xr(Fo, Io), jo = (Ro.x === xo.r ? 0 : 2) | Number(Ro.y & me);
+    let xo = new Xr(Fo, Do), jo = (Ro.x === xo.r ? 0 : 2) | Number(Ro.y & me);
     return lo && xo.hasHighS() && (xo = xo.normalizeS(), jo ^= 1), { sig: xo, recovery: jo };
   }
   function Uo(io) {
@@ -23384,7 +23157,7 @@ var Signer$1 = {}, lib = {};
   }
   fe.getSharedSecret = Zo;
   function Ko(io) {
-    const Gr = io.length > ve ? io.slice(0, ve) : io;
+    const Gr = io.length > we ? io.slice(0, we) : io;
     return yo(Gr);
   }
   function Jo(io) {
@@ -23399,10 +23172,10 @@ var Signer$1 = {}, lib = {};
       throw new Error(`sign: expected valid message hash, not "${io}"`);
     const lo = Oo(io), _o = Uo(Gr), So = [Ho(_o), Jo(lo)];
     if (ro != null) {
-      ro === !0 && (ro = fe.utils.randomBytes(ve));
+      ro === !0 && (ro = fe.utils.randomBytes(we));
       const Fo = Oo(ro);
-      if (Fo.length !== ve)
-        throw new Error(`sign: Expected ${ve} bytes of extra data`);
+      if (Fo.length !== we)
+        throw new Error(`sign: Expected ${we} bytes of extra data`);
       So.push(Fo);
     }
     const $o = to(...So), Ro = Ko(lo);
@@ -23448,8 +23221,8 @@ var Signer$1 = {}, lib = {};
     } catch {
       return !1;
     }
-    const { n: Io } = Oe, xo = Bo($o, Io), jo = go(Ro * xo, Io), Lo = go(So * xo, Io), Qo = Ur.BASE.multiplyAndAddUnsafe(Fo, jo, Lo);
-    return Qo ? go(Qo.x, Io) === So : !1;
+    const { n: Do } = Oe, xo = Bo($o, Do), jo = go(Ro * xo, Do), Lo = go(So * xo, Do), Qo = Ur.BASE.multiplyAndAddUnsafe(Fo, jo, Lo);
+    return Qo ? go(Qo.x, Do) === So : !1;
   }
   fe.verify = oi;
   function ti(io) {
@@ -23511,11 +23284,11 @@ var Signer$1 = {}, lib = {};
       throw new Error("sign: Invalid signature produced");
     }
     async calc() {
-      const { m: Gr, d: ro, px: lo, rand: _o } = this, So = fe.utils.taggedHash, $o = this.initNonce(ro, await So(ai.aux, _o)), { R: Ro, rx: Fo, k: Io } = this.finalizeNonce(await So(ai.nonce, $o, lo, Gr)), xo = ti(await So(ai.challenge, Fo, lo, Gr)), jo = this.finalizeSig(Ro, Io, xo, ro);
-      return await Ii(jo, Gr, lo) || this.error(), jo;
+      const { m: Gr, d: ro, px: lo, rand: _o } = this, So = fe.utils.taggedHash, $o = this.initNonce(ro, await So(ai.aux, _o)), { R: Ro, rx: Fo, k: Do } = this.finalizeNonce(await So(ai.nonce, $o, lo, Gr)), xo = ti(await So(ai.challenge, Fo, lo, Gr)), jo = this.finalizeSig(Ro, Do, xo, ro);
+      return await Di(jo, Gr, lo) || this.error(), jo;
     }
     calcSync() {
-      const { m: Gr, d: ro, px: lo, rand: _o } = this, So = fe.utils.taggedHashSync, $o = this.initNonce(ro, So(ai.aux, _o)), { R: Ro, rx: Fo, k: Io } = this.finalizeNonce(So(ai.nonce, $o, lo, Gr)), xo = ti(So(ai.challenge, Fo, lo, Gr)), jo = this.finalizeSig(Ro, Io, xo, ro);
+      const { m: Gr, d: ro, px: lo, rand: _o } = this, So = fe.utils.taggedHashSync, $o = this.initNonce(ro, So(ai.aux, _o)), { R: Ro, rx: Fo, k: Do } = this.finalizeNonce(So(ai.nonce, $o, lo, Gr)), xo = ti(So(ai.challenge, Fo, lo, Gr)), jo = this.finalizeSig(Ro, Do, xo, ro);
       return Ni(jo, Gr, lo) || this.error(), jo;
     }
   }
@@ -23537,7 +23310,7 @@ var Signer$1 = {}, lib = {};
     const _o = Ur.BASE.multiplyAndAddUnsafe(Gr, Uo(ro), go(-lo, Oe.n));
     return !(!_o || !_o.hasEvenY() || _o.x !== io);
   }
-  async function Ii(io, Gr, ro) {
+  async function Di(io, Gr, ro) {
     try {
       const { r: lo, s: _o, m: So, P: $o } = $i(io, Gr, ro), Ro = ti(await fe.utils.taggedHash(ai.challenge, fo(lo), $o.toRawX(), So));
       return bi(lo, $o, _o, Ro);
@@ -23559,7 +23332,7 @@ var Signer$1 = {}, lib = {};
     Signature: ri,
     getPublicKey: ni,
     sign: wi,
-    verify: Ii,
+    verify: Di,
     signSync: Si,
     verifySync: Ni
   }, Ur.BASE._setWindowSize(8);
@@ -23606,7 +23379,7 @@ var Signer$1 = {}, lib = {};
     randomPrivateKey: () => fe.utils.hashToPrivateKey(fe.utils.randomBytes(Se + 8)),
     precompute(io = 8, Gr = Ur.BASE) {
       const ro = Gr === Ur.BASE ? Gr : new Ur(Gr.x, Gr.y);
-      return ro._setWindowSize(io), ro.multiply(we), ro;
+      return ro._setWindowSize(io), ro.multiply(ve), ro;
     },
     sha256: async (...io) => {
       if (fi.web) {
@@ -23678,179 +23451,179 @@ function requireMinimal() {
   (function(e, ye) {
     typeof commonjsRequire == "function" && fe && fe.exports && (fe.exports = ye(requireMinimal()));
   })(commonjsGlobal, function(e) {
-    var ye = e.Reader, me = e.Writer, be = e.util, we = e.roots.default || (e.roots.default = {});
-    return we.koinos = function() {
+    var ye = e.Reader, me = e.Writer, be = e.util, ve = e.roots.default || (e.roots.default = {});
+    return ve.koinos = function() {
       var Ee = {};
       return Ee.protocol = function() {
         var Oe = {};
         return Oe.event_data = function() {
           function xe(gr) {
             if (this.impacted = [], gr)
-              for (var ve = Object.keys(gr), Se = 0; Se < ve.length; ++Se)
-                gr[ve[Se]] != null && (this[ve[Se]] = gr[ve[Se]]);
+              for (var we = Object.keys(gr), Se = 0; Se < we.length; ++Se)
+                gr[we[Se]] != null && (this[we[Se]] = gr[we[Se]]);
           }
-          return xe.prototype.sequence = 0, xe.prototype.source = be.newBuffer([]), xe.prototype.name = "", xe.prototype.data = be.newBuffer([]), xe.prototype.impacted = be.emptyArray, xe.create = function(ve) {
-            return new xe(ve);
-          }, xe.encode = function(ve, Se) {
-            if (Se || (Se = me.create()), ve.sequence != null && Object.hasOwnProperty.call(ve, "sequence") && Se.uint32(
+          return xe.prototype.sequence = 0, xe.prototype.source = be.newBuffer([]), xe.prototype.name = "", xe.prototype.data = be.newBuffer([]), xe.prototype.impacted = be.emptyArray, xe.create = function(we) {
+            return new xe(we);
+          }, xe.encode = function(we, Se) {
+            if (Se || (Se = me.create()), we.sequence != null && Object.hasOwnProperty.call(we, "sequence") && Se.uint32(
               /* id 1, wireType 0 =*/
               8
-            ).uint32(ve.sequence), ve.source != null && Object.hasOwnProperty.call(ve, "source") && Se.uint32(
+            ).uint32(we.sequence), we.source != null && Object.hasOwnProperty.call(we, "source") && Se.uint32(
               /* id 2, wireType 2 =*/
               18
-            ).bytes(ve.source), ve.name != null && Object.hasOwnProperty.call(ve, "name") && Se.uint32(
+            ).bytes(we.source), we.name != null && Object.hasOwnProperty.call(we, "name") && Se.uint32(
               /* id 3, wireType 2 =*/
               26
-            ).string(ve.name), ve.data != null && Object.hasOwnProperty.call(ve, "data") && Se.uint32(
+            ).string(we.name), we.data != null && Object.hasOwnProperty.call(we, "data") && Se.uint32(
               /* id 4, wireType 2 =*/
               34
-            ).bytes(ve.data), ve.impacted != null && ve.impacted.length)
-              for (var $r = 0; $r < ve.impacted.length; ++$r)
+            ).bytes(we.data), we.impacted != null && we.impacted.length)
+              for (var $r = 0; $r < we.impacted.length; ++$r)
                 Se.uint32(
                   /* id 5, wireType 2 =*/
                   42
-                ).bytes(ve.impacted[$r]);
+                ).bytes(we.impacted[$r]);
             return Se;
-          }, xe.encodeDelimited = function(ve, Se) {
-            return this.encode(ve, Se).ldelim();
-          }, xe.decode = function(ve, Se) {
-            ve instanceof ye || (ve = ye.create(ve));
-            for (var $r = Se === void 0 ? ve.len : ve.pos + Se, Fr = new we.koinos.protocol.event_data(); ve.pos < $r; ) {
-              var Br = ve.uint32();
+          }, xe.encodeDelimited = function(we, Se) {
+            return this.encode(we, Se).ldelim();
+          }, xe.decode = function(we, Se) {
+            we instanceof ye || (we = ye.create(we));
+            for (var $r = Se === void 0 ? we.len : we.pos + Se, Fr = new ve.koinos.protocol.event_data(); we.pos < $r; ) {
+              var Br = we.uint32();
               switch (Br >>> 3) {
                 case 1: {
-                  Fr.sequence = ve.uint32();
+                  Fr.sequence = we.uint32();
                   break;
                 }
                 case 2: {
-                  Fr.source = ve.bytes();
+                  Fr.source = we.bytes();
                   break;
                 }
                 case 3: {
-                  Fr.name = ve.string();
+                  Fr.name = we.string();
                   break;
                 }
                 case 4: {
-                  Fr.data = ve.bytes();
+                  Fr.data = we.bytes();
                   break;
                 }
                 case 5: {
-                  Fr.impacted && Fr.impacted.length || (Fr.impacted = []), Fr.impacted.push(ve.bytes());
+                  Fr.impacted && Fr.impacted.length || (Fr.impacted = []), Fr.impacted.push(we.bytes());
                   break;
                 }
                 default:
-                  ve.skipType(Br & 7);
+                  we.skipType(Br & 7);
                   break;
               }
             }
             return Fr;
-          }, xe.decodeDelimited = function(ve) {
-            return ve instanceof ye || (ve = new ye(ve)), this.decode(ve, ve.uint32());
-          }, xe.verify = function(ve) {
-            if (typeof ve != "object" || ve === null)
+          }, xe.decodeDelimited = function(we) {
+            return we instanceof ye || (we = new ye(we)), this.decode(we, we.uint32());
+          }, xe.verify = function(we) {
+            if (typeof we != "object" || we === null)
               return "object expected";
-            if (ve.sequence != null && ve.hasOwnProperty("sequence") && !be.isInteger(ve.sequence))
+            if (we.sequence != null && we.hasOwnProperty("sequence") && !be.isInteger(we.sequence))
               return "sequence: integer expected";
-            if (ve.source != null && ve.hasOwnProperty("source") && !(ve.source && typeof ve.source.length == "number" || be.isString(ve.source)))
+            if (we.source != null && we.hasOwnProperty("source") && !(we.source && typeof we.source.length == "number" || be.isString(we.source)))
               return "source: buffer expected";
-            if (ve.name != null && ve.hasOwnProperty("name") && !be.isString(ve.name))
+            if (we.name != null && we.hasOwnProperty("name") && !be.isString(we.name))
               return "name: string expected";
-            if (ve.data != null && ve.hasOwnProperty("data") && !(ve.data && typeof ve.data.length == "number" || be.isString(ve.data)))
+            if (we.data != null && we.hasOwnProperty("data") && !(we.data && typeof we.data.length == "number" || be.isString(we.data)))
               return "data: buffer expected";
-            if (ve.impacted != null && ve.hasOwnProperty("impacted")) {
-              if (!Array.isArray(ve.impacted))
+            if (we.impacted != null && we.hasOwnProperty("impacted")) {
+              if (!Array.isArray(we.impacted))
                 return "impacted: array expected";
-              for (var Se = 0; Se < ve.impacted.length; ++Se)
-                if (!(ve.impacted[Se] && typeof ve.impacted[Se].length == "number" || be.isString(ve.impacted[Se])))
+              for (var Se = 0; Se < we.impacted.length; ++Se)
+                if (!(we.impacted[Se] && typeof we.impacted[Se].length == "number" || be.isString(we.impacted[Se])))
                   return "impacted: buffer[] expected";
             }
             return null;
-          }, xe.fromObject = function(ve) {
-            if (ve instanceof we.koinos.protocol.event_data)
-              return ve;
-            var Se = new we.koinos.protocol.event_data();
-            if (ve.sequence != null && (Se.sequence = ve.sequence >>> 0), ve.source != null && (typeof ve.source == "string" ? be.base64.decode(ve.source, Se.source = be.newBuffer(be.base64.length(ve.source)), 0) : ve.source.length >= 0 && (Se.source = ve.source)), ve.name != null && (Se.name = String(ve.name)), ve.data != null && (typeof ve.data == "string" ? be.base64.decode(ve.data, Se.data = be.newBuffer(be.base64.length(ve.data)), 0) : ve.data.length >= 0 && (Se.data = ve.data)), ve.impacted) {
-              if (!Array.isArray(ve.impacted))
+          }, xe.fromObject = function(we) {
+            if (we instanceof ve.koinos.protocol.event_data)
+              return we;
+            var Se = new ve.koinos.protocol.event_data();
+            if (we.sequence != null && (Se.sequence = we.sequence >>> 0), we.source != null && (typeof we.source == "string" ? be.base64.decode(we.source, Se.source = be.newBuffer(be.base64.length(we.source)), 0) : we.source.length >= 0 && (Se.source = we.source)), we.name != null && (Se.name = String(we.name)), we.data != null && (typeof we.data == "string" ? be.base64.decode(we.data, Se.data = be.newBuffer(be.base64.length(we.data)), 0) : we.data.length >= 0 && (Se.data = we.data)), we.impacted) {
+              if (!Array.isArray(we.impacted))
                 throw TypeError(".koinos.protocol.event_data.impacted: array expected");
               Se.impacted = [];
-              for (var $r = 0; $r < ve.impacted.length; ++$r)
-                typeof ve.impacted[$r] == "string" ? be.base64.decode(ve.impacted[$r], Se.impacted[$r] = be.newBuffer(be.base64.length(ve.impacted[$r])), 0) : ve.impacted[$r].length >= 0 && (Se.impacted[$r] = ve.impacted[$r]);
+              for (var $r = 0; $r < we.impacted.length; ++$r)
+                typeof we.impacted[$r] == "string" ? be.base64.decode(we.impacted[$r], Se.impacted[$r] = be.newBuffer(be.base64.length(we.impacted[$r])), 0) : we.impacted[$r].length >= 0 && (Se.impacted[$r] = we.impacted[$r]);
             }
             return Se;
-          }, xe.toObject = function(ve, Se) {
+          }, xe.toObject = function(we, Se) {
             Se || (Se = {});
             var $r = {};
-            if ((Se.arrays || Se.defaults) && ($r.impacted = []), Se.defaults && ($r.sequence = 0, Se.bytes === String ? $r.source = "" : ($r.source = [], Se.bytes !== Array && ($r.source = be.newBuffer($r.source))), $r.name = "", Se.bytes === String ? $r.data = "" : ($r.data = [], Se.bytes !== Array && ($r.data = be.newBuffer($r.data)))), ve.sequence != null && ve.hasOwnProperty("sequence") && ($r.sequence = ve.sequence), ve.source != null && ve.hasOwnProperty("source") && ($r.source = Se.bytes === String ? be.base64.encode(ve.source, 0, ve.source.length) : Se.bytes === Array ? Array.prototype.slice.call(ve.source) : ve.source), ve.name != null && ve.hasOwnProperty("name") && ($r.name = ve.name), ve.data != null && ve.hasOwnProperty("data") && ($r.data = Se.bytes === String ? be.base64.encode(ve.data, 0, ve.data.length) : Se.bytes === Array ? Array.prototype.slice.call(ve.data) : ve.data), ve.impacted && ve.impacted.length) {
+            if ((Se.arrays || Se.defaults) && ($r.impacted = []), Se.defaults && ($r.sequence = 0, Se.bytes === String ? $r.source = "" : ($r.source = [], Se.bytes !== Array && ($r.source = be.newBuffer($r.source))), $r.name = "", Se.bytes === String ? $r.data = "" : ($r.data = [], Se.bytes !== Array && ($r.data = be.newBuffer($r.data)))), we.sequence != null && we.hasOwnProperty("sequence") && ($r.sequence = we.sequence), we.source != null && we.hasOwnProperty("source") && ($r.source = Se.bytes === String ? be.base64.encode(we.source, 0, we.source.length) : Se.bytes === Array ? Array.prototype.slice.call(we.source) : we.source), we.name != null && we.hasOwnProperty("name") && ($r.name = we.name), we.data != null && we.hasOwnProperty("data") && ($r.data = Se.bytes === String ? be.base64.encode(we.data, 0, we.data.length) : Se.bytes === Array ? Array.prototype.slice.call(we.data) : we.data), we.impacted && we.impacted.length) {
               $r.impacted = [];
-              for (var Fr = 0; Fr < ve.impacted.length; ++Fr)
-                $r.impacted[Fr] = Se.bytes === String ? be.base64.encode(ve.impacted[Fr], 0, ve.impacted[Fr].length) : Se.bytes === Array ? Array.prototype.slice.call(ve.impacted[Fr]) : ve.impacted[Fr];
+              for (var Fr = 0; Fr < we.impacted.length; ++Fr)
+                $r.impacted[Fr] = Se.bytes === String ? be.base64.encode(we.impacted[Fr], 0, we.impacted[Fr].length) : Se.bytes === Array ? Array.prototype.slice.call(we.impacted[Fr]) : we.impacted[Fr];
             }
             return $r;
           }, xe.prototype.toJSON = function() {
             return this.constructor.toObject(this, e.util.toJSONOptions);
-          }, xe.getTypeUrl = function(ve) {
-            return ve === void 0 && (ve = "type.googleapis.com"), ve + "/koinos.protocol.event_data";
+          }, xe.getTypeUrl = function(we) {
+            return we === void 0 && (we = "type.googleapis.com"), we + "/koinos.protocol.event_data";
           }, xe;
         }(), Oe.contract_call_bundle = function() {
           function xe(gr) {
             if (gr)
-              for (var ve = Object.keys(gr), Se = 0; Se < ve.length; ++Se)
-                gr[ve[Se]] != null && (this[ve[Se]] = gr[ve[Se]]);
+              for (var we = Object.keys(gr), Se = 0; Se < we.length; ++Se)
+                gr[we[Se]] != null && (this[we[Se]] = gr[we[Se]]);
           }
-          return xe.prototype.contract_id = be.newBuffer([]), xe.prototype.entry_point = 0, xe.create = function(ve) {
-            return new xe(ve);
-          }, xe.encode = function(ve, Se) {
-            return Se || (Se = me.create()), ve.contract_id != null && Object.hasOwnProperty.call(ve, "contract_id") && Se.uint32(
+          return xe.prototype.contract_id = be.newBuffer([]), xe.prototype.entry_point = 0, xe.create = function(we) {
+            return new xe(we);
+          }, xe.encode = function(we, Se) {
+            return Se || (Se = me.create()), we.contract_id != null && Object.hasOwnProperty.call(we, "contract_id") && Se.uint32(
               /* id 1, wireType 2 =*/
               10
-            ).bytes(ve.contract_id), ve.entry_point != null && Object.hasOwnProperty.call(ve, "entry_point") && Se.uint32(
+            ).bytes(we.contract_id), we.entry_point != null && Object.hasOwnProperty.call(we, "entry_point") && Se.uint32(
               /* id 2, wireType 0 =*/
               16
-            ).uint32(ve.entry_point), Se;
-          }, xe.encodeDelimited = function(ve, Se) {
-            return this.encode(ve, Se).ldelim();
-          }, xe.decode = function(ve, Se) {
-            ve instanceof ye || (ve = ye.create(ve));
-            for (var $r = Se === void 0 ? ve.len : ve.pos + Se, Fr = new we.koinos.protocol.contract_call_bundle(); ve.pos < $r; ) {
-              var Br = ve.uint32();
+            ).uint32(we.entry_point), Se;
+          }, xe.encodeDelimited = function(we, Se) {
+            return this.encode(we, Se).ldelim();
+          }, xe.decode = function(we, Se) {
+            we instanceof ye || (we = ye.create(we));
+            for (var $r = Se === void 0 ? we.len : we.pos + Se, Fr = new ve.koinos.protocol.contract_call_bundle(); we.pos < $r; ) {
+              var Br = we.uint32();
               switch (Br >>> 3) {
                 case 1: {
-                  Fr.contract_id = ve.bytes();
+                  Fr.contract_id = we.bytes();
                   break;
                 }
                 case 2: {
-                  Fr.entry_point = ve.uint32();
+                  Fr.entry_point = we.uint32();
                   break;
                 }
                 default:
-                  ve.skipType(Br & 7);
+                  we.skipType(Br & 7);
                   break;
               }
             }
             return Fr;
-          }, xe.decodeDelimited = function(ve) {
-            return ve instanceof ye || (ve = new ye(ve)), this.decode(ve, ve.uint32());
-          }, xe.verify = function(ve) {
-            return typeof ve != "object" || ve === null ? "object expected" : ve.contract_id != null && ve.hasOwnProperty("contract_id") && !(ve.contract_id && typeof ve.contract_id.length == "number" || be.isString(ve.contract_id)) ? "contract_id: buffer expected" : ve.entry_point != null && ve.hasOwnProperty("entry_point") && !be.isInteger(ve.entry_point) ? "entry_point: integer expected" : null;
-          }, xe.fromObject = function(ve) {
-            if (ve instanceof we.koinos.protocol.contract_call_bundle)
-              return ve;
-            var Se = new we.koinos.protocol.contract_call_bundle();
-            return ve.contract_id != null && (typeof ve.contract_id == "string" ? be.base64.decode(ve.contract_id, Se.contract_id = be.newBuffer(be.base64.length(ve.contract_id)), 0) : ve.contract_id.length >= 0 && (Se.contract_id = ve.contract_id)), ve.entry_point != null && (Se.entry_point = ve.entry_point >>> 0), Se;
-          }, xe.toObject = function(ve, Se) {
+          }, xe.decodeDelimited = function(we) {
+            return we instanceof ye || (we = new ye(we)), this.decode(we, we.uint32());
+          }, xe.verify = function(we) {
+            return typeof we != "object" || we === null ? "object expected" : we.contract_id != null && we.hasOwnProperty("contract_id") && !(we.contract_id && typeof we.contract_id.length == "number" || be.isString(we.contract_id)) ? "contract_id: buffer expected" : we.entry_point != null && we.hasOwnProperty("entry_point") && !be.isInteger(we.entry_point) ? "entry_point: integer expected" : null;
+          }, xe.fromObject = function(we) {
+            if (we instanceof ve.koinos.protocol.contract_call_bundle)
+              return we;
+            var Se = new ve.koinos.protocol.contract_call_bundle();
+            return we.contract_id != null && (typeof we.contract_id == "string" ? be.base64.decode(we.contract_id, Se.contract_id = be.newBuffer(be.base64.length(we.contract_id)), 0) : we.contract_id.length >= 0 && (Se.contract_id = we.contract_id)), we.entry_point != null && (Se.entry_point = we.entry_point >>> 0), Se;
+          }, xe.toObject = function(we, Se) {
             Se || (Se = {});
             var $r = {};
-            return Se.defaults && (Se.bytes === String ? $r.contract_id = "" : ($r.contract_id = [], Se.bytes !== Array && ($r.contract_id = be.newBuffer($r.contract_id))), $r.entry_point = 0), ve.contract_id != null && ve.hasOwnProperty("contract_id") && ($r.contract_id = Se.bytes === String ? be.base64.encode(ve.contract_id, 0, ve.contract_id.length) : Se.bytes === Array ? Array.prototype.slice.call(ve.contract_id) : ve.contract_id), ve.entry_point != null && ve.hasOwnProperty("entry_point") && ($r.entry_point = ve.entry_point), $r;
+            return Se.defaults && (Se.bytes === String ? $r.contract_id = "" : ($r.contract_id = [], Se.bytes !== Array && ($r.contract_id = be.newBuffer($r.contract_id))), $r.entry_point = 0), we.contract_id != null && we.hasOwnProperty("contract_id") && ($r.contract_id = Se.bytes === String ? be.base64.encode(we.contract_id, 0, we.contract_id.length) : Se.bytes === Array ? Array.prototype.slice.call(we.contract_id) : we.contract_id), we.entry_point != null && we.hasOwnProperty("entry_point") && ($r.entry_point = we.entry_point), $r;
           }, xe.prototype.toJSON = function() {
             return this.constructor.toObject(this, e.util.toJSONOptions);
-          }, xe.getTypeUrl = function(ve) {
-            return ve === void 0 && (ve = "type.googleapis.com"), ve + "/koinos.protocol.contract_call_bundle";
+          }, xe.getTypeUrl = function(we) {
+            return we === void 0 && (we = "type.googleapis.com"), we + "/koinos.protocol.contract_call_bundle";
           }, xe;
         }(), Oe.system_call_target = function() {
-          function xe(ve) {
-            if (ve)
-              for (var Se = Object.keys(ve), $r = 0; $r < Se.length; ++$r)
-                ve[Se[$r]] != null && (this[Se[$r]] = ve[Se[$r]]);
+          function xe(we) {
+            if (we)
+              for (var Se = Object.keys(we), $r = 0; $r < Se.length; ++$r)
+                we[Se[$r]] != null && (this[Se[$r]] = we[Se[$r]]);
           }
           xe.prototype.thunk_id = null, xe.prototype.system_call_bundle = null;
           var gr;
@@ -23863,7 +23636,7 @@ function requireMinimal() {
             return $r || ($r = me.create()), Se.thunk_id != null && Object.hasOwnProperty.call(Se, "thunk_id") && $r.uint32(
               /* id 1, wireType 0 =*/
               8
-            ).uint32(Se.thunk_id), Se.system_call_bundle != null && Object.hasOwnProperty.call(Se, "system_call_bundle") && we.koinos.protocol.contract_call_bundle.encode(Se.system_call_bundle, $r.uint32(
+            ).uint32(Se.thunk_id), Se.system_call_bundle != null && Object.hasOwnProperty.call(Se, "system_call_bundle") && ve.koinos.protocol.contract_call_bundle.encode(Se.system_call_bundle, $r.uint32(
               /* id 2, wireType 2 =*/
               18
             ).fork()).ldelim(), $r;
@@ -23871,7 +23644,7 @@ function requireMinimal() {
             return this.encode(Se, $r).ldelim();
           }, xe.decode = function(Se, $r) {
             Se instanceof ye || (Se = ye.create(Se));
-            for (var Fr = $r === void 0 ? Se.len : Se.pos + $r, Br = new we.koinos.protocol.system_call_target(); Se.pos < Fr; ) {
+            for (var Fr = $r === void 0 ? Se.len : Se.pos + $r, Br = new ve.koinos.protocol.system_call_target(); Se.pos < Fr; ) {
               var Vr = Se.uint32();
               switch (Vr >>> 3) {
                 case 1: {
@@ -23879,7 +23652,7 @@ function requireMinimal() {
                   break;
                 }
                 case 2: {
-                  Br.system_call_bundle = we.koinos.protocol.contract_call_bundle.decode(Se, Se.uint32());
+                  Br.system_call_bundle = ve.koinos.protocol.contract_call_bundle.decode(Se, Se.uint32());
                   break;
                 }
                 default:
@@ -23901,26 +23674,26 @@ function requireMinimal() {
                 return "target: multiple values";
               $r.target = 1;
               {
-                var Fr = we.koinos.protocol.contract_call_bundle.verify(Se.system_call_bundle);
+                var Fr = ve.koinos.protocol.contract_call_bundle.verify(Se.system_call_bundle);
                 if (Fr)
                   return "system_call_bundle." + Fr;
               }
             }
             return null;
           }, xe.fromObject = function(Se) {
-            if (Se instanceof we.koinos.protocol.system_call_target)
+            if (Se instanceof ve.koinos.protocol.system_call_target)
               return Se;
-            var $r = new we.koinos.protocol.system_call_target();
+            var $r = new ve.koinos.protocol.system_call_target();
             if (Se.thunk_id != null && ($r.thunk_id = Se.thunk_id >>> 0), Se.system_call_bundle != null) {
               if (typeof Se.system_call_bundle != "object")
                 throw TypeError(".koinos.protocol.system_call_target.system_call_bundle: object expected");
-              $r.system_call_bundle = we.koinos.protocol.contract_call_bundle.fromObject(Se.system_call_bundle);
+              $r.system_call_bundle = ve.koinos.protocol.contract_call_bundle.fromObject(Se.system_call_bundle);
             }
             return $r;
           }, xe.toObject = function(Se, $r) {
             $r || ($r = {});
             var Fr = {};
-            return Se.thunk_id != null && Se.hasOwnProperty("thunk_id") && (Fr.thunk_id = Se.thunk_id, $r.oneofs && (Fr.target = "thunk_id")), Se.system_call_bundle != null && Se.hasOwnProperty("system_call_bundle") && (Fr.system_call_bundle = we.koinos.protocol.contract_call_bundle.toObject(Se.system_call_bundle, $r), $r.oneofs && (Fr.target = "system_call_bundle")), Fr;
+            return Se.thunk_id != null && Se.hasOwnProperty("thunk_id") && (Fr.thunk_id = Se.thunk_id, $r.oneofs && (Fr.target = "thunk_id")), Se.system_call_bundle != null && Se.hasOwnProperty("system_call_bundle") && (Fr.system_call_bundle = ve.koinos.protocol.contract_call_bundle.toObject(Se.system_call_bundle, $r), $r.oneofs && (Fr.target = "system_call_bundle")), Fr;
           }, xe.prototype.toJSON = function() {
             return this.constructor.toObject(this, e.util.toJSONOptions);
           }, xe.getTypeUrl = function(Se) {
@@ -23929,277 +23702,277 @@ function requireMinimal() {
         }(), Oe.upload_contract_operation = function() {
           function xe(gr) {
             if (gr)
-              for (var ve = Object.keys(gr), Se = 0; Se < ve.length; ++Se)
-                gr[ve[Se]] != null && (this[ve[Se]] = gr[ve[Se]]);
+              for (var we = Object.keys(gr), Se = 0; Se < we.length; ++Se)
+                gr[we[Se]] != null && (this[we[Se]] = gr[we[Se]]);
           }
-          return xe.prototype.contract_id = be.newBuffer([]), xe.prototype.bytecode = be.newBuffer([]), xe.prototype.abi = "", xe.prototype.authorizes_call_contract = !1, xe.prototype.authorizes_transaction_application = !1, xe.prototype.authorizes_upload_contract = !1, xe.create = function(ve) {
-            return new xe(ve);
-          }, xe.encode = function(ve, Se) {
-            return Se || (Se = me.create()), ve.contract_id != null && Object.hasOwnProperty.call(ve, "contract_id") && Se.uint32(
+          return xe.prototype.contract_id = be.newBuffer([]), xe.prototype.bytecode = be.newBuffer([]), xe.prototype.abi = "", xe.prototype.authorizes_call_contract = !1, xe.prototype.authorizes_transaction_application = !1, xe.prototype.authorizes_upload_contract = !1, xe.create = function(we) {
+            return new xe(we);
+          }, xe.encode = function(we, Se) {
+            return Se || (Se = me.create()), we.contract_id != null && Object.hasOwnProperty.call(we, "contract_id") && Se.uint32(
               /* id 1, wireType 2 =*/
               10
-            ).bytes(ve.contract_id), ve.bytecode != null && Object.hasOwnProperty.call(ve, "bytecode") && Se.uint32(
+            ).bytes(we.contract_id), we.bytecode != null && Object.hasOwnProperty.call(we, "bytecode") && Se.uint32(
               /* id 2, wireType 2 =*/
               18
-            ).bytes(ve.bytecode), ve.abi != null && Object.hasOwnProperty.call(ve, "abi") && Se.uint32(
+            ).bytes(we.bytecode), we.abi != null && Object.hasOwnProperty.call(we, "abi") && Se.uint32(
               /* id 3, wireType 2 =*/
               26
-            ).string(ve.abi), ve.authorizes_call_contract != null && Object.hasOwnProperty.call(ve, "authorizes_call_contract") && Se.uint32(
+            ).string(we.abi), we.authorizes_call_contract != null && Object.hasOwnProperty.call(we, "authorizes_call_contract") && Se.uint32(
               /* id 4, wireType 0 =*/
               32
-            ).bool(ve.authorizes_call_contract), ve.authorizes_transaction_application != null && Object.hasOwnProperty.call(ve, "authorizes_transaction_application") && Se.uint32(
+            ).bool(we.authorizes_call_contract), we.authorizes_transaction_application != null && Object.hasOwnProperty.call(we, "authorizes_transaction_application") && Se.uint32(
               /* id 5, wireType 0 =*/
               40
-            ).bool(ve.authorizes_transaction_application), ve.authorizes_upload_contract != null && Object.hasOwnProperty.call(ve, "authorizes_upload_contract") && Se.uint32(
+            ).bool(we.authorizes_transaction_application), we.authorizes_upload_contract != null && Object.hasOwnProperty.call(we, "authorizes_upload_contract") && Se.uint32(
               /* id 6, wireType 0 =*/
               48
-            ).bool(ve.authorizes_upload_contract), Se;
-          }, xe.encodeDelimited = function(ve, Se) {
-            return this.encode(ve, Se).ldelim();
-          }, xe.decode = function(ve, Se) {
-            ve instanceof ye || (ve = ye.create(ve));
-            for (var $r = Se === void 0 ? ve.len : ve.pos + Se, Fr = new we.koinos.protocol.upload_contract_operation(); ve.pos < $r; ) {
-              var Br = ve.uint32();
+            ).bool(we.authorizes_upload_contract), Se;
+          }, xe.encodeDelimited = function(we, Se) {
+            return this.encode(we, Se).ldelim();
+          }, xe.decode = function(we, Se) {
+            we instanceof ye || (we = ye.create(we));
+            for (var $r = Se === void 0 ? we.len : we.pos + Se, Fr = new ve.koinos.protocol.upload_contract_operation(); we.pos < $r; ) {
+              var Br = we.uint32();
               switch (Br >>> 3) {
                 case 1: {
-                  Fr.contract_id = ve.bytes();
+                  Fr.contract_id = we.bytes();
                   break;
                 }
                 case 2: {
-                  Fr.bytecode = ve.bytes();
+                  Fr.bytecode = we.bytes();
                   break;
                 }
                 case 3: {
-                  Fr.abi = ve.string();
+                  Fr.abi = we.string();
                   break;
                 }
                 case 4: {
-                  Fr.authorizes_call_contract = ve.bool();
+                  Fr.authorizes_call_contract = we.bool();
                   break;
                 }
                 case 5: {
-                  Fr.authorizes_transaction_application = ve.bool();
+                  Fr.authorizes_transaction_application = we.bool();
                   break;
                 }
                 case 6: {
-                  Fr.authorizes_upload_contract = ve.bool();
+                  Fr.authorizes_upload_contract = we.bool();
                   break;
                 }
                 default:
-                  ve.skipType(Br & 7);
+                  we.skipType(Br & 7);
                   break;
               }
             }
             return Fr;
-          }, xe.decodeDelimited = function(ve) {
-            return ve instanceof ye || (ve = new ye(ve)), this.decode(ve, ve.uint32());
-          }, xe.verify = function(ve) {
-            return typeof ve != "object" || ve === null ? "object expected" : ve.contract_id != null && ve.hasOwnProperty("contract_id") && !(ve.contract_id && typeof ve.contract_id.length == "number" || be.isString(ve.contract_id)) ? "contract_id: buffer expected" : ve.bytecode != null && ve.hasOwnProperty("bytecode") && !(ve.bytecode && typeof ve.bytecode.length == "number" || be.isString(ve.bytecode)) ? "bytecode: buffer expected" : ve.abi != null && ve.hasOwnProperty("abi") && !be.isString(ve.abi) ? "abi: string expected" : ve.authorizes_call_contract != null && ve.hasOwnProperty("authorizes_call_contract") && typeof ve.authorizes_call_contract != "boolean" ? "authorizes_call_contract: boolean expected" : ve.authorizes_transaction_application != null && ve.hasOwnProperty("authorizes_transaction_application") && typeof ve.authorizes_transaction_application != "boolean" ? "authorizes_transaction_application: boolean expected" : ve.authorizes_upload_contract != null && ve.hasOwnProperty("authorizes_upload_contract") && typeof ve.authorizes_upload_contract != "boolean" ? "authorizes_upload_contract: boolean expected" : null;
-          }, xe.fromObject = function(ve) {
-            if (ve instanceof we.koinos.protocol.upload_contract_operation)
-              return ve;
-            var Se = new we.koinos.protocol.upload_contract_operation();
-            return ve.contract_id != null && (typeof ve.contract_id == "string" ? be.base64.decode(ve.contract_id, Se.contract_id = be.newBuffer(be.base64.length(ve.contract_id)), 0) : ve.contract_id.length >= 0 && (Se.contract_id = ve.contract_id)), ve.bytecode != null && (typeof ve.bytecode == "string" ? be.base64.decode(ve.bytecode, Se.bytecode = be.newBuffer(be.base64.length(ve.bytecode)), 0) : ve.bytecode.length >= 0 && (Se.bytecode = ve.bytecode)), ve.abi != null && (Se.abi = String(ve.abi)), ve.authorizes_call_contract != null && (Se.authorizes_call_contract = !!ve.authorizes_call_contract), ve.authorizes_transaction_application != null && (Se.authorizes_transaction_application = !!ve.authorizes_transaction_application), ve.authorizes_upload_contract != null && (Se.authorizes_upload_contract = !!ve.authorizes_upload_contract), Se;
-          }, xe.toObject = function(ve, Se) {
+          }, xe.decodeDelimited = function(we) {
+            return we instanceof ye || (we = new ye(we)), this.decode(we, we.uint32());
+          }, xe.verify = function(we) {
+            return typeof we != "object" || we === null ? "object expected" : we.contract_id != null && we.hasOwnProperty("contract_id") && !(we.contract_id && typeof we.contract_id.length == "number" || be.isString(we.contract_id)) ? "contract_id: buffer expected" : we.bytecode != null && we.hasOwnProperty("bytecode") && !(we.bytecode && typeof we.bytecode.length == "number" || be.isString(we.bytecode)) ? "bytecode: buffer expected" : we.abi != null && we.hasOwnProperty("abi") && !be.isString(we.abi) ? "abi: string expected" : we.authorizes_call_contract != null && we.hasOwnProperty("authorizes_call_contract") && typeof we.authorizes_call_contract != "boolean" ? "authorizes_call_contract: boolean expected" : we.authorizes_transaction_application != null && we.hasOwnProperty("authorizes_transaction_application") && typeof we.authorizes_transaction_application != "boolean" ? "authorizes_transaction_application: boolean expected" : we.authorizes_upload_contract != null && we.hasOwnProperty("authorizes_upload_contract") && typeof we.authorizes_upload_contract != "boolean" ? "authorizes_upload_contract: boolean expected" : null;
+          }, xe.fromObject = function(we) {
+            if (we instanceof ve.koinos.protocol.upload_contract_operation)
+              return we;
+            var Se = new ve.koinos.protocol.upload_contract_operation();
+            return we.contract_id != null && (typeof we.contract_id == "string" ? be.base64.decode(we.contract_id, Se.contract_id = be.newBuffer(be.base64.length(we.contract_id)), 0) : we.contract_id.length >= 0 && (Se.contract_id = we.contract_id)), we.bytecode != null && (typeof we.bytecode == "string" ? be.base64.decode(we.bytecode, Se.bytecode = be.newBuffer(be.base64.length(we.bytecode)), 0) : we.bytecode.length >= 0 && (Se.bytecode = we.bytecode)), we.abi != null && (Se.abi = String(we.abi)), we.authorizes_call_contract != null && (Se.authorizes_call_contract = !!we.authorizes_call_contract), we.authorizes_transaction_application != null && (Se.authorizes_transaction_application = !!we.authorizes_transaction_application), we.authorizes_upload_contract != null && (Se.authorizes_upload_contract = !!we.authorizes_upload_contract), Se;
+          }, xe.toObject = function(we, Se) {
             Se || (Se = {});
             var $r = {};
-            return Se.defaults && (Se.bytes === String ? $r.contract_id = "" : ($r.contract_id = [], Se.bytes !== Array && ($r.contract_id = be.newBuffer($r.contract_id))), Se.bytes === String ? $r.bytecode = "" : ($r.bytecode = [], Se.bytes !== Array && ($r.bytecode = be.newBuffer($r.bytecode))), $r.abi = "", $r.authorizes_call_contract = !1, $r.authorizes_transaction_application = !1, $r.authorizes_upload_contract = !1), ve.contract_id != null && ve.hasOwnProperty("contract_id") && ($r.contract_id = Se.bytes === String ? be.base64.encode(ve.contract_id, 0, ve.contract_id.length) : Se.bytes === Array ? Array.prototype.slice.call(ve.contract_id) : ve.contract_id), ve.bytecode != null && ve.hasOwnProperty("bytecode") && ($r.bytecode = Se.bytes === String ? be.base64.encode(ve.bytecode, 0, ve.bytecode.length) : Se.bytes === Array ? Array.prototype.slice.call(ve.bytecode) : ve.bytecode), ve.abi != null && ve.hasOwnProperty("abi") && ($r.abi = ve.abi), ve.authorizes_call_contract != null && ve.hasOwnProperty("authorizes_call_contract") && ($r.authorizes_call_contract = ve.authorizes_call_contract), ve.authorizes_transaction_application != null && ve.hasOwnProperty("authorizes_transaction_application") && ($r.authorizes_transaction_application = ve.authorizes_transaction_application), ve.authorizes_upload_contract != null && ve.hasOwnProperty("authorizes_upload_contract") && ($r.authorizes_upload_contract = ve.authorizes_upload_contract), $r;
+            return Se.defaults && (Se.bytes === String ? $r.contract_id = "" : ($r.contract_id = [], Se.bytes !== Array && ($r.contract_id = be.newBuffer($r.contract_id))), Se.bytes === String ? $r.bytecode = "" : ($r.bytecode = [], Se.bytes !== Array && ($r.bytecode = be.newBuffer($r.bytecode))), $r.abi = "", $r.authorizes_call_contract = !1, $r.authorizes_transaction_application = !1, $r.authorizes_upload_contract = !1), we.contract_id != null && we.hasOwnProperty("contract_id") && ($r.contract_id = Se.bytes === String ? be.base64.encode(we.contract_id, 0, we.contract_id.length) : Se.bytes === Array ? Array.prototype.slice.call(we.contract_id) : we.contract_id), we.bytecode != null && we.hasOwnProperty("bytecode") && ($r.bytecode = Se.bytes === String ? be.base64.encode(we.bytecode, 0, we.bytecode.length) : Se.bytes === Array ? Array.prototype.slice.call(we.bytecode) : we.bytecode), we.abi != null && we.hasOwnProperty("abi") && ($r.abi = we.abi), we.authorizes_call_contract != null && we.hasOwnProperty("authorizes_call_contract") && ($r.authorizes_call_contract = we.authorizes_call_contract), we.authorizes_transaction_application != null && we.hasOwnProperty("authorizes_transaction_application") && ($r.authorizes_transaction_application = we.authorizes_transaction_application), we.authorizes_upload_contract != null && we.hasOwnProperty("authorizes_upload_contract") && ($r.authorizes_upload_contract = we.authorizes_upload_contract), $r;
           }, xe.prototype.toJSON = function() {
             return this.constructor.toObject(this, e.util.toJSONOptions);
-          }, xe.getTypeUrl = function(ve) {
-            return ve === void 0 && (ve = "type.googleapis.com"), ve + "/koinos.protocol.upload_contract_operation";
+          }, xe.getTypeUrl = function(we) {
+            return we === void 0 && (we = "type.googleapis.com"), we + "/koinos.protocol.upload_contract_operation";
           }, xe;
         }(), Oe.call_contract_operation = function() {
           function xe(gr) {
             if (gr)
-              for (var ve = Object.keys(gr), Se = 0; Se < ve.length; ++Se)
-                gr[ve[Se]] != null && (this[ve[Se]] = gr[ve[Se]]);
+              for (var we = Object.keys(gr), Se = 0; Se < we.length; ++Se)
+                gr[we[Se]] != null && (this[we[Se]] = gr[we[Se]]);
           }
-          return xe.prototype.contract_id = be.newBuffer([]), xe.prototype.entry_point = 0, xe.prototype.args = be.newBuffer([]), xe.create = function(ve) {
-            return new xe(ve);
-          }, xe.encode = function(ve, Se) {
-            return Se || (Se = me.create()), ve.contract_id != null && Object.hasOwnProperty.call(ve, "contract_id") && Se.uint32(
+          return xe.prototype.contract_id = be.newBuffer([]), xe.prototype.entry_point = 0, xe.prototype.args = be.newBuffer([]), xe.create = function(we) {
+            return new xe(we);
+          }, xe.encode = function(we, Se) {
+            return Se || (Se = me.create()), we.contract_id != null && Object.hasOwnProperty.call(we, "contract_id") && Se.uint32(
               /* id 1, wireType 2 =*/
               10
-            ).bytes(ve.contract_id), ve.entry_point != null && Object.hasOwnProperty.call(ve, "entry_point") && Se.uint32(
+            ).bytes(we.contract_id), we.entry_point != null && Object.hasOwnProperty.call(we, "entry_point") && Se.uint32(
               /* id 2, wireType 0 =*/
               16
-            ).uint32(ve.entry_point), ve.args != null && Object.hasOwnProperty.call(ve, "args") && Se.uint32(
+            ).uint32(we.entry_point), we.args != null && Object.hasOwnProperty.call(we, "args") && Se.uint32(
               /* id 3, wireType 2 =*/
               26
-            ).bytes(ve.args), Se;
-          }, xe.encodeDelimited = function(ve, Se) {
-            return this.encode(ve, Se).ldelim();
-          }, xe.decode = function(ve, Se) {
-            ve instanceof ye || (ve = ye.create(ve));
-            for (var $r = Se === void 0 ? ve.len : ve.pos + Se, Fr = new we.koinos.protocol.call_contract_operation(); ve.pos < $r; ) {
-              var Br = ve.uint32();
+            ).bytes(we.args), Se;
+          }, xe.encodeDelimited = function(we, Se) {
+            return this.encode(we, Se).ldelim();
+          }, xe.decode = function(we, Se) {
+            we instanceof ye || (we = ye.create(we));
+            for (var $r = Se === void 0 ? we.len : we.pos + Se, Fr = new ve.koinos.protocol.call_contract_operation(); we.pos < $r; ) {
+              var Br = we.uint32();
               switch (Br >>> 3) {
                 case 1: {
-                  Fr.contract_id = ve.bytes();
+                  Fr.contract_id = we.bytes();
                   break;
                 }
                 case 2: {
-                  Fr.entry_point = ve.uint32();
+                  Fr.entry_point = we.uint32();
                   break;
                 }
                 case 3: {
-                  Fr.args = ve.bytes();
+                  Fr.args = we.bytes();
                   break;
                 }
                 default:
-                  ve.skipType(Br & 7);
+                  we.skipType(Br & 7);
                   break;
               }
             }
             return Fr;
-          }, xe.decodeDelimited = function(ve) {
-            return ve instanceof ye || (ve = new ye(ve)), this.decode(ve, ve.uint32());
-          }, xe.verify = function(ve) {
-            return typeof ve != "object" || ve === null ? "object expected" : ve.contract_id != null && ve.hasOwnProperty("contract_id") && !(ve.contract_id && typeof ve.contract_id.length == "number" || be.isString(ve.contract_id)) ? "contract_id: buffer expected" : ve.entry_point != null && ve.hasOwnProperty("entry_point") && !be.isInteger(ve.entry_point) ? "entry_point: integer expected" : ve.args != null && ve.hasOwnProperty("args") && !(ve.args && typeof ve.args.length == "number" || be.isString(ve.args)) ? "args: buffer expected" : null;
-          }, xe.fromObject = function(ve) {
-            if (ve instanceof we.koinos.protocol.call_contract_operation)
-              return ve;
-            var Se = new we.koinos.protocol.call_contract_operation();
-            return ve.contract_id != null && (typeof ve.contract_id == "string" ? be.base64.decode(ve.contract_id, Se.contract_id = be.newBuffer(be.base64.length(ve.contract_id)), 0) : ve.contract_id.length >= 0 && (Se.contract_id = ve.contract_id)), ve.entry_point != null && (Se.entry_point = ve.entry_point >>> 0), ve.args != null && (typeof ve.args == "string" ? be.base64.decode(ve.args, Se.args = be.newBuffer(be.base64.length(ve.args)), 0) : ve.args.length >= 0 && (Se.args = ve.args)), Se;
-          }, xe.toObject = function(ve, Se) {
+          }, xe.decodeDelimited = function(we) {
+            return we instanceof ye || (we = new ye(we)), this.decode(we, we.uint32());
+          }, xe.verify = function(we) {
+            return typeof we != "object" || we === null ? "object expected" : we.contract_id != null && we.hasOwnProperty("contract_id") && !(we.contract_id && typeof we.contract_id.length == "number" || be.isString(we.contract_id)) ? "contract_id: buffer expected" : we.entry_point != null && we.hasOwnProperty("entry_point") && !be.isInteger(we.entry_point) ? "entry_point: integer expected" : we.args != null && we.hasOwnProperty("args") && !(we.args && typeof we.args.length == "number" || be.isString(we.args)) ? "args: buffer expected" : null;
+          }, xe.fromObject = function(we) {
+            if (we instanceof ve.koinos.protocol.call_contract_operation)
+              return we;
+            var Se = new ve.koinos.protocol.call_contract_operation();
+            return we.contract_id != null && (typeof we.contract_id == "string" ? be.base64.decode(we.contract_id, Se.contract_id = be.newBuffer(be.base64.length(we.contract_id)), 0) : we.contract_id.length >= 0 && (Se.contract_id = we.contract_id)), we.entry_point != null && (Se.entry_point = we.entry_point >>> 0), we.args != null && (typeof we.args == "string" ? be.base64.decode(we.args, Se.args = be.newBuffer(be.base64.length(we.args)), 0) : we.args.length >= 0 && (Se.args = we.args)), Se;
+          }, xe.toObject = function(we, Se) {
             Se || (Se = {});
             var $r = {};
-            return Se.defaults && (Se.bytes === String ? $r.contract_id = "" : ($r.contract_id = [], Se.bytes !== Array && ($r.contract_id = be.newBuffer($r.contract_id))), $r.entry_point = 0, Se.bytes === String ? $r.args = "" : ($r.args = [], Se.bytes !== Array && ($r.args = be.newBuffer($r.args)))), ve.contract_id != null && ve.hasOwnProperty("contract_id") && ($r.contract_id = Se.bytes === String ? be.base64.encode(ve.contract_id, 0, ve.contract_id.length) : Se.bytes === Array ? Array.prototype.slice.call(ve.contract_id) : ve.contract_id), ve.entry_point != null && ve.hasOwnProperty("entry_point") && ($r.entry_point = ve.entry_point), ve.args != null && ve.hasOwnProperty("args") && ($r.args = Se.bytes === String ? be.base64.encode(ve.args, 0, ve.args.length) : Se.bytes === Array ? Array.prototype.slice.call(ve.args) : ve.args), $r;
+            return Se.defaults && (Se.bytes === String ? $r.contract_id = "" : ($r.contract_id = [], Se.bytes !== Array && ($r.contract_id = be.newBuffer($r.contract_id))), $r.entry_point = 0, Se.bytes === String ? $r.args = "" : ($r.args = [], Se.bytes !== Array && ($r.args = be.newBuffer($r.args)))), we.contract_id != null && we.hasOwnProperty("contract_id") && ($r.contract_id = Se.bytes === String ? be.base64.encode(we.contract_id, 0, we.contract_id.length) : Se.bytes === Array ? Array.prototype.slice.call(we.contract_id) : we.contract_id), we.entry_point != null && we.hasOwnProperty("entry_point") && ($r.entry_point = we.entry_point), we.args != null && we.hasOwnProperty("args") && ($r.args = Se.bytes === String ? be.base64.encode(we.args, 0, we.args.length) : Se.bytes === Array ? Array.prototype.slice.call(we.args) : we.args), $r;
           }, xe.prototype.toJSON = function() {
             return this.constructor.toObject(this, e.util.toJSONOptions);
-          }, xe.getTypeUrl = function(ve) {
-            return ve === void 0 && (ve = "type.googleapis.com"), ve + "/koinos.protocol.call_contract_operation";
+          }, xe.getTypeUrl = function(we) {
+            return we === void 0 && (we = "type.googleapis.com"), we + "/koinos.protocol.call_contract_operation";
           }, xe;
         }(), Oe.set_system_call_operation = function() {
           function xe(gr) {
             if (gr)
-              for (var ve = Object.keys(gr), Se = 0; Se < ve.length; ++Se)
-                gr[ve[Se]] != null && (this[ve[Se]] = gr[ve[Se]]);
+              for (var we = Object.keys(gr), Se = 0; Se < we.length; ++Se)
+                gr[we[Se]] != null && (this[we[Se]] = gr[we[Se]]);
           }
-          return xe.prototype.call_id = 0, xe.prototype.target = null, xe.create = function(ve) {
-            return new xe(ve);
-          }, xe.encode = function(ve, Se) {
-            return Se || (Se = me.create()), ve.call_id != null && Object.hasOwnProperty.call(ve, "call_id") && Se.uint32(
+          return xe.prototype.call_id = 0, xe.prototype.target = null, xe.create = function(we) {
+            return new xe(we);
+          }, xe.encode = function(we, Se) {
+            return Se || (Se = me.create()), we.call_id != null && Object.hasOwnProperty.call(we, "call_id") && Se.uint32(
               /* id 1, wireType 0 =*/
               8
-            ).uint32(ve.call_id), ve.target != null && Object.hasOwnProperty.call(ve, "target") && we.koinos.protocol.system_call_target.encode(ve.target, Se.uint32(
+            ).uint32(we.call_id), we.target != null && Object.hasOwnProperty.call(we, "target") && ve.koinos.protocol.system_call_target.encode(we.target, Se.uint32(
               /* id 2, wireType 2 =*/
               18
             ).fork()).ldelim(), Se;
-          }, xe.encodeDelimited = function(ve, Se) {
-            return this.encode(ve, Se).ldelim();
-          }, xe.decode = function(ve, Se) {
-            ve instanceof ye || (ve = ye.create(ve));
-            for (var $r = Se === void 0 ? ve.len : ve.pos + Se, Fr = new we.koinos.protocol.set_system_call_operation(); ve.pos < $r; ) {
-              var Br = ve.uint32();
+          }, xe.encodeDelimited = function(we, Se) {
+            return this.encode(we, Se).ldelim();
+          }, xe.decode = function(we, Se) {
+            we instanceof ye || (we = ye.create(we));
+            for (var $r = Se === void 0 ? we.len : we.pos + Se, Fr = new ve.koinos.protocol.set_system_call_operation(); we.pos < $r; ) {
+              var Br = we.uint32();
               switch (Br >>> 3) {
                 case 1: {
-                  Fr.call_id = ve.uint32();
+                  Fr.call_id = we.uint32();
                   break;
                 }
                 case 2: {
-                  Fr.target = we.koinos.protocol.system_call_target.decode(ve, ve.uint32());
+                  Fr.target = ve.koinos.protocol.system_call_target.decode(we, we.uint32());
                   break;
                 }
                 default:
-                  ve.skipType(Br & 7);
+                  we.skipType(Br & 7);
                   break;
               }
             }
             return Fr;
-          }, xe.decodeDelimited = function(ve) {
-            return ve instanceof ye || (ve = new ye(ve)), this.decode(ve, ve.uint32());
-          }, xe.verify = function(ve) {
-            if (typeof ve != "object" || ve === null)
+          }, xe.decodeDelimited = function(we) {
+            return we instanceof ye || (we = new ye(we)), this.decode(we, we.uint32());
+          }, xe.verify = function(we) {
+            if (typeof we != "object" || we === null)
               return "object expected";
-            if (ve.call_id != null && ve.hasOwnProperty("call_id") && !be.isInteger(ve.call_id))
+            if (we.call_id != null && we.hasOwnProperty("call_id") && !be.isInteger(we.call_id))
               return "call_id: integer expected";
-            if (ve.target != null && ve.hasOwnProperty("target")) {
-              var Se = we.koinos.protocol.system_call_target.verify(ve.target);
+            if (we.target != null && we.hasOwnProperty("target")) {
+              var Se = ve.koinos.protocol.system_call_target.verify(we.target);
               if (Se)
                 return "target." + Se;
             }
             return null;
-          }, xe.fromObject = function(ve) {
-            if (ve instanceof we.koinos.protocol.set_system_call_operation)
-              return ve;
-            var Se = new we.koinos.protocol.set_system_call_operation();
-            if (ve.call_id != null && (Se.call_id = ve.call_id >>> 0), ve.target != null) {
-              if (typeof ve.target != "object")
+          }, xe.fromObject = function(we) {
+            if (we instanceof ve.koinos.protocol.set_system_call_operation)
+              return we;
+            var Se = new ve.koinos.protocol.set_system_call_operation();
+            if (we.call_id != null && (Se.call_id = we.call_id >>> 0), we.target != null) {
+              if (typeof we.target != "object")
                 throw TypeError(".koinos.protocol.set_system_call_operation.target: object expected");
-              Se.target = we.koinos.protocol.system_call_target.fromObject(ve.target);
+              Se.target = ve.koinos.protocol.system_call_target.fromObject(we.target);
             }
             return Se;
-          }, xe.toObject = function(ve, Se) {
+          }, xe.toObject = function(we, Se) {
             Se || (Se = {});
             var $r = {};
-            return Se.defaults && ($r.call_id = 0, $r.target = null), ve.call_id != null && ve.hasOwnProperty("call_id") && ($r.call_id = ve.call_id), ve.target != null && ve.hasOwnProperty("target") && ($r.target = we.koinos.protocol.system_call_target.toObject(ve.target, Se)), $r;
+            return Se.defaults && ($r.call_id = 0, $r.target = null), we.call_id != null && we.hasOwnProperty("call_id") && ($r.call_id = we.call_id), we.target != null && we.hasOwnProperty("target") && ($r.target = ve.koinos.protocol.system_call_target.toObject(we.target, Se)), $r;
           }, xe.prototype.toJSON = function() {
             return this.constructor.toObject(this, e.util.toJSONOptions);
-          }, xe.getTypeUrl = function(ve) {
-            return ve === void 0 && (ve = "type.googleapis.com"), ve + "/koinos.protocol.set_system_call_operation";
+          }, xe.getTypeUrl = function(we) {
+            return we === void 0 && (we = "type.googleapis.com"), we + "/koinos.protocol.set_system_call_operation";
           }, xe;
         }(), Oe.set_system_contract_operation = function() {
           function xe(gr) {
             if (gr)
-              for (var ve = Object.keys(gr), Se = 0; Se < ve.length; ++Se)
-                gr[ve[Se]] != null && (this[ve[Se]] = gr[ve[Se]]);
+              for (var we = Object.keys(gr), Se = 0; Se < we.length; ++Se)
+                gr[we[Se]] != null && (this[we[Se]] = gr[we[Se]]);
           }
-          return xe.prototype.contract_id = be.newBuffer([]), xe.prototype.system_contract = !1, xe.create = function(ve) {
-            return new xe(ve);
-          }, xe.encode = function(ve, Se) {
-            return Se || (Se = me.create()), ve.contract_id != null && Object.hasOwnProperty.call(ve, "contract_id") && Se.uint32(
+          return xe.prototype.contract_id = be.newBuffer([]), xe.prototype.system_contract = !1, xe.create = function(we) {
+            return new xe(we);
+          }, xe.encode = function(we, Se) {
+            return Se || (Se = me.create()), we.contract_id != null && Object.hasOwnProperty.call(we, "contract_id") && Se.uint32(
               /* id 1, wireType 2 =*/
               10
-            ).bytes(ve.contract_id), ve.system_contract != null && Object.hasOwnProperty.call(ve, "system_contract") && Se.uint32(
+            ).bytes(we.contract_id), we.system_contract != null && Object.hasOwnProperty.call(we, "system_contract") && Se.uint32(
               /* id 2, wireType 0 =*/
               16
-            ).bool(ve.system_contract), Se;
-          }, xe.encodeDelimited = function(ve, Se) {
-            return this.encode(ve, Se).ldelim();
-          }, xe.decode = function(ve, Se) {
-            ve instanceof ye || (ve = ye.create(ve));
-            for (var $r = Se === void 0 ? ve.len : ve.pos + Se, Fr = new we.koinos.protocol.set_system_contract_operation(); ve.pos < $r; ) {
-              var Br = ve.uint32();
+            ).bool(we.system_contract), Se;
+          }, xe.encodeDelimited = function(we, Se) {
+            return this.encode(we, Se).ldelim();
+          }, xe.decode = function(we, Se) {
+            we instanceof ye || (we = ye.create(we));
+            for (var $r = Se === void 0 ? we.len : we.pos + Se, Fr = new ve.koinos.protocol.set_system_contract_operation(); we.pos < $r; ) {
+              var Br = we.uint32();
               switch (Br >>> 3) {
                 case 1: {
-                  Fr.contract_id = ve.bytes();
+                  Fr.contract_id = we.bytes();
                   break;
                 }
                 case 2: {
-                  Fr.system_contract = ve.bool();
+                  Fr.system_contract = we.bool();
                   break;
                 }
                 default:
-                  ve.skipType(Br & 7);
+                  we.skipType(Br & 7);
                   break;
               }
             }
             return Fr;
-          }, xe.decodeDelimited = function(ve) {
-            return ve instanceof ye || (ve = new ye(ve)), this.decode(ve, ve.uint32());
-          }, xe.verify = function(ve) {
-            return typeof ve != "object" || ve === null ? "object expected" : ve.contract_id != null && ve.hasOwnProperty("contract_id") && !(ve.contract_id && typeof ve.contract_id.length == "number" || be.isString(ve.contract_id)) ? "contract_id: buffer expected" : ve.system_contract != null && ve.hasOwnProperty("system_contract") && typeof ve.system_contract != "boolean" ? "system_contract: boolean expected" : null;
-          }, xe.fromObject = function(ve) {
-            if (ve instanceof we.koinos.protocol.set_system_contract_operation)
-              return ve;
-            var Se = new we.koinos.protocol.set_system_contract_operation();
-            return ve.contract_id != null && (typeof ve.contract_id == "string" ? be.base64.decode(ve.contract_id, Se.contract_id = be.newBuffer(be.base64.length(ve.contract_id)), 0) : ve.contract_id.length >= 0 && (Se.contract_id = ve.contract_id)), ve.system_contract != null && (Se.system_contract = !!ve.system_contract), Se;
-          }, xe.toObject = function(ve, Se) {
+          }, xe.decodeDelimited = function(we) {
+            return we instanceof ye || (we = new ye(we)), this.decode(we, we.uint32());
+          }, xe.verify = function(we) {
+            return typeof we != "object" || we === null ? "object expected" : we.contract_id != null && we.hasOwnProperty("contract_id") && !(we.contract_id && typeof we.contract_id.length == "number" || be.isString(we.contract_id)) ? "contract_id: buffer expected" : we.system_contract != null && we.hasOwnProperty("system_contract") && typeof we.system_contract != "boolean" ? "system_contract: boolean expected" : null;
+          }, xe.fromObject = function(we) {
+            if (we instanceof ve.koinos.protocol.set_system_contract_operation)
+              return we;
+            var Se = new ve.koinos.protocol.set_system_contract_operation();
+            return we.contract_id != null && (typeof we.contract_id == "string" ? be.base64.decode(we.contract_id, Se.contract_id = be.newBuffer(be.base64.length(we.contract_id)), 0) : we.contract_id.length >= 0 && (Se.contract_id = we.contract_id)), we.system_contract != null && (Se.system_contract = !!we.system_contract), Se;
+          }, xe.toObject = function(we, Se) {
             Se || (Se = {});
             var $r = {};
-            return Se.defaults && (Se.bytes === String ? $r.contract_id = "" : ($r.contract_id = [], Se.bytes !== Array && ($r.contract_id = be.newBuffer($r.contract_id))), $r.system_contract = !1), ve.contract_id != null && ve.hasOwnProperty("contract_id") && ($r.contract_id = Se.bytes === String ? be.base64.encode(ve.contract_id, 0, ve.contract_id.length) : Se.bytes === Array ? Array.prototype.slice.call(ve.contract_id) : ve.contract_id), ve.system_contract != null && ve.hasOwnProperty("system_contract") && ($r.system_contract = ve.system_contract), $r;
+            return Se.defaults && (Se.bytes === String ? $r.contract_id = "" : ($r.contract_id = [], Se.bytes !== Array && ($r.contract_id = be.newBuffer($r.contract_id))), $r.system_contract = !1), we.contract_id != null && we.hasOwnProperty("contract_id") && ($r.contract_id = Se.bytes === String ? be.base64.encode(we.contract_id, 0, we.contract_id.length) : Se.bytes === Array ? Array.prototype.slice.call(we.contract_id) : we.contract_id), we.system_contract != null && we.hasOwnProperty("system_contract") && ($r.system_contract = we.system_contract), $r;
           }, xe.prototype.toJSON = function() {
             return this.constructor.toObject(this, e.util.toJSONOptions);
-          }, xe.getTypeUrl = function(ve) {
-            return ve === void 0 && (ve = "type.googleapis.com"), ve + "/koinos.protocol.set_system_contract_operation";
+          }, xe.getTypeUrl = function(we) {
+            return we === void 0 && (we = "type.googleapis.com"), we + "/koinos.protocol.set_system_contract_operation";
           }, xe;
         }(), Oe.operation = function() {
-          function xe(ve) {
-            if (ve)
-              for (var Se = Object.keys(ve), $r = 0; $r < Se.length; ++$r)
-                ve[Se[$r]] != null && (this[Se[$r]] = ve[Se[$r]]);
+          function xe(we) {
+            if (we)
+              for (var Se = Object.keys(we), $r = 0; $r < Se.length; ++$r)
+                we[Se[$r]] != null && (this[Se[$r]] = we[Se[$r]]);
           }
           xe.prototype.upload_contract = null, xe.prototype.call_contract = null, xe.prototype.set_system_call = null, xe.prototype.set_system_contract = null;
           var gr;
@@ -24214,16 +23987,16 @@ function requireMinimal() {
           }), xe.create = function(Se) {
             return new xe(Se);
           }, xe.encode = function(Se, $r) {
-            return $r || ($r = me.create()), Se.upload_contract != null && Object.hasOwnProperty.call(Se, "upload_contract") && we.koinos.protocol.upload_contract_operation.encode(Se.upload_contract, $r.uint32(
+            return $r || ($r = me.create()), Se.upload_contract != null && Object.hasOwnProperty.call(Se, "upload_contract") && ve.koinos.protocol.upload_contract_operation.encode(Se.upload_contract, $r.uint32(
               /* id 1, wireType 2 =*/
               10
-            ).fork()).ldelim(), Se.call_contract != null && Object.hasOwnProperty.call(Se, "call_contract") && we.koinos.protocol.call_contract_operation.encode(Se.call_contract, $r.uint32(
+            ).fork()).ldelim(), Se.call_contract != null && Object.hasOwnProperty.call(Se, "call_contract") && ve.koinos.protocol.call_contract_operation.encode(Se.call_contract, $r.uint32(
               /* id 2, wireType 2 =*/
               18
-            ).fork()).ldelim(), Se.set_system_call != null && Object.hasOwnProperty.call(Se, "set_system_call") && we.koinos.protocol.set_system_call_operation.encode(Se.set_system_call, $r.uint32(
+            ).fork()).ldelim(), Se.set_system_call != null && Object.hasOwnProperty.call(Se, "set_system_call") && ve.koinos.protocol.set_system_call_operation.encode(Se.set_system_call, $r.uint32(
               /* id 3, wireType 2 =*/
               26
-            ).fork()).ldelim(), Se.set_system_contract != null && Object.hasOwnProperty.call(Se, "set_system_contract") && we.koinos.protocol.set_system_contract_operation.encode(Se.set_system_contract, $r.uint32(
+            ).fork()).ldelim(), Se.set_system_contract != null && Object.hasOwnProperty.call(Se, "set_system_contract") && ve.koinos.protocol.set_system_contract_operation.encode(Se.set_system_contract, $r.uint32(
               /* id 4, wireType 2 =*/
               34
             ).fork()).ldelim(), $r;
@@ -24231,23 +24004,23 @@ function requireMinimal() {
             return this.encode(Se, $r).ldelim();
           }, xe.decode = function(Se, $r) {
             Se instanceof ye || (Se = ye.create(Se));
-            for (var Fr = $r === void 0 ? Se.len : Se.pos + $r, Br = new we.koinos.protocol.operation(); Se.pos < Fr; ) {
+            for (var Fr = $r === void 0 ? Se.len : Se.pos + $r, Br = new ve.koinos.protocol.operation(); Se.pos < Fr; ) {
               var Vr = Se.uint32();
               switch (Vr >>> 3) {
                 case 1: {
-                  Br.upload_contract = we.koinos.protocol.upload_contract_operation.decode(Se, Se.uint32());
+                  Br.upload_contract = ve.koinos.protocol.upload_contract_operation.decode(Se, Se.uint32());
                   break;
                 }
                 case 2: {
-                  Br.call_contract = we.koinos.protocol.call_contract_operation.decode(Se, Se.uint32());
+                  Br.call_contract = ve.koinos.protocol.call_contract_operation.decode(Se, Se.uint32());
                   break;
                 }
                 case 3: {
-                  Br.set_system_call = we.koinos.protocol.set_system_call_operation.decode(Se, Se.uint32());
+                  Br.set_system_call = ve.koinos.protocol.set_system_call_operation.decode(Se, Se.uint32());
                   break;
                 }
                 case 4: {
-                  Br.set_system_contract = we.koinos.protocol.set_system_contract_operation.decode(Se, Se.uint32());
+                  Br.set_system_contract = ve.koinos.protocol.set_system_contract_operation.decode(Se, Se.uint32());
                   break;
                 }
                 default:
@@ -24265,7 +24038,7 @@ function requireMinimal() {
             if (Se.upload_contract != null && Se.hasOwnProperty("upload_contract")) {
               $r.op = 1;
               {
-                var Fr = we.koinos.protocol.upload_contract_operation.verify(Se.upload_contract);
+                var Fr = ve.koinos.protocol.upload_contract_operation.verify(Se.upload_contract);
                 if (Fr)
                   return "upload_contract." + Fr;
               }
@@ -24275,7 +24048,7 @@ function requireMinimal() {
                 return "op: multiple values";
               $r.op = 1;
               {
-                var Fr = we.koinos.protocol.call_contract_operation.verify(Se.call_contract);
+                var Fr = ve.koinos.protocol.call_contract_operation.verify(Se.call_contract);
                 if (Fr)
                   return "call_contract." + Fr;
               }
@@ -24285,7 +24058,7 @@ function requireMinimal() {
                 return "op: multiple values";
               $r.op = 1;
               {
-                var Fr = we.koinos.protocol.set_system_call_operation.verify(Se.set_system_call);
+                var Fr = ve.koinos.protocol.set_system_call_operation.verify(Se.set_system_call);
                 if (Fr)
                   return "set_system_call." + Fr;
               }
@@ -24295,41 +24068,41 @@ function requireMinimal() {
                 return "op: multiple values";
               $r.op = 1;
               {
-                var Fr = we.koinos.protocol.set_system_contract_operation.verify(Se.set_system_contract);
+                var Fr = ve.koinos.protocol.set_system_contract_operation.verify(Se.set_system_contract);
                 if (Fr)
                   return "set_system_contract." + Fr;
               }
             }
             return null;
           }, xe.fromObject = function(Se) {
-            if (Se instanceof we.koinos.protocol.operation)
+            if (Se instanceof ve.koinos.protocol.operation)
               return Se;
-            var $r = new we.koinos.protocol.operation();
+            var $r = new ve.koinos.protocol.operation();
             if (Se.upload_contract != null) {
               if (typeof Se.upload_contract != "object")
                 throw TypeError(".koinos.protocol.operation.upload_contract: object expected");
-              $r.upload_contract = we.koinos.protocol.upload_contract_operation.fromObject(Se.upload_contract);
+              $r.upload_contract = ve.koinos.protocol.upload_contract_operation.fromObject(Se.upload_contract);
             }
             if (Se.call_contract != null) {
               if (typeof Se.call_contract != "object")
                 throw TypeError(".koinos.protocol.operation.call_contract: object expected");
-              $r.call_contract = we.koinos.protocol.call_contract_operation.fromObject(Se.call_contract);
+              $r.call_contract = ve.koinos.protocol.call_contract_operation.fromObject(Se.call_contract);
             }
             if (Se.set_system_call != null) {
               if (typeof Se.set_system_call != "object")
                 throw TypeError(".koinos.protocol.operation.set_system_call: object expected");
-              $r.set_system_call = we.koinos.protocol.set_system_call_operation.fromObject(Se.set_system_call);
+              $r.set_system_call = ve.koinos.protocol.set_system_call_operation.fromObject(Se.set_system_call);
             }
             if (Se.set_system_contract != null) {
               if (typeof Se.set_system_contract != "object")
                 throw TypeError(".koinos.protocol.operation.set_system_contract: object expected");
-              $r.set_system_contract = we.koinos.protocol.set_system_contract_operation.fromObject(Se.set_system_contract);
+              $r.set_system_contract = ve.koinos.protocol.set_system_contract_operation.fromObject(Se.set_system_contract);
             }
             return $r;
           }, xe.toObject = function(Se, $r) {
             $r || ($r = {});
             var Fr = {};
-            return Se.upload_contract != null && Se.hasOwnProperty("upload_contract") && (Fr.upload_contract = we.koinos.protocol.upload_contract_operation.toObject(Se.upload_contract, $r), $r.oneofs && (Fr.op = "upload_contract")), Se.call_contract != null && Se.hasOwnProperty("call_contract") && (Fr.call_contract = we.koinos.protocol.call_contract_operation.toObject(Se.call_contract, $r), $r.oneofs && (Fr.op = "call_contract")), Se.set_system_call != null && Se.hasOwnProperty("set_system_call") && (Fr.set_system_call = we.koinos.protocol.set_system_call_operation.toObject(Se.set_system_call, $r), $r.oneofs && (Fr.op = "set_system_call")), Se.set_system_contract != null && Se.hasOwnProperty("set_system_contract") && (Fr.set_system_contract = we.koinos.protocol.set_system_contract_operation.toObject(Se.set_system_contract, $r), $r.oneofs && (Fr.op = "set_system_contract")), Fr;
+            return Se.upload_contract != null && Se.hasOwnProperty("upload_contract") && (Fr.upload_contract = ve.koinos.protocol.upload_contract_operation.toObject(Se.upload_contract, $r), $r.oneofs && (Fr.op = "upload_contract")), Se.call_contract != null && Se.hasOwnProperty("call_contract") && (Fr.call_contract = ve.koinos.protocol.call_contract_operation.toObject(Se.call_contract, $r), $r.oneofs && (Fr.op = "call_contract")), Se.set_system_call != null && Se.hasOwnProperty("set_system_call") && (Fr.set_system_call = ve.koinos.protocol.set_system_call_operation.toObject(Se.set_system_call, $r), $r.oneofs && (Fr.op = "set_system_call")), Se.set_system_contract != null && Se.hasOwnProperty("set_system_contract") && (Fr.set_system_contract = ve.koinos.protocol.set_system_contract_operation.toObject(Se.set_system_contract, $r), $r.oneofs && (Fr.op = "set_system_contract")), Fr;
           }, xe.prototype.toJSON = function() {
             return this.constructor.toObject(this, e.util.toJSONOptions);
           }, xe.getTypeUrl = function(Se) {
@@ -24338,78 +24111,78 @@ function requireMinimal() {
         }(), Oe.transaction_header = function() {
           function xe(gr) {
             if (gr)
-              for (var ve = Object.keys(gr), Se = 0; Se < ve.length; ++Se)
-                gr[ve[Se]] != null && (this[ve[Se]] = gr[ve[Se]]);
+              for (var we = Object.keys(gr), Se = 0; Se < we.length; ++Se)
+                gr[we[Se]] != null && (this[we[Se]] = gr[we[Se]]);
           }
-          return xe.prototype.chain_id = be.newBuffer([]), xe.prototype.rc_limit = be.Long ? be.Long.fromBits(0, 0, !0) : 0, xe.prototype.nonce = be.newBuffer([]), xe.prototype.operation_merkle_root = be.newBuffer([]), xe.prototype.payer = be.newBuffer([]), xe.prototype.payee = be.newBuffer([]), xe.create = function(ve) {
-            return new xe(ve);
-          }, xe.encode = function(ve, Se) {
-            return Se || (Se = me.create()), ve.chain_id != null && Object.hasOwnProperty.call(ve, "chain_id") && Se.uint32(
+          return xe.prototype.chain_id = be.newBuffer([]), xe.prototype.rc_limit = be.Long ? be.Long.fromBits(0, 0, !0) : 0, xe.prototype.nonce = be.newBuffer([]), xe.prototype.operation_merkle_root = be.newBuffer([]), xe.prototype.payer = be.newBuffer([]), xe.prototype.payee = be.newBuffer([]), xe.create = function(we) {
+            return new xe(we);
+          }, xe.encode = function(we, Se) {
+            return Se || (Se = me.create()), we.chain_id != null && Object.hasOwnProperty.call(we, "chain_id") && Se.uint32(
               /* id 1, wireType 2 =*/
               10
-            ).bytes(ve.chain_id), ve.rc_limit != null && Object.hasOwnProperty.call(ve, "rc_limit") && Se.uint32(
+            ).bytes(we.chain_id), we.rc_limit != null && Object.hasOwnProperty.call(we, "rc_limit") && Se.uint32(
               /* id 2, wireType 0 =*/
               16
-            ).uint64(ve.rc_limit), ve.nonce != null && Object.hasOwnProperty.call(ve, "nonce") && Se.uint32(
+            ).uint64(we.rc_limit), we.nonce != null && Object.hasOwnProperty.call(we, "nonce") && Se.uint32(
               /* id 3, wireType 2 =*/
               26
-            ).bytes(ve.nonce), ve.operation_merkle_root != null && Object.hasOwnProperty.call(ve, "operation_merkle_root") && Se.uint32(
+            ).bytes(we.nonce), we.operation_merkle_root != null && Object.hasOwnProperty.call(we, "operation_merkle_root") && Se.uint32(
               /* id 4, wireType 2 =*/
               34
-            ).bytes(ve.operation_merkle_root), ve.payer != null && Object.hasOwnProperty.call(ve, "payer") && Se.uint32(
+            ).bytes(we.operation_merkle_root), we.payer != null && Object.hasOwnProperty.call(we, "payer") && Se.uint32(
               /* id 5, wireType 2 =*/
               42
-            ).bytes(ve.payer), ve.payee != null && Object.hasOwnProperty.call(ve, "payee") && Se.uint32(
+            ).bytes(we.payer), we.payee != null && Object.hasOwnProperty.call(we, "payee") && Se.uint32(
               /* id 6, wireType 2 =*/
               50
-            ).bytes(ve.payee), Se;
-          }, xe.encodeDelimited = function(ve, Se) {
-            return this.encode(ve, Se).ldelim();
-          }, xe.decode = function(ve, Se) {
-            ve instanceof ye || (ve = ye.create(ve));
-            for (var $r = Se === void 0 ? ve.len : ve.pos + Se, Fr = new we.koinos.protocol.transaction_header(); ve.pos < $r; ) {
-              var Br = ve.uint32();
+            ).bytes(we.payee), Se;
+          }, xe.encodeDelimited = function(we, Se) {
+            return this.encode(we, Se).ldelim();
+          }, xe.decode = function(we, Se) {
+            we instanceof ye || (we = ye.create(we));
+            for (var $r = Se === void 0 ? we.len : we.pos + Se, Fr = new ve.koinos.protocol.transaction_header(); we.pos < $r; ) {
+              var Br = we.uint32();
               switch (Br >>> 3) {
                 case 1: {
-                  Fr.chain_id = ve.bytes();
+                  Fr.chain_id = we.bytes();
                   break;
                 }
                 case 2: {
-                  Fr.rc_limit = ve.uint64();
+                  Fr.rc_limit = we.uint64();
                   break;
                 }
                 case 3: {
-                  Fr.nonce = ve.bytes();
+                  Fr.nonce = we.bytes();
                   break;
                 }
                 case 4: {
-                  Fr.operation_merkle_root = ve.bytes();
+                  Fr.operation_merkle_root = we.bytes();
                   break;
                 }
                 case 5: {
-                  Fr.payer = ve.bytes();
+                  Fr.payer = we.bytes();
                   break;
                 }
                 case 6: {
-                  Fr.payee = ve.bytes();
+                  Fr.payee = we.bytes();
                   break;
                 }
                 default:
-                  ve.skipType(Br & 7);
+                  we.skipType(Br & 7);
                   break;
               }
             }
             return Fr;
-          }, xe.decodeDelimited = function(ve) {
-            return ve instanceof ye || (ve = new ye(ve)), this.decode(ve, ve.uint32());
-          }, xe.verify = function(ve) {
-            return typeof ve != "object" || ve === null ? "object expected" : ve.chain_id != null && ve.hasOwnProperty("chain_id") && !(ve.chain_id && typeof ve.chain_id.length == "number" || be.isString(ve.chain_id)) ? "chain_id: buffer expected" : ve.rc_limit != null && ve.hasOwnProperty("rc_limit") && !be.isInteger(ve.rc_limit) && !(ve.rc_limit && be.isInteger(ve.rc_limit.low) && be.isInteger(ve.rc_limit.high)) ? "rc_limit: integer|Long expected" : ve.nonce != null && ve.hasOwnProperty("nonce") && !(ve.nonce && typeof ve.nonce.length == "number" || be.isString(ve.nonce)) ? "nonce: buffer expected" : ve.operation_merkle_root != null && ve.hasOwnProperty("operation_merkle_root") && !(ve.operation_merkle_root && typeof ve.operation_merkle_root.length == "number" || be.isString(ve.operation_merkle_root)) ? "operation_merkle_root: buffer expected" : ve.payer != null && ve.hasOwnProperty("payer") && !(ve.payer && typeof ve.payer.length == "number" || be.isString(ve.payer)) ? "payer: buffer expected" : ve.payee != null && ve.hasOwnProperty("payee") && !(ve.payee && typeof ve.payee.length == "number" || be.isString(ve.payee)) ? "payee: buffer expected" : null;
-          }, xe.fromObject = function(ve) {
-            if (ve instanceof we.koinos.protocol.transaction_header)
-              return ve;
-            var Se = new we.koinos.protocol.transaction_header();
-            return ve.chain_id != null && (typeof ve.chain_id == "string" ? be.base64.decode(ve.chain_id, Se.chain_id = be.newBuffer(be.base64.length(ve.chain_id)), 0) : ve.chain_id.length >= 0 && (Se.chain_id = ve.chain_id)), ve.rc_limit != null && (be.Long ? (Se.rc_limit = be.Long.fromValue(ve.rc_limit)).unsigned = !0 : typeof ve.rc_limit == "string" ? Se.rc_limit = parseInt(ve.rc_limit, 10) : typeof ve.rc_limit == "number" ? Se.rc_limit = ve.rc_limit : typeof ve.rc_limit == "object" && (Se.rc_limit = new be.LongBits(ve.rc_limit.low >>> 0, ve.rc_limit.high >>> 0).toNumber(!0))), ve.nonce != null && (typeof ve.nonce == "string" ? be.base64.decode(ve.nonce, Se.nonce = be.newBuffer(be.base64.length(ve.nonce)), 0) : ve.nonce.length >= 0 && (Se.nonce = ve.nonce)), ve.operation_merkle_root != null && (typeof ve.operation_merkle_root == "string" ? be.base64.decode(ve.operation_merkle_root, Se.operation_merkle_root = be.newBuffer(be.base64.length(ve.operation_merkle_root)), 0) : ve.operation_merkle_root.length >= 0 && (Se.operation_merkle_root = ve.operation_merkle_root)), ve.payer != null && (typeof ve.payer == "string" ? be.base64.decode(ve.payer, Se.payer = be.newBuffer(be.base64.length(ve.payer)), 0) : ve.payer.length >= 0 && (Se.payer = ve.payer)), ve.payee != null && (typeof ve.payee == "string" ? be.base64.decode(ve.payee, Se.payee = be.newBuffer(be.base64.length(ve.payee)), 0) : ve.payee.length >= 0 && (Se.payee = ve.payee)), Se;
-          }, xe.toObject = function(ve, Se) {
+          }, xe.decodeDelimited = function(we) {
+            return we instanceof ye || (we = new ye(we)), this.decode(we, we.uint32());
+          }, xe.verify = function(we) {
+            return typeof we != "object" || we === null ? "object expected" : we.chain_id != null && we.hasOwnProperty("chain_id") && !(we.chain_id && typeof we.chain_id.length == "number" || be.isString(we.chain_id)) ? "chain_id: buffer expected" : we.rc_limit != null && we.hasOwnProperty("rc_limit") && !be.isInteger(we.rc_limit) && !(we.rc_limit && be.isInteger(we.rc_limit.low) && be.isInteger(we.rc_limit.high)) ? "rc_limit: integer|Long expected" : we.nonce != null && we.hasOwnProperty("nonce") && !(we.nonce && typeof we.nonce.length == "number" || be.isString(we.nonce)) ? "nonce: buffer expected" : we.operation_merkle_root != null && we.hasOwnProperty("operation_merkle_root") && !(we.operation_merkle_root && typeof we.operation_merkle_root.length == "number" || be.isString(we.operation_merkle_root)) ? "operation_merkle_root: buffer expected" : we.payer != null && we.hasOwnProperty("payer") && !(we.payer && typeof we.payer.length == "number" || be.isString(we.payer)) ? "payer: buffer expected" : we.payee != null && we.hasOwnProperty("payee") && !(we.payee && typeof we.payee.length == "number" || be.isString(we.payee)) ? "payee: buffer expected" : null;
+          }, xe.fromObject = function(we) {
+            if (we instanceof ve.koinos.protocol.transaction_header)
+              return we;
+            var Se = new ve.koinos.protocol.transaction_header();
+            return we.chain_id != null && (typeof we.chain_id == "string" ? be.base64.decode(we.chain_id, Se.chain_id = be.newBuffer(be.base64.length(we.chain_id)), 0) : we.chain_id.length >= 0 && (Se.chain_id = we.chain_id)), we.rc_limit != null && (be.Long ? (Se.rc_limit = be.Long.fromValue(we.rc_limit)).unsigned = !0 : typeof we.rc_limit == "string" ? Se.rc_limit = parseInt(we.rc_limit, 10) : typeof we.rc_limit == "number" ? Se.rc_limit = we.rc_limit : typeof we.rc_limit == "object" && (Se.rc_limit = new be.LongBits(we.rc_limit.low >>> 0, we.rc_limit.high >>> 0).toNumber(!0))), we.nonce != null && (typeof we.nonce == "string" ? be.base64.decode(we.nonce, Se.nonce = be.newBuffer(be.base64.length(we.nonce)), 0) : we.nonce.length >= 0 && (Se.nonce = we.nonce)), we.operation_merkle_root != null && (typeof we.operation_merkle_root == "string" ? be.base64.decode(we.operation_merkle_root, Se.operation_merkle_root = be.newBuffer(be.base64.length(we.operation_merkle_root)), 0) : we.operation_merkle_root.length >= 0 && (Se.operation_merkle_root = we.operation_merkle_root)), we.payer != null && (typeof we.payer == "string" ? be.base64.decode(we.payer, Se.payer = be.newBuffer(be.base64.length(we.payer)), 0) : we.payer.length >= 0 && (Se.payer = we.payer)), we.payee != null && (typeof we.payee == "string" ? be.base64.decode(we.payee, Se.payee = be.newBuffer(be.base64.length(we.payee)), 0) : we.payee.length >= 0 && (Se.payee = we.payee)), Se;
+          }, xe.toObject = function(we, Se) {
             Se || (Se = {});
             var $r = {};
             if (Se.defaults) {
@@ -24420,313 +24193,313 @@ function requireMinimal() {
                 $r.rc_limit = Se.longs === String ? "0" : 0;
               Se.bytes === String ? $r.nonce = "" : ($r.nonce = [], Se.bytes !== Array && ($r.nonce = be.newBuffer($r.nonce))), Se.bytes === String ? $r.operation_merkle_root = "" : ($r.operation_merkle_root = [], Se.bytes !== Array && ($r.operation_merkle_root = be.newBuffer($r.operation_merkle_root))), Se.bytes === String ? $r.payer = "" : ($r.payer = [], Se.bytes !== Array && ($r.payer = be.newBuffer($r.payer))), Se.bytes === String ? $r.payee = "" : ($r.payee = [], Se.bytes !== Array && ($r.payee = be.newBuffer($r.payee)));
             }
-            return ve.chain_id != null && ve.hasOwnProperty("chain_id") && ($r.chain_id = Se.bytes === String ? be.base64.encode(ve.chain_id, 0, ve.chain_id.length) : Se.bytes === Array ? Array.prototype.slice.call(ve.chain_id) : ve.chain_id), ve.rc_limit != null && ve.hasOwnProperty("rc_limit") && (typeof ve.rc_limit == "number" ? $r.rc_limit = Se.longs === String ? String(ve.rc_limit) : ve.rc_limit : $r.rc_limit = Se.longs === String ? be.Long.prototype.toString.call(ve.rc_limit) : Se.longs === Number ? new be.LongBits(ve.rc_limit.low >>> 0, ve.rc_limit.high >>> 0).toNumber(!0) : ve.rc_limit), ve.nonce != null && ve.hasOwnProperty("nonce") && ($r.nonce = Se.bytes === String ? be.base64.encode(ve.nonce, 0, ve.nonce.length) : Se.bytes === Array ? Array.prototype.slice.call(ve.nonce) : ve.nonce), ve.operation_merkle_root != null && ve.hasOwnProperty("operation_merkle_root") && ($r.operation_merkle_root = Se.bytes === String ? be.base64.encode(ve.operation_merkle_root, 0, ve.operation_merkle_root.length) : Se.bytes === Array ? Array.prototype.slice.call(ve.operation_merkle_root) : ve.operation_merkle_root), ve.payer != null && ve.hasOwnProperty("payer") && ($r.payer = Se.bytes === String ? be.base64.encode(ve.payer, 0, ve.payer.length) : Se.bytes === Array ? Array.prototype.slice.call(ve.payer) : ve.payer), ve.payee != null && ve.hasOwnProperty("payee") && ($r.payee = Se.bytes === String ? be.base64.encode(ve.payee, 0, ve.payee.length) : Se.bytes === Array ? Array.prototype.slice.call(ve.payee) : ve.payee), $r;
+            return we.chain_id != null && we.hasOwnProperty("chain_id") && ($r.chain_id = Se.bytes === String ? be.base64.encode(we.chain_id, 0, we.chain_id.length) : Se.bytes === Array ? Array.prototype.slice.call(we.chain_id) : we.chain_id), we.rc_limit != null && we.hasOwnProperty("rc_limit") && (typeof we.rc_limit == "number" ? $r.rc_limit = Se.longs === String ? String(we.rc_limit) : we.rc_limit : $r.rc_limit = Se.longs === String ? be.Long.prototype.toString.call(we.rc_limit) : Se.longs === Number ? new be.LongBits(we.rc_limit.low >>> 0, we.rc_limit.high >>> 0).toNumber(!0) : we.rc_limit), we.nonce != null && we.hasOwnProperty("nonce") && ($r.nonce = Se.bytes === String ? be.base64.encode(we.nonce, 0, we.nonce.length) : Se.bytes === Array ? Array.prototype.slice.call(we.nonce) : we.nonce), we.operation_merkle_root != null && we.hasOwnProperty("operation_merkle_root") && ($r.operation_merkle_root = Se.bytes === String ? be.base64.encode(we.operation_merkle_root, 0, we.operation_merkle_root.length) : Se.bytes === Array ? Array.prototype.slice.call(we.operation_merkle_root) : we.operation_merkle_root), we.payer != null && we.hasOwnProperty("payer") && ($r.payer = Se.bytes === String ? be.base64.encode(we.payer, 0, we.payer.length) : Se.bytes === Array ? Array.prototype.slice.call(we.payer) : we.payer), we.payee != null && we.hasOwnProperty("payee") && ($r.payee = Se.bytes === String ? be.base64.encode(we.payee, 0, we.payee.length) : Se.bytes === Array ? Array.prototype.slice.call(we.payee) : we.payee), $r;
           }, xe.prototype.toJSON = function() {
             return this.constructor.toObject(this, e.util.toJSONOptions);
-          }, xe.getTypeUrl = function(ve) {
-            return ve === void 0 && (ve = "type.googleapis.com"), ve + "/koinos.protocol.transaction_header";
+          }, xe.getTypeUrl = function(we) {
+            return we === void 0 && (we = "type.googleapis.com"), we + "/koinos.protocol.transaction_header";
           }, xe;
         }(), Oe.transaction = function() {
           function xe(gr) {
             if (this.operations = [], this.signatures = [], gr)
-              for (var ve = Object.keys(gr), Se = 0; Se < ve.length; ++Se)
-                gr[ve[Se]] != null && (this[ve[Se]] = gr[ve[Se]]);
+              for (var we = Object.keys(gr), Se = 0; Se < we.length; ++Se)
+                gr[we[Se]] != null && (this[we[Se]] = gr[we[Se]]);
           }
-          return xe.prototype.id = be.newBuffer([]), xe.prototype.header = null, xe.prototype.operations = be.emptyArray, xe.prototype.signatures = be.emptyArray, xe.create = function(ve) {
-            return new xe(ve);
-          }, xe.encode = function(ve, Se) {
-            if (Se || (Se = me.create()), ve.id != null && Object.hasOwnProperty.call(ve, "id") && Se.uint32(
+          return xe.prototype.id = be.newBuffer([]), xe.prototype.header = null, xe.prototype.operations = be.emptyArray, xe.prototype.signatures = be.emptyArray, xe.create = function(we) {
+            return new xe(we);
+          }, xe.encode = function(we, Se) {
+            if (Se || (Se = me.create()), we.id != null && Object.hasOwnProperty.call(we, "id") && Se.uint32(
               /* id 1, wireType 2 =*/
               10
-            ).bytes(ve.id), ve.header != null && Object.hasOwnProperty.call(ve, "header") && we.koinos.protocol.transaction_header.encode(ve.header, Se.uint32(
+            ).bytes(we.id), we.header != null && Object.hasOwnProperty.call(we, "header") && ve.koinos.protocol.transaction_header.encode(we.header, Se.uint32(
               /* id 2, wireType 2 =*/
               18
-            ).fork()).ldelim(), ve.operations != null && ve.operations.length)
-              for (var $r = 0; $r < ve.operations.length; ++$r)
-                we.koinos.protocol.operation.encode(ve.operations[$r], Se.uint32(
+            ).fork()).ldelim(), we.operations != null && we.operations.length)
+              for (var $r = 0; $r < we.operations.length; ++$r)
+                ve.koinos.protocol.operation.encode(we.operations[$r], Se.uint32(
                   /* id 3, wireType 2 =*/
                   26
                 ).fork()).ldelim();
-            if (ve.signatures != null && ve.signatures.length)
-              for (var $r = 0; $r < ve.signatures.length; ++$r)
+            if (we.signatures != null && we.signatures.length)
+              for (var $r = 0; $r < we.signatures.length; ++$r)
                 Se.uint32(
                   /* id 4, wireType 2 =*/
                   34
-                ).bytes(ve.signatures[$r]);
+                ).bytes(we.signatures[$r]);
             return Se;
-          }, xe.encodeDelimited = function(ve, Se) {
-            return this.encode(ve, Se).ldelim();
-          }, xe.decode = function(ve, Se) {
-            ve instanceof ye || (ve = ye.create(ve));
-            for (var $r = Se === void 0 ? ve.len : ve.pos + Se, Fr = new we.koinos.protocol.transaction(); ve.pos < $r; ) {
-              var Br = ve.uint32();
+          }, xe.encodeDelimited = function(we, Se) {
+            return this.encode(we, Se).ldelim();
+          }, xe.decode = function(we, Se) {
+            we instanceof ye || (we = ye.create(we));
+            for (var $r = Se === void 0 ? we.len : we.pos + Se, Fr = new ve.koinos.protocol.transaction(); we.pos < $r; ) {
+              var Br = we.uint32();
               switch (Br >>> 3) {
                 case 1: {
-                  Fr.id = ve.bytes();
+                  Fr.id = we.bytes();
                   break;
                 }
                 case 2: {
-                  Fr.header = we.koinos.protocol.transaction_header.decode(ve, ve.uint32());
+                  Fr.header = ve.koinos.protocol.transaction_header.decode(we, we.uint32());
                   break;
                 }
                 case 3: {
-                  Fr.operations && Fr.operations.length || (Fr.operations = []), Fr.operations.push(we.koinos.protocol.operation.decode(ve, ve.uint32()));
+                  Fr.operations && Fr.operations.length || (Fr.operations = []), Fr.operations.push(ve.koinos.protocol.operation.decode(we, we.uint32()));
                   break;
                 }
                 case 4: {
-                  Fr.signatures && Fr.signatures.length || (Fr.signatures = []), Fr.signatures.push(ve.bytes());
+                  Fr.signatures && Fr.signatures.length || (Fr.signatures = []), Fr.signatures.push(we.bytes());
                   break;
                 }
                 default:
-                  ve.skipType(Br & 7);
+                  we.skipType(Br & 7);
                   break;
               }
             }
             return Fr;
-          }, xe.decodeDelimited = function(ve) {
-            return ve instanceof ye || (ve = new ye(ve)), this.decode(ve, ve.uint32());
-          }, xe.verify = function(ve) {
-            if (typeof ve != "object" || ve === null)
+          }, xe.decodeDelimited = function(we) {
+            return we instanceof ye || (we = new ye(we)), this.decode(we, we.uint32());
+          }, xe.verify = function(we) {
+            if (typeof we != "object" || we === null)
               return "object expected";
-            if (ve.id != null && ve.hasOwnProperty("id") && !(ve.id && typeof ve.id.length == "number" || be.isString(ve.id)))
+            if (we.id != null && we.hasOwnProperty("id") && !(we.id && typeof we.id.length == "number" || be.isString(we.id)))
               return "id: buffer expected";
-            if (ve.header != null && ve.hasOwnProperty("header")) {
-              var Se = we.koinos.protocol.transaction_header.verify(ve.header);
+            if (we.header != null && we.hasOwnProperty("header")) {
+              var Se = ve.koinos.protocol.transaction_header.verify(we.header);
               if (Se)
                 return "header." + Se;
             }
-            if (ve.operations != null && ve.hasOwnProperty("operations")) {
-              if (!Array.isArray(ve.operations))
+            if (we.operations != null && we.hasOwnProperty("operations")) {
+              if (!Array.isArray(we.operations))
                 return "operations: array expected";
-              for (var $r = 0; $r < ve.operations.length; ++$r) {
-                var Se = we.koinos.protocol.operation.verify(ve.operations[$r]);
+              for (var $r = 0; $r < we.operations.length; ++$r) {
+                var Se = ve.koinos.protocol.operation.verify(we.operations[$r]);
                 if (Se)
                   return "operations." + Se;
               }
             }
-            if (ve.signatures != null && ve.hasOwnProperty("signatures")) {
-              if (!Array.isArray(ve.signatures))
+            if (we.signatures != null && we.hasOwnProperty("signatures")) {
+              if (!Array.isArray(we.signatures))
                 return "signatures: array expected";
-              for (var $r = 0; $r < ve.signatures.length; ++$r)
-                if (!(ve.signatures[$r] && typeof ve.signatures[$r].length == "number" || be.isString(ve.signatures[$r])))
+              for (var $r = 0; $r < we.signatures.length; ++$r)
+                if (!(we.signatures[$r] && typeof we.signatures[$r].length == "number" || be.isString(we.signatures[$r])))
                   return "signatures: buffer[] expected";
             }
             return null;
-          }, xe.fromObject = function(ve) {
-            if (ve instanceof we.koinos.protocol.transaction)
-              return ve;
-            var Se = new we.koinos.protocol.transaction();
-            if (ve.id != null && (typeof ve.id == "string" ? be.base64.decode(ve.id, Se.id = be.newBuffer(be.base64.length(ve.id)), 0) : ve.id.length >= 0 && (Se.id = ve.id)), ve.header != null) {
-              if (typeof ve.header != "object")
+          }, xe.fromObject = function(we) {
+            if (we instanceof ve.koinos.protocol.transaction)
+              return we;
+            var Se = new ve.koinos.protocol.transaction();
+            if (we.id != null && (typeof we.id == "string" ? be.base64.decode(we.id, Se.id = be.newBuffer(be.base64.length(we.id)), 0) : we.id.length >= 0 && (Se.id = we.id)), we.header != null) {
+              if (typeof we.header != "object")
                 throw TypeError(".koinos.protocol.transaction.header: object expected");
-              Se.header = we.koinos.protocol.transaction_header.fromObject(ve.header);
+              Se.header = ve.koinos.protocol.transaction_header.fromObject(we.header);
             }
-            if (ve.operations) {
-              if (!Array.isArray(ve.operations))
+            if (we.operations) {
+              if (!Array.isArray(we.operations))
                 throw TypeError(".koinos.protocol.transaction.operations: array expected");
               Se.operations = [];
-              for (var $r = 0; $r < ve.operations.length; ++$r) {
-                if (typeof ve.operations[$r] != "object")
+              for (var $r = 0; $r < we.operations.length; ++$r) {
+                if (typeof we.operations[$r] != "object")
                   throw TypeError(".koinos.protocol.transaction.operations: object expected");
-                Se.operations[$r] = we.koinos.protocol.operation.fromObject(ve.operations[$r]);
+                Se.operations[$r] = ve.koinos.protocol.operation.fromObject(we.operations[$r]);
               }
             }
-            if (ve.signatures) {
-              if (!Array.isArray(ve.signatures))
+            if (we.signatures) {
+              if (!Array.isArray(we.signatures))
                 throw TypeError(".koinos.protocol.transaction.signatures: array expected");
               Se.signatures = [];
-              for (var $r = 0; $r < ve.signatures.length; ++$r)
-                typeof ve.signatures[$r] == "string" ? be.base64.decode(ve.signatures[$r], Se.signatures[$r] = be.newBuffer(be.base64.length(ve.signatures[$r])), 0) : ve.signatures[$r].length >= 0 && (Se.signatures[$r] = ve.signatures[$r]);
+              for (var $r = 0; $r < we.signatures.length; ++$r)
+                typeof we.signatures[$r] == "string" ? be.base64.decode(we.signatures[$r], Se.signatures[$r] = be.newBuffer(be.base64.length(we.signatures[$r])), 0) : we.signatures[$r].length >= 0 && (Se.signatures[$r] = we.signatures[$r]);
             }
             return Se;
-          }, xe.toObject = function(ve, Se) {
+          }, xe.toObject = function(we, Se) {
             Se || (Se = {});
             var $r = {};
-            if ((Se.arrays || Se.defaults) && ($r.operations = [], $r.signatures = []), Se.defaults && (Se.bytes === String ? $r.id = "" : ($r.id = [], Se.bytes !== Array && ($r.id = be.newBuffer($r.id))), $r.header = null), ve.id != null && ve.hasOwnProperty("id") && ($r.id = Se.bytes === String ? be.base64.encode(ve.id, 0, ve.id.length) : Se.bytes === Array ? Array.prototype.slice.call(ve.id) : ve.id), ve.header != null && ve.hasOwnProperty("header") && ($r.header = we.koinos.protocol.transaction_header.toObject(ve.header, Se)), ve.operations && ve.operations.length) {
+            if ((Se.arrays || Se.defaults) && ($r.operations = [], $r.signatures = []), Se.defaults && (Se.bytes === String ? $r.id = "" : ($r.id = [], Se.bytes !== Array && ($r.id = be.newBuffer($r.id))), $r.header = null), we.id != null && we.hasOwnProperty("id") && ($r.id = Se.bytes === String ? be.base64.encode(we.id, 0, we.id.length) : Se.bytes === Array ? Array.prototype.slice.call(we.id) : we.id), we.header != null && we.hasOwnProperty("header") && ($r.header = ve.koinos.protocol.transaction_header.toObject(we.header, Se)), we.operations && we.operations.length) {
               $r.operations = [];
-              for (var Fr = 0; Fr < ve.operations.length; ++Fr)
-                $r.operations[Fr] = we.koinos.protocol.operation.toObject(ve.operations[Fr], Se);
+              for (var Fr = 0; Fr < we.operations.length; ++Fr)
+                $r.operations[Fr] = ve.koinos.protocol.operation.toObject(we.operations[Fr], Se);
             }
-            if (ve.signatures && ve.signatures.length) {
+            if (we.signatures && we.signatures.length) {
               $r.signatures = [];
-              for (var Fr = 0; Fr < ve.signatures.length; ++Fr)
-                $r.signatures[Fr] = Se.bytes === String ? be.base64.encode(ve.signatures[Fr], 0, ve.signatures[Fr].length) : Se.bytes === Array ? Array.prototype.slice.call(ve.signatures[Fr]) : ve.signatures[Fr];
+              for (var Fr = 0; Fr < we.signatures.length; ++Fr)
+                $r.signatures[Fr] = Se.bytes === String ? be.base64.encode(we.signatures[Fr], 0, we.signatures[Fr].length) : Se.bytes === Array ? Array.prototype.slice.call(we.signatures[Fr]) : we.signatures[Fr];
             }
             return $r;
           }, xe.prototype.toJSON = function() {
             return this.constructor.toObject(this, e.util.toJSONOptions);
-          }, xe.getTypeUrl = function(ve) {
-            return ve === void 0 && (ve = "type.googleapis.com"), ve + "/koinos.protocol.transaction";
+          }, xe.getTypeUrl = function(we) {
+            return we === void 0 && (we = "type.googleapis.com"), we + "/koinos.protocol.transaction";
           }, xe;
         }(), Oe.transaction_receipt = function() {
           function xe(gr) {
             if (this.events = [], this.logs = [], gr)
-              for (var ve = Object.keys(gr), Se = 0; Se < ve.length; ++Se)
-                gr[ve[Se]] != null && (this[ve[Se]] = gr[ve[Se]]);
+              for (var we = Object.keys(gr), Se = 0; Se < we.length; ++Se)
+                gr[we[Se]] != null && (this[we[Se]] = gr[we[Se]]);
           }
-          return xe.prototype.id = be.newBuffer([]), xe.prototype.payer = be.newBuffer([]), xe.prototype.max_payer_rc = be.Long ? be.Long.fromBits(0, 0, !0) : 0, xe.prototype.rc_limit = be.Long ? be.Long.fromBits(0, 0, !0) : 0, xe.prototype.rc_used = be.Long ? be.Long.fromBits(0, 0, !0) : 0, xe.prototype.disk_storage_used = be.Long ? be.Long.fromBits(0, 0, !0) : 0, xe.prototype.network_bandwidth_used = be.Long ? be.Long.fromBits(0, 0, !0) : 0, xe.prototype.compute_bandwidth_used = be.Long ? be.Long.fromBits(0, 0, !0) : 0, xe.prototype.reverted = !1, xe.prototype.events = be.emptyArray, xe.prototype.logs = be.emptyArray, xe.create = function(ve) {
-            return new xe(ve);
-          }, xe.encode = function(ve, Se) {
-            if (Se || (Se = me.create()), ve.id != null && Object.hasOwnProperty.call(ve, "id") && Se.uint32(
+          return xe.prototype.id = be.newBuffer([]), xe.prototype.payer = be.newBuffer([]), xe.prototype.max_payer_rc = be.Long ? be.Long.fromBits(0, 0, !0) : 0, xe.prototype.rc_limit = be.Long ? be.Long.fromBits(0, 0, !0) : 0, xe.prototype.rc_used = be.Long ? be.Long.fromBits(0, 0, !0) : 0, xe.prototype.disk_storage_used = be.Long ? be.Long.fromBits(0, 0, !0) : 0, xe.prototype.network_bandwidth_used = be.Long ? be.Long.fromBits(0, 0, !0) : 0, xe.prototype.compute_bandwidth_used = be.Long ? be.Long.fromBits(0, 0, !0) : 0, xe.prototype.reverted = !1, xe.prototype.events = be.emptyArray, xe.prototype.logs = be.emptyArray, xe.create = function(we) {
+            return new xe(we);
+          }, xe.encode = function(we, Se) {
+            if (Se || (Se = me.create()), we.id != null && Object.hasOwnProperty.call(we, "id") && Se.uint32(
               /* id 1, wireType 2 =*/
               10
-            ).bytes(ve.id), ve.payer != null && Object.hasOwnProperty.call(ve, "payer") && Se.uint32(
+            ).bytes(we.id), we.payer != null && Object.hasOwnProperty.call(we, "payer") && Se.uint32(
               /* id 2, wireType 2 =*/
               18
-            ).bytes(ve.payer), ve.max_payer_rc != null && Object.hasOwnProperty.call(ve, "max_payer_rc") && Se.uint32(
+            ).bytes(we.payer), we.max_payer_rc != null && Object.hasOwnProperty.call(we, "max_payer_rc") && Se.uint32(
               /* id 3, wireType 0 =*/
               24
-            ).uint64(ve.max_payer_rc), ve.rc_limit != null && Object.hasOwnProperty.call(ve, "rc_limit") && Se.uint32(
+            ).uint64(we.max_payer_rc), we.rc_limit != null && Object.hasOwnProperty.call(we, "rc_limit") && Se.uint32(
               /* id 4, wireType 0 =*/
               32
-            ).uint64(ve.rc_limit), ve.rc_used != null && Object.hasOwnProperty.call(ve, "rc_used") && Se.uint32(
+            ).uint64(we.rc_limit), we.rc_used != null && Object.hasOwnProperty.call(we, "rc_used") && Se.uint32(
               /* id 5, wireType 0 =*/
               40
-            ).uint64(ve.rc_used), ve.disk_storage_used != null && Object.hasOwnProperty.call(ve, "disk_storage_used") && Se.uint32(
+            ).uint64(we.rc_used), we.disk_storage_used != null && Object.hasOwnProperty.call(we, "disk_storage_used") && Se.uint32(
               /* id 6, wireType 0 =*/
               48
-            ).uint64(ve.disk_storage_used), ve.network_bandwidth_used != null && Object.hasOwnProperty.call(ve, "network_bandwidth_used") && Se.uint32(
+            ).uint64(we.disk_storage_used), we.network_bandwidth_used != null && Object.hasOwnProperty.call(we, "network_bandwidth_used") && Se.uint32(
               /* id 7, wireType 0 =*/
               56
-            ).uint64(ve.network_bandwidth_used), ve.compute_bandwidth_used != null && Object.hasOwnProperty.call(ve, "compute_bandwidth_used") && Se.uint32(
+            ).uint64(we.network_bandwidth_used), we.compute_bandwidth_used != null && Object.hasOwnProperty.call(we, "compute_bandwidth_used") && Se.uint32(
               /* id 8, wireType 0 =*/
               64
-            ).uint64(ve.compute_bandwidth_used), ve.reverted != null && Object.hasOwnProperty.call(ve, "reverted") && Se.uint32(
+            ).uint64(we.compute_bandwidth_used), we.reverted != null && Object.hasOwnProperty.call(we, "reverted") && Se.uint32(
               /* id 9, wireType 0 =*/
               72
-            ).bool(ve.reverted), ve.events != null && ve.events.length)
-              for (var $r = 0; $r < ve.events.length; ++$r)
-                we.koinos.protocol.event_data.encode(ve.events[$r], Se.uint32(
+            ).bool(we.reverted), we.events != null && we.events.length)
+              for (var $r = 0; $r < we.events.length; ++$r)
+                ve.koinos.protocol.event_data.encode(we.events[$r], Se.uint32(
                   /* id 10, wireType 2 =*/
                   82
                 ).fork()).ldelim();
-            if (ve.logs != null && ve.logs.length)
-              for (var $r = 0; $r < ve.logs.length; ++$r)
+            if (we.logs != null && we.logs.length)
+              for (var $r = 0; $r < we.logs.length; ++$r)
                 Se.uint32(
                   /* id 11, wireType 2 =*/
                   90
-                ).string(ve.logs[$r]);
+                ).string(we.logs[$r]);
             return Se;
-          }, xe.encodeDelimited = function(ve, Se) {
-            return this.encode(ve, Se).ldelim();
-          }, xe.decode = function(ve, Se) {
-            ve instanceof ye || (ve = ye.create(ve));
-            for (var $r = Se === void 0 ? ve.len : ve.pos + Se, Fr = new we.koinos.protocol.transaction_receipt(); ve.pos < $r; ) {
-              var Br = ve.uint32();
+          }, xe.encodeDelimited = function(we, Se) {
+            return this.encode(we, Se).ldelim();
+          }, xe.decode = function(we, Se) {
+            we instanceof ye || (we = ye.create(we));
+            for (var $r = Se === void 0 ? we.len : we.pos + Se, Fr = new ve.koinos.protocol.transaction_receipt(); we.pos < $r; ) {
+              var Br = we.uint32();
               switch (Br >>> 3) {
                 case 1: {
-                  Fr.id = ve.bytes();
+                  Fr.id = we.bytes();
                   break;
                 }
                 case 2: {
-                  Fr.payer = ve.bytes();
+                  Fr.payer = we.bytes();
                   break;
                 }
                 case 3: {
-                  Fr.max_payer_rc = ve.uint64();
+                  Fr.max_payer_rc = we.uint64();
                   break;
                 }
                 case 4: {
-                  Fr.rc_limit = ve.uint64();
+                  Fr.rc_limit = we.uint64();
                   break;
                 }
                 case 5: {
-                  Fr.rc_used = ve.uint64();
+                  Fr.rc_used = we.uint64();
                   break;
                 }
                 case 6: {
-                  Fr.disk_storage_used = ve.uint64();
+                  Fr.disk_storage_used = we.uint64();
                   break;
                 }
                 case 7: {
-                  Fr.network_bandwidth_used = ve.uint64();
+                  Fr.network_bandwidth_used = we.uint64();
                   break;
                 }
                 case 8: {
-                  Fr.compute_bandwidth_used = ve.uint64();
+                  Fr.compute_bandwidth_used = we.uint64();
                   break;
                 }
                 case 9: {
-                  Fr.reverted = ve.bool();
+                  Fr.reverted = we.bool();
                   break;
                 }
                 case 10: {
-                  Fr.events && Fr.events.length || (Fr.events = []), Fr.events.push(we.koinos.protocol.event_data.decode(ve, ve.uint32()));
+                  Fr.events && Fr.events.length || (Fr.events = []), Fr.events.push(ve.koinos.protocol.event_data.decode(we, we.uint32()));
                   break;
                 }
                 case 11: {
-                  Fr.logs && Fr.logs.length || (Fr.logs = []), Fr.logs.push(ve.string());
+                  Fr.logs && Fr.logs.length || (Fr.logs = []), Fr.logs.push(we.string());
                   break;
                 }
                 default:
-                  ve.skipType(Br & 7);
+                  we.skipType(Br & 7);
                   break;
               }
             }
             return Fr;
-          }, xe.decodeDelimited = function(ve) {
-            return ve instanceof ye || (ve = new ye(ve)), this.decode(ve, ve.uint32());
-          }, xe.verify = function(ve) {
-            if (typeof ve != "object" || ve === null)
+          }, xe.decodeDelimited = function(we) {
+            return we instanceof ye || (we = new ye(we)), this.decode(we, we.uint32());
+          }, xe.verify = function(we) {
+            if (typeof we != "object" || we === null)
               return "object expected";
-            if (ve.id != null && ve.hasOwnProperty("id") && !(ve.id && typeof ve.id.length == "number" || be.isString(ve.id)))
+            if (we.id != null && we.hasOwnProperty("id") && !(we.id && typeof we.id.length == "number" || be.isString(we.id)))
               return "id: buffer expected";
-            if (ve.payer != null && ve.hasOwnProperty("payer") && !(ve.payer && typeof ve.payer.length == "number" || be.isString(ve.payer)))
+            if (we.payer != null && we.hasOwnProperty("payer") && !(we.payer && typeof we.payer.length == "number" || be.isString(we.payer)))
               return "payer: buffer expected";
-            if (ve.max_payer_rc != null && ve.hasOwnProperty("max_payer_rc") && !be.isInteger(ve.max_payer_rc) && !(ve.max_payer_rc && be.isInteger(ve.max_payer_rc.low) && be.isInteger(ve.max_payer_rc.high)))
+            if (we.max_payer_rc != null && we.hasOwnProperty("max_payer_rc") && !be.isInteger(we.max_payer_rc) && !(we.max_payer_rc && be.isInteger(we.max_payer_rc.low) && be.isInteger(we.max_payer_rc.high)))
               return "max_payer_rc: integer|Long expected";
-            if (ve.rc_limit != null && ve.hasOwnProperty("rc_limit") && !be.isInteger(ve.rc_limit) && !(ve.rc_limit && be.isInteger(ve.rc_limit.low) && be.isInteger(ve.rc_limit.high)))
+            if (we.rc_limit != null && we.hasOwnProperty("rc_limit") && !be.isInteger(we.rc_limit) && !(we.rc_limit && be.isInteger(we.rc_limit.low) && be.isInteger(we.rc_limit.high)))
               return "rc_limit: integer|Long expected";
-            if (ve.rc_used != null && ve.hasOwnProperty("rc_used") && !be.isInteger(ve.rc_used) && !(ve.rc_used && be.isInteger(ve.rc_used.low) && be.isInteger(ve.rc_used.high)))
+            if (we.rc_used != null && we.hasOwnProperty("rc_used") && !be.isInteger(we.rc_used) && !(we.rc_used && be.isInteger(we.rc_used.low) && be.isInteger(we.rc_used.high)))
               return "rc_used: integer|Long expected";
-            if (ve.disk_storage_used != null && ve.hasOwnProperty("disk_storage_used") && !be.isInteger(ve.disk_storage_used) && !(ve.disk_storage_used && be.isInteger(ve.disk_storage_used.low) && be.isInteger(ve.disk_storage_used.high)))
+            if (we.disk_storage_used != null && we.hasOwnProperty("disk_storage_used") && !be.isInteger(we.disk_storage_used) && !(we.disk_storage_used && be.isInteger(we.disk_storage_used.low) && be.isInteger(we.disk_storage_used.high)))
               return "disk_storage_used: integer|Long expected";
-            if (ve.network_bandwidth_used != null && ve.hasOwnProperty("network_bandwidth_used") && !be.isInteger(ve.network_bandwidth_used) && !(ve.network_bandwidth_used && be.isInteger(ve.network_bandwidth_used.low) && be.isInteger(ve.network_bandwidth_used.high)))
+            if (we.network_bandwidth_used != null && we.hasOwnProperty("network_bandwidth_used") && !be.isInteger(we.network_bandwidth_used) && !(we.network_bandwidth_used && be.isInteger(we.network_bandwidth_used.low) && be.isInteger(we.network_bandwidth_used.high)))
               return "network_bandwidth_used: integer|Long expected";
-            if (ve.compute_bandwidth_used != null && ve.hasOwnProperty("compute_bandwidth_used") && !be.isInteger(ve.compute_bandwidth_used) && !(ve.compute_bandwidth_used && be.isInteger(ve.compute_bandwidth_used.low) && be.isInteger(ve.compute_bandwidth_used.high)))
+            if (we.compute_bandwidth_used != null && we.hasOwnProperty("compute_bandwidth_used") && !be.isInteger(we.compute_bandwidth_used) && !(we.compute_bandwidth_used && be.isInteger(we.compute_bandwidth_used.low) && be.isInteger(we.compute_bandwidth_used.high)))
               return "compute_bandwidth_used: integer|Long expected";
-            if (ve.reverted != null && ve.hasOwnProperty("reverted") && typeof ve.reverted != "boolean")
+            if (we.reverted != null && we.hasOwnProperty("reverted") && typeof we.reverted != "boolean")
               return "reverted: boolean expected";
-            if (ve.events != null && ve.hasOwnProperty("events")) {
-              if (!Array.isArray(ve.events))
+            if (we.events != null && we.hasOwnProperty("events")) {
+              if (!Array.isArray(we.events))
                 return "events: array expected";
-              for (var Se = 0; Se < ve.events.length; ++Se) {
-                var $r = we.koinos.protocol.event_data.verify(ve.events[Se]);
+              for (var Se = 0; Se < we.events.length; ++Se) {
+                var $r = ve.koinos.protocol.event_data.verify(we.events[Se]);
                 if ($r)
                   return "events." + $r;
               }
             }
-            if (ve.logs != null && ve.hasOwnProperty("logs")) {
-              if (!Array.isArray(ve.logs))
+            if (we.logs != null && we.hasOwnProperty("logs")) {
+              if (!Array.isArray(we.logs))
                 return "logs: array expected";
-              for (var Se = 0; Se < ve.logs.length; ++Se)
-                if (!be.isString(ve.logs[Se]))
+              for (var Se = 0; Se < we.logs.length; ++Se)
+                if (!be.isString(we.logs[Se]))
                   return "logs: string[] expected";
             }
             return null;
-          }, xe.fromObject = function(ve) {
-            if (ve instanceof we.koinos.protocol.transaction_receipt)
-              return ve;
-            var Se = new we.koinos.protocol.transaction_receipt();
-            if (ve.id != null && (typeof ve.id == "string" ? be.base64.decode(ve.id, Se.id = be.newBuffer(be.base64.length(ve.id)), 0) : ve.id.length >= 0 && (Se.id = ve.id)), ve.payer != null && (typeof ve.payer == "string" ? be.base64.decode(ve.payer, Se.payer = be.newBuffer(be.base64.length(ve.payer)), 0) : ve.payer.length >= 0 && (Se.payer = ve.payer)), ve.max_payer_rc != null && (be.Long ? (Se.max_payer_rc = be.Long.fromValue(ve.max_payer_rc)).unsigned = !0 : typeof ve.max_payer_rc == "string" ? Se.max_payer_rc = parseInt(ve.max_payer_rc, 10) : typeof ve.max_payer_rc == "number" ? Se.max_payer_rc = ve.max_payer_rc : typeof ve.max_payer_rc == "object" && (Se.max_payer_rc = new be.LongBits(ve.max_payer_rc.low >>> 0, ve.max_payer_rc.high >>> 0).toNumber(!0))), ve.rc_limit != null && (be.Long ? (Se.rc_limit = be.Long.fromValue(ve.rc_limit)).unsigned = !0 : typeof ve.rc_limit == "string" ? Se.rc_limit = parseInt(ve.rc_limit, 10) : typeof ve.rc_limit == "number" ? Se.rc_limit = ve.rc_limit : typeof ve.rc_limit == "object" && (Se.rc_limit = new be.LongBits(ve.rc_limit.low >>> 0, ve.rc_limit.high >>> 0).toNumber(!0))), ve.rc_used != null && (be.Long ? (Se.rc_used = be.Long.fromValue(ve.rc_used)).unsigned = !0 : typeof ve.rc_used == "string" ? Se.rc_used = parseInt(ve.rc_used, 10) : typeof ve.rc_used == "number" ? Se.rc_used = ve.rc_used : typeof ve.rc_used == "object" && (Se.rc_used = new be.LongBits(ve.rc_used.low >>> 0, ve.rc_used.high >>> 0).toNumber(!0))), ve.disk_storage_used != null && (be.Long ? (Se.disk_storage_used = be.Long.fromValue(ve.disk_storage_used)).unsigned = !0 : typeof ve.disk_storage_used == "string" ? Se.disk_storage_used = parseInt(ve.disk_storage_used, 10) : typeof ve.disk_storage_used == "number" ? Se.disk_storage_used = ve.disk_storage_used : typeof ve.disk_storage_used == "object" && (Se.disk_storage_used = new be.LongBits(ve.disk_storage_used.low >>> 0, ve.disk_storage_used.high >>> 0).toNumber(!0))), ve.network_bandwidth_used != null && (be.Long ? (Se.network_bandwidth_used = be.Long.fromValue(ve.network_bandwidth_used)).unsigned = !0 : typeof ve.network_bandwidth_used == "string" ? Se.network_bandwidth_used = parseInt(ve.network_bandwidth_used, 10) : typeof ve.network_bandwidth_used == "number" ? Se.network_bandwidth_used = ve.network_bandwidth_used : typeof ve.network_bandwidth_used == "object" && (Se.network_bandwidth_used = new be.LongBits(ve.network_bandwidth_used.low >>> 0, ve.network_bandwidth_used.high >>> 0).toNumber(!0))), ve.compute_bandwidth_used != null && (be.Long ? (Se.compute_bandwidth_used = be.Long.fromValue(ve.compute_bandwidth_used)).unsigned = !0 : typeof ve.compute_bandwidth_used == "string" ? Se.compute_bandwidth_used = parseInt(ve.compute_bandwidth_used, 10) : typeof ve.compute_bandwidth_used == "number" ? Se.compute_bandwidth_used = ve.compute_bandwidth_used : typeof ve.compute_bandwidth_used == "object" && (Se.compute_bandwidth_used = new be.LongBits(ve.compute_bandwidth_used.low >>> 0, ve.compute_bandwidth_used.high >>> 0).toNumber(!0))), ve.reverted != null && (Se.reverted = !!ve.reverted), ve.events) {
-              if (!Array.isArray(ve.events))
+          }, xe.fromObject = function(we) {
+            if (we instanceof ve.koinos.protocol.transaction_receipt)
+              return we;
+            var Se = new ve.koinos.protocol.transaction_receipt();
+            if (we.id != null && (typeof we.id == "string" ? be.base64.decode(we.id, Se.id = be.newBuffer(be.base64.length(we.id)), 0) : we.id.length >= 0 && (Se.id = we.id)), we.payer != null && (typeof we.payer == "string" ? be.base64.decode(we.payer, Se.payer = be.newBuffer(be.base64.length(we.payer)), 0) : we.payer.length >= 0 && (Se.payer = we.payer)), we.max_payer_rc != null && (be.Long ? (Se.max_payer_rc = be.Long.fromValue(we.max_payer_rc)).unsigned = !0 : typeof we.max_payer_rc == "string" ? Se.max_payer_rc = parseInt(we.max_payer_rc, 10) : typeof we.max_payer_rc == "number" ? Se.max_payer_rc = we.max_payer_rc : typeof we.max_payer_rc == "object" && (Se.max_payer_rc = new be.LongBits(we.max_payer_rc.low >>> 0, we.max_payer_rc.high >>> 0).toNumber(!0))), we.rc_limit != null && (be.Long ? (Se.rc_limit = be.Long.fromValue(we.rc_limit)).unsigned = !0 : typeof we.rc_limit == "string" ? Se.rc_limit = parseInt(we.rc_limit, 10) : typeof we.rc_limit == "number" ? Se.rc_limit = we.rc_limit : typeof we.rc_limit == "object" && (Se.rc_limit = new be.LongBits(we.rc_limit.low >>> 0, we.rc_limit.high >>> 0).toNumber(!0))), we.rc_used != null && (be.Long ? (Se.rc_used = be.Long.fromValue(we.rc_used)).unsigned = !0 : typeof we.rc_used == "string" ? Se.rc_used = parseInt(we.rc_used, 10) : typeof we.rc_used == "number" ? Se.rc_used = we.rc_used : typeof we.rc_used == "object" && (Se.rc_used = new be.LongBits(we.rc_used.low >>> 0, we.rc_used.high >>> 0).toNumber(!0))), we.disk_storage_used != null && (be.Long ? (Se.disk_storage_used = be.Long.fromValue(we.disk_storage_used)).unsigned = !0 : typeof we.disk_storage_used == "string" ? Se.disk_storage_used = parseInt(we.disk_storage_used, 10) : typeof we.disk_storage_used == "number" ? Se.disk_storage_used = we.disk_storage_used : typeof we.disk_storage_used == "object" && (Se.disk_storage_used = new be.LongBits(we.disk_storage_used.low >>> 0, we.disk_storage_used.high >>> 0).toNumber(!0))), we.network_bandwidth_used != null && (be.Long ? (Se.network_bandwidth_used = be.Long.fromValue(we.network_bandwidth_used)).unsigned = !0 : typeof we.network_bandwidth_used == "string" ? Se.network_bandwidth_used = parseInt(we.network_bandwidth_used, 10) : typeof we.network_bandwidth_used == "number" ? Se.network_bandwidth_used = we.network_bandwidth_used : typeof we.network_bandwidth_used == "object" && (Se.network_bandwidth_used = new be.LongBits(we.network_bandwidth_used.low >>> 0, we.network_bandwidth_used.high >>> 0).toNumber(!0))), we.compute_bandwidth_used != null && (be.Long ? (Se.compute_bandwidth_used = be.Long.fromValue(we.compute_bandwidth_used)).unsigned = !0 : typeof we.compute_bandwidth_used == "string" ? Se.compute_bandwidth_used = parseInt(we.compute_bandwidth_used, 10) : typeof we.compute_bandwidth_used == "number" ? Se.compute_bandwidth_used = we.compute_bandwidth_used : typeof we.compute_bandwidth_used == "object" && (Se.compute_bandwidth_used = new be.LongBits(we.compute_bandwidth_used.low >>> 0, we.compute_bandwidth_used.high >>> 0).toNumber(!0))), we.reverted != null && (Se.reverted = !!we.reverted), we.events) {
+              if (!Array.isArray(we.events))
                 throw TypeError(".koinos.protocol.transaction_receipt.events: array expected");
               Se.events = [];
-              for (var $r = 0; $r < ve.events.length; ++$r) {
-                if (typeof ve.events[$r] != "object")
+              for (var $r = 0; $r < we.events.length; ++$r) {
+                if (typeof we.events[$r] != "object")
                   throw TypeError(".koinos.protocol.transaction_receipt.events: object expected");
-                Se.events[$r] = we.koinos.protocol.event_data.fromObject(ve.events[$r]);
+                Se.events[$r] = ve.koinos.protocol.event_data.fromObject(we.events[$r]);
               }
             }
-            if (ve.logs) {
-              if (!Array.isArray(ve.logs))
+            if (we.logs) {
+              if (!Array.isArray(we.logs))
                 throw TypeError(".koinos.protocol.transaction_receipt.logs: array expected");
               Se.logs = [];
-              for (var $r = 0; $r < ve.logs.length; ++$r)
-                Se.logs[$r] = String(ve.logs[$r]);
+              for (var $r = 0; $r < we.logs.length; ++$r)
+                Se.logs[$r] = String(we.logs[$r]);
             }
             return Se;
-          }, xe.toObject = function(ve, Se) {
+          }, xe.toObject = function(we, Se) {
             Se || (Se = {});
             var $r = {};
             if ((Se.arrays || Se.defaults) && ($r.events = [], $r.logs = []), Se.defaults) {
@@ -24762,135 +24535,135 @@ function requireMinimal() {
                 $r.compute_bandwidth_used = Se.longs === String ? "0" : 0;
               $r.reverted = !1;
             }
-            if (ve.id != null && ve.hasOwnProperty("id") && ($r.id = Se.bytes === String ? be.base64.encode(ve.id, 0, ve.id.length) : Se.bytes === Array ? Array.prototype.slice.call(ve.id) : ve.id), ve.payer != null && ve.hasOwnProperty("payer") && ($r.payer = Se.bytes === String ? be.base64.encode(ve.payer, 0, ve.payer.length) : Se.bytes === Array ? Array.prototype.slice.call(ve.payer) : ve.payer), ve.max_payer_rc != null && ve.hasOwnProperty("max_payer_rc") && (typeof ve.max_payer_rc == "number" ? $r.max_payer_rc = Se.longs === String ? String(ve.max_payer_rc) : ve.max_payer_rc : $r.max_payer_rc = Se.longs === String ? be.Long.prototype.toString.call(ve.max_payer_rc) : Se.longs === Number ? new be.LongBits(ve.max_payer_rc.low >>> 0, ve.max_payer_rc.high >>> 0).toNumber(!0) : ve.max_payer_rc), ve.rc_limit != null && ve.hasOwnProperty("rc_limit") && (typeof ve.rc_limit == "number" ? $r.rc_limit = Se.longs === String ? String(ve.rc_limit) : ve.rc_limit : $r.rc_limit = Se.longs === String ? be.Long.prototype.toString.call(ve.rc_limit) : Se.longs === Number ? new be.LongBits(ve.rc_limit.low >>> 0, ve.rc_limit.high >>> 0).toNumber(!0) : ve.rc_limit), ve.rc_used != null && ve.hasOwnProperty("rc_used") && (typeof ve.rc_used == "number" ? $r.rc_used = Se.longs === String ? String(ve.rc_used) : ve.rc_used : $r.rc_used = Se.longs === String ? be.Long.prototype.toString.call(ve.rc_used) : Se.longs === Number ? new be.LongBits(ve.rc_used.low >>> 0, ve.rc_used.high >>> 0).toNumber(!0) : ve.rc_used), ve.disk_storage_used != null && ve.hasOwnProperty("disk_storage_used") && (typeof ve.disk_storage_used == "number" ? $r.disk_storage_used = Se.longs === String ? String(ve.disk_storage_used) : ve.disk_storage_used : $r.disk_storage_used = Se.longs === String ? be.Long.prototype.toString.call(ve.disk_storage_used) : Se.longs === Number ? new be.LongBits(ve.disk_storage_used.low >>> 0, ve.disk_storage_used.high >>> 0).toNumber(!0) : ve.disk_storage_used), ve.network_bandwidth_used != null && ve.hasOwnProperty("network_bandwidth_used") && (typeof ve.network_bandwidth_used == "number" ? $r.network_bandwidth_used = Se.longs === String ? String(ve.network_bandwidth_used) : ve.network_bandwidth_used : $r.network_bandwidth_used = Se.longs === String ? be.Long.prototype.toString.call(ve.network_bandwidth_used) : Se.longs === Number ? new be.LongBits(ve.network_bandwidth_used.low >>> 0, ve.network_bandwidth_used.high >>> 0).toNumber(!0) : ve.network_bandwidth_used), ve.compute_bandwidth_used != null && ve.hasOwnProperty("compute_bandwidth_used") && (typeof ve.compute_bandwidth_used == "number" ? $r.compute_bandwidth_used = Se.longs === String ? String(ve.compute_bandwidth_used) : ve.compute_bandwidth_used : $r.compute_bandwidth_used = Se.longs === String ? be.Long.prototype.toString.call(ve.compute_bandwidth_used) : Se.longs === Number ? new be.LongBits(ve.compute_bandwidth_used.low >>> 0, ve.compute_bandwidth_used.high >>> 0).toNumber(!0) : ve.compute_bandwidth_used), ve.reverted != null && ve.hasOwnProperty("reverted") && ($r.reverted = ve.reverted), ve.events && ve.events.length) {
+            if (we.id != null && we.hasOwnProperty("id") && ($r.id = Se.bytes === String ? be.base64.encode(we.id, 0, we.id.length) : Se.bytes === Array ? Array.prototype.slice.call(we.id) : we.id), we.payer != null && we.hasOwnProperty("payer") && ($r.payer = Se.bytes === String ? be.base64.encode(we.payer, 0, we.payer.length) : Se.bytes === Array ? Array.prototype.slice.call(we.payer) : we.payer), we.max_payer_rc != null && we.hasOwnProperty("max_payer_rc") && (typeof we.max_payer_rc == "number" ? $r.max_payer_rc = Se.longs === String ? String(we.max_payer_rc) : we.max_payer_rc : $r.max_payer_rc = Se.longs === String ? be.Long.prototype.toString.call(we.max_payer_rc) : Se.longs === Number ? new be.LongBits(we.max_payer_rc.low >>> 0, we.max_payer_rc.high >>> 0).toNumber(!0) : we.max_payer_rc), we.rc_limit != null && we.hasOwnProperty("rc_limit") && (typeof we.rc_limit == "number" ? $r.rc_limit = Se.longs === String ? String(we.rc_limit) : we.rc_limit : $r.rc_limit = Se.longs === String ? be.Long.prototype.toString.call(we.rc_limit) : Se.longs === Number ? new be.LongBits(we.rc_limit.low >>> 0, we.rc_limit.high >>> 0).toNumber(!0) : we.rc_limit), we.rc_used != null && we.hasOwnProperty("rc_used") && (typeof we.rc_used == "number" ? $r.rc_used = Se.longs === String ? String(we.rc_used) : we.rc_used : $r.rc_used = Se.longs === String ? be.Long.prototype.toString.call(we.rc_used) : Se.longs === Number ? new be.LongBits(we.rc_used.low >>> 0, we.rc_used.high >>> 0).toNumber(!0) : we.rc_used), we.disk_storage_used != null && we.hasOwnProperty("disk_storage_used") && (typeof we.disk_storage_used == "number" ? $r.disk_storage_used = Se.longs === String ? String(we.disk_storage_used) : we.disk_storage_used : $r.disk_storage_used = Se.longs === String ? be.Long.prototype.toString.call(we.disk_storage_used) : Se.longs === Number ? new be.LongBits(we.disk_storage_used.low >>> 0, we.disk_storage_used.high >>> 0).toNumber(!0) : we.disk_storage_used), we.network_bandwidth_used != null && we.hasOwnProperty("network_bandwidth_used") && (typeof we.network_bandwidth_used == "number" ? $r.network_bandwidth_used = Se.longs === String ? String(we.network_bandwidth_used) : we.network_bandwidth_used : $r.network_bandwidth_used = Se.longs === String ? be.Long.prototype.toString.call(we.network_bandwidth_used) : Se.longs === Number ? new be.LongBits(we.network_bandwidth_used.low >>> 0, we.network_bandwidth_used.high >>> 0).toNumber(!0) : we.network_bandwidth_used), we.compute_bandwidth_used != null && we.hasOwnProperty("compute_bandwidth_used") && (typeof we.compute_bandwidth_used == "number" ? $r.compute_bandwidth_used = Se.longs === String ? String(we.compute_bandwidth_used) : we.compute_bandwidth_used : $r.compute_bandwidth_used = Se.longs === String ? be.Long.prototype.toString.call(we.compute_bandwidth_used) : Se.longs === Number ? new be.LongBits(we.compute_bandwidth_used.low >>> 0, we.compute_bandwidth_used.high >>> 0).toNumber(!0) : we.compute_bandwidth_used), we.reverted != null && we.hasOwnProperty("reverted") && ($r.reverted = we.reverted), we.events && we.events.length) {
               $r.events = [];
-              for (var Br = 0; Br < ve.events.length; ++Br)
-                $r.events[Br] = we.koinos.protocol.event_data.toObject(ve.events[Br], Se);
+              for (var Br = 0; Br < we.events.length; ++Br)
+                $r.events[Br] = ve.koinos.protocol.event_data.toObject(we.events[Br], Se);
             }
-            if (ve.logs && ve.logs.length) {
+            if (we.logs && we.logs.length) {
               $r.logs = [];
-              for (var Br = 0; Br < ve.logs.length; ++Br)
-                $r.logs[Br] = ve.logs[Br];
+              for (var Br = 0; Br < we.logs.length; ++Br)
+                $r.logs[Br] = we.logs[Br];
             }
             return $r;
           }, xe.prototype.toJSON = function() {
             return this.constructor.toObject(this, e.util.toJSONOptions);
-          }, xe.getTypeUrl = function(ve) {
-            return ve === void 0 && (ve = "type.googleapis.com"), ve + "/koinos.protocol.transaction_receipt";
+          }, xe.getTypeUrl = function(we) {
+            return we === void 0 && (we = "type.googleapis.com"), we + "/koinos.protocol.transaction_receipt";
           }, xe;
         }(), Oe.block_header = function() {
           function xe(gr) {
             if (this.approved_proposals = [], gr)
-              for (var ve = Object.keys(gr), Se = 0; Se < ve.length; ++Se)
-                gr[ve[Se]] != null && (this[ve[Se]] = gr[ve[Se]]);
+              for (var we = Object.keys(gr), Se = 0; Se < we.length; ++Se)
+                gr[we[Se]] != null && (this[we[Se]] = gr[we[Se]]);
           }
-          return xe.prototype.previous = be.newBuffer([]), xe.prototype.height = be.Long ? be.Long.fromBits(0, 0, !0) : 0, xe.prototype.timestamp = be.Long ? be.Long.fromBits(0, 0, !0) : 0, xe.prototype.previous_state_merkle_root = be.newBuffer([]), xe.prototype.transaction_merkle_root = be.newBuffer([]), xe.prototype.signer = be.newBuffer([]), xe.prototype.approved_proposals = be.emptyArray, xe.create = function(ve) {
-            return new xe(ve);
-          }, xe.encode = function(ve, Se) {
-            if (Se || (Se = me.create()), ve.previous != null && Object.hasOwnProperty.call(ve, "previous") && Se.uint32(
+          return xe.prototype.previous = be.newBuffer([]), xe.prototype.height = be.Long ? be.Long.fromBits(0, 0, !0) : 0, xe.prototype.timestamp = be.Long ? be.Long.fromBits(0, 0, !0) : 0, xe.prototype.previous_state_merkle_root = be.newBuffer([]), xe.prototype.transaction_merkle_root = be.newBuffer([]), xe.prototype.signer = be.newBuffer([]), xe.prototype.approved_proposals = be.emptyArray, xe.create = function(we) {
+            return new xe(we);
+          }, xe.encode = function(we, Se) {
+            if (Se || (Se = me.create()), we.previous != null && Object.hasOwnProperty.call(we, "previous") && Se.uint32(
               /* id 1, wireType 2 =*/
               10
-            ).bytes(ve.previous), ve.height != null && Object.hasOwnProperty.call(ve, "height") && Se.uint32(
+            ).bytes(we.previous), we.height != null && Object.hasOwnProperty.call(we, "height") && Se.uint32(
               /* id 2, wireType 0 =*/
               16
-            ).uint64(ve.height), ve.timestamp != null && Object.hasOwnProperty.call(ve, "timestamp") && Se.uint32(
+            ).uint64(we.height), we.timestamp != null && Object.hasOwnProperty.call(we, "timestamp") && Se.uint32(
               /* id 3, wireType 0 =*/
               24
-            ).uint64(ve.timestamp), ve.previous_state_merkle_root != null && Object.hasOwnProperty.call(ve, "previous_state_merkle_root") && Se.uint32(
+            ).uint64(we.timestamp), we.previous_state_merkle_root != null && Object.hasOwnProperty.call(we, "previous_state_merkle_root") && Se.uint32(
               /* id 4, wireType 2 =*/
               34
-            ).bytes(ve.previous_state_merkle_root), ve.transaction_merkle_root != null && Object.hasOwnProperty.call(ve, "transaction_merkle_root") && Se.uint32(
+            ).bytes(we.previous_state_merkle_root), we.transaction_merkle_root != null && Object.hasOwnProperty.call(we, "transaction_merkle_root") && Se.uint32(
               /* id 5, wireType 2 =*/
               42
-            ).bytes(ve.transaction_merkle_root), ve.signer != null && Object.hasOwnProperty.call(ve, "signer") && Se.uint32(
+            ).bytes(we.transaction_merkle_root), we.signer != null && Object.hasOwnProperty.call(we, "signer") && Se.uint32(
               /* id 6, wireType 2 =*/
               50
-            ).bytes(ve.signer), ve.approved_proposals != null && ve.approved_proposals.length)
-              for (var $r = 0; $r < ve.approved_proposals.length; ++$r)
+            ).bytes(we.signer), we.approved_proposals != null && we.approved_proposals.length)
+              for (var $r = 0; $r < we.approved_proposals.length; ++$r)
                 Se.uint32(
                   /* id 7, wireType 2 =*/
                   58
-                ).bytes(ve.approved_proposals[$r]);
+                ).bytes(we.approved_proposals[$r]);
             return Se;
-          }, xe.encodeDelimited = function(ve, Se) {
-            return this.encode(ve, Se).ldelim();
-          }, xe.decode = function(ve, Se) {
-            ve instanceof ye || (ve = ye.create(ve));
-            for (var $r = Se === void 0 ? ve.len : ve.pos + Se, Fr = new we.koinos.protocol.block_header(); ve.pos < $r; ) {
-              var Br = ve.uint32();
+          }, xe.encodeDelimited = function(we, Se) {
+            return this.encode(we, Se).ldelim();
+          }, xe.decode = function(we, Se) {
+            we instanceof ye || (we = ye.create(we));
+            for (var $r = Se === void 0 ? we.len : we.pos + Se, Fr = new ve.koinos.protocol.block_header(); we.pos < $r; ) {
+              var Br = we.uint32();
               switch (Br >>> 3) {
                 case 1: {
-                  Fr.previous = ve.bytes();
+                  Fr.previous = we.bytes();
                   break;
                 }
                 case 2: {
-                  Fr.height = ve.uint64();
+                  Fr.height = we.uint64();
                   break;
                 }
                 case 3: {
-                  Fr.timestamp = ve.uint64();
+                  Fr.timestamp = we.uint64();
                   break;
                 }
                 case 4: {
-                  Fr.previous_state_merkle_root = ve.bytes();
+                  Fr.previous_state_merkle_root = we.bytes();
                   break;
                 }
                 case 5: {
-                  Fr.transaction_merkle_root = ve.bytes();
+                  Fr.transaction_merkle_root = we.bytes();
                   break;
                 }
                 case 6: {
-                  Fr.signer = ve.bytes();
+                  Fr.signer = we.bytes();
                   break;
                 }
                 case 7: {
-                  Fr.approved_proposals && Fr.approved_proposals.length || (Fr.approved_proposals = []), Fr.approved_proposals.push(ve.bytes());
+                  Fr.approved_proposals && Fr.approved_proposals.length || (Fr.approved_proposals = []), Fr.approved_proposals.push(we.bytes());
                   break;
                 }
                 default:
-                  ve.skipType(Br & 7);
+                  we.skipType(Br & 7);
                   break;
               }
             }
             return Fr;
-          }, xe.decodeDelimited = function(ve) {
-            return ve instanceof ye || (ve = new ye(ve)), this.decode(ve, ve.uint32());
-          }, xe.verify = function(ve) {
-            if (typeof ve != "object" || ve === null)
+          }, xe.decodeDelimited = function(we) {
+            return we instanceof ye || (we = new ye(we)), this.decode(we, we.uint32());
+          }, xe.verify = function(we) {
+            if (typeof we != "object" || we === null)
               return "object expected";
-            if (ve.previous != null && ve.hasOwnProperty("previous") && !(ve.previous && typeof ve.previous.length == "number" || be.isString(ve.previous)))
+            if (we.previous != null && we.hasOwnProperty("previous") && !(we.previous && typeof we.previous.length == "number" || be.isString(we.previous)))
               return "previous: buffer expected";
-            if (ve.height != null && ve.hasOwnProperty("height") && !be.isInteger(ve.height) && !(ve.height && be.isInteger(ve.height.low) && be.isInteger(ve.height.high)))
+            if (we.height != null && we.hasOwnProperty("height") && !be.isInteger(we.height) && !(we.height && be.isInteger(we.height.low) && be.isInteger(we.height.high)))
               return "height: integer|Long expected";
-            if (ve.timestamp != null && ve.hasOwnProperty("timestamp") && !be.isInteger(ve.timestamp) && !(ve.timestamp && be.isInteger(ve.timestamp.low) && be.isInteger(ve.timestamp.high)))
+            if (we.timestamp != null && we.hasOwnProperty("timestamp") && !be.isInteger(we.timestamp) && !(we.timestamp && be.isInteger(we.timestamp.low) && be.isInteger(we.timestamp.high)))
               return "timestamp: integer|Long expected";
-            if (ve.previous_state_merkle_root != null && ve.hasOwnProperty("previous_state_merkle_root") && !(ve.previous_state_merkle_root && typeof ve.previous_state_merkle_root.length == "number" || be.isString(ve.previous_state_merkle_root)))
+            if (we.previous_state_merkle_root != null && we.hasOwnProperty("previous_state_merkle_root") && !(we.previous_state_merkle_root && typeof we.previous_state_merkle_root.length == "number" || be.isString(we.previous_state_merkle_root)))
               return "previous_state_merkle_root: buffer expected";
-            if (ve.transaction_merkle_root != null && ve.hasOwnProperty("transaction_merkle_root") && !(ve.transaction_merkle_root && typeof ve.transaction_merkle_root.length == "number" || be.isString(ve.transaction_merkle_root)))
+            if (we.transaction_merkle_root != null && we.hasOwnProperty("transaction_merkle_root") && !(we.transaction_merkle_root && typeof we.transaction_merkle_root.length == "number" || be.isString(we.transaction_merkle_root)))
               return "transaction_merkle_root: buffer expected";
-            if (ve.signer != null && ve.hasOwnProperty("signer") && !(ve.signer && typeof ve.signer.length == "number" || be.isString(ve.signer)))
+            if (we.signer != null && we.hasOwnProperty("signer") && !(we.signer && typeof we.signer.length == "number" || be.isString(we.signer)))
               return "signer: buffer expected";
-            if (ve.approved_proposals != null && ve.hasOwnProperty("approved_proposals")) {
-              if (!Array.isArray(ve.approved_proposals))
+            if (we.approved_proposals != null && we.hasOwnProperty("approved_proposals")) {
+              if (!Array.isArray(we.approved_proposals))
                 return "approved_proposals: array expected";
-              for (var Se = 0; Se < ve.approved_proposals.length; ++Se)
-                if (!(ve.approved_proposals[Se] && typeof ve.approved_proposals[Se].length == "number" || be.isString(ve.approved_proposals[Se])))
+              for (var Se = 0; Se < we.approved_proposals.length; ++Se)
+                if (!(we.approved_proposals[Se] && typeof we.approved_proposals[Se].length == "number" || be.isString(we.approved_proposals[Se])))
                   return "approved_proposals: buffer[] expected";
             }
             return null;
-          }, xe.fromObject = function(ve) {
-            if (ve instanceof we.koinos.protocol.block_header)
-              return ve;
-            var Se = new we.koinos.protocol.block_header();
-            if (ve.previous != null && (typeof ve.previous == "string" ? be.base64.decode(ve.previous, Se.previous = be.newBuffer(be.base64.length(ve.previous)), 0) : ve.previous.length >= 0 && (Se.previous = ve.previous)), ve.height != null && (be.Long ? (Se.height = be.Long.fromValue(ve.height)).unsigned = !0 : typeof ve.height == "string" ? Se.height = parseInt(ve.height, 10) : typeof ve.height == "number" ? Se.height = ve.height : typeof ve.height == "object" && (Se.height = new be.LongBits(ve.height.low >>> 0, ve.height.high >>> 0).toNumber(!0))), ve.timestamp != null && (be.Long ? (Se.timestamp = be.Long.fromValue(ve.timestamp)).unsigned = !0 : typeof ve.timestamp == "string" ? Se.timestamp = parseInt(ve.timestamp, 10) : typeof ve.timestamp == "number" ? Se.timestamp = ve.timestamp : typeof ve.timestamp == "object" && (Se.timestamp = new be.LongBits(ve.timestamp.low >>> 0, ve.timestamp.high >>> 0).toNumber(!0))), ve.previous_state_merkle_root != null && (typeof ve.previous_state_merkle_root == "string" ? be.base64.decode(ve.previous_state_merkle_root, Se.previous_state_merkle_root = be.newBuffer(be.base64.length(ve.previous_state_merkle_root)), 0) : ve.previous_state_merkle_root.length >= 0 && (Se.previous_state_merkle_root = ve.previous_state_merkle_root)), ve.transaction_merkle_root != null && (typeof ve.transaction_merkle_root == "string" ? be.base64.decode(ve.transaction_merkle_root, Se.transaction_merkle_root = be.newBuffer(be.base64.length(ve.transaction_merkle_root)), 0) : ve.transaction_merkle_root.length >= 0 && (Se.transaction_merkle_root = ve.transaction_merkle_root)), ve.signer != null && (typeof ve.signer == "string" ? be.base64.decode(ve.signer, Se.signer = be.newBuffer(be.base64.length(ve.signer)), 0) : ve.signer.length >= 0 && (Se.signer = ve.signer)), ve.approved_proposals) {
-              if (!Array.isArray(ve.approved_proposals))
+          }, xe.fromObject = function(we) {
+            if (we instanceof ve.koinos.protocol.block_header)
+              return we;
+            var Se = new ve.koinos.protocol.block_header();
+            if (we.previous != null && (typeof we.previous == "string" ? be.base64.decode(we.previous, Se.previous = be.newBuffer(be.base64.length(we.previous)), 0) : we.previous.length >= 0 && (Se.previous = we.previous)), we.height != null && (be.Long ? (Se.height = be.Long.fromValue(we.height)).unsigned = !0 : typeof we.height == "string" ? Se.height = parseInt(we.height, 10) : typeof we.height == "number" ? Se.height = we.height : typeof we.height == "object" && (Se.height = new be.LongBits(we.height.low >>> 0, we.height.high >>> 0).toNumber(!0))), we.timestamp != null && (be.Long ? (Se.timestamp = be.Long.fromValue(we.timestamp)).unsigned = !0 : typeof we.timestamp == "string" ? Se.timestamp = parseInt(we.timestamp, 10) : typeof we.timestamp == "number" ? Se.timestamp = we.timestamp : typeof we.timestamp == "object" && (Se.timestamp = new be.LongBits(we.timestamp.low >>> 0, we.timestamp.high >>> 0).toNumber(!0))), we.previous_state_merkle_root != null && (typeof we.previous_state_merkle_root == "string" ? be.base64.decode(we.previous_state_merkle_root, Se.previous_state_merkle_root = be.newBuffer(be.base64.length(we.previous_state_merkle_root)), 0) : we.previous_state_merkle_root.length >= 0 && (Se.previous_state_merkle_root = we.previous_state_merkle_root)), we.transaction_merkle_root != null && (typeof we.transaction_merkle_root == "string" ? be.base64.decode(we.transaction_merkle_root, Se.transaction_merkle_root = be.newBuffer(be.base64.length(we.transaction_merkle_root)), 0) : we.transaction_merkle_root.length >= 0 && (Se.transaction_merkle_root = we.transaction_merkle_root)), we.signer != null && (typeof we.signer == "string" ? be.base64.decode(we.signer, Se.signer = be.newBuffer(be.base64.length(we.signer)), 0) : we.signer.length >= 0 && (Se.signer = we.signer)), we.approved_proposals) {
+              if (!Array.isArray(we.approved_proposals))
                 throw TypeError(".koinos.protocol.block_header.approved_proposals: array expected");
               Se.approved_proposals = [];
-              for (var $r = 0; $r < ve.approved_proposals.length; ++$r)
-                typeof ve.approved_proposals[$r] == "string" ? be.base64.decode(ve.approved_proposals[$r], Se.approved_proposals[$r] = be.newBuffer(be.base64.length(ve.approved_proposals[$r])), 0) : ve.approved_proposals[$r].length >= 0 && (Se.approved_proposals[$r] = ve.approved_proposals[$r]);
+              for (var $r = 0; $r < we.approved_proposals.length; ++$r)
+                typeof we.approved_proposals[$r] == "string" ? be.base64.decode(we.approved_proposals[$r], Se.approved_proposals[$r] = be.newBuffer(be.base64.length(we.approved_proposals[$r])), 0) : we.approved_proposals[$r].length >= 0 && (Se.approved_proposals[$r] = we.approved_proposals[$r]);
             }
             return Se;
-          }, xe.toObject = function(ve, Se) {
+          }, xe.toObject = function(we, Se) {
             Se || (Se = {});
             var $r = {};
             if ((Se.arrays || Se.defaults) && ($r.approved_proposals = []), Se.defaults) {
@@ -24906,298 +24679,298 @@ function requireMinimal() {
                 $r.timestamp = Se.longs === String ? "0" : 0;
               Se.bytes === String ? $r.previous_state_merkle_root = "" : ($r.previous_state_merkle_root = [], Se.bytes !== Array && ($r.previous_state_merkle_root = be.newBuffer($r.previous_state_merkle_root))), Se.bytes === String ? $r.transaction_merkle_root = "" : ($r.transaction_merkle_root = [], Se.bytes !== Array && ($r.transaction_merkle_root = be.newBuffer($r.transaction_merkle_root))), Se.bytes === String ? $r.signer = "" : ($r.signer = [], Se.bytes !== Array && ($r.signer = be.newBuffer($r.signer)));
             }
-            if (ve.previous != null && ve.hasOwnProperty("previous") && ($r.previous = Se.bytes === String ? be.base64.encode(ve.previous, 0, ve.previous.length) : Se.bytes === Array ? Array.prototype.slice.call(ve.previous) : ve.previous), ve.height != null && ve.hasOwnProperty("height") && (typeof ve.height == "number" ? $r.height = Se.longs === String ? String(ve.height) : ve.height : $r.height = Se.longs === String ? be.Long.prototype.toString.call(ve.height) : Se.longs === Number ? new be.LongBits(ve.height.low >>> 0, ve.height.high >>> 0).toNumber(!0) : ve.height), ve.timestamp != null && ve.hasOwnProperty("timestamp") && (typeof ve.timestamp == "number" ? $r.timestamp = Se.longs === String ? String(ve.timestamp) : ve.timestamp : $r.timestamp = Se.longs === String ? be.Long.prototype.toString.call(ve.timestamp) : Se.longs === Number ? new be.LongBits(ve.timestamp.low >>> 0, ve.timestamp.high >>> 0).toNumber(!0) : ve.timestamp), ve.previous_state_merkle_root != null && ve.hasOwnProperty("previous_state_merkle_root") && ($r.previous_state_merkle_root = Se.bytes === String ? be.base64.encode(ve.previous_state_merkle_root, 0, ve.previous_state_merkle_root.length) : Se.bytes === Array ? Array.prototype.slice.call(ve.previous_state_merkle_root) : ve.previous_state_merkle_root), ve.transaction_merkle_root != null && ve.hasOwnProperty("transaction_merkle_root") && ($r.transaction_merkle_root = Se.bytes === String ? be.base64.encode(ve.transaction_merkle_root, 0, ve.transaction_merkle_root.length) : Se.bytes === Array ? Array.prototype.slice.call(ve.transaction_merkle_root) : ve.transaction_merkle_root), ve.signer != null && ve.hasOwnProperty("signer") && ($r.signer = Se.bytes === String ? be.base64.encode(ve.signer, 0, ve.signer.length) : Se.bytes === Array ? Array.prototype.slice.call(ve.signer) : ve.signer), ve.approved_proposals && ve.approved_proposals.length) {
+            if (we.previous != null && we.hasOwnProperty("previous") && ($r.previous = Se.bytes === String ? be.base64.encode(we.previous, 0, we.previous.length) : Se.bytes === Array ? Array.prototype.slice.call(we.previous) : we.previous), we.height != null && we.hasOwnProperty("height") && (typeof we.height == "number" ? $r.height = Se.longs === String ? String(we.height) : we.height : $r.height = Se.longs === String ? be.Long.prototype.toString.call(we.height) : Se.longs === Number ? new be.LongBits(we.height.low >>> 0, we.height.high >>> 0).toNumber(!0) : we.height), we.timestamp != null && we.hasOwnProperty("timestamp") && (typeof we.timestamp == "number" ? $r.timestamp = Se.longs === String ? String(we.timestamp) : we.timestamp : $r.timestamp = Se.longs === String ? be.Long.prototype.toString.call(we.timestamp) : Se.longs === Number ? new be.LongBits(we.timestamp.low >>> 0, we.timestamp.high >>> 0).toNumber(!0) : we.timestamp), we.previous_state_merkle_root != null && we.hasOwnProperty("previous_state_merkle_root") && ($r.previous_state_merkle_root = Se.bytes === String ? be.base64.encode(we.previous_state_merkle_root, 0, we.previous_state_merkle_root.length) : Se.bytes === Array ? Array.prototype.slice.call(we.previous_state_merkle_root) : we.previous_state_merkle_root), we.transaction_merkle_root != null && we.hasOwnProperty("transaction_merkle_root") && ($r.transaction_merkle_root = Se.bytes === String ? be.base64.encode(we.transaction_merkle_root, 0, we.transaction_merkle_root.length) : Se.bytes === Array ? Array.prototype.slice.call(we.transaction_merkle_root) : we.transaction_merkle_root), we.signer != null && we.hasOwnProperty("signer") && ($r.signer = Se.bytes === String ? be.base64.encode(we.signer, 0, we.signer.length) : Se.bytes === Array ? Array.prototype.slice.call(we.signer) : we.signer), we.approved_proposals && we.approved_proposals.length) {
               $r.approved_proposals = [];
-              for (var Br = 0; Br < ve.approved_proposals.length; ++Br)
-                $r.approved_proposals[Br] = Se.bytes === String ? be.base64.encode(ve.approved_proposals[Br], 0, ve.approved_proposals[Br].length) : Se.bytes === Array ? Array.prototype.slice.call(ve.approved_proposals[Br]) : ve.approved_proposals[Br];
+              for (var Br = 0; Br < we.approved_proposals.length; ++Br)
+                $r.approved_proposals[Br] = Se.bytes === String ? be.base64.encode(we.approved_proposals[Br], 0, we.approved_proposals[Br].length) : Se.bytes === Array ? Array.prototype.slice.call(we.approved_proposals[Br]) : we.approved_proposals[Br];
             }
             return $r;
           }, xe.prototype.toJSON = function() {
             return this.constructor.toObject(this, e.util.toJSONOptions);
-          }, xe.getTypeUrl = function(ve) {
-            return ve === void 0 && (ve = "type.googleapis.com"), ve + "/koinos.protocol.block_header";
+          }, xe.getTypeUrl = function(we) {
+            return we === void 0 && (we = "type.googleapis.com"), we + "/koinos.protocol.block_header";
           }, xe;
         }(), Oe.block = function() {
           function xe(gr) {
             if (this.transactions = [], gr)
-              for (var ve = Object.keys(gr), Se = 0; Se < ve.length; ++Se)
-                gr[ve[Se]] != null && (this[ve[Se]] = gr[ve[Se]]);
+              for (var we = Object.keys(gr), Se = 0; Se < we.length; ++Se)
+                gr[we[Se]] != null && (this[we[Se]] = gr[we[Se]]);
           }
-          return xe.prototype.id = be.newBuffer([]), xe.prototype.header = null, xe.prototype.transactions = be.emptyArray, xe.prototype.signature = be.newBuffer([]), xe.create = function(ve) {
-            return new xe(ve);
-          }, xe.encode = function(ve, Se) {
-            if (Se || (Se = me.create()), ve.id != null && Object.hasOwnProperty.call(ve, "id") && Se.uint32(
+          return xe.prototype.id = be.newBuffer([]), xe.prototype.header = null, xe.prototype.transactions = be.emptyArray, xe.prototype.signature = be.newBuffer([]), xe.create = function(we) {
+            return new xe(we);
+          }, xe.encode = function(we, Se) {
+            if (Se || (Se = me.create()), we.id != null && Object.hasOwnProperty.call(we, "id") && Se.uint32(
               /* id 1, wireType 2 =*/
               10
-            ).bytes(ve.id), ve.header != null && Object.hasOwnProperty.call(ve, "header") && we.koinos.protocol.block_header.encode(ve.header, Se.uint32(
+            ).bytes(we.id), we.header != null && Object.hasOwnProperty.call(we, "header") && ve.koinos.protocol.block_header.encode(we.header, Se.uint32(
               /* id 2, wireType 2 =*/
               18
-            ).fork()).ldelim(), ve.transactions != null && ve.transactions.length)
-              for (var $r = 0; $r < ve.transactions.length; ++$r)
-                we.koinos.protocol.transaction.encode(ve.transactions[$r], Se.uint32(
+            ).fork()).ldelim(), we.transactions != null && we.transactions.length)
+              for (var $r = 0; $r < we.transactions.length; ++$r)
+                ve.koinos.protocol.transaction.encode(we.transactions[$r], Se.uint32(
                   /* id 3, wireType 2 =*/
                   26
                 ).fork()).ldelim();
-            return ve.signature != null && Object.hasOwnProperty.call(ve, "signature") && Se.uint32(
+            return we.signature != null && Object.hasOwnProperty.call(we, "signature") && Se.uint32(
               /* id 4, wireType 2 =*/
               34
-            ).bytes(ve.signature), Se;
-          }, xe.encodeDelimited = function(ve, Se) {
-            return this.encode(ve, Se).ldelim();
-          }, xe.decode = function(ve, Se) {
-            ve instanceof ye || (ve = ye.create(ve));
-            for (var $r = Se === void 0 ? ve.len : ve.pos + Se, Fr = new we.koinos.protocol.block(); ve.pos < $r; ) {
-              var Br = ve.uint32();
+            ).bytes(we.signature), Se;
+          }, xe.encodeDelimited = function(we, Se) {
+            return this.encode(we, Se).ldelim();
+          }, xe.decode = function(we, Se) {
+            we instanceof ye || (we = ye.create(we));
+            for (var $r = Se === void 0 ? we.len : we.pos + Se, Fr = new ve.koinos.protocol.block(); we.pos < $r; ) {
+              var Br = we.uint32();
               switch (Br >>> 3) {
                 case 1: {
-                  Fr.id = ve.bytes();
+                  Fr.id = we.bytes();
                   break;
                 }
                 case 2: {
-                  Fr.header = we.koinos.protocol.block_header.decode(ve, ve.uint32());
+                  Fr.header = ve.koinos.protocol.block_header.decode(we, we.uint32());
                   break;
                 }
                 case 3: {
-                  Fr.transactions && Fr.transactions.length || (Fr.transactions = []), Fr.transactions.push(we.koinos.protocol.transaction.decode(ve, ve.uint32()));
+                  Fr.transactions && Fr.transactions.length || (Fr.transactions = []), Fr.transactions.push(ve.koinos.protocol.transaction.decode(we, we.uint32()));
                   break;
                 }
                 case 4: {
-                  Fr.signature = ve.bytes();
+                  Fr.signature = we.bytes();
                   break;
                 }
                 default:
-                  ve.skipType(Br & 7);
+                  we.skipType(Br & 7);
                   break;
               }
             }
             return Fr;
-          }, xe.decodeDelimited = function(ve) {
-            return ve instanceof ye || (ve = new ye(ve)), this.decode(ve, ve.uint32());
-          }, xe.verify = function(ve) {
-            if (typeof ve != "object" || ve === null)
+          }, xe.decodeDelimited = function(we) {
+            return we instanceof ye || (we = new ye(we)), this.decode(we, we.uint32());
+          }, xe.verify = function(we) {
+            if (typeof we != "object" || we === null)
               return "object expected";
-            if (ve.id != null && ve.hasOwnProperty("id") && !(ve.id && typeof ve.id.length == "number" || be.isString(ve.id)))
+            if (we.id != null && we.hasOwnProperty("id") && !(we.id && typeof we.id.length == "number" || be.isString(we.id)))
               return "id: buffer expected";
-            if (ve.header != null && ve.hasOwnProperty("header")) {
-              var Se = we.koinos.protocol.block_header.verify(ve.header);
+            if (we.header != null && we.hasOwnProperty("header")) {
+              var Se = ve.koinos.protocol.block_header.verify(we.header);
               if (Se)
                 return "header." + Se;
             }
-            if (ve.transactions != null && ve.hasOwnProperty("transactions")) {
-              if (!Array.isArray(ve.transactions))
+            if (we.transactions != null && we.hasOwnProperty("transactions")) {
+              if (!Array.isArray(we.transactions))
                 return "transactions: array expected";
-              for (var $r = 0; $r < ve.transactions.length; ++$r) {
-                var Se = we.koinos.protocol.transaction.verify(ve.transactions[$r]);
+              for (var $r = 0; $r < we.transactions.length; ++$r) {
+                var Se = ve.koinos.protocol.transaction.verify(we.transactions[$r]);
                 if (Se)
                   return "transactions." + Se;
               }
             }
-            return ve.signature != null && ve.hasOwnProperty("signature") && !(ve.signature && typeof ve.signature.length == "number" || be.isString(ve.signature)) ? "signature: buffer expected" : null;
-          }, xe.fromObject = function(ve) {
-            if (ve instanceof we.koinos.protocol.block)
-              return ve;
-            var Se = new we.koinos.protocol.block();
-            if (ve.id != null && (typeof ve.id == "string" ? be.base64.decode(ve.id, Se.id = be.newBuffer(be.base64.length(ve.id)), 0) : ve.id.length >= 0 && (Se.id = ve.id)), ve.header != null) {
-              if (typeof ve.header != "object")
+            return we.signature != null && we.hasOwnProperty("signature") && !(we.signature && typeof we.signature.length == "number" || be.isString(we.signature)) ? "signature: buffer expected" : null;
+          }, xe.fromObject = function(we) {
+            if (we instanceof ve.koinos.protocol.block)
+              return we;
+            var Se = new ve.koinos.protocol.block();
+            if (we.id != null && (typeof we.id == "string" ? be.base64.decode(we.id, Se.id = be.newBuffer(be.base64.length(we.id)), 0) : we.id.length >= 0 && (Se.id = we.id)), we.header != null) {
+              if (typeof we.header != "object")
                 throw TypeError(".koinos.protocol.block.header: object expected");
-              Se.header = we.koinos.protocol.block_header.fromObject(ve.header);
+              Se.header = ve.koinos.protocol.block_header.fromObject(we.header);
             }
-            if (ve.transactions) {
-              if (!Array.isArray(ve.transactions))
+            if (we.transactions) {
+              if (!Array.isArray(we.transactions))
                 throw TypeError(".koinos.protocol.block.transactions: array expected");
               Se.transactions = [];
-              for (var $r = 0; $r < ve.transactions.length; ++$r) {
-                if (typeof ve.transactions[$r] != "object")
+              for (var $r = 0; $r < we.transactions.length; ++$r) {
+                if (typeof we.transactions[$r] != "object")
                   throw TypeError(".koinos.protocol.block.transactions: object expected");
-                Se.transactions[$r] = we.koinos.protocol.transaction.fromObject(ve.transactions[$r]);
+                Se.transactions[$r] = ve.koinos.protocol.transaction.fromObject(we.transactions[$r]);
               }
             }
-            return ve.signature != null && (typeof ve.signature == "string" ? be.base64.decode(ve.signature, Se.signature = be.newBuffer(be.base64.length(ve.signature)), 0) : ve.signature.length >= 0 && (Se.signature = ve.signature)), Se;
-          }, xe.toObject = function(ve, Se) {
+            return we.signature != null && (typeof we.signature == "string" ? be.base64.decode(we.signature, Se.signature = be.newBuffer(be.base64.length(we.signature)), 0) : we.signature.length >= 0 && (Se.signature = we.signature)), Se;
+          }, xe.toObject = function(we, Se) {
             Se || (Se = {});
             var $r = {};
-            if ((Se.arrays || Se.defaults) && ($r.transactions = []), Se.defaults && (Se.bytes === String ? $r.id = "" : ($r.id = [], Se.bytes !== Array && ($r.id = be.newBuffer($r.id))), $r.header = null, Se.bytes === String ? $r.signature = "" : ($r.signature = [], Se.bytes !== Array && ($r.signature = be.newBuffer($r.signature)))), ve.id != null && ve.hasOwnProperty("id") && ($r.id = Se.bytes === String ? be.base64.encode(ve.id, 0, ve.id.length) : Se.bytes === Array ? Array.prototype.slice.call(ve.id) : ve.id), ve.header != null && ve.hasOwnProperty("header") && ($r.header = we.koinos.protocol.block_header.toObject(ve.header, Se)), ve.transactions && ve.transactions.length) {
+            if ((Se.arrays || Se.defaults) && ($r.transactions = []), Se.defaults && (Se.bytes === String ? $r.id = "" : ($r.id = [], Se.bytes !== Array && ($r.id = be.newBuffer($r.id))), $r.header = null, Se.bytes === String ? $r.signature = "" : ($r.signature = [], Se.bytes !== Array && ($r.signature = be.newBuffer($r.signature)))), we.id != null && we.hasOwnProperty("id") && ($r.id = Se.bytes === String ? be.base64.encode(we.id, 0, we.id.length) : Se.bytes === Array ? Array.prototype.slice.call(we.id) : we.id), we.header != null && we.hasOwnProperty("header") && ($r.header = ve.koinos.protocol.block_header.toObject(we.header, Se)), we.transactions && we.transactions.length) {
               $r.transactions = [];
-              for (var Fr = 0; Fr < ve.transactions.length; ++Fr)
-                $r.transactions[Fr] = we.koinos.protocol.transaction.toObject(ve.transactions[Fr], Se);
+              for (var Fr = 0; Fr < we.transactions.length; ++Fr)
+                $r.transactions[Fr] = ve.koinos.protocol.transaction.toObject(we.transactions[Fr], Se);
             }
-            return ve.signature != null && ve.hasOwnProperty("signature") && ($r.signature = Se.bytes === String ? be.base64.encode(ve.signature, 0, ve.signature.length) : Se.bytes === Array ? Array.prototype.slice.call(ve.signature) : ve.signature), $r;
+            return we.signature != null && we.hasOwnProperty("signature") && ($r.signature = Se.bytes === String ? be.base64.encode(we.signature, 0, we.signature.length) : Se.bytes === Array ? Array.prototype.slice.call(we.signature) : we.signature), $r;
           }, xe.prototype.toJSON = function() {
             return this.constructor.toObject(this, e.util.toJSONOptions);
-          }, xe.getTypeUrl = function(ve) {
-            return ve === void 0 && (ve = "type.googleapis.com"), ve + "/koinos.protocol.block";
+          }, xe.getTypeUrl = function(we) {
+            return we === void 0 && (we = "type.googleapis.com"), we + "/koinos.protocol.block";
           }, xe;
         }(), Oe.block_receipt = function() {
           function xe(gr) {
             if (this.events = [], this.transaction_receipts = [], this.logs = [], gr)
-              for (var ve = Object.keys(gr), Se = 0; Se < ve.length; ++Se)
-                gr[ve[Se]] != null && (this[ve[Se]] = gr[ve[Se]]);
+              for (var we = Object.keys(gr), Se = 0; Se < we.length; ++Se)
+                gr[we[Se]] != null && (this[we[Se]] = gr[we[Se]]);
           }
-          return xe.prototype.id = be.newBuffer([]), xe.prototype.height = be.Long ? be.Long.fromBits(0, 0, !0) : 0, xe.prototype.disk_storage_used = be.Long ? be.Long.fromBits(0, 0, !0) : 0, xe.prototype.network_bandwidth_used = be.Long ? be.Long.fromBits(0, 0, !0) : 0, xe.prototype.compute_bandwidth_used = be.Long ? be.Long.fromBits(0, 0, !0) : 0, xe.prototype.state_merkle_root = be.newBuffer([]), xe.prototype.events = be.emptyArray, xe.prototype.transaction_receipts = be.emptyArray, xe.prototype.logs = be.emptyArray, xe.create = function(ve) {
-            return new xe(ve);
-          }, xe.encode = function(ve, Se) {
-            if (Se || (Se = me.create()), ve.id != null && Object.hasOwnProperty.call(ve, "id") && Se.uint32(
+          return xe.prototype.id = be.newBuffer([]), xe.prototype.height = be.Long ? be.Long.fromBits(0, 0, !0) : 0, xe.prototype.disk_storage_used = be.Long ? be.Long.fromBits(0, 0, !0) : 0, xe.prototype.network_bandwidth_used = be.Long ? be.Long.fromBits(0, 0, !0) : 0, xe.prototype.compute_bandwidth_used = be.Long ? be.Long.fromBits(0, 0, !0) : 0, xe.prototype.state_merkle_root = be.newBuffer([]), xe.prototype.events = be.emptyArray, xe.prototype.transaction_receipts = be.emptyArray, xe.prototype.logs = be.emptyArray, xe.create = function(we) {
+            return new xe(we);
+          }, xe.encode = function(we, Se) {
+            if (Se || (Se = me.create()), we.id != null && Object.hasOwnProperty.call(we, "id") && Se.uint32(
               /* id 1, wireType 2 =*/
               10
-            ).bytes(ve.id), ve.height != null && Object.hasOwnProperty.call(ve, "height") && Se.uint32(
+            ).bytes(we.id), we.height != null && Object.hasOwnProperty.call(we, "height") && Se.uint32(
               /* id 2, wireType 0 =*/
               16
-            ).uint64(ve.height), ve.disk_storage_used != null && Object.hasOwnProperty.call(ve, "disk_storage_used") && Se.uint32(
+            ).uint64(we.height), we.disk_storage_used != null && Object.hasOwnProperty.call(we, "disk_storage_used") && Se.uint32(
               /* id 3, wireType 0 =*/
               24
-            ).uint64(ve.disk_storage_used), ve.network_bandwidth_used != null && Object.hasOwnProperty.call(ve, "network_bandwidth_used") && Se.uint32(
+            ).uint64(we.disk_storage_used), we.network_bandwidth_used != null && Object.hasOwnProperty.call(we, "network_bandwidth_used") && Se.uint32(
               /* id 4, wireType 0 =*/
               32
-            ).uint64(ve.network_bandwidth_used), ve.compute_bandwidth_used != null && Object.hasOwnProperty.call(ve, "compute_bandwidth_used") && Se.uint32(
+            ).uint64(we.network_bandwidth_used), we.compute_bandwidth_used != null && Object.hasOwnProperty.call(we, "compute_bandwidth_used") && Se.uint32(
               /* id 5, wireType 0 =*/
               40
-            ).uint64(ve.compute_bandwidth_used), ve.state_merkle_root != null && Object.hasOwnProperty.call(ve, "state_merkle_root") && Se.uint32(
+            ).uint64(we.compute_bandwidth_used), we.state_merkle_root != null && Object.hasOwnProperty.call(we, "state_merkle_root") && Se.uint32(
               /* id 6, wireType 2 =*/
               50
-            ).bytes(ve.state_merkle_root), ve.events != null && ve.events.length)
-              for (var $r = 0; $r < ve.events.length; ++$r)
-                we.koinos.protocol.event_data.encode(ve.events[$r], Se.uint32(
+            ).bytes(we.state_merkle_root), we.events != null && we.events.length)
+              for (var $r = 0; $r < we.events.length; ++$r)
+                ve.koinos.protocol.event_data.encode(we.events[$r], Se.uint32(
                   /* id 7, wireType 2 =*/
                   58
                 ).fork()).ldelim();
-            if (ve.transaction_receipts != null && ve.transaction_receipts.length)
-              for (var $r = 0; $r < ve.transaction_receipts.length; ++$r)
-                we.koinos.protocol.transaction_receipt.encode(ve.transaction_receipts[$r], Se.uint32(
+            if (we.transaction_receipts != null && we.transaction_receipts.length)
+              for (var $r = 0; $r < we.transaction_receipts.length; ++$r)
+                ve.koinos.protocol.transaction_receipt.encode(we.transaction_receipts[$r], Se.uint32(
                   /* id 8, wireType 2 =*/
                   66
                 ).fork()).ldelim();
-            if (ve.logs != null && ve.logs.length)
-              for (var $r = 0; $r < ve.logs.length; ++$r)
+            if (we.logs != null && we.logs.length)
+              for (var $r = 0; $r < we.logs.length; ++$r)
                 Se.uint32(
                   /* id 9, wireType 2 =*/
                   74
-                ).string(ve.logs[$r]);
+                ).string(we.logs[$r]);
             return Se;
-          }, xe.encodeDelimited = function(ve, Se) {
-            return this.encode(ve, Se).ldelim();
-          }, xe.decode = function(ve, Se) {
-            ve instanceof ye || (ve = ye.create(ve));
-            for (var $r = Se === void 0 ? ve.len : ve.pos + Se, Fr = new we.koinos.protocol.block_receipt(); ve.pos < $r; ) {
-              var Br = ve.uint32();
+          }, xe.encodeDelimited = function(we, Se) {
+            return this.encode(we, Se).ldelim();
+          }, xe.decode = function(we, Se) {
+            we instanceof ye || (we = ye.create(we));
+            for (var $r = Se === void 0 ? we.len : we.pos + Se, Fr = new ve.koinos.protocol.block_receipt(); we.pos < $r; ) {
+              var Br = we.uint32();
               switch (Br >>> 3) {
                 case 1: {
-                  Fr.id = ve.bytes();
+                  Fr.id = we.bytes();
                   break;
                 }
                 case 2: {
-                  Fr.height = ve.uint64();
+                  Fr.height = we.uint64();
                   break;
                 }
                 case 3: {
-                  Fr.disk_storage_used = ve.uint64();
+                  Fr.disk_storage_used = we.uint64();
                   break;
                 }
                 case 4: {
-                  Fr.network_bandwidth_used = ve.uint64();
+                  Fr.network_bandwidth_used = we.uint64();
                   break;
                 }
                 case 5: {
-                  Fr.compute_bandwidth_used = ve.uint64();
+                  Fr.compute_bandwidth_used = we.uint64();
                   break;
                 }
                 case 6: {
-                  Fr.state_merkle_root = ve.bytes();
+                  Fr.state_merkle_root = we.bytes();
                   break;
                 }
                 case 7: {
-                  Fr.events && Fr.events.length || (Fr.events = []), Fr.events.push(we.koinos.protocol.event_data.decode(ve, ve.uint32()));
+                  Fr.events && Fr.events.length || (Fr.events = []), Fr.events.push(ve.koinos.protocol.event_data.decode(we, we.uint32()));
                   break;
                 }
                 case 8: {
-                  Fr.transaction_receipts && Fr.transaction_receipts.length || (Fr.transaction_receipts = []), Fr.transaction_receipts.push(we.koinos.protocol.transaction_receipt.decode(ve, ve.uint32()));
+                  Fr.transaction_receipts && Fr.transaction_receipts.length || (Fr.transaction_receipts = []), Fr.transaction_receipts.push(ve.koinos.protocol.transaction_receipt.decode(we, we.uint32()));
                   break;
                 }
                 case 9: {
-                  Fr.logs && Fr.logs.length || (Fr.logs = []), Fr.logs.push(ve.string());
+                  Fr.logs && Fr.logs.length || (Fr.logs = []), Fr.logs.push(we.string());
                   break;
                 }
                 default:
-                  ve.skipType(Br & 7);
+                  we.skipType(Br & 7);
                   break;
               }
             }
             return Fr;
-          }, xe.decodeDelimited = function(ve) {
-            return ve instanceof ye || (ve = new ye(ve)), this.decode(ve, ve.uint32());
-          }, xe.verify = function(ve) {
-            if (typeof ve != "object" || ve === null)
+          }, xe.decodeDelimited = function(we) {
+            return we instanceof ye || (we = new ye(we)), this.decode(we, we.uint32());
+          }, xe.verify = function(we) {
+            if (typeof we != "object" || we === null)
               return "object expected";
-            if (ve.id != null && ve.hasOwnProperty("id") && !(ve.id && typeof ve.id.length == "number" || be.isString(ve.id)))
+            if (we.id != null && we.hasOwnProperty("id") && !(we.id && typeof we.id.length == "number" || be.isString(we.id)))
               return "id: buffer expected";
-            if (ve.height != null && ve.hasOwnProperty("height") && !be.isInteger(ve.height) && !(ve.height && be.isInteger(ve.height.low) && be.isInteger(ve.height.high)))
+            if (we.height != null && we.hasOwnProperty("height") && !be.isInteger(we.height) && !(we.height && be.isInteger(we.height.low) && be.isInteger(we.height.high)))
               return "height: integer|Long expected";
-            if (ve.disk_storage_used != null && ve.hasOwnProperty("disk_storage_used") && !be.isInteger(ve.disk_storage_used) && !(ve.disk_storage_used && be.isInteger(ve.disk_storage_used.low) && be.isInteger(ve.disk_storage_used.high)))
+            if (we.disk_storage_used != null && we.hasOwnProperty("disk_storage_used") && !be.isInteger(we.disk_storage_used) && !(we.disk_storage_used && be.isInteger(we.disk_storage_used.low) && be.isInteger(we.disk_storage_used.high)))
               return "disk_storage_used: integer|Long expected";
-            if (ve.network_bandwidth_used != null && ve.hasOwnProperty("network_bandwidth_used") && !be.isInteger(ve.network_bandwidth_used) && !(ve.network_bandwidth_used && be.isInteger(ve.network_bandwidth_used.low) && be.isInteger(ve.network_bandwidth_used.high)))
+            if (we.network_bandwidth_used != null && we.hasOwnProperty("network_bandwidth_used") && !be.isInteger(we.network_bandwidth_used) && !(we.network_bandwidth_used && be.isInteger(we.network_bandwidth_used.low) && be.isInteger(we.network_bandwidth_used.high)))
               return "network_bandwidth_used: integer|Long expected";
-            if (ve.compute_bandwidth_used != null && ve.hasOwnProperty("compute_bandwidth_used") && !be.isInteger(ve.compute_bandwidth_used) && !(ve.compute_bandwidth_used && be.isInteger(ve.compute_bandwidth_used.low) && be.isInteger(ve.compute_bandwidth_used.high)))
+            if (we.compute_bandwidth_used != null && we.hasOwnProperty("compute_bandwidth_used") && !be.isInteger(we.compute_bandwidth_used) && !(we.compute_bandwidth_used && be.isInteger(we.compute_bandwidth_used.low) && be.isInteger(we.compute_bandwidth_used.high)))
               return "compute_bandwidth_used: integer|Long expected";
-            if (ve.state_merkle_root != null && ve.hasOwnProperty("state_merkle_root") && !(ve.state_merkle_root && typeof ve.state_merkle_root.length == "number" || be.isString(ve.state_merkle_root)))
+            if (we.state_merkle_root != null && we.hasOwnProperty("state_merkle_root") && !(we.state_merkle_root && typeof we.state_merkle_root.length == "number" || be.isString(we.state_merkle_root)))
               return "state_merkle_root: buffer expected";
-            if (ve.events != null && ve.hasOwnProperty("events")) {
-              if (!Array.isArray(ve.events))
+            if (we.events != null && we.hasOwnProperty("events")) {
+              if (!Array.isArray(we.events))
                 return "events: array expected";
-              for (var Se = 0; Se < ve.events.length; ++Se) {
-                var $r = we.koinos.protocol.event_data.verify(ve.events[Se]);
+              for (var Se = 0; Se < we.events.length; ++Se) {
+                var $r = ve.koinos.protocol.event_data.verify(we.events[Se]);
                 if ($r)
                   return "events." + $r;
               }
             }
-            if (ve.transaction_receipts != null && ve.hasOwnProperty("transaction_receipts")) {
-              if (!Array.isArray(ve.transaction_receipts))
+            if (we.transaction_receipts != null && we.hasOwnProperty("transaction_receipts")) {
+              if (!Array.isArray(we.transaction_receipts))
                 return "transaction_receipts: array expected";
-              for (var Se = 0; Se < ve.transaction_receipts.length; ++Se) {
-                var $r = we.koinos.protocol.transaction_receipt.verify(ve.transaction_receipts[Se]);
+              for (var Se = 0; Se < we.transaction_receipts.length; ++Se) {
+                var $r = ve.koinos.protocol.transaction_receipt.verify(we.transaction_receipts[Se]);
                 if ($r)
                   return "transaction_receipts." + $r;
               }
             }
-            if (ve.logs != null && ve.hasOwnProperty("logs")) {
-              if (!Array.isArray(ve.logs))
+            if (we.logs != null && we.hasOwnProperty("logs")) {
+              if (!Array.isArray(we.logs))
                 return "logs: array expected";
-              for (var Se = 0; Se < ve.logs.length; ++Se)
-                if (!be.isString(ve.logs[Se]))
+              for (var Se = 0; Se < we.logs.length; ++Se)
+                if (!be.isString(we.logs[Se]))
                   return "logs: string[] expected";
             }
             return null;
-          }, xe.fromObject = function(ve) {
-            if (ve instanceof we.koinos.protocol.block_receipt)
-              return ve;
-            var Se = new we.koinos.protocol.block_receipt();
-            if (ve.id != null && (typeof ve.id == "string" ? be.base64.decode(ve.id, Se.id = be.newBuffer(be.base64.length(ve.id)), 0) : ve.id.length >= 0 && (Se.id = ve.id)), ve.height != null && (be.Long ? (Se.height = be.Long.fromValue(ve.height)).unsigned = !0 : typeof ve.height == "string" ? Se.height = parseInt(ve.height, 10) : typeof ve.height == "number" ? Se.height = ve.height : typeof ve.height == "object" && (Se.height = new be.LongBits(ve.height.low >>> 0, ve.height.high >>> 0).toNumber(!0))), ve.disk_storage_used != null && (be.Long ? (Se.disk_storage_used = be.Long.fromValue(ve.disk_storage_used)).unsigned = !0 : typeof ve.disk_storage_used == "string" ? Se.disk_storage_used = parseInt(ve.disk_storage_used, 10) : typeof ve.disk_storage_used == "number" ? Se.disk_storage_used = ve.disk_storage_used : typeof ve.disk_storage_used == "object" && (Se.disk_storage_used = new be.LongBits(ve.disk_storage_used.low >>> 0, ve.disk_storage_used.high >>> 0).toNumber(!0))), ve.network_bandwidth_used != null && (be.Long ? (Se.network_bandwidth_used = be.Long.fromValue(ve.network_bandwidth_used)).unsigned = !0 : typeof ve.network_bandwidth_used == "string" ? Se.network_bandwidth_used = parseInt(ve.network_bandwidth_used, 10) : typeof ve.network_bandwidth_used == "number" ? Se.network_bandwidth_used = ve.network_bandwidth_used : typeof ve.network_bandwidth_used == "object" && (Se.network_bandwidth_used = new be.LongBits(ve.network_bandwidth_used.low >>> 0, ve.network_bandwidth_used.high >>> 0).toNumber(!0))), ve.compute_bandwidth_used != null && (be.Long ? (Se.compute_bandwidth_used = be.Long.fromValue(ve.compute_bandwidth_used)).unsigned = !0 : typeof ve.compute_bandwidth_used == "string" ? Se.compute_bandwidth_used = parseInt(ve.compute_bandwidth_used, 10) : typeof ve.compute_bandwidth_used == "number" ? Se.compute_bandwidth_used = ve.compute_bandwidth_used : typeof ve.compute_bandwidth_used == "object" && (Se.compute_bandwidth_used = new be.LongBits(ve.compute_bandwidth_used.low >>> 0, ve.compute_bandwidth_used.high >>> 0).toNumber(!0))), ve.state_merkle_root != null && (typeof ve.state_merkle_root == "string" ? be.base64.decode(ve.state_merkle_root, Se.state_merkle_root = be.newBuffer(be.base64.length(ve.state_merkle_root)), 0) : ve.state_merkle_root.length >= 0 && (Se.state_merkle_root = ve.state_merkle_root)), ve.events) {
-              if (!Array.isArray(ve.events))
+          }, xe.fromObject = function(we) {
+            if (we instanceof ve.koinos.protocol.block_receipt)
+              return we;
+            var Se = new ve.koinos.protocol.block_receipt();
+            if (we.id != null && (typeof we.id == "string" ? be.base64.decode(we.id, Se.id = be.newBuffer(be.base64.length(we.id)), 0) : we.id.length >= 0 && (Se.id = we.id)), we.height != null && (be.Long ? (Se.height = be.Long.fromValue(we.height)).unsigned = !0 : typeof we.height == "string" ? Se.height = parseInt(we.height, 10) : typeof we.height == "number" ? Se.height = we.height : typeof we.height == "object" && (Se.height = new be.LongBits(we.height.low >>> 0, we.height.high >>> 0).toNumber(!0))), we.disk_storage_used != null && (be.Long ? (Se.disk_storage_used = be.Long.fromValue(we.disk_storage_used)).unsigned = !0 : typeof we.disk_storage_used == "string" ? Se.disk_storage_used = parseInt(we.disk_storage_used, 10) : typeof we.disk_storage_used == "number" ? Se.disk_storage_used = we.disk_storage_used : typeof we.disk_storage_used == "object" && (Se.disk_storage_used = new be.LongBits(we.disk_storage_used.low >>> 0, we.disk_storage_used.high >>> 0).toNumber(!0))), we.network_bandwidth_used != null && (be.Long ? (Se.network_bandwidth_used = be.Long.fromValue(we.network_bandwidth_used)).unsigned = !0 : typeof we.network_bandwidth_used == "string" ? Se.network_bandwidth_used = parseInt(we.network_bandwidth_used, 10) : typeof we.network_bandwidth_used == "number" ? Se.network_bandwidth_used = we.network_bandwidth_used : typeof we.network_bandwidth_used == "object" && (Se.network_bandwidth_used = new be.LongBits(we.network_bandwidth_used.low >>> 0, we.network_bandwidth_used.high >>> 0).toNumber(!0))), we.compute_bandwidth_used != null && (be.Long ? (Se.compute_bandwidth_used = be.Long.fromValue(we.compute_bandwidth_used)).unsigned = !0 : typeof we.compute_bandwidth_used == "string" ? Se.compute_bandwidth_used = parseInt(we.compute_bandwidth_used, 10) : typeof we.compute_bandwidth_used == "number" ? Se.compute_bandwidth_used = we.compute_bandwidth_used : typeof we.compute_bandwidth_used == "object" && (Se.compute_bandwidth_used = new be.LongBits(we.compute_bandwidth_used.low >>> 0, we.compute_bandwidth_used.high >>> 0).toNumber(!0))), we.state_merkle_root != null && (typeof we.state_merkle_root == "string" ? be.base64.decode(we.state_merkle_root, Se.state_merkle_root = be.newBuffer(be.base64.length(we.state_merkle_root)), 0) : we.state_merkle_root.length >= 0 && (Se.state_merkle_root = we.state_merkle_root)), we.events) {
+              if (!Array.isArray(we.events))
                 throw TypeError(".koinos.protocol.block_receipt.events: array expected");
               Se.events = [];
-              for (var $r = 0; $r < ve.events.length; ++$r) {
-                if (typeof ve.events[$r] != "object")
+              for (var $r = 0; $r < we.events.length; ++$r) {
+                if (typeof we.events[$r] != "object")
                   throw TypeError(".koinos.protocol.block_receipt.events: object expected");
-                Se.events[$r] = we.koinos.protocol.event_data.fromObject(ve.events[$r]);
+                Se.events[$r] = ve.koinos.protocol.event_data.fromObject(we.events[$r]);
               }
             }
-            if (ve.transaction_receipts) {
-              if (!Array.isArray(ve.transaction_receipts))
+            if (we.transaction_receipts) {
+              if (!Array.isArray(we.transaction_receipts))
                 throw TypeError(".koinos.protocol.block_receipt.transaction_receipts: array expected");
               Se.transaction_receipts = [];
-              for (var $r = 0; $r < ve.transaction_receipts.length; ++$r) {
-                if (typeof ve.transaction_receipts[$r] != "object")
+              for (var $r = 0; $r < we.transaction_receipts.length; ++$r) {
+                if (typeof we.transaction_receipts[$r] != "object")
                   throw TypeError(".koinos.protocol.block_receipt.transaction_receipts: object expected");
-                Se.transaction_receipts[$r] = we.koinos.protocol.transaction_receipt.fromObject(ve.transaction_receipts[$r]);
+                Se.transaction_receipts[$r] = ve.koinos.protocol.transaction_receipt.fromObject(we.transaction_receipts[$r]);
               }
             }
-            if (ve.logs) {
-              if (!Array.isArray(ve.logs))
+            if (we.logs) {
+              if (!Array.isArray(we.logs))
                 throw TypeError(".koinos.protocol.block_receipt.logs: array expected");
               Se.logs = [];
-              for (var $r = 0; $r < ve.logs.length; ++$r)
-                Se.logs[$r] = String(ve.logs[$r]);
+              for (var $r = 0; $r < we.logs.length; ++$r)
+                Se.logs[$r] = String(we.logs[$r]);
             }
             return Se;
-          }, xe.toObject = function(ve, Se) {
+          }, xe.toObject = function(we, Se) {
             Se || (Se = {});
             var $r = {};
             if ((Se.arrays || Se.defaults) && ($r.events = [], $r.transaction_receipts = [], $r.logs = []), Se.defaults) {
@@ -25223,35 +24996,35 @@ function requireMinimal() {
                 $r.compute_bandwidth_used = Se.longs === String ? "0" : 0;
               Se.bytes === String ? $r.state_merkle_root = "" : ($r.state_merkle_root = [], Se.bytes !== Array && ($r.state_merkle_root = be.newBuffer($r.state_merkle_root)));
             }
-            if (ve.id != null && ve.hasOwnProperty("id") && ($r.id = Se.bytes === String ? be.base64.encode(ve.id, 0, ve.id.length) : Se.bytes === Array ? Array.prototype.slice.call(ve.id) : ve.id), ve.height != null && ve.hasOwnProperty("height") && (typeof ve.height == "number" ? $r.height = Se.longs === String ? String(ve.height) : ve.height : $r.height = Se.longs === String ? be.Long.prototype.toString.call(ve.height) : Se.longs === Number ? new be.LongBits(ve.height.low >>> 0, ve.height.high >>> 0).toNumber(!0) : ve.height), ve.disk_storage_used != null && ve.hasOwnProperty("disk_storage_used") && (typeof ve.disk_storage_used == "number" ? $r.disk_storage_used = Se.longs === String ? String(ve.disk_storage_used) : ve.disk_storage_used : $r.disk_storage_used = Se.longs === String ? be.Long.prototype.toString.call(ve.disk_storage_used) : Se.longs === Number ? new be.LongBits(ve.disk_storage_used.low >>> 0, ve.disk_storage_used.high >>> 0).toNumber(!0) : ve.disk_storage_used), ve.network_bandwidth_used != null && ve.hasOwnProperty("network_bandwidth_used") && (typeof ve.network_bandwidth_used == "number" ? $r.network_bandwidth_used = Se.longs === String ? String(ve.network_bandwidth_used) : ve.network_bandwidth_used : $r.network_bandwidth_used = Se.longs === String ? be.Long.prototype.toString.call(ve.network_bandwidth_used) : Se.longs === Number ? new be.LongBits(ve.network_bandwidth_used.low >>> 0, ve.network_bandwidth_used.high >>> 0).toNumber(!0) : ve.network_bandwidth_used), ve.compute_bandwidth_used != null && ve.hasOwnProperty("compute_bandwidth_used") && (typeof ve.compute_bandwidth_used == "number" ? $r.compute_bandwidth_used = Se.longs === String ? String(ve.compute_bandwidth_used) : ve.compute_bandwidth_used : $r.compute_bandwidth_used = Se.longs === String ? be.Long.prototype.toString.call(ve.compute_bandwidth_used) : Se.longs === Number ? new be.LongBits(ve.compute_bandwidth_used.low >>> 0, ve.compute_bandwidth_used.high >>> 0).toNumber(!0) : ve.compute_bandwidth_used), ve.state_merkle_root != null && ve.hasOwnProperty("state_merkle_root") && ($r.state_merkle_root = Se.bytes === String ? be.base64.encode(ve.state_merkle_root, 0, ve.state_merkle_root.length) : Se.bytes === Array ? Array.prototype.slice.call(ve.state_merkle_root) : ve.state_merkle_root), ve.events && ve.events.length) {
+            if (we.id != null && we.hasOwnProperty("id") && ($r.id = Se.bytes === String ? be.base64.encode(we.id, 0, we.id.length) : Se.bytes === Array ? Array.prototype.slice.call(we.id) : we.id), we.height != null && we.hasOwnProperty("height") && (typeof we.height == "number" ? $r.height = Se.longs === String ? String(we.height) : we.height : $r.height = Se.longs === String ? be.Long.prototype.toString.call(we.height) : Se.longs === Number ? new be.LongBits(we.height.low >>> 0, we.height.high >>> 0).toNumber(!0) : we.height), we.disk_storage_used != null && we.hasOwnProperty("disk_storage_used") && (typeof we.disk_storage_used == "number" ? $r.disk_storage_used = Se.longs === String ? String(we.disk_storage_used) : we.disk_storage_used : $r.disk_storage_used = Se.longs === String ? be.Long.prototype.toString.call(we.disk_storage_used) : Se.longs === Number ? new be.LongBits(we.disk_storage_used.low >>> 0, we.disk_storage_used.high >>> 0).toNumber(!0) : we.disk_storage_used), we.network_bandwidth_used != null && we.hasOwnProperty("network_bandwidth_used") && (typeof we.network_bandwidth_used == "number" ? $r.network_bandwidth_used = Se.longs === String ? String(we.network_bandwidth_used) : we.network_bandwidth_used : $r.network_bandwidth_used = Se.longs === String ? be.Long.prototype.toString.call(we.network_bandwidth_used) : Se.longs === Number ? new be.LongBits(we.network_bandwidth_used.low >>> 0, we.network_bandwidth_used.high >>> 0).toNumber(!0) : we.network_bandwidth_used), we.compute_bandwidth_used != null && we.hasOwnProperty("compute_bandwidth_used") && (typeof we.compute_bandwidth_used == "number" ? $r.compute_bandwidth_used = Se.longs === String ? String(we.compute_bandwidth_used) : we.compute_bandwidth_used : $r.compute_bandwidth_used = Se.longs === String ? be.Long.prototype.toString.call(we.compute_bandwidth_used) : Se.longs === Number ? new be.LongBits(we.compute_bandwidth_used.low >>> 0, we.compute_bandwidth_used.high >>> 0).toNumber(!0) : we.compute_bandwidth_used), we.state_merkle_root != null && we.hasOwnProperty("state_merkle_root") && ($r.state_merkle_root = Se.bytes === String ? be.base64.encode(we.state_merkle_root, 0, we.state_merkle_root.length) : Se.bytes === Array ? Array.prototype.slice.call(we.state_merkle_root) : we.state_merkle_root), we.events && we.events.length) {
               $r.events = [];
-              for (var Br = 0; Br < ve.events.length; ++Br)
-                $r.events[Br] = we.koinos.protocol.event_data.toObject(ve.events[Br], Se);
+              for (var Br = 0; Br < we.events.length; ++Br)
+                $r.events[Br] = ve.koinos.protocol.event_data.toObject(we.events[Br], Se);
             }
-            if (ve.transaction_receipts && ve.transaction_receipts.length) {
+            if (we.transaction_receipts && we.transaction_receipts.length) {
               $r.transaction_receipts = [];
-              for (var Br = 0; Br < ve.transaction_receipts.length; ++Br)
-                $r.transaction_receipts[Br] = we.koinos.protocol.transaction_receipt.toObject(ve.transaction_receipts[Br], Se);
+              for (var Br = 0; Br < we.transaction_receipts.length; ++Br)
+                $r.transaction_receipts[Br] = ve.koinos.protocol.transaction_receipt.toObject(we.transaction_receipts[Br], Se);
             }
-            if (ve.logs && ve.logs.length) {
+            if (we.logs && we.logs.length) {
               $r.logs = [];
-              for (var Br = 0; Br < ve.logs.length; ++Br)
-                $r.logs[Br] = ve.logs[Br];
+              for (var Br = 0; Br < we.logs.length; ++Br)
+                $r.logs[Br] = we.logs[Br];
             }
             return $r;
           }, xe.prototype.toJSON = function() {
             return this.constructor.toObject(this, e.util.toJSONOptions);
-          }, xe.getTypeUrl = function(ve) {
-            return ve === void 0 && (ve = "type.googleapis.com"), ve + "/koinos.protocol.block_receipt";
+          }, xe.getTypeUrl = function(we) {
+            return we === void 0 && (we = "type.googleapis.com"), we + "/koinos.protocol.block_receipt";
           }, xe;
         }(), Oe;
       }(), Ee.chain = function() {
         var Oe = {};
         return Oe.value_type = function() {
-          function xe(ve) {
-            if (ve)
-              for (var Se = Object.keys(ve), $r = 0; $r < Se.length; ++$r)
-                ve[Se[$r]] != null && (this[Se[$r]] = ve[Se[$r]]);
+          function xe(we) {
+            if (we)
+              for (var Se = Object.keys(we), $r = 0; $r < Se.length; ++$r)
+                we[Se[$r]] != null && (this[Se[$r]] = we[Se[$r]]);
           }
           xe.prototype.message_value = null, xe.prototype.int32_value = null, xe.prototype.int64_value = null, xe.prototype.uint32_value = null, xe.prototype.uint64_value = null, xe.prototype.sint32_value = null, xe.prototype.sint64_value = null, xe.prototype.fixed32_value = null, xe.prototype.fixed64_value = null, xe.prototype.sfixed32_value = null, xe.prototype.sfixed64_value = null, xe.prototype.bool_value = null, xe.prototype.string_value = null, xe.prototype.bytes_value = null;
           var gr;
@@ -25276,7 +25049,7 @@ function requireMinimal() {
           }), xe.create = function(Se) {
             return new xe(Se);
           }, xe.encode = function(Se, $r) {
-            return $r || ($r = me.create()), Se.message_value != null && Object.hasOwnProperty.call(Se, "message_value") && we.google.protobuf.Any.encode(Se.message_value, $r.uint32(
+            return $r || ($r = me.create()), Se.message_value != null && Object.hasOwnProperty.call(Se, "message_value") && ve.google.protobuf.Any.encode(Se.message_value, $r.uint32(
               /* id 1, wireType 2 =*/
               10
             ).fork()).ldelim(), Se.int32_value != null && Object.hasOwnProperty.call(Se, "int32_value") && $r.uint32(
@@ -25323,11 +25096,11 @@ function requireMinimal() {
             return this.encode(Se, $r).ldelim();
           }, xe.decode = function(Se, $r) {
             Se instanceof ye || (Se = ye.create(Se));
-            for (var Fr = $r === void 0 ? Se.len : Se.pos + $r, Br = new we.koinos.chain.value_type(); Se.pos < Fr; ) {
+            for (var Fr = $r === void 0 ? Se.len : Se.pos + $r, Br = new ve.koinos.chain.value_type(); Se.pos < Fr; ) {
               var Vr = Se.uint32();
               switch (Vr >>> 3) {
                 case 1: {
-                  Br.message_value = we.google.protobuf.Any.decode(Se, Se.uint32());
+                  Br.message_value = ve.google.protobuf.Any.decode(Se, Se.uint32());
                   break;
                 }
                 case 2: {
@@ -25397,7 +25170,7 @@ function requireMinimal() {
             if (Se.message_value != null && Se.hasOwnProperty("message_value")) {
               $r.kind = 1;
               {
-                var Fr = we.google.protobuf.Any.verify(Se.message_value);
+                var Fr = ve.google.protobuf.Any.verify(Se.message_value);
                 if (Fr)
                   return "message_value." + Fr;
               }
@@ -25482,19 +25255,19 @@ function requireMinimal() {
             }
             return null;
           }, xe.fromObject = function(Se) {
-            if (Se instanceof we.koinos.chain.value_type)
+            if (Se instanceof ve.koinos.chain.value_type)
               return Se;
-            var $r = new we.koinos.chain.value_type();
+            var $r = new ve.koinos.chain.value_type();
             if (Se.message_value != null) {
               if (typeof Se.message_value != "object")
                 throw TypeError(".koinos.chain.value_type.message_value: object expected");
-              $r.message_value = we.google.protobuf.Any.fromObject(Se.message_value);
+              $r.message_value = ve.google.protobuf.Any.fromObject(Se.message_value);
             }
             return Se.int32_value != null && ($r.int32_value = Se.int32_value | 0), Se.int64_value != null && (be.Long ? ($r.int64_value = be.Long.fromValue(Se.int64_value)).unsigned = !1 : typeof Se.int64_value == "string" ? $r.int64_value = parseInt(Se.int64_value, 10) : typeof Se.int64_value == "number" ? $r.int64_value = Se.int64_value : typeof Se.int64_value == "object" && ($r.int64_value = new be.LongBits(Se.int64_value.low >>> 0, Se.int64_value.high >>> 0).toNumber())), Se.uint32_value != null && ($r.uint32_value = Se.uint32_value >>> 0), Se.uint64_value != null && (be.Long ? ($r.uint64_value = be.Long.fromValue(Se.uint64_value)).unsigned = !0 : typeof Se.uint64_value == "string" ? $r.uint64_value = parseInt(Se.uint64_value, 10) : typeof Se.uint64_value == "number" ? $r.uint64_value = Se.uint64_value : typeof Se.uint64_value == "object" && ($r.uint64_value = new be.LongBits(Se.uint64_value.low >>> 0, Se.uint64_value.high >>> 0).toNumber(!0))), Se.sint32_value != null && ($r.sint32_value = Se.sint32_value | 0), Se.sint64_value != null && (be.Long ? ($r.sint64_value = be.Long.fromValue(Se.sint64_value)).unsigned = !1 : typeof Se.sint64_value == "string" ? $r.sint64_value = parseInt(Se.sint64_value, 10) : typeof Se.sint64_value == "number" ? $r.sint64_value = Se.sint64_value : typeof Se.sint64_value == "object" && ($r.sint64_value = new be.LongBits(Se.sint64_value.low >>> 0, Se.sint64_value.high >>> 0).toNumber())), Se.fixed32_value != null && ($r.fixed32_value = Se.fixed32_value >>> 0), Se.fixed64_value != null && (be.Long ? ($r.fixed64_value = be.Long.fromValue(Se.fixed64_value)).unsigned = !1 : typeof Se.fixed64_value == "string" ? $r.fixed64_value = parseInt(Se.fixed64_value, 10) : typeof Se.fixed64_value == "number" ? $r.fixed64_value = Se.fixed64_value : typeof Se.fixed64_value == "object" && ($r.fixed64_value = new be.LongBits(Se.fixed64_value.low >>> 0, Se.fixed64_value.high >>> 0).toNumber())), Se.sfixed32_value != null && ($r.sfixed32_value = Se.sfixed32_value | 0), Se.sfixed64_value != null && (be.Long ? ($r.sfixed64_value = be.Long.fromValue(Se.sfixed64_value)).unsigned = !1 : typeof Se.sfixed64_value == "string" ? $r.sfixed64_value = parseInt(Se.sfixed64_value, 10) : typeof Se.sfixed64_value == "number" ? $r.sfixed64_value = Se.sfixed64_value : typeof Se.sfixed64_value == "object" && ($r.sfixed64_value = new be.LongBits(Se.sfixed64_value.low >>> 0, Se.sfixed64_value.high >>> 0).toNumber())), Se.bool_value != null && ($r.bool_value = !!Se.bool_value), Se.string_value != null && ($r.string_value = String(Se.string_value)), Se.bytes_value != null && (typeof Se.bytes_value == "string" ? be.base64.decode(Se.bytes_value, $r.bytes_value = be.newBuffer(be.base64.length(Se.bytes_value)), 0) : Se.bytes_value.length >= 0 && ($r.bytes_value = Se.bytes_value)), $r;
           }, xe.toObject = function(Se, $r) {
             $r || ($r = {});
             var Fr = {};
-            return Se.message_value != null && Se.hasOwnProperty("message_value") && (Fr.message_value = we.google.protobuf.Any.toObject(Se.message_value, $r), $r.oneofs && (Fr.kind = "message_value")), Se.int32_value != null && Se.hasOwnProperty("int32_value") && (Fr.int32_value = Se.int32_value, $r.oneofs && (Fr.kind = "int32_value")), Se.int64_value != null && Se.hasOwnProperty("int64_value") && (typeof Se.int64_value == "number" ? Fr.int64_value = $r.longs === String ? String(Se.int64_value) : Se.int64_value : Fr.int64_value = $r.longs === String ? be.Long.prototype.toString.call(Se.int64_value) : $r.longs === Number ? new be.LongBits(Se.int64_value.low >>> 0, Se.int64_value.high >>> 0).toNumber() : Se.int64_value, $r.oneofs && (Fr.kind = "int64_value")), Se.uint32_value != null && Se.hasOwnProperty("uint32_value") && (Fr.uint32_value = Se.uint32_value, $r.oneofs && (Fr.kind = "uint32_value")), Se.uint64_value != null && Se.hasOwnProperty("uint64_value") && (typeof Se.uint64_value == "number" ? Fr.uint64_value = $r.longs === String ? String(Se.uint64_value) : Se.uint64_value : Fr.uint64_value = $r.longs === String ? be.Long.prototype.toString.call(Se.uint64_value) : $r.longs === Number ? new be.LongBits(Se.uint64_value.low >>> 0, Se.uint64_value.high >>> 0).toNumber(!0) : Se.uint64_value, $r.oneofs && (Fr.kind = "uint64_value")), Se.sint32_value != null && Se.hasOwnProperty("sint32_value") && (Fr.sint32_value = Se.sint32_value, $r.oneofs && (Fr.kind = "sint32_value")), Se.sint64_value != null && Se.hasOwnProperty("sint64_value") && (typeof Se.sint64_value == "number" ? Fr.sint64_value = $r.longs === String ? String(Se.sint64_value) : Se.sint64_value : Fr.sint64_value = $r.longs === String ? be.Long.prototype.toString.call(Se.sint64_value) : $r.longs === Number ? new be.LongBits(Se.sint64_value.low >>> 0, Se.sint64_value.high >>> 0).toNumber() : Se.sint64_value, $r.oneofs && (Fr.kind = "sint64_value")), Se.fixed32_value != null && Se.hasOwnProperty("fixed32_value") && (Fr.fixed32_value = Se.fixed32_value, $r.oneofs && (Fr.kind = "fixed32_value")), Se.fixed64_value != null && Se.hasOwnProperty("fixed64_value") && (typeof Se.fixed64_value == "number" ? Fr.fixed64_value = $r.longs === String ? String(Se.fixed64_value) : Se.fixed64_value : Fr.fixed64_value = $r.longs === String ? be.Long.prototype.toString.call(Se.fixed64_value) : $r.longs === Number ? new be.LongBits(Se.fixed64_value.low >>> 0, Se.fixed64_value.high >>> 0).toNumber() : Se.fixed64_value, $r.oneofs && (Fr.kind = "fixed64_value")), Se.sfixed32_value != null && Se.hasOwnProperty("sfixed32_value") && (Fr.sfixed32_value = Se.sfixed32_value, $r.oneofs && (Fr.kind = "sfixed32_value")), Se.sfixed64_value != null && Se.hasOwnProperty("sfixed64_value") && (typeof Se.sfixed64_value == "number" ? Fr.sfixed64_value = $r.longs === String ? String(Se.sfixed64_value) : Se.sfixed64_value : Fr.sfixed64_value = $r.longs === String ? be.Long.prototype.toString.call(Se.sfixed64_value) : $r.longs === Number ? new be.LongBits(Se.sfixed64_value.low >>> 0, Se.sfixed64_value.high >>> 0).toNumber() : Se.sfixed64_value, $r.oneofs && (Fr.kind = "sfixed64_value")), Se.bool_value != null && Se.hasOwnProperty("bool_value") && (Fr.bool_value = Se.bool_value, $r.oneofs && (Fr.kind = "bool_value")), Se.string_value != null && Se.hasOwnProperty("string_value") && (Fr.string_value = Se.string_value, $r.oneofs && (Fr.kind = "string_value")), Se.bytes_value != null && Se.hasOwnProperty("bytes_value") && (Fr.bytes_value = $r.bytes === String ? be.base64.encode(Se.bytes_value, 0, Se.bytes_value.length) : $r.bytes === Array ? Array.prototype.slice.call(Se.bytes_value) : Se.bytes_value, $r.oneofs && (Fr.kind = "bytes_value")), Fr;
+            return Se.message_value != null && Se.hasOwnProperty("message_value") && (Fr.message_value = ve.google.protobuf.Any.toObject(Se.message_value, $r), $r.oneofs && (Fr.kind = "message_value")), Se.int32_value != null && Se.hasOwnProperty("int32_value") && (Fr.int32_value = Se.int32_value, $r.oneofs && (Fr.kind = "int32_value")), Se.int64_value != null && Se.hasOwnProperty("int64_value") && (typeof Se.int64_value == "number" ? Fr.int64_value = $r.longs === String ? String(Se.int64_value) : Se.int64_value : Fr.int64_value = $r.longs === String ? be.Long.prototype.toString.call(Se.int64_value) : $r.longs === Number ? new be.LongBits(Se.int64_value.low >>> 0, Se.int64_value.high >>> 0).toNumber() : Se.int64_value, $r.oneofs && (Fr.kind = "int64_value")), Se.uint32_value != null && Se.hasOwnProperty("uint32_value") && (Fr.uint32_value = Se.uint32_value, $r.oneofs && (Fr.kind = "uint32_value")), Se.uint64_value != null && Se.hasOwnProperty("uint64_value") && (typeof Se.uint64_value == "number" ? Fr.uint64_value = $r.longs === String ? String(Se.uint64_value) : Se.uint64_value : Fr.uint64_value = $r.longs === String ? be.Long.prototype.toString.call(Se.uint64_value) : $r.longs === Number ? new be.LongBits(Se.uint64_value.low >>> 0, Se.uint64_value.high >>> 0).toNumber(!0) : Se.uint64_value, $r.oneofs && (Fr.kind = "uint64_value")), Se.sint32_value != null && Se.hasOwnProperty("sint32_value") && (Fr.sint32_value = Se.sint32_value, $r.oneofs && (Fr.kind = "sint32_value")), Se.sint64_value != null && Se.hasOwnProperty("sint64_value") && (typeof Se.sint64_value == "number" ? Fr.sint64_value = $r.longs === String ? String(Se.sint64_value) : Se.sint64_value : Fr.sint64_value = $r.longs === String ? be.Long.prototype.toString.call(Se.sint64_value) : $r.longs === Number ? new be.LongBits(Se.sint64_value.low >>> 0, Se.sint64_value.high >>> 0).toNumber() : Se.sint64_value, $r.oneofs && (Fr.kind = "sint64_value")), Se.fixed32_value != null && Se.hasOwnProperty("fixed32_value") && (Fr.fixed32_value = Se.fixed32_value, $r.oneofs && (Fr.kind = "fixed32_value")), Se.fixed64_value != null && Se.hasOwnProperty("fixed64_value") && (typeof Se.fixed64_value == "number" ? Fr.fixed64_value = $r.longs === String ? String(Se.fixed64_value) : Se.fixed64_value : Fr.fixed64_value = $r.longs === String ? be.Long.prototype.toString.call(Se.fixed64_value) : $r.longs === Number ? new be.LongBits(Se.fixed64_value.low >>> 0, Se.fixed64_value.high >>> 0).toNumber() : Se.fixed64_value, $r.oneofs && (Fr.kind = "fixed64_value")), Se.sfixed32_value != null && Se.hasOwnProperty("sfixed32_value") && (Fr.sfixed32_value = Se.sfixed32_value, $r.oneofs && (Fr.kind = "sfixed32_value")), Se.sfixed64_value != null && Se.hasOwnProperty("sfixed64_value") && (typeof Se.sfixed64_value == "number" ? Fr.sfixed64_value = $r.longs === String ? String(Se.sfixed64_value) : Se.sfixed64_value : Fr.sfixed64_value = $r.longs === String ? be.Long.prototype.toString.call(Se.sfixed64_value) : $r.longs === Number ? new be.LongBits(Se.sfixed64_value.low >>> 0, Se.sfixed64_value.high >>> 0).toNumber() : Se.sfixed64_value, $r.oneofs && (Fr.kind = "sfixed64_value")), Se.bool_value != null && Se.hasOwnProperty("bool_value") && (Fr.bool_value = Se.bool_value, $r.oneofs && (Fr.kind = "bool_value")), Se.string_value != null && Se.hasOwnProperty("string_value") && (Fr.string_value = Se.string_value, $r.oneofs && (Fr.kind = "string_value")), Se.bytes_value != null && Se.hasOwnProperty("bytes_value") && (Fr.bytes_value = $r.bytes === String ? be.base64.encode(Se.bytes_value, 0, Se.bytes_value.length) : $r.bytes === Array ? Array.prototype.slice.call(Se.bytes_value) : Se.bytes_value, $r.oneofs && (Fr.kind = "bytes_value")), Fr;
           }, xe.prototype.toJSON = function() {
             return this.constructor.toObject(this, e.util.toJSONOptions);
           }, xe.getTypeUrl = function(Se) {
@@ -25503,199 +25276,199 @@ function requireMinimal() {
         }(), Oe.enum_type = function() {
           function xe(gr) {
             if (gr)
-              for (var ve = Object.keys(gr), Se = 0; Se < ve.length; ++Se)
-                gr[ve[Se]] != null && (this[ve[Se]] = gr[ve[Se]]);
+              for (var we = Object.keys(gr), Se = 0; Se < we.length; ++Se)
+                gr[we[Se]] != null && (this[we[Se]] = gr[we[Se]]);
           }
-          return xe.prototype.name = "", xe.prototype.number = 0, xe.create = function(ve) {
-            return new xe(ve);
-          }, xe.encode = function(ve, Se) {
-            return Se || (Se = me.create()), ve.name != null && Object.hasOwnProperty.call(ve, "name") && Se.uint32(
+          return xe.prototype.name = "", xe.prototype.number = 0, xe.create = function(we) {
+            return new xe(we);
+          }, xe.encode = function(we, Se) {
+            return Se || (Se = me.create()), we.name != null && Object.hasOwnProperty.call(we, "name") && Se.uint32(
               /* id 1, wireType 2 =*/
               10
-            ).string(ve.name), ve.number != null && Object.hasOwnProperty.call(ve, "number") && Se.uint32(
+            ).string(we.name), we.number != null && Object.hasOwnProperty.call(we, "number") && Se.uint32(
               /* id 2, wireType 0 =*/
               16
-            ).int32(ve.number), Se;
-          }, xe.encodeDelimited = function(ve, Se) {
-            return this.encode(ve, Se).ldelim();
-          }, xe.decode = function(ve, Se) {
-            ve instanceof ye || (ve = ye.create(ve));
-            for (var $r = Se === void 0 ? ve.len : ve.pos + Se, Fr = new we.koinos.chain.enum_type(); ve.pos < $r; ) {
-              var Br = ve.uint32();
+            ).int32(we.number), Se;
+          }, xe.encodeDelimited = function(we, Se) {
+            return this.encode(we, Se).ldelim();
+          }, xe.decode = function(we, Se) {
+            we instanceof ye || (we = ye.create(we));
+            for (var $r = Se === void 0 ? we.len : we.pos + Se, Fr = new ve.koinos.chain.enum_type(); we.pos < $r; ) {
+              var Br = we.uint32();
               switch (Br >>> 3) {
                 case 1: {
-                  Fr.name = ve.string();
+                  Fr.name = we.string();
                   break;
                 }
                 case 2: {
-                  Fr.number = ve.int32();
+                  Fr.number = we.int32();
                   break;
                 }
                 default:
-                  ve.skipType(Br & 7);
+                  we.skipType(Br & 7);
                   break;
               }
             }
             return Fr;
-          }, xe.decodeDelimited = function(ve) {
-            return ve instanceof ye || (ve = new ye(ve)), this.decode(ve, ve.uint32());
-          }, xe.verify = function(ve) {
-            return typeof ve != "object" || ve === null ? "object expected" : ve.name != null && ve.hasOwnProperty("name") && !be.isString(ve.name) ? "name: string expected" : ve.number != null && ve.hasOwnProperty("number") && !be.isInteger(ve.number) ? "number: integer expected" : null;
-          }, xe.fromObject = function(ve) {
-            if (ve instanceof we.koinos.chain.enum_type)
-              return ve;
-            var Se = new we.koinos.chain.enum_type();
-            return ve.name != null && (Se.name = String(ve.name)), ve.number != null && (Se.number = ve.number | 0), Se;
-          }, xe.toObject = function(ve, Se) {
+          }, xe.decodeDelimited = function(we) {
+            return we instanceof ye || (we = new ye(we)), this.decode(we, we.uint32());
+          }, xe.verify = function(we) {
+            return typeof we != "object" || we === null ? "object expected" : we.name != null && we.hasOwnProperty("name") && !be.isString(we.name) ? "name: string expected" : we.number != null && we.hasOwnProperty("number") && !be.isInteger(we.number) ? "number: integer expected" : null;
+          }, xe.fromObject = function(we) {
+            if (we instanceof ve.koinos.chain.enum_type)
+              return we;
+            var Se = new ve.koinos.chain.enum_type();
+            return we.name != null && (Se.name = String(we.name)), we.number != null && (Se.number = we.number | 0), Se;
+          }, xe.toObject = function(we, Se) {
             Se || (Se = {});
             var $r = {};
-            return Se.defaults && ($r.name = "", $r.number = 0), ve.name != null && ve.hasOwnProperty("name") && ($r.name = ve.name), ve.number != null && ve.hasOwnProperty("number") && ($r.number = ve.number), $r;
+            return Se.defaults && ($r.name = "", $r.number = 0), we.name != null && we.hasOwnProperty("name") && ($r.name = we.name), we.number != null && we.hasOwnProperty("number") && ($r.number = we.number), $r;
           }, xe.prototype.toJSON = function() {
             return this.constructor.toObject(this, e.util.toJSONOptions);
-          }, xe.getTypeUrl = function(ve) {
-            return ve === void 0 && (ve = "type.googleapis.com"), ve + "/koinos.chain.enum_type";
+          }, xe.getTypeUrl = function(we) {
+            return we === void 0 && (we = "type.googleapis.com"), we + "/koinos.chain.enum_type";
           }, xe;
         }(), Oe.list_type = function() {
           function xe(gr) {
             if (this.values = [], gr)
-              for (var ve = Object.keys(gr), Se = 0; Se < ve.length; ++Se)
-                gr[ve[Se]] != null && (this[ve[Se]] = gr[ve[Se]]);
+              for (var we = Object.keys(gr), Se = 0; Se < we.length; ++Se)
+                gr[we[Se]] != null && (this[we[Se]] = gr[we[Se]]);
           }
-          return xe.prototype.values = be.emptyArray, xe.create = function(ve) {
-            return new xe(ve);
-          }, xe.encode = function(ve, Se) {
-            if (Se || (Se = me.create()), ve.values != null && ve.values.length)
-              for (var $r = 0; $r < ve.values.length; ++$r)
-                we.koinos.chain.value_type.encode(ve.values[$r], Se.uint32(
+          return xe.prototype.values = be.emptyArray, xe.create = function(we) {
+            return new xe(we);
+          }, xe.encode = function(we, Se) {
+            if (Se || (Se = me.create()), we.values != null && we.values.length)
+              for (var $r = 0; $r < we.values.length; ++$r)
+                ve.koinos.chain.value_type.encode(we.values[$r], Se.uint32(
                   /* id 1, wireType 2 =*/
                   10
                 ).fork()).ldelim();
             return Se;
-          }, xe.encodeDelimited = function(ve, Se) {
-            return this.encode(ve, Se).ldelim();
-          }, xe.decode = function(ve, Se) {
-            ve instanceof ye || (ve = ye.create(ve));
-            for (var $r = Se === void 0 ? ve.len : ve.pos + Se, Fr = new we.koinos.chain.list_type(); ve.pos < $r; ) {
-              var Br = ve.uint32();
+          }, xe.encodeDelimited = function(we, Se) {
+            return this.encode(we, Se).ldelim();
+          }, xe.decode = function(we, Se) {
+            we instanceof ye || (we = ye.create(we));
+            for (var $r = Se === void 0 ? we.len : we.pos + Se, Fr = new ve.koinos.chain.list_type(); we.pos < $r; ) {
+              var Br = we.uint32();
               switch (Br >>> 3) {
                 case 1: {
-                  Fr.values && Fr.values.length || (Fr.values = []), Fr.values.push(we.koinos.chain.value_type.decode(ve, ve.uint32()));
+                  Fr.values && Fr.values.length || (Fr.values = []), Fr.values.push(ve.koinos.chain.value_type.decode(we, we.uint32()));
                   break;
                 }
                 default:
-                  ve.skipType(Br & 7);
+                  we.skipType(Br & 7);
                   break;
               }
             }
             return Fr;
-          }, xe.decodeDelimited = function(ve) {
-            return ve instanceof ye || (ve = new ye(ve)), this.decode(ve, ve.uint32());
-          }, xe.verify = function(ve) {
-            if (typeof ve != "object" || ve === null)
+          }, xe.decodeDelimited = function(we) {
+            return we instanceof ye || (we = new ye(we)), this.decode(we, we.uint32());
+          }, xe.verify = function(we) {
+            if (typeof we != "object" || we === null)
               return "object expected";
-            if (ve.values != null && ve.hasOwnProperty("values")) {
-              if (!Array.isArray(ve.values))
+            if (we.values != null && we.hasOwnProperty("values")) {
+              if (!Array.isArray(we.values))
                 return "values: array expected";
-              for (var Se = 0; Se < ve.values.length; ++Se) {
-                var $r = we.koinos.chain.value_type.verify(ve.values[Se]);
+              for (var Se = 0; Se < we.values.length; ++Se) {
+                var $r = ve.koinos.chain.value_type.verify(we.values[Se]);
                 if ($r)
                   return "values." + $r;
               }
             }
             return null;
-          }, xe.fromObject = function(ve) {
-            if (ve instanceof we.koinos.chain.list_type)
-              return ve;
-            var Se = new we.koinos.chain.list_type();
-            if (ve.values) {
-              if (!Array.isArray(ve.values))
+          }, xe.fromObject = function(we) {
+            if (we instanceof ve.koinos.chain.list_type)
+              return we;
+            var Se = new ve.koinos.chain.list_type();
+            if (we.values) {
+              if (!Array.isArray(we.values))
                 throw TypeError(".koinos.chain.list_type.values: array expected");
               Se.values = [];
-              for (var $r = 0; $r < ve.values.length; ++$r) {
-                if (typeof ve.values[$r] != "object")
+              for (var $r = 0; $r < we.values.length; ++$r) {
+                if (typeof we.values[$r] != "object")
                   throw TypeError(".koinos.chain.list_type.values: object expected");
-                Se.values[$r] = we.koinos.chain.value_type.fromObject(ve.values[$r]);
+                Se.values[$r] = ve.koinos.chain.value_type.fromObject(we.values[$r]);
               }
             }
             return Se;
-          }, xe.toObject = function(ve, Se) {
+          }, xe.toObject = function(we, Se) {
             Se || (Se = {});
             var $r = {};
-            if ((Se.arrays || Se.defaults) && ($r.values = []), ve.values && ve.values.length) {
+            if ((Se.arrays || Se.defaults) && ($r.values = []), we.values && we.values.length) {
               $r.values = [];
-              for (var Fr = 0; Fr < ve.values.length; ++Fr)
-                $r.values[Fr] = we.koinos.chain.value_type.toObject(ve.values[Fr], Se);
+              for (var Fr = 0; Fr < we.values.length; ++Fr)
+                $r.values[Fr] = ve.koinos.chain.value_type.toObject(we.values[Fr], Se);
             }
             return $r;
           }, xe.prototype.toJSON = function() {
             return this.constructor.toObject(this, e.util.toJSONOptions);
-          }, xe.getTypeUrl = function(ve) {
-            return ve === void 0 && (ve = "type.googleapis.com"), ve + "/koinos.chain.list_type";
+          }, xe.getTypeUrl = function(we) {
+            return we === void 0 && (we = "type.googleapis.com"), we + "/koinos.chain.list_type";
           }, xe;
         }(), Oe;
       }(), Ee;
-    }(), we.google = function() {
+    }(), ve.google = function() {
       var Ee = {};
       return Ee.protobuf = function() {
         var Oe = {};
         return Oe.Any = function() {
           function xe(gr) {
             if (gr)
-              for (var ve = Object.keys(gr), Se = 0; Se < ve.length; ++Se)
-                gr[ve[Se]] != null && (this[ve[Se]] = gr[ve[Se]]);
+              for (var we = Object.keys(gr), Se = 0; Se < we.length; ++Se)
+                gr[we[Se]] != null && (this[we[Se]] = gr[we[Se]]);
           }
-          return xe.prototype.type_url = "", xe.prototype.value = be.newBuffer([]), xe.create = function(ve) {
-            return new xe(ve);
-          }, xe.encode = function(ve, Se) {
-            return Se || (Se = me.create()), ve.type_url != null && Object.hasOwnProperty.call(ve, "type_url") && Se.uint32(
+          return xe.prototype.type_url = "", xe.prototype.value = be.newBuffer([]), xe.create = function(we) {
+            return new xe(we);
+          }, xe.encode = function(we, Se) {
+            return Se || (Se = me.create()), we.type_url != null && Object.hasOwnProperty.call(we, "type_url") && Se.uint32(
               /* id 1, wireType 2 =*/
               10
-            ).string(ve.type_url), ve.value != null && Object.hasOwnProperty.call(ve, "value") && Se.uint32(
+            ).string(we.type_url), we.value != null && Object.hasOwnProperty.call(we, "value") && Se.uint32(
               /* id 2, wireType 2 =*/
               18
-            ).bytes(ve.value), Se;
-          }, xe.encodeDelimited = function(ve, Se) {
-            return this.encode(ve, Se).ldelim();
-          }, xe.decode = function(ve, Se) {
-            ve instanceof ye || (ve = ye.create(ve));
-            for (var $r = Se === void 0 ? ve.len : ve.pos + Se, Fr = new we.google.protobuf.Any(); ve.pos < $r; ) {
-              var Br = ve.uint32();
+            ).bytes(we.value), Se;
+          }, xe.encodeDelimited = function(we, Se) {
+            return this.encode(we, Se).ldelim();
+          }, xe.decode = function(we, Se) {
+            we instanceof ye || (we = ye.create(we));
+            for (var $r = Se === void 0 ? we.len : we.pos + Se, Fr = new ve.google.protobuf.Any(); we.pos < $r; ) {
+              var Br = we.uint32();
               switch (Br >>> 3) {
                 case 1: {
-                  Fr.type_url = ve.string();
+                  Fr.type_url = we.string();
                   break;
                 }
                 case 2: {
-                  Fr.value = ve.bytes();
+                  Fr.value = we.bytes();
                   break;
                 }
                 default:
-                  ve.skipType(Br & 7);
+                  we.skipType(Br & 7);
                   break;
               }
             }
             return Fr;
-          }, xe.decodeDelimited = function(ve) {
-            return ve instanceof ye || (ve = new ye(ve)), this.decode(ve, ve.uint32());
-          }, xe.verify = function(ve) {
-            return typeof ve != "object" || ve === null ? "object expected" : ve.type_url != null && ve.hasOwnProperty("type_url") && !be.isString(ve.type_url) ? "type_url: string expected" : ve.value != null && ve.hasOwnProperty("value") && !(ve.value && typeof ve.value.length == "number" || be.isString(ve.value)) ? "value: buffer expected" : null;
-          }, xe.fromObject = function(ve) {
-            if (ve instanceof we.google.protobuf.Any)
-              return ve;
-            var Se = new we.google.protobuf.Any();
-            return ve.type_url != null && (Se.type_url = String(ve.type_url)), ve.value != null && (typeof ve.value == "string" ? be.base64.decode(ve.value, Se.value = be.newBuffer(be.base64.length(ve.value)), 0) : ve.value.length >= 0 && (Se.value = ve.value)), Se;
-          }, xe.toObject = function(ve, Se) {
+          }, xe.decodeDelimited = function(we) {
+            return we instanceof ye || (we = new ye(we)), this.decode(we, we.uint32());
+          }, xe.verify = function(we) {
+            return typeof we != "object" || we === null ? "object expected" : we.type_url != null && we.hasOwnProperty("type_url") && !be.isString(we.type_url) ? "type_url: string expected" : we.value != null && we.hasOwnProperty("value") && !(we.value && typeof we.value.length == "number" || be.isString(we.value)) ? "value: buffer expected" : null;
+          }, xe.fromObject = function(we) {
+            if (we instanceof ve.google.protobuf.Any)
+              return we;
+            var Se = new ve.google.protobuf.Any();
+            return we.type_url != null && (Se.type_url = String(we.type_url)), we.value != null && (typeof we.value == "string" ? be.base64.decode(we.value, Se.value = be.newBuffer(be.base64.length(we.value)), 0) : we.value.length >= 0 && (Se.value = we.value)), Se;
+          }, xe.toObject = function(we, Se) {
             Se || (Se = {});
             var $r = {};
-            return Se.defaults && ($r.type_url = "", Se.bytes === String ? $r.value = "" : ($r.value = [], Se.bytes !== Array && ($r.value = be.newBuffer($r.value)))), ve.type_url != null && ve.hasOwnProperty("type_url") && ($r.type_url = ve.type_url), ve.value != null && ve.hasOwnProperty("value") && ($r.value = Se.bytes === String ? be.base64.encode(ve.value, 0, ve.value.length) : Se.bytes === Array ? Array.prototype.slice.call(ve.value) : ve.value), $r;
+            return Se.defaults && ($r.type_url = "", Se.bytes === String ? $r.value = "" : ($r.value = [], Se.bytes !== Array && ($r.value = be.newBuffer($r.value)))), we.type_url != null && we.hasOwnProperty("type_url") && ($r.type_url = we.type_url), we.value != null && we.hasOwnProperty("value") && ($r.value = Se.bytes === String ? be.base64.encode(we.value, 0, we.value.length) : Se.bytes === Array ? Array.prototype.slice.call(we.value) : we.value), $r;
           }, xe.prototype.toJSON = function() {
             return this.constructor.toObject(this, e.util.toJSONOptions);
-          }, xe.getTypeUrl = function(ve) {
-            return ve === void 0 && (ve = "type.googleapis.com"), ve + "/google.protobuf.Any";
+          }, xe.getTypeUrl = function(we) {
+            return we === void 0 && (we = "type.googleapis.com"), we + "/google.protobuf.Any";
           }, xe;
         }(), Oe;
       }(), Ee;
-    }(), we;
+    }(), ve;
   });
 })(protocolProto);
 var protocolProtoExports = protocolProto.exports, __createBinding = commonjsGlobal && commonjsGlobal.__createBinding || (Object.create ? function(fe, e, ye, me) {
@@ -25951,7 +25724,7 @@ class Signer {
    * @param compressed - default true
    */
   static recoverPublicKey(e, ye, me = !0) {
-    const be = (0, utils_1$1.toHexString)(ye), we = +`0x${be.slice(0, 2)}` - 31, Ee = be.slice(2, 66), Oe = be.slice(66), xe = BigInt(`0x${Ee}`), gr = BigInt(`0x${Oe}`), ve = new secp.Signature(xe, gr), Se = secp.recoverPublicKey((0, utils_1$1.toHexString)(e), ve.toHex(), we);
+    const be = (0, utils_1$1.toHexString)(ye), ve = +`0x${be.slice(0, 2)}` - 31, Ee = be.slice(2, 66), Oe = be.slice(66), xe = BigInt(`0x${Ee}`), gr = BigInt(`0x${Oe}`), we = new secp.Signature(xe, gr), Se = secp.recoverPublicKey((0, utils_1$1.toHexString)(e), we.toHex(), ve);
     if (!Se)
       throw new Error("Public key cannot be recovered");
     return me ? secp.Point.fromHex(Se).toHex(!0) : (0, utils_1$1.toHexString)(Se);
@@ -26011,7 +25784,7 @@ class Signer {
   async recoverPublicKeys(e, ye) {
     let me = !0;
     ye && ye.compressed !== void 0 && (me = ye.compressed);
-    let be = [], we;
+    let be = [], ve;
     const Ee = e;
     if (Ee.signature) {
       if (!Ee.header)
@@ -26020,7 +25793,7 @@ class Signer {
         throw new Error("Missing block signature");
       be = [Ee.signature];
       const xe = (0, utils_1$1.btypeDecode)(Ee.header, btypeBlockHeader, !1), gr = protocol_proto_js_1$1.koinos.protocol.block_header.create(xe);
-      we = protocol_proto_js_1$1.koinos.protocol.block_header.encode(gr).finish();
+      ve = protocol_proto_js_1$1.koinos.protocol.block_header.encode(gr).finish();
     } else {
       const xe = e;
       if (!xe.header)
@@ -26028,10 +25801,10 @@ class Signer {
       if (!xe.signatures)
         throw new Error("Missing transaction signatures");
       be = xe.signatures;
-      const gr = (0, utils_1$1.btypeDecode)(xe.header, btypeTransactionHeader, !1), ve = protocol_proto_js_1$1.koinos.protocol.transaction_header.create(gr);
-      we = protocol_proto_js_1$1.koinos.protocol.transaction_header.encode(ve).finish();
+      const gr = (0, utils_1$1.btypeDecode)(xe.header, btypeTransactionHeader, !1), we = protocol_proto_js_1$1.koinos.protocol.transaction_header.create(gr);
+      ve = protocol_proto_js_1$1.koinos.protocol.transaction_header.encode(we).finish();
     }
-    const Oe = (0, sha256_1.sha256)(we);
+    const Oe = (0, sha256_1.sha256)(ve);
     return Promise.all(be.map(async (xe) => (ye && typeof ye.transformSignature == "function" && (xe = await ye.transformSignature(xe)), Signer.recoverPublicKey(Oe, (0, utils_1$1.decodeBase64url)(xe), me))));
   }
   /**
@@ -26094,12 +25867,12 @@ class Signer {
   async prepareTransaction(e) {
     var ye, me;
     e.header || (e.header = {});
-    const be = (ye = e.header.payer) !== null && ye !== void 0 ? ye : this.address, { payee: we } = e.header;
+    const be = (ye = e.header.payer) !== null && ye !== void 0 ? ye : this.address, { payee: ve } = e.header;
     let Ee;
     if (e.header.nonce === void 0) {
       if (!this.provider)
         throw new Error("Cannot get the nonce because provider is undefined. To skip this call set a nonce in the transaction header");
-      Ee = await this.provider.getNextNonce(we || be);
+      Ee = await this.provider.getNextNonce(ve || be);
     } else
       Ee = e.header.nonce;
     let Oe;
@@ -26121,7 +25894,7 @@ class Signer {
         const oo = (0, utils_1$1.btypeDecode)(e.operations[Vr], btypesOperation, !1), so = protocol_proto_js_1$1.koinos.protocol.operation.create(oo), kr = protocol_proto_js_1$1.koinos.protocol.operation.encode(so).finish();
         gr.push((0, sha256_1.sha256)(kr));
       }
-    const ve = (0, utils_1$1.encodeBase64url)(new Uint8Array([
+    const we = (0, utils_1$1.encodeBase64url)(new Uint8Array([
       // multihash sha256: 18, 32
       18,
       32,
@@ -26131,9 +25904,9 @@ class Signer {
       chain_id: xe,
       rc_limit: Oe,
       nonce: Ee,
-      operation_merkle_root: ve,
+      operation_merkle_root: we,
       payer: be,
-      ...we && { payee: we }
+      ...ve && { payee: ve }
       // TODO: Option to resolve names (payer, payee)
     };
     const Se = (0, utils_1$1.btypeDecode)(e.header, btypeTransactionHeader, !1), $r = protocol_proto_js_1$1.koinos.protocol.transaction_header.create(Se), Fr = protocol_proto_js_1$1.koinos.protocol.transaction_header.encode($r).finish(), Br = (0, sha256_1.sha256)(Fr);
@@ -26160,16 +25933,16 @@ class Signer {
           ]);
         }), me.push((0, sha256_1.sha256)(oo));
       }
-    let { height: be, previous: we, previous_state_merkle_root: Ee } = e.header;
-    if (!be || !we || !Ee) {
+    let { height: be, previous: ve, previous_state_merkle_root: Ee } = e.header;
+    if (!be || !ve || !Ee) {
       if (!this.provider)
         throw new Error("Cannot get the head info because provider is undefined.");
       const Se = await this.provider.getHeadInfo();
-      be = be || `${Number(Se.head_topology.height) + 1}`, we = we || Se.head_topology.id, Ee = Ee || Se.head_state_merkle_root;
+      be = be || `${Number(Se.head_topology.height) + 1}`, ve = ve || Se.head_topology.id, Ee = Ee || Se.head_state_merkle_root;
     }
     e.header = {
       height: be,
-      previous: we,
+      previous: ve,
       previous_state_merkle_root: Ee,
       timestamp: e.header.timestamp || `${Date.now()}`,
       transaction_merkle_root: (0, utils_1$1.encodeBase64url)(new Uint8Array([
@@ -26180,8 +25953,8 @@ class Signer {
       ])),
       signer: this.address
     };
-    const Oe = (0, utils_1$1.btypeDecode)(e.header, btypeBlockHeader, !1), xe = protocol_proto_js_1$1.koinos.protocol.block_header.create(Oe), gr = protocol_proto_js_1$1.koinos.protocol.block_header.encode(xe).finish(), ve = (0, sha256_1.sha256)(gr);
-    return e.id = `0x1220${(0, utils_1$1.toHexString)(ve)}`, e;
+    const Oe = (0, utils_1$1.btypeDecode)(e.header, btypeBlockHeader, !1), xe = protocol_proto_js_1$1.koinos.protocol.block_header.create(Oe), gr = protocol_proto_js_1$1.koinos.protocol.block_header.encode(xe).finish(), we = (0, sha256_1.sha256)(gr);
+    return e.id = `0x1220${(0, utils_1$1.toHexString)(we)}`, e;
   }
 }
 Signer$1.Signer = Signer;
@@ -26189,25 +25962,25 @@ Signer$1.default = Signer;
 var Provider$1 = {}, browserPonyfill = { exports: {} };
 (function(fe, e) {
   var ye = typeof self < "u" ? self : commonjsGlobal, me = function() {
-    function we() {
+    function ve() {
       this.fetch = !1, this.DOMException = ye.DOMException;
     }
-    return we.prototype = ye, new we();
+    return ve.prototype = ye, new ve();
   }();
-  (function(we) {
+  (function(ve) {
     (function(Ee) {
       var Oe = {
-        searchParams: "URLSearchParams" in we,
-        iterable: "Symbol" in we && "iterator" in Symbol,
-        blob: "FileReader" in we && "Blob" in we && function() {
+        searchParams: "URLSearchParams" in ve,
+        iterable: "Symbol" in ve && "iterator" in Symbol,
+        blob: "FileReader" in ve && "Blob" in ve && function() {
           try {
             return new Blob(), !0;
           } catch {
             return !1;
           }
         }(),
-        formData: "FormData" in we,
-        arrayBuffer: "ArrayBuffer" in we
+        formData: "FormData" in ve,
+        arrayBuffer: "ArrayBuffer" in ve
       };
       function xe(Wr) {
         return Wr && DataView.prototype.isPrototypeOf(Wr);
@@ -26223,7 +25996,7 @@ var Provider$1 = {}, browserPonyfill = { exports: {} };
           "[object Uint32Array]",
           "[object Float32Array]",
           "[object Float64Array]"
-        ], ve = ArrayBuffer.isView || function(Wr) {
+        ], we = ArrayBuffer.isView || function(Wr) {
           return Wr && gr.indexOf(Object.prototype.toString.call(Wr)) > -1;
         };
       function Se(Wr) {
@@ -26320,7 +26093,7 @@ var Provider$1 = {}, browserPonyfill = { exports: {} };
       }
       function Yr() {
         return this.bodyUsed = !1, this._initBody = function(Wr) {
-          this._bodyInit = Wr, Wr ? typeof Wr == "string" ? this._bodyText = Wr : Oe.blob && Blob.prototype.isPrototypeOf(Wr) ? this._bodyBlob = Wr : Oe.formData && FormData.prototype.isPrototypeOf(Wr) ? this._bodyFormData = Wr : Oe.searchParams && URLSearchParams.prototype.isPrototypeOf(Wr) ? this._bodyText = Wr.toString() : Oe.arrayBuffer && Oe.blob && xe(Wr) ? (this._bodyArrayBuffer = Hr(Wr.buffer), this._bodyInit = new Blob([this._bodyArrayBuffer])) : Oe.arrayBuffer && (ArrayBuffer.prototype.isPrototypeOf(Wr) || ve(Wr)) ? this._bodyArrayBuffer = Hr(Wr) : this._bodyText = Wr = Object.prototype.toString.call(Wr) : this._bodyText = "", this.headers.get("content-type") || (typeof Wr == "string" ? this.headers.set("content-type", "text/plain;charset=UTF-8") : this._bodyBlob && this._bodyBlob.type ? this.headers.set("content-type", this._bodyBlob.type) : Oe.searchParams && URLSearchParams.prototype.isPrototypeOf(Wr) && this.headers.set("content-type", "application/x-www-form-urlencoded;charset=UTF-8"));
+          this._bodyInit = Wr, Wr ? typeof Wr == "string" ? this._bodyText = Wr : Oe.blob && Blob.prototype.isPrototypeOf(Wr) ? this._bodyBlob = Wr : Oe.formData && FormData.prototype.isPrototypeOf(Wr) ? this._bodyFormData = Wr : Oe.searchParams && URLSearchParams.prototype.isPrototypeOf(Wr) ? this._bodyText = Wr.toString() : Oe.arrayBuffer && Oe.blob && xe(Wr) ? (this._bodyArrayBuffer = Hr(Wr.buffer), this._bodyInit = new Blob([this._bodyArrayBuffer])) : Oe.arrayBuffer && (ArrayBuffer.prototype.isPrototypeOf(Wr) || we(Wr)) ? this._bodyArrayBuffer = Hr(Wr) : this._bodyText = Wr = Object.prototype.toString.call(Wr) : this._bodyText = "", this.headers.get("content-type") || (typeof Wr == "string" ? this.headers.set("content-type", "text/plain;charset=UTF-8") : this._bodyBlob && this._bodyBlob.type ? this.headers.set("content-type", this._bodyBlob.type) : Oe.searchParams && URLSearchParams.prototype.isPrototypeOf(Wr) && this.headers.set("content-type", "application/x-www-form-urlencoded;charset=UTF-8"));
         }, Oe.blob && (this.blob = function() {
           var Wr = Vr(this);
           if (Wr)
@@ -26411,7 +26184,7 @@ var Provider$1 = {}, browserPonyfill = { exports: {} };
         if (ao.indexOf(Jr) === -1)
           throw new RangeError("Invalid status code");
         return new to(null, { status: Jr, headers: { location: Wr } });
-      }, Ee.DOMException = we.DOMException;
+      }, Ee.DOMException = ve.DOMException;
       try {
         new Ee.DOMException();
       } catch {
@@ -26437,22 +26210,22 @@ var Provider$1 = {}, browserPonyfill = { exports: {} };
               headers: Xr(po.getAllResponseHeaders() || "")
             };
             Oo.url = "responseURL" in po ? po.responseURL : Oo.headers.get("X-Request-URL");
-            var Do = "response" in po ? po.response : po.responseText;
-            fo(new to(Do, Oo));
+            var Io = "response" in po ? po.response : po.responseText;
+            fo(new to(Io, Oo));
           }, po.onerror = function() {
             vo(new TypeError("Network request failed"));
           }, po.ontimeout = function() {
             vo(new TypeError("Network request failed"));
           }, po.onabort = function() {
             vo(new Ee.DOMException("Aborted", "AbortError"));
-          }, po.open(mo.method, mo.url, !0), mo.credentials === "include" ? po.withCredentials = !0 : mo.credentials === "omit" && (po.withCredentials = !1), "responseType" in po && Oe.blob && (po.responseType = "blob"), mo.headers.forEach(function(Oo, Do) {
-            po.setRequestHeader(Do, Oo);
+          }, po.open(mo.method, mo.url, !0), mo.credentials === "include" ? po.withCredentials = !0 : mo.credentials === "omit" && (po.withCredentials = !1), "responseType" in po && Oe.blob && (po.responseType = "blob"), mo.headers.forEach(function(Oo, Io) {
+            po.setRequestHeader(Io, Oo);
           }), mo.signal && (mo.signal.addEventListener("abort", yo), po.onreadystatechange = function() {
             po.readyState === 4 && mo.signal.removeEventListener("abort", yo);
           }), po.send(typeof mo._bodyInit > "u" ? null : mo._bodyInit);
         });
       }
-      return bo.polyfill = !0, we.fetch || (we.fetch = bo, we.Headers = Br, we.Request = Lr, we.Response = to), Ee.Headers = Br, Ee.Request = Lr, Ee.Response = to, Ee.fetch = bo, Object.defineProperty(Ee, "__esModule", { value: !0 }), Ee;
+      return bo.polyfill = !0, ve.fetch || (ve.fetch = bo, ve.Headers = Br, ve.Request = Lr, ve.Response = to), Ee.Headers = Br, Ee.Request = Lr, Ee.Response = to, Ee.fetch = bo, Object.defineProperty(Ee, "__esModule", { value: !0 }), Ee;
     })({});
   })(me), me.fetch.ponyfill = !0, delete me.fetch.polyfill;
   var be = me;
@@ -26521,8 +26294,8 @@ class Provider {
       } catch (me) {
         const be = this.rpcNodes[this.currentNodeId];
         this.currentNodeId = (this.currentNodeId + 1) % this.rpcNodes.length;
-        const we = this.rpcNodes[this.currentNodeId];
-        if (this.onError(me, be, we))
+        const ve = this.rpcNodes[this.currentNodeId];
+        if (this.onError(me, be, ve))
           throw me;
       }
   }
@@ -26540,7 +26313,7 @@ class Provider {
     const { nonce: me } = await this.call("chain.get_account_nonce", { account: e });
     if (!ye)
       return me;
-    const be = (0, utils_1.decodeBase64url)(me), we = protocol_proto_js_1.koinos.chain.value_type.decode(be), Ee = protocol_proto_js_1.koinos.chain.value_type.toObject(we, {
+    const be = (0, utils_1.decodeBase64url)(me), ve = protocol_proto_js_1.koinos.chain.value_type.decode(be), Ee = protocol_proto_js_1.koinos.chain.value_type.toObject(ve, {
       longs: String,
       defaults: !0
     });
@@ -26655,8 +26428,8 @@ class Provider {
       }
       throw new Error(`Transaction not mined after ${me} ms`);
     }
-    const we = async (gr, ve, Se) => {
-      const $r = await this.getBlocks(gr, ve, Se);
+    const ve = async (gr, we, Se) => {
+      const $r = await this.getBlocks(gr, we, Se);
       let Fr = 0, Br = "";
       $r.forEach((oo) => {
         if (!oo || !oo.block || !oo.block_id || !oo.block.transactions)
@@ -26671,7 +26444,7 @@ class Provider {
       await sleep(1e3);
       const { head_topology: gr } = await this.getHeadInfo();
       if (Ee === 0 && (Ee = Number(gr.height), Oe = Ee), Number(gr.height) === Ee - 1 && xe && xe !== gr.id) {
-        const [Fr, Br, Vr] = await we(Oe, Number(gr.height) - Oe + 1, gr.id);
+        const [Fr, Br, Vr] = await ve(Oe, Number(gr.height) - Oe + 1, gr.id);
         if (Fr)
           return {
             blockId: Br,
@@ -26681,11 +26454,11 @@ class Provider {
       }
       if (Ee > Number(gr.height))
         continue;
-      const [ve, Se, $r] = await we(Ee, 1, gr.id);
-      if (ve)
+      const [we, Se, $r] = await ve(Ee, 1, gr.id);
+      if (we)
         return {
           blockId: Se,
-          blockNumber: ve
+          blockNumber: we
         };
       xe || (xe = $r), Ee += 1;
     }
@@ -26707,7 +26480,7 @@ class Provider {
    */
   async sendTransaction(e, ye = !0) {
     const me = await this.call("chain.submit_transaction", { transaction: e, broadcast: ye });
-    return e.wait = async (be = "byBlock", we = 15e3) => this.wait(e.id, be, we), { ...me, transaction: e };
+    return e.wait = async (be = "byBlock", ve = 15e3) => this.wait(e.id, be, ve), { ...me, transaction: e };
   }
   /**
    * Function to call "chain.submit_block" to send a signed
@@ -26733,7 +26506,7 @@ Transaction$1.Transaction = void 0;
 const Signer_1 = Signer$1;
 class Transaction {
   constructor(e) {
-    var ye, me, be, we, Ee;
+    var ye, me, be, ve, Ee;
     this.signer = e == null ? void 0 : e.signer, this.provider = e == null ? void 0 : e.provider, this.options = {
       broadcast: !0,
       sendAbis: !0,
@@ -26743,7 +26516,7 @@ class Transaction {
         ...((ye = e == null ? void 0 : e.options) === null || ye === void 0 ? void 0 : ye.chainId) && { chain_id: e.options.chainId },
         ...((me = e == null ? void 0 : e.options) === null || me === void 0 ? void 0 : me.rcLimit) && { rc_limit: e.options.rcLimit },
         ...((be = e == null ? void 0 : e.options) === null || be === void 0 ? void 0 : be.nonce) && { nonce: e.options.nonce },
-        ...((we = e == null ? void 0 : e.options) === null || we === void 0 ? void 0 : we.payer) && { payer: e.options.payer },
+        ...((ve = e == null ? void 0 : e.options) === null || ve === void 0 ? void 0 : ve.payer) && { payer: e.options.payer },
         ...((Ee = e == null ? void 0 : e.options) === null || Ee === void 0 ? void 0 : Ee.payee) && { payee: e.options.payee }
       },
       operations: []
@@ -26860,8 +26633,8 @@ class Transaction {
       ...e
     };
     if (this.transaction.id || await this.prepare(), this.signer && this.signer.provider) {
-      const { transaction: we, receipt: Ee } = await this.signer.sendTransaction(this.transaction, ye);
-      return this.transaction = we, this.waitFunction = we.wait, Ee;
+      const { transaction: ve, receipt: Ee } = await this.signer.sendTransaction(this.transaction, ye);
+      return this.transaction = ve, this.waitFunction = ve.wait, Ee;
     }
     if (!this.provider)
       throw new Error("provider not defined");
@@ -26879,29 +26652,29 @@ class Transaction {
 }
 Transaction$1.Transaction = Transaction;
 (function(fe) {
-  var e = commonjsGlobal && commonjsGlobal.__createBinding || (Object.create ? function(we, Ee, Oe, xe) {
+  var e = commonjsGlobal && commonjsGlobal.__createBinding || (Object.create ? function(ve, Ee, Oe, xe) {
     xe === void 0 && (xe = Oe);
     var gr = Object.getOwnPropertyDescriptor(Ee, Oe);
     (!gr || ("get" in gr ? !Ee.__esModule : gr.writable || gr.configurable)) && (gr = { enumerable: !0, get: function() {
       return Ee[Oe];
-    } }), Object.defineProperty(we, xe, gr);
-  } : function(we, Ee, Oe, xe) {
-    xe === void 0 && (xe = Oe), we[xe] = Ee[Oe];
-  }), ye = commonjsGlobal && commonjsGlobal.__setModuleDefault || (Object.create ? function(we, Ee) {
-    Object.defineProperty(we, "default", { enumerable: !0, value: Ee });
-  } : function(we, Ee) {
-    we.default = Ee;
-  }), me = commonjsGlobal && commonjsGlobal.__importStar || function(we) {
-    if (we && we.__esModule)
-      return we;
+    } }), Object.defineProperty(ve, xe, gr);
+  } : function(ve, Ee, Oe, xe) {
+    xe === void 0 && (xe = Oe), ve[xe] = Ee[Oe];
+  }), ye = commonjsGlobal && commonjsGlobal.__setModuleDefault || (Object.create ? function(ve, Ee) {
+    Object.defineProperty(ve, "default", { enumerable: !0, value: Ee });
+  } : function(ve, Ee) {
+    ve.default = Ee;
+  }), me = commonjsGlobal && commonjsGlobal.__importStar || function(ve) {
+    if (ve && ve.__esModule)
+      return ve;
     var Ee = {};
-    if (we != null)
-      for (var Oe in we)
-        Oe !== "default" && Object.prototype.hasOwnProperty.call(we, Oe) && e(Ee, we, Oe);
-    return ye(Ee, we), Ee;
-  }, be = commonjsGlobal && commonjsGlobal.__exportStar || function(we, Ee) {
-    for (var Oe in we)
-      Oe !== "default" && !Object.prototype.hasOwnProperty.call(Ee, Oe) && e(Ee, we, Oe);
+    if (ve != null)
+      for (var Oe in ve)
+        Oe !== "default" && Object.prototype.hasOwnProperty.call(ve, Oe) && e(Ee, ve, Oe);
+    return ye(Ee, ve), Ee;
+  }, be = commonjsGlobal && commonjsGlobal.__exportStar || function(ve, Ee) {
+    for (var Oe in ve)
+      Oe !== "default" && !Object.prototype.hasOwnProperty.call(Ee, Oe) && e(Ee, ve, Oe);
   };
   Object.defineProperty(fe, "__esModule", { value: !0 }), fe.interfaces = fe.utils = void 0;
   /*! koilib - MIT License (c) Julian Gonzalez (joticajulian@gmail.com) */
@@ -26990,7 +26763,7 @@ function generateSigner(fe, e, ye, me, be) {
           }
         }
       });
-      return xe.transaction.wait = async (gr = "byBlock", ve = 6e4) => await me.request({
+      return xe.transaction.wait = async (gr = "byBlock", we = 6e4) => await me.request({
         chainId: e,
         topic: ye,
         request: {
@@ -26998,7 +26771,7 @@ function generateSigner(fe, e, ye, me, be) {
           params: {
             transactionId: xe.transaction.id,
             type: gr,
-            timeout: ve
+            timeout: we
           }
         }
       }), xe;
@@ -27044,11 +26817,11 @@ class WebWalletConnectKoinos {
     })), !be)
       return [];
     this.topic = be.topic, ((Ee = be.namespaces.koinos.chains) == null ? void 0 : Ee.length) === 1 && (this.chainId = be.namespaces.koinos.chains[0]);
-    const we = be.namespaces.koinos.accounts.reduce((Oe, xe) => {
-      const [gr, ve, Se] = xe.split(":");
+    const ve = be.namespaces.koinos.accounts.reduce((Oe, xe) => {
+      const [gr, we, Se] = xe.split(":");
       return Oe.includes(Se) || Oe.push(Se), Oe;
     }, []);
-    return this.accounts = we, we;
+    return this.accounts = ve, ve;
   }
   async disconnect() {
     const e = await this.web3Modal.getSessions();
@@ -27101,8 +26874,8 @@ var z$1 = (fe = {}) => {
     return !(typeof await get(ye(be), me) > "u");
   }, async getItem(be) {
     return await get(ye(be), me) ?? null;
-  }, setItem(be, we) {
-    return set(ye(be), we, me);
+  }, setItem(be, ve) {
+    return set(ye(be), ve, me);
   }, removeItem(be) {
     return del(ye(be), me);
   }, getKeys() {
@@ -27188,14 +26961,14 @@ const N$3 = "wc_storage_version", y$2 = 1, O$3 = async (fe, e, ye) => {
     ye(e);
     return;
   }
-  const we = await fe.getKeys();
-  if (!we.length) {
+  const ve = await fe.getKeys();
+  if (!ve.length) {
     ye(e);
     return;
   }
   const Ee = [];
-  for (; we.length; ) {
-    const Oe = we.shift();
+  for (; ve.length; ) {
+    const Oe = ve.shift();
     if (!Oe)
       continue;
     const xe = Oe.toLowerCase();
@@ -27340,11 +27113,11 @@ function Re(fe) {
 function ee$1(fe) {
   const e = fromString(fe, F$2), ye = e.slice(Dn, Ie), me = Ie;
   if ($$1(ye) === _$2) {
-    const Oe = me + X$2, xe = Oe + Z$1, gr = e.slice(me, Oe), ve = e.slice(Oe, xe), Se = e.slice(xe);
-    return { type: ye, sealed: Se, iv: ve, senderPublicKey: gr };
+    const Oe = me + X$2, xe = Oe + Z$1, gr = e.slice(me, Oe), we = e.slice(Oe, xe), Se = e.slice(xe);
+    return { type: ye, sealed: Se, iv: we, senderPublicKey: gr };
   }
-  const be = me + Z$1, we = e.slice(me, be), Ee = e.slice(be);
-  return { type: ye, sealed: Ee, iv: we };
+  const be = me + Z$1, ve = e.slice(me, be), Ee = e.slice(be);
+  return { type: ye, sealed: Ee, iv: ve };
 }
 function Hn(fe, e) {
   const ye = ee$1(fe);
@@ -27416,8 +27189,8 @@ function Me$1(fe, e, ye) {
   const me = ke$1(), be = Ve$1();
   return [[fe, e].join("-"), [$e$1, ye].join("-"), me, be].join("/");
 }
-function Xn({ protocol: fe, version: e, relayUrl: ye, sdkVersion: me, auth: be, projectId: we, useOnCloseEvent: Ee, bundleId: Oe }) {
-  const xe = ye.split("?"), gr = Me$1(fe, e, me), ve = { auth: be, ua: gr, projectId: we, useOnCloseEvent: Ee || void 0, origin: Oe || void 0 }, Se = De$1(xe[1] || "", ve);
+function Xn({ protocol: fe, version: e, relayUrl: ye, sdkVersion: me, auth: be, projectId: ve, useOnCloseEvent: Ee, bundleId: Oe }) {
+  const xe = ye.split("?"), gr = Me$1(fe, e, me), we = { auth: be, ua: gr, projectId: ve, useOnCloseEvent: Ee || void 0, origin: Oe || void 0 }, Se = De$1(xe[1] || "", we);
   return xe[0] + "?" + Se;
 }
 function rt$1(fe) {
@@ -27428,27 +27201,27 @@ function ot$1(fe) {
 }
 function at$2(fe = cjs$4.FIVE_MINUTES, e) {
   const ye = cjs$4.toMiliseconds(fe || cjs$4.FIVE_MINUTES);
-  let me, be, we;
+  let me, be, ve;
   return { resolve: (Ee) => {
-    we && me && (clearTimeout(we), me(Ee));
+    ve && me && (clearTimeout(ve), me(Ee));
   }, reject: (Ee) => {
-    we && be && (clearTimeout(we), be(Ee));
+    ve && be && (clearTimeout(ve), be(Ee));
   }, done: () => new Promise((Ee, Oe) => {
-    we = setTimeout(() => {
+    ve = setTimeout(() => {
       Oe(new Error(e));
     }, ye), me = Ee, be = Oe;
   }) };
 }
 function ut$1(fe, e, ye) {
   return new Promise(async (me, be) => {
-    const we = setTimeout(() => be(new Error(ye)), e);
+    const ve = setTimeout(() => be(new Error(ye)), e);
     try {
       const Ee = await fe;
       me(Ee);
     } catch (Ee) {
       be(Ee);
     }
-    clearTimeout(we);
+    clearTimeout(ve);
   });
 }
 function re(fe, e) {
@@ -27512,14 +27285,14 @@ function Be$1(fe, e = "-") {
   const ye = {}, me = "relay" + e;
   return Object.keys(fe).forEach((be) => {
     if (be.startsWith(me)) {
-      const we = be.replace(me, ""), Ee = fe[be];
-      ye[we] = Ee;
+      const ve = be.replace(me, ""), Ee = fe[be];
+      ye[ve] = Ee;
     }
   }), ye;
 }
 function wt$1(fe) {
   fe = fe.includes("wc://") ? fe.replace("wc://", "") : fe, fe = fe.includes("wc:") ? fe.replace("wc:", "") : fe;
-  const e = fe.indexOf(":"), ye = fe.indexOf("?") !== -1 ? fe.indexOf("?") : void 0, me = fe.substring(0, e), be = fe.substring(e + 1, ye).split("@"), we = typeof ye < "u" ? fe.substring(ye) : "", Ee = queryString.parse(we);
+  const e = fe.indexOf(":"), ye = fe.indexOf("?") !== -1 ? fe.indexOf("?") : void 0, me = fe.substring(0, e), be = fe.substring(e + 1, ye).split("@"), ve = typeof ye < "u" ? fe.substring(ye) : "", Ee = queryString.parse(ve);
   return { protocol: me, topic: Ge$1(be[0]), version: parseInt(be[1], 10), symKey: Ee.symKey, relay: Be$1(Ee) };
 }
 function Ge$1(fe) {
@@ -27528,8 +27301,8 @@ function Ge$1(fe) {
 function We$1(fe, e = "-") {
   const ye = "relay", me = {};
   return Object.keys(fe).forEach((be) => {
-    const we = ye + e + be;
-    fe[be] && (me[we] = fe[be]);
+    const ve = ye + e + be;
+    fe[be] && (me[ve] = fe[be]);
   }), me;
 }
 function It$1(fe) {
@@ -27622,7 +27395,7 @@ function gn(fe) {
 const w$2 = () => typeof WebSocket < "u" ? WebSocket : typeof global < "u" && typeof global.WebSocket < "u" ? global.WebSocket : typeof window < "u" && typeof window.WebSocket < "u" ? window.WebSocket : typeof self < "u" && typeof self.WebSocket < "u" ? self.WebSocket : require("ws"), b$2 = () => typeof WebSocket < "u" || typeof global < "u" && typeof global.WebSocket < "u" || typeof window < "u" && typeof window.WebSocket < "u" || typeof self < "u" && typeof self.WebSocket < "u", a = (fe) => fe.split("?")[0], h$2 = 10, S$1 = w$2();
 class f {
   constructor(e) {
-    if (this.url = e, this.events = new eventsExports.EventEmitter(), this.registering = !1, !isWsUrl(e))
+    if (this.url = e, this.events = new EventEmitter$1(), this.registering = !1, !isWsUrl(e))
       throw new Error(`Provided URL is not compatible with WebSocket connection: ${e}`);
     this.url = e;
   }
@@ -27672,8 +27445,8 @@ class f {
     if (this.registering) {
       const ye = this.events.getMaxListeners();
       return (this.events.listenerCount("register_error") >= ye || this.events.listenerCount("open") >= ye) && this.events.setMaxListeners(ye + 1), new Promise((me, be) => {
-        this.events.once("register_error", (we) => {
-          this.resetMaxListeners(), be(we);
+        this.events.once("register_error", (ve) => {
+          this.resetMaxListeners(), be(ve);
         }), this.events.once("open", () => {
           if (this.resetMaxListeners(), typeof this.socket > "u")
             return be(new Error("WebSocket connection is missing or invalid"));
@@ -27682,7 +27455,7 @@ class f {
       });
     }
     return this.url = e, this.registering = !0, new Promise((ye, me) => {
-      const be = new URLSearchParams(e).get("origin"), we = cjs.isReactNative() ? { headers: { origin: be } } : { rejectUnauthorized: !isLocalhostUrl(e) }, Ee = new S$1(e, [], we);
+      const be = new URLSearchParams(e).get("origin"), ve = cjs.isReactNative() ? { headers: { origin: be } } : { rejectUnauthorized: !isLocalhostUrl(e) }, Ee = new S$1(e, [], ve);
       b$2() ? Ee.onerror = (Oe) => {
         const xe = Oe;
         me(this.emitError(xe.error));
@@ -27706,8 +27479,8 @@ class f {
     this.events.emit("payload", ye);
   }
   onError(e, ye) {
-    const me = this.parseError(ye), be = me.message || me.toString(), we = formatJsonRpcError(e, be);
-    this.events.emit("payload", we);
+    const me = this.parseError(ye), be = me.message || me.toString(), ve = formatJsonRpcError(e, be);
+    this.events.emit("payload", ve);
   }
   parseError(e, ye = this.url) {
     return parseConnectionError(e, a(ye), "WS");
@@ -27726,12 +27499,12 @@ function Vi(fe, e) {
   for (var ye = new Uint8Array(256), me = 0; me < ye.length; me++)
     ye[me] = 255;
   for (var be = 0; be < fe.length; be++) {
-    var we = fe.charAt(be), Ee = we.charCodeAt(0);
+    var ve = fe.charAt(be), Ee = ve.charCodeAt(0);
     if (ye[Ee] !== 255)
-      throw new TypeError(we + " is ambiguous");
+      throw new TypeError(ve + " is ambiguous");
     ye[Ee] = be;
   }
-  var Oe = fe.length, xe = fe.charAt(0), gr = Math.log(Oe) / Math.log(256), ve = Math.log(256) / Math.log(Oe);
+  var Oe = fe.length, xe = fe.charAt(0), gr = Math.log(Oe) / Math.log(256), we = Math.log(256) / Math.log(Oe);
   function Se(Br) {
     if (Br instanceof Uint8Array || (ArrayBuffer.isView(Br) ? Br = new Uint8Array(Br.buffer, Br.byteOffset, Br.byteLength) : Array.isArray(Br) && (Br = Uint8Array.from(Br))), !(Br instanceof Uint8Array))
       throw new TypeError("Expected Uint8Array");
@@ -27739,7 +27512,7 @@ function Vi(fe, e) {
       return "";
     for (var Vr = 0, oo = 0, so = 0, kr = Br.length; so !== kr && Br[so] === 0; )
       so++, Vr++;
-    for (var qr = (kr - so) * ve + 1 >>> 0, Hr = new Uint8Array(qr); so !== kr; ) {
+    for (var qr = (kr - so) * we + 1 >>> 0, Hr = new Uint8Array(qr); so !== kr; ) {
       for (var Yr = Br[so], Ur = 0, Mr = qr - 1; (Yr !== 0 || Ur < oo) && Mr !== -1; Mr--, Ur++)
         Yr += 256 * Hr[Mr] >>> 0, Hr[Mr] = Yr % Oe >>> 0, Yr = Yr / Oe >>> 0;
       if (Yr !== 0)
@@ -27854,18 +27627,18 @@ class Xi {
 }
 const X$1 = ({ name: fe, prefix: e, encode: ye, decode: me }) => new Xi(fe, e, ye, me), B$1 = ({ prefix: fe, name: e, alphabet: ye }) => {
   const { encode: me, decode: be } = ji(ye, e);
-  return X$1({ prefix: fe, name: e, encode: me, decode: (we) => Ne(be(we)) });
+  return X$1({ prefix: fe, name: e, encode: me, decode: (ve) => Ne(be(ve)) });
 }, Qi = (fe, e, ye, me) => {
   const be = {};
-  for (let ve = 0; ve < e.length; ++ve)
-    be[e[ve]] = ve;
-  let we = fe.length;
-  for (; fe[we - 1] === "="; )
-    --we;
-  const Ee = new Uint8Array(we * ye / 8 | 0);
+  for (let we = 0; we < e.length; ++we)
+    be[e[we]] = we;
+  let ve = fe.length;
+  for (; fe[ve - 1] === "="; )
+    --ve;
+  const Ee = new Uint8Array(ve * ye / 8 | 0);
   let Oe = 0, xe = 0, gr = 0;
-  for (let ve = 0; ve < we; ++ve) {
-    const Se = be[fe[ve]];
+  for (let we = 0; we < ve; ++we) {
+    const Se = be[fe[we]];
     if (Se === void 0)
       throw new SyntaxError(`Non-${me} character`);
     xe = xe << ye | Se, Oe += ye, Oe >= 8 && (Oe -= 8, Ee[gr++] = 255 & xe >> Oe);
@@ -27875,14 +27648,14 @@ const X$1 = ({ name: fe, prefix: e, encode: ye, decode: me }) => new Xi(fe, e, y
   return Ee;
 }, Zi = (fe, e, ye) => {
   const me = e[e.length - 1] === "=", be = (1 << ye) - 1;
-  let we = "", Ee = 0, Oe = 0;
+  let ve = "", Ee = 0, Oe = 0;
   for (let xe = 0; xe < fe.length; ++xe)
     for (Oe = Oe << 8 | fe[xe], Ee += 8; Ee > ye; )
-      Ee -= ye, we += e[be & Oe >> Ee];
-  if (Ee && (we += e[be & Oe << ye - Ee]), me)
-    for (; we.length * ye & 7; )
-      we += "=";
-  return we;
+      Ee -= ye, ve += e[be & Oe >> Ee];
+  if (Ee && (ve += e[be & Oe << ye - Ee]), me)
+    for (; ve.length * ye & 7; )
+      ve += "=";
+  return ve;
 }, g$1 = ({ name: fe, prefix: e, bitsPerChar: ye, alphabet: me }) => X$1({ prefix: e, name: fe, encode(be) {
   return Zi(be, me, ye);
 }, decode(be) {
@@ -27931,20 +27704,20 @@ function $e(fe, e, ye) {
 }
 var Bs = he$1, Vs = 128, Me = 127;
 function he$1(fe, me) {
-  var ye = 0, me = me || 0, be = 0, we = me, Ee, Oe = fe.length;
+  var ye = 0, me = me || 0, be = 0, ve = me, Ee, Oe = fe.length;
   do {
-    if (we >= Oe)
+    if (ve >= Oe)
       throw he$1.bytes = 0, new RangeError("Could not decode varint");
-    Ee = fe[we++], ye += be < 28 ? (Ee & Me) << be : (Ee & Me) * Math.pow(2, be), be += 7;
+    Ee = fe[ve++], ye += be < 28 ? (Ee & Me) << be : (Ee & Me) * Math.pow(2, be), be += 7;
   } while (Ee >= Vs);
-  return he$1.bytes = we - me, ye;
+  return he$1.bytes = ve - me, ye;
 }
 var qs = Math.pow(2, 7), js = Math.pow(2, 14), Gs = Math.pow(2, 21), Ys = Math.pow(2, 28), Hs = Math.pow(2, 35), Js = Math.pow(2, 42), Ws = Math.pow(2, 49), Xs = Math.pow(2, 56), Qs = Math.pow(2, 63), Zs = function(fe) {
   return fe < qs ? 1 : fe < js ? 2 : fe < Gs ? 3 : fe < Ys ? 4 : fe < Hs ? 5 : fe < Js ? 6 : fe < Ws ? 7 : fe < Xs ? 8 : fe < Qs ? 9 : 10;
 }, er = { encode: $s, decode: Bs, encodingLength: Zs }, ke = er;
 const Ke = (fe, e, ye = 0) => (ke.encode(fe, e, ye), e), Be = (fe) => ke.encodingLength(fe), ce$2 = (fe, e) => {
-  const ye = e.byteLength, me = Be(fe), be = me + Be(ye), we = new Uint8Array(be + ye);
-  return Ke(fe, we, 0), Ke(ye, we, me), we.set(e, be), new tr$1(fe, ye, e, we);
+  const ye = e.byteLength, me = Be(fe), be = me + Be(ye), ve = new Uint8Array(be + ye);
+  return Ke(fe, ve, 0), Ke(ye, ve, me), ve.set(e, be), new tr$1(fe, ye, e, ve);
 };
 let tr$1 = class {
   constructor(e, ye, me, be) {
@@ -28012,8 +27785,8 @@ class St {
       this.isInitialized();
       const be = this.keychain.get(me);
       if (typeof be > "u") {
-        const { message: we } = N$2("NO_MATCHING_KEY", `${this.name}: ${me}`);
-        throw new Error(we);
+        const { message: ve } = N$2("NO_MATCHING_KEY", `${this.name}: ${me}`);
+        throw new Error(ve);
       }
       return be;
     }, this.del = async (me) => {
@@ -28049,56 +27822,56 @@ class Tt {
       this.initialized || (await this.keychain.init(), this.initialized = !0);
     }, this.hasKeys = (be) => (this.isInitialized(), this.keychain.has(be)), this.getClientId = async () => {
       this.isInitialized();
-      const be = await this.getClientSeed(), we = generateKeyPair(be);
-      return encodeIss(we.publicKey);
+      const be = await this.getClientSeed(), ve = generateKeyPair(be);
+      return encodeIss(ve.publicKey);
     }, this.generateKeyPair = () => {
       this.isInitialized();
       const be = kn();
       return this.setPrivateKey(be.publicKey, be.privateKey);
     }, this.signJWT = async (be) => {
       this.isInitialized();
-      const we = await this.getClientSeed(), Ee = generateKeyPair(we), Oe = Vn();
+      const ve = await this.getClientSeed(), Ee = generateKeyPair(ve), Oe = Vn();
       return await signJWT(Oe, be, tt, Ee);
-    }, this.generateSharedKey = (be, we, Ee) => {
+    }, this.generateSharedKey = (be, ve, Ee) => {
       this.isInitialized();
-      const Oe = this.getPrivateKey(be), xe = Mn(Oe, we);
+      const Oe = this.getPrivateKey(be), xe = Mn(Oe, ve);
       return this.setSymKey(xe, Ee);
-    }, this.setSymKey = async (be, we) => {
+    }, this.setSymKey = async (be, ve) => {
       this.isInitialized();
-      const Ee = we || Kn(be);
+      const Ee = ve || Kn(be);
       return await this.keychain.set(Ee, be), Ee;
     }, this.deleteKeyPair = async (be) => {
       this.isInitialized(), await this.keychain.del(be);
     }, this.deleteSymKey = async (be) => {
       this.isInitialized(), await this.keychain.del(be);
-    }, this.encode = async (be, we, Ee) => {
+    }, this.encode = async (be, ve, Ee) => {
       this.isInitialized();
-      const Oe = Te(Ee), xe = safeJsonStringify(we);
+      const Oe = Te(Ee), xe = safeJsonStringify(ve);
       if (qn(Oe)) {
         const $r = Oe.senderPublicKey, Fr = Oe.receiverPublicKey;
         be = await this.generateSharedKey($r, Fr);
       }
-      const gr = this.getSymKey(be), { type: ve, senderPublicKey: Se } = Oe;
-      return xn({ type: ve, symKey: gr, message: xe, senderPublicKey: Se });
-    }, this.decode = async (be, we, Ee) => {
+      const gr = this.getSymKey(be), { type: we, senderPublicKey: Se } = Oe;
+      return xn({ type: we, symKey: gr, message: xe, senderPublicKey: Se });
+    }, this.decode = async (be, ve, Ee) => {
       this.isInitialized();
-      const Oe = Hn(we, Ee);
+      const Oe = Hn(ve, Ee);
       if (qn(Oe)) {
         const xe = Oe.receiverPublicKey, gr = Oe.senderPublicKey;
         be = await this.generateSharedKey(xe, gr);
       }
       try {
-        const xe = this.getSymKey(be), gr = Fn({ symKey: xe, encoded: we });
+        const xe = this.getSymKey(be), gr = Fn({ symKey: xe, encoded: ve });
         return safeJsonParse(gr);
       } catch (xe) {
         this.logger.error(`Failed to decode message from topic: '${be}', clientId: '${await this.getClientId()}'`), this.logger.error(xe);
       }
     }, this.getPayloadType = (be) => {
-      const we = ee$1(be);
-      return $$1(we.type);
+      const ve = ee$1(be);
+      return $$1(ve.type);
     }, this.getPayloadSenderPublicKey = (be) => {
-      const we = ee$1(be);
-      return we.senderPublicKey ? toString(we.senderPublicKey, p$1) : void 0;
+      const ve = ee$1(be);
+      return ve.senderPublicKey ? toString(ve.senderPublicKey, p$1) : void 0;
     }, this.core = e, this.logger = cjs$3.generateChildLogger(ye, this.name), this.keychain = me || new St(this.core, this.logger);
   }
   get context() {
@@ -28145,17 +27918,17 @@ class Pt extends a$1 {
       }
     }, this.set = async (me, be) => {
       this.isInitialized();
-      const we = Ln$1(be);
+      const ve = Ln$1(be);
       let Ee = this.messages.get(me);
-      return typeof Ee > "u" && (Ee = {}), typeof Ee[we] < "u" || (Ee[we] = be, this.messages.set(me, Ee), await this.persist()), we;
+      return typeof Ee > "u" && (Ee = {}), typeof Ee[ve] < "u" || (Ee[ve] = be, this.messages.set(me, Ee), await this.persist()), ve;
     }, this.get = (me) => {
       this.isInitialized();
       let be = this.messages.get(me);
       return typeof be > "u" && (be = {}), be;
     }, this.has = (me, be) => {
       this.isInitialized();
-      const we = this.get(me), Ee = Ln$1(be);
-      return typeof we[Ee] < "u";
+      const ve = this.get(me), Ee = Ln$1(be);
+      return typeof ve[Ee] < "u";
     }, this.del = async (me) => {
       this.isInitialized(), this.messages.delete(me), await this.persist();
     }, this.logger = cjs$3.generateChildLogger(e, this.name), this.core = ye;
@@ -28185,21 +27958,21 @@ class Pt extends a$1 {
 }
 class mr extends u {
   constructor(e, ye) {
-    super(e, ye), this.relayer = e, this.logger = ye, this.events = new eventsExports.EventEmitter(), this.name = at$1, this.queue = /* @__PURE__ */ new Map(), this.publishTimeout = cjs$4.toMiliseconds(cjs$4.TEN_SECONDS), this.needsTransportRestart = !1, this.publish = async (me, be, we) => {
+    super(e, ye), this.relayer = e, this.logger = ye, this.events = new EventEmitter$1(), this.name = at$1, this.queue = /* @__PURE__ */ new Map(), this.publishTimeout = cjs$4.toMiliseconds(cjs$4.TEN_SECONDS), this.needsTransportRestart = !1, this.publish = async (me, be, ve) => {
       var Ee;
-      this.logger.debug("Publishing Payload"), this.logger.trace({ type: "method", method: "publish", params: { topic: me, message: be, opts: we } });
+      this.logger.debug("Publishing Payload"), this.logger.trace({ type: "method", method: "publish", params: { topic: me, message: be, opts: ve } });
       try {
-        const Oe = (we == null ? void 0 : we.ttl) || ot, xe = vt$1(we), gr = (we == null ? void 0 : we.prompt) || !1, ve = (we == null ? void 0 : we.tag) || 0, Se = (we == null ? void 0 : we.id) || getBigIntRpcId().toString(), $r = { topic: me, message: be, opts: { ttl: Oe, relay: xe, prompt: gr, tag: ve, id: Se } }, Fr = setTimeout(() => this.queue.set(Se, $r), this.publishTimeout);
+        const Oe = (ve == null ? void 0 : ve.ttl) || ot, xe = vt$1(ve), gr = (ve == null ? void 0 : ve.prompt) || !1, we = (ve == null ? void 0 : ve.tag) || 0, Se = (ve == null ? void 0 : ve.id) || getBigIntRpcId().toString(), $r = { topic: me, message: be, opts: { ttl: Oe, relay: xe, prompt: gr, tag: we, id: Se } }, Fr = setTimeout(() => this.queue.set(Se, $r), this.publishTimeout);
         try {
-          await await ut$1(this.rpcPublish(me, be, Oe, xe, gr, ve, Se), this.publishTimeout, "Failed to publish payload, please try again."), this.removeRequestFromQueue(Se), this.relayer.events.emit(D$2.publish, $r);
+          await await ut$1(this.rpcPublish(me, be, Oe, xe, gr, we, Se), this.publishTimeout, "Failed to publish payload, please try again."), this.removeRequestFromQueue(Se), this.relayer.events.emit(D$2.publish, $r);
         } catch (Br) {
-          if (this.logger.debug("Publishing Payload stalled"), this.needsTransportRestart = !0, (Ee = we == null ? void 0 : we.internal) != null && Ee.throwOnFailedPublish)
+          if (this.logger.debug("Publishing Payload stalled"), this.needsTransportRestart = !0, (Ee = ve == null ? void 0 : ve.internal) != null && Ee.throwOnFailedPublish)
             throw this.removeRequestFromQueue(Se), Br;
           return;
         } finally {
           clearTimeout(Fr);
         }
-        this.logger.debug("Successfully Published Payload"), this.logger.trace({ type: "method", method: "publish", params: { topic: me, message: be, opts: we } });
+        this.logger.debug("Successfully Published Payload"), this.logger.trace({ type: "method", method: "publish", params: { topic: me, message: be, opts: ve } });
       } catch (Oe) {
         throw this.logger.debug("Failed to Publish Payload"), this.logger.error(Oe), Oe;
       }
@@ -28216,10 +27989,10 @@ class mr extends u {
   get context() {
     return cjs$3.getLoggerContext(this.logger);
   }
-  rpcPublish(e, ye, me, be, we, Ee, Oe) {
-    var xe, gr, ve, Se;
-    const $r = { method: Et$1(be.protocol).publish, params: { topic: e, message: ye, ttl: me, prompt: we, tag: Ee }, id: Oe };
-    return w$3((xe = $r.params) == null ? void 0 : xe.prompt) && ((gr = $r.params) == null || delete gr.prompt), w$3((ve = $r.params) == null ? void 0 : ve.tag) && ((Se = $r.params) == null || delete Se.tag), this.logger.debug("Outgoing Relay Payload"), this.logger.trace({ type: "message", direction: "outgoing", request: $r }), this.relayer.request($r);
+  rpcPublish(e, ye, me, be, ve, Ee, Oe) {
+    var xe, gr, we, Se;
+    const $r = { method: Et$1(be.protocol).publish, params: { topic: e, message: ye, ttl: me, prompt: ve, tag: Ee }, id: Oe };
+    return w$3((xe = $r.params) == null ? void 0 : xe.prompt) && ((gr = $r.params) == null || delete gr.prompt), w$3((we = $r.params) == null ? void 0 : we.tag) && ((Se = $r.params) == null || delete Se.tag), this.logger.debug("Outgoing Relay Payload"), this.logger.trace({ type: "message", direction: "outgoing", request: $r }), this.relayer.request($r);
   }
   removeRequestFromQueue(e) {
     this.queue.delete(e);
@@ -28257,7 +28030,7 @@ class br {
       const me = this.get(e);
       if (!this.exists(e, ye))
         return;
-      const be = me.filter((we) => we !== ye);
+      const be = me.filter((ve) => ve !== ye);
       if (!be.length) {
         this.map.delete(e);
         return;
@@ -28281,25 +28054,25 @@ var fr = Object.defineProperty, Er = Object.defineProperties, wr = Object.getOwn
 }, De = (fe, e) => Er(fe, wr(e));
 class At extends d {
   constructor(e, ye) {
-    super(e, ye), this.relayer = e, this.logger = ye, this.subscriptions = /* @__PURE__ */ new Map(), this.topicMap = new br(), this.events = new eventsExports.EventEmitter(), this.name = mt$1, this.version = bt, this.pending = /* @__PURE__ */ new Map(), this.cached = [], this.initialized = !1, this.pendingSubscriptionWatchLabel = "pending_sub_watch_label", this.pollingInterval = 20, this.storagePrefix = O$2, this.subscribeTimeout = 1e4, this.restartInProgress = !1, this.batchSubscribeTopicsLimit = 500, this.init = async () => {
+    super(e, ye), this.relayer = e, this.logger = ye, this.subscriptions = /* @__PURE__ */ new Map(), this.topicMap = new br(), this.events = new EventEmitter$1(), this.name = mt$1, this.version = bt, this.pending = /* @__PURE__ */ new Map(), this.cached = [], this.initialized = !1, this.pendingSubscriptionWatchLabel = "pending_sub_watch_label", this.pollingInterval = 20, this.storagePrefix = O$2, this.subscribeTimeout = 1e4, this.restartInProgress = !1, this.batchSubscribeTopicsLimit = 500, this.init = async () => {
       this.initialized || (this.logger.trace("Initialized"), this.registerEventListeners(), this.clientId = await this.relayer.core.crypto.getClientId());
     }, this.subscribe = async (me, be) => {
       await this.restartToComplete(), this.isInitialized(), this.logger.debug("Subscribing Topic"), this.logger.trace({ type: "method", method: "subscribe", params: { topic: me, opts: be } });
       try {
-        const we = vt$1(be), Ee = { topic: me, relay: we };
+        const ve = vt$1(be), Ee = { topic: me, relay: ve };
         this.pending.set(me, Ee);
-        const Oe = await this.rpcSubscribe(me, we);
+        const Oe = await this.rpcSubscribe(me, ve);
         return this.onSubscribe(Oe, Ee), this.logger.debug("Successfully Subscribed Topic"), this.logger.trace({ type: "method", method: "subscribe", params: { topic: me, opts: be } }), Oe;
-      } catch (we) {
-        throw this.logger.debug("Failed to Subscribe Topic"), this.logger.error(we), we;
+      } catch (ve) {
+        throw this.logger.debug("Failed to Subscribe Topic"), this.logger.error(ve), ve;
       }
     }, this.unsubscribe = async (me, be) => {
       await this.restartToComplete(), this.isInitialized(), typeof (be == null ? void 0 : be.id) < "u" ? await this.unsubscribeById(me, be.id, be) : await this.unsubscribeByTopic(me, be);
-    }, this.isSubscribed = async (me) => this.topics.includes(me) ? !0 : await new Promise((be, we) => {
+    }, this.isSubscribed = async (me) => this.topics.includes(me) ? !0 : await new Promise((be, ve) => {
       const Ee = new cjs$4.Watch();
       Ee.start(this.pendingSubscriptionWatchLabel);
       const Oe = setInterval(() => {
-        !this.pending.has(me) && this.topics.includes(me) && (clearInterval(Oe), Ee.stop(this.pendingSubscriptionWatchLabel), be(!0)), Ee.elapsed(this.pendingSubscriptionWatchLabel) >= ft$1 && (clearInterval(Oe), Ee.stop(this.pendingSubscriptionWatchLabel), we(new Error("Subscription resolution timeout")));
+        !this.pending.has(me) && this.topics.includes(me) && (clearInterval(Oe), Ee.stop(this.pendingSubscriptionWatchLabel), be(!0)), Ee.elapsed(this.pendingSubscriptionWatchLabel) >= ft$1 && (clearInterval(Oe), Ee.stop(this.pendingSubscriptionWatchLabel), ve(new Error("Subscription resolution timeout")));
       }, this.pollingInterval);
     }).catch(() => !1), this.on = (me, be) => {
       this.events.on(me, be);
@@ -28354,8 +28127,8 @@ class At extends d {
     try {
       const be = vt$1(me);
       await this.rpcUnsubscribe(e, ye, be);
-      const we = U$2("USER_DISCONNECTED", `${this.name}, ${e}`);
-      await this.onUnsubscribe(e, ye, we), this.logger.debug("Successfully Unsubscribed Topic"), this.logger.trace({ type: "method", method: "unsubscribe", params: { topic: e, id: ye, opts: me } });
+      const ve = U$2("USER_DISCONNECTED", `${this.name}, ${e}`);
+      await this.onUnsubscribe(e, ye, ve), this.logger.debug("Successfully Unsubscribed Topic"), this.logger.trace({ type: "method", method: "unsubscribe", params: { topic: e, id: ye, opts: me } });
     } catch (be) {
       throw this.logger.debug("Failed to Unsubscribe Topic"), this.logger.error(be), be;
     }
@@ -28508,7 +28281,7 @@ var Cr = Object.defineProperty, zt$1 = Object.getOwnPropertySymbols, Rr = Object
 };
 class Ut extends g$2 {
   constructor(e) {
-    super(e), this.protocol = "wc", this.version = 2, this.events = new eventsExports.EventEmitter(), this.name = ut, this.transportExplicitlyClosed = !1, this.initialized = !1, this.connectionAttemptInProgress = !1, this.connectionStatusPollingInterval = 20, this.staleConnectionErrors = ["socket hang up", "socket stalled"], this.hasExperiencedNetworkDisruption = !1, this.request = async (ye) => {
+    super(e), this.protocol = "wc", this.version = 2, this.events = new EventEmitter$1(), this.name = ut, this.transportExplicitlyClosed = !1, this.initialized = !1, this.connectionAttemptInProgress = !1, this.connectionStatusPollingInterval = 20, this.staleConnectionErrors = ["socket hang up", "socket stalled"], this.hasExperiencedNetworkDisruption = !1, this.request = async (ye) => {
       this.logger.debug("Publishing Request Payload");
       try {
         return await this.toEstablishConnection(), await this.provider.request(ye);
@@ -28556,12 +28329,12 @@ class Ut extends g$2 {
     let be = ((me = this.subscriber.topicMap.get(e)) == null ? void 0 : me[0]) || "";
     if (be)
       return be;
-    let we;
+    let ve;
     const Ee = (Oe) => {
-      Oe.topic === e && (this.subscriber.off(w$1.created, Ee), we());
+      Oe.topic === e && (this.subscriber.off(w$1.created, Ee), ve());
     };
     return await Promise.all([new Promise((Oe) => {
-      we = Oe, this.subscriber.on(w$1.created, Ee);
+      ve = Oe, this.subscriber.on(w$1.created, Ee);
     }), new Promise(async (Oe) => {
       be = await this.subscriber.subscribe(e, ye), Oe();
     })]), be;
@@ -28646,7 +28419,7 @@ class Ut extends g$2 {
     if (this.logger.debug("Incoming Relay Payload"), this.logger.trace({ type: "payload", direction: "incoming", payload: e }), isJsonRpcRequest(e)) {
       if (!e.method.endsWith(lt))
         return;
-      const ye = e.params, { topic: me, message: be, publishedAt: we } = ye.data, Ee = { topic: me, message: be, publishedAt: we };
+      const ye = e.params, { topic: me, message: be, publishedAt: ve } = ye.data, Ee = { topic: me, message: be, publishedAt: ve };
       this.logger.debug("Emitting Relayer Payload"), this.logger.trace(Sr({ type: "event", event: ye.id }, Ee)), this.events.emit(ye.id, Ee), await this.acknowledgePayload(e), await this.onMessageEvent(Ee);
     } else
       isJsonRpcResponse(e) && this.events.emit(D$2.message_ack, e);
@@ -28705,7 +28478,7 @@ var Tr = Object.defineProperty, Lt$1 = Object.getOwnPropertySymbols, Pr = Object
   return fe;
 };
 class Mt extends p$2 {
-  constructor(e, ye, me, be = O$2, we = void 0) {
+  constructor(e, ye, me, be = O$2, ve = void 0) {
     super(e, ye, me, be), this.core = e, this.logger = ye, this.name = me, this.map = /* @__PURE__ */ new Map(), this.version = Dt$1, this.cached = [], this.initialized = !1, this.storagePrefix = O$2, this.init = async () => {
       this.initialized || (this.logger.trace("Initialized"), await this.restore(), this.cached.forEach((Ee) => {
         this.getKey && Ee !== null && !w$3(Ee) ? this.map.set(this.getKey(Ee), Ee) : Vt$1(Ee) ? this.map.set(Ee.id, Ee) : Mt$1(Ee) && this.map.set(Ee.topic, Ee);
@@ -28718,7 +28491,7 @@ class Mt extends p$2 {
       this.map.set(Ee, xe), await this.persist();
     }, this.delete = async (Ee, Oe) => {
       this.isInitialized(), this.map.has(Ee) && (this.logger.debug("Deleting value"), this.logger.trace({ type: "method", method: "delete", key: Ee, reason: Oe }), this.map.delete(Ee), await this.persist());
-    }, this.logger = cjs$3.generateChildLogger(ye, this.name), this.storagePrefix = be, this.getKey = we;
+    }, this.logger = cjs$3.generateChildLogger(ye, this.name), this.storagePrefix = be, this.getKey = ve;
   }
   get context() {
     return cjs$3.getLoggerContext(this.logger);
@@ -28775,22 +28548,22 @@ class Mt extends p$2 {
 }
 class kt {
   constructor(e, ye) {
-    this.core = e, this.logger = ye, this.name = Et, this.version = wt, this.events = new Ye$2(), this.initialized = !1, this.storagePrefix = O$2, this.ignoredPayloadTypes = [_$2], this.registeredMethods = [], this.init = async () => {
+    this.core = e, this.logger = ye, this.name = Et, this.version = wt, this.events = new c$5(), this.initialized = !1, this.storagePrefix = O$2, this.ignoredPayloadTypes = [_$2], this.registeredMethods = [], this.init = async () => {
       this.initialized || (await this.pairings.init(), await this.cleanup(), this.registerRelayerEvents(), this.registerExpirerEvents(), this.initialized = !0, this.logger.trace("Initialized"));
     }, this.register = ({ methods: me }) => {
       this.isInitialized(), this.registeredMethods = [.../* @__PURE__ */ new Set([...this.registeredMethods, ...me])];
     }, this.create = async () => {
       this.isInitialized();
-      const me = Vn(), be = await this.core.crypto.setSymKey(me), we = pt$2(cjs$4.FIVE_MINUTES), Ee = { protocol: ht$1 }, Oe = { topic: be, expiry: we, relay: Ee, active: !1 }, xe = It$1({ protocol: this.core.protocol, version: this.core.version, topic: be, symKey: me, relay: Ee });
-      return await this.pairings.set(be, Oe), await this.core.relayer.subscribe(be), this.core.expirer.set(be, we), { topic: be, uri: xe };
+      const me = Vn(), be = await this.core.crypto.setSymKey(me), ve = pt$2(cjs$4.FIVE_MINUTES), Ee = { protocol: ht$1 }, Oe = { topic: be, expiry: ve, relay: Ee, active: !1 }, xe = It$1({ protocol: this.core.protocol, version: this.core.version, topic: be, symKey: me, relay: Ee });
+      return await this.pairings.set(be, Oe), await this.core.relayer.subscribe(be), this.core.expirer.set(be, ve), { topic: be, uri: xe };
     }, this.pair = async (me) => {
       this.isInitialized(), this.isValidPair(me);
-      const { topic: be, symKey: we, relay: Ee } = wt$1(me.uri);
+      const { topic: be, symKey: ve, relay: Ee } = wt$1(me.uri);
       let Oe;
       if (this.pairings.keys.includes(be) && (Oe = this.pairings.get(be), Oe.active))
         throw new Error(`Pairing already exists: ${be}. Please try again with a new connection URI.`);
       const xe = pt$2(cjs$4.FIVE_MINUTES), gr = { topic: be, relay: Ee, expiry: xe, active: !1 };
-      return await this.pairings.set(be, gr), this.core.expirer.set(be, xe), me.activatePairing && await this.activate({ topic: be }), this.events.emit(V$2.create, gr), this.core.crypto.keychain.has(be) || (await this.core.crypto.setSymKey(we, be), await this.core.relayer.subscribe(be, { relay: Ee })), gr;
+      return await this.pairings.set(be, gr), this.core.expirer.set(be, xe), me.activatePairing && await this.activate({ topic: be }), this.events.emit(V$2.create, gr), this.core.crypto.keychain.has(be) || (await this.core.crypto.setSymKey(ve, be), await this.core.relayer.subscribe(be, { relay: Ee })), gr;
     }, this.activate = async ({ topic: me }) => {
       this.isInitialized();
       const be = pt$2(cjs$4.THIRTY_DAYS);
@@ -28799,8 +28572,8 @@ class kt {
       this.isInitialized(), await this.isValidPing(me);
       const { topic: be } = me;
       if (this.pairings.keys.includes(be)) {
-        const we = await this.sendRequest(be, "wc_pairingPing", {}), { done: Ee, resolve: Oe, reject: xe } = at$2();
-        this.events.once(yt$2("pairing_ping", we), ({ error: gr }) => {
+        const ve = await this.sendRequest(be, "wc_pairingPing", {}), { done: Ee, resolve: Oe, reject: xe } = at$2();
+        this.events.once(yt$2("pairing_ping", ve), ({ error: gr }) => {
           gr ? xe(gr) : Oe();
         }), await Ee();
       }
@@ -28812,14 +28585,14 @@ class kt {
       this.isInitialized(), await this.isValidDisconnect(me);
       const { topic: be } = me;
       this.pairings.keys.includes(be) && (await this.sendRequest(be, "wc_pairingDelete", U$2("USER_DISCONNECTED")), await this.deletePairing(be));
-    }, this.sendRequest = async (me, be, we) => {
-      const Ee = formatJsonRpcRequest(be, we), Oe = await this.core.crypto.encode(me, Ee), xe = F$1[be].req;
+    }, this.sendRequest = async (me, be, ve) => {
+      const Ee = formatJsonRpcRequest(be, ve), Oe = await this.core.crypto.encode(me, Ee), xe = F$1[be].req;
       return this.core.history.set(me, Ee), this.core.relayer.publish(me, Oe, xe), Ee.id;
-    }, this.sendResult = async (me, be, we) => {
-      const Ee = formatJsonRpcResult(me, we), Oe = await this.core.crypto.encode(be, Ee), xe = await this.core.history.get(be, me), gr = F$1[xe.request.method].res;
+    }, this.sendResult = async (me, be, ve) => {
+      const Ee = formatJsonRpcResult(me, ve), Oe = await this.core.crypto.encode(be, Ee), xe = await this.core.history.get(be, me), gr = F$1[xe.request.method].res;
       await this.core.relayer.publish(be, Oe, gr), await this.core.history.resolve(Ee);
-    }, this.sendError = async (me, be, we) => {
-      const Ee = formatJsonRpcError(me, we), Oe = await this.core.crypto.encode(be, Ee), xe = await this.core.history.get(be, me), gr = F$1[xe.request.method] ? F$1[xe.request.method].res : F$1.unregistered_method.res;
+    }, this.sendError = async (me, be, ve) => {
+      const Ee = formatJsonRpcError(me, ve), Oe = await this.core.crypto.encode(be, Ee), xe = await this.core.history.get(be, me), gr = F$1[xe.request.method] ? F$1[xe.request.method].res : F$1.unregistered_method.res;
       await this.core.relayer.publish(be, Oe, gr), await this.core.history.resolve(Ee);
     }, this.deletePairing = async (me, be) => {
       await this.core.relayer.unsubscribe(me), await Promise.all([this.pairings.delete(me, U$2("USER_DISCONNECTED")), this.core.crypto.deleteSymKey(me), be ? Promise.resolve() : this.core.expirer.del(me)]);
@@ -28827,51 +28600,51 @@ class kt {
       const me = this.pairings.getAll().filter((be) => mt$2(be.expiry));
       await Promise.all(me.map((be) => this.deletePairing(be.topic)));
     }, this.onRelayEventRequest = (me) => {
-      const { topic: be, payload: we } = me;
-      switch (we.method) {
+      const { topic: be, payload: ve } = me;
+      switch (ve.method) {
         case "wc_pairingPing":
-          return this.onPairingPingRequest(be, we);
+          return this.onPairingPingRequest(be, ve);
         case "wc_pairingDelete":
-          return this.onPairingDeleteRequest(be, we);
+          return this.onPairingDeleteRequest(be, ve);
         default:
-          return this.onUnknownRpcMethodRequest(be, we);
+          return this.onUnknownRpcMethodRequest(be, ve);
       }
     }, this.onRelayEventResponse = async (me) => {
-      const { topic: be, payload: we } = me, Ee = (await this.core.history.get(be, we.id)).request.method;
+      const { topic: be, payload: ve } = me, Ee = (await this.core.history.get(be, ve.id)).request.method;
       switch (Ee) {
         case "wc_pairingPing":
-          return this.onPairingPingResponse(be, we);
+          return this.onPairingPingResponse(be, ve);
         default:
           return this.onUnknownRpcMethodResponse(Ee);
       }
     }, this.onPairingPingRequest = async (me, be) => {
-      const { id: we } = be;
+      const { id: ve } = be;
       try {
-        this.isValidPing({ topic: me }), await this.sendResult(we, me, !0), this.events.emit(V$2.ping, { id: we, topic: me });
+        this.isValidPing({ topic: me }), await this.sendResult(ve, me, !0), this.events.emit(V$2.ping, { id: ve, topic: me });
       } catch (Ee) {
-        await this.sendError(we, me, Ee), this.logger.error(Ee);
+        await this.sendError(ve, me, Ee), this.logger.error(Ee);
       }
     }, this.onPairingPingResponse = (me, be) => {
-      const { id: we } = be;
+      const { id: ve } = be;
       setTimeout(() => {
-        isJsonRpcResult(be) ? this.events.emit(yt$2("pairing_ping", we), {}) : isJsonRpcError(be) && this.events.emit(yt$2("pairing_ping", we), { error: be.error });
+        isJsonRpcResult(be) ? this.events.emit(yt$2("pairing_ping", ve), {}) : isJsonRpcError(be) && this.events.emit(yt$2("pairing_ping", ve), { error: be.error });
       }, 500);
     }, this.onPairingDeleteRequest = async (me, be) => {
-      const { id: we } = be;
+      const { id: ve } = be;
       try {
-        this.isValidDisconnect({ topic: me }), await this.deletePairing(me), this.events.emit(V$2.delete, { id: we, topic: me });
+        this.isValidDisconnect({ topic: me }), await this.deletePairing(me), this.events.emit(V$2.delete, { id: ve, topic: me });
       } catch (Ee) {
-        await this.sendError(we, me, Ee), this.logger.error(Ee);
+        await this.sendError(ve, me, Ee), this.logger.error(Ee);
       }
     }, this.onUnknownRpcMethodRequest = async (me, be) => {
-      const { id: we, method: Ee } = be;
+      const { id: ve, method: Ee } = be;
       try {
         if (this.registeredMethods.includes(Ee))
           return;
         const Oe = U$2("WC_METHOD_UNSUPPORTED", Ee);
-        await this.sendError(we, me, Oe), this.logger.error(Oe);
+        await this.sendError(ve, me, Oe), this.logger.error(Oe);
       } catch (Oe) {
-        await this.sendError(we, me, Oe), this.logger.error(Oe);
+        await this.sendError(ve, me, Oe), this.logger.error(Oe);
       }
     }, this.onUnknownRpcMethodResponse = (me) => {
       this.registeredMethods.includes(me) || this.logger.error(U$2("WC_METHOD_UNSUPPORTED", me));
@@ -28885,26 +28658,26 @@ class kt {
         const { message: Ee } = N$2("MISSING_OR_INVALID", `pair() uri: ${me.uri}`);
         throw new Error(Ee);
       }
-      const we = wt$1(me.uri);
-      if (!((be = we == null ? void 0 : we.relay) != null && be.protocol)) {
+      const ve = wt$1(me.uri);
+      if (!((be = ve == null ? void 0 : ve.relay) != null && be.protocol)) {
         const { message: Ee } = N$2("MISSING_OR_INVALID", "pair() uri#relay-protocol");
         throw new Error(Ee);
       }
-      if (!(we != null && we.symKey)) {
+      if (!(ve != null && ve.symKey)) {
         const { message: Ee } = N$2("MISSING_OR_INVALID", "pair() uri#symKey");
         throw new Error(Ee);
       }
     }, this.isValidPing = async (me) => {
       if (!Ht$1(me)) {
-        const { message: we } = N$2("MISSING_OR_INVALID", `ping() params: ${me}`);
-        throw new Error(we);
+        const { message: ve } = N$2("MISSING_OR_INVALID", `ping() params: ${me}`);
+        throw new Error(ve);
       }
       const { topic: be } = me;
       await this.isValidPairingTopic(be);
     }, this.isValidDisconnect = async (me) => {
       if (!Ht$1(me)) {
-        const { message: we } = N$2("MISSING_OR_INVALID", `disconnect() params: ${me}`);
-        throw new Error(we);
+        const { message: ve } = N$2("MISSING_OR_INVALID", `disconnect() params: ${me}`);
+        throw new Error(ve);
       }
       const { topic: be } = me;
       await this.isValidPairingTopic(be);
@@ -28941,8 +28714,8 @@ class kt {
       const be = await this.core.crypto.decode(ye, me);
       try {
         isJsonRpcRequest(be) ? (this.core.history.set(ye, be), this.onRelayEventRequest({ topic: ye, payload: be })) : isJsonRpcResponse(be) && (await this.core.history.resolve(be), await this.onRelayEventResponse({ topic: ye, payload: be }), this.core.history.delete(ye, be.id));
-      } catch (we) {
-        this.logger.error(we);
+      } catch (ve) {
+        this.logger.error(ve);
       }
     });
   }
@@ -28955,12 +28728,12 @@ class kt {
 }
 let Kt$1 = class extends h$4 {
   constructor(e, ye) {
-    super(e, ye), this.core = e, this.logger = ye, this.records = /* @__PURE__ */ new Map(), this.events = new eventsExports.EventEmitter(), this.name = vt, this.version = It, this.cached = [], this.initialized = !1, this.storagePrefix = O$2, this.init = async () => {
+    super(e, ye), this.core = e, this.logger = ye, this.records = /* @__PURE__ */ new Map(), this.events = new EventEmitter$1(), this.name = vt, this.version = It, this.cached = [], this.initialized = !1, this.storagePrefix = O$2, this.init = async () => {
       this.initialized || (this.logger.trace("Initialized"), await this.restore(), this.cached.forEach((me) => this.records.set(me.id, me)), this.cached = [], this.registerEventListeners(), this.initialized = !0);
-    }, this.set = (me, be, we) => {
-      if (this.isInitialized(), this.logger.debug("Setting JSON-RPC request history record"), this.logger.trace({ type: "method", method: "set", topic: me, request: be, chainId: we }), this.records.has(be.id))
+    }, this.set = (me, be, ve) => {
+      if (this.isInitialized(), this.logger.debug("Setting JSON-RPC request history record"), this.logger.trace({ type: "method", method: "set", topic: me, request: be, chainId: ve }), this.records.has(be.id))
         return;
-      const Ee = { id: be.id, topic: me, request: { method: be.method, params: be.params || null }, chainId: we, expiry: pt$2(cjs$4.THIRTY_DAYS) };
+      const Ee = { id: be.id, topic: me, request: { method: be.method, params: be.params || null }, chainId: ve, expiry: pt$2(cjs$4.THIRTY_DAYS) };
       this.records.set(Ee.id, Ee), this.events.emit(R.created, Ee);
     }, this.resolve = async (me) => {
       if (this.isInitialized(), this.logger.debug("Updating JSON-RPC response history record"), this.logger.trace({ type: "method", method: "update", response: me }), !this.records.has(me.id))
@@ -28968,11 +28741,11 @@ let Kt$1 = class extends h$4 {
       const be = await this.getRecord(me.id);
       typeof be.response > "u" && (be.response = isJsonRpcError(me) ? { error: me.error } : { result: me.result }, this.records.set(be.id, be), this.events.emit(R.updated, be));
     }, this.get = async (me, be) => (this.isInitialized(), this.logger.debug("Getting record"), this.logger.trace({ type: "method", method: "get", topic: me, id: be }), await this.getRecord(be)), this.delete = (me, be) => {
-      this.isInitialized(), this.logger.debug("Deleting record"), this.logger.trace({ type: "method", method: "delete", id: be }), this.values.forEach((we) => {
-        if (we.topic === me) {
-          if (typeof be < "u" && we.id !== be)
+      this.isInitialized(), this.logger.debug("Deleting record"), this.logger.trace({ type: "method", method: "delete", id: be }), this.values.forEach((ve) => {
+        if (ve.topic === me) {
+          if (typeof be < "u" && ve.id !== be)
             return;
-          this.records.delete(we.id), this.events.emit(R.deleted, we);
+          this.records.delete(ve.id), this.events.emit(R.deleted, ve);
         }
       });
     }, this.exists = async (me, be) => (this.isInitialized(), this.records.has(be) ? (await this.getRecord(be)).topic === me : !1), this.on = (me, be) => {
@@ -29072,7 +28845,7 @@ let Kt$1 = class extends h$4 {
   }
 }, Bt$1 = class extends E$1 {
   constructor(e, ye) {
-    super(e, ye), this.core = e, this.logger = ye, this.expirations = /* @__PURE__ */ new Map(), this.events = new eventsExports.EventEmitter(), this.name = Ct, this.version = Rt, this.cached = [], this.initialized = !1, this.storagePrefix = O$2, this.init = async () => {
+    super(e, ye), this.core = e, this.logger = ye, this.expirations = /* @__PURE__ */ new Map(), this.events = new EventEmitter$1(), this.name = Ct, this.version = Rt, this.cached = [], this.initialized = !1, this.storagePrefix = O$2, this.init = async () => {
       this.initialized || (this.logger.trace("Initialized"), await this.restore(), this.cached.forEach((me) => this.expirations.set(me.target, me)), this.cached = [], this.registerEventListeners(), this.initialized = !0);
     }, this.has = (me) => {
       try {
@@ -29083,16 +28856,16 @@ let Kt$1 = class extends h$4 {
       }
     }, this.set = (me, be) => {
       this.isInitialized();
-      const we = this.formatTarget(me), Ee = { target: we, expiry: be };
-      this.expirations.set(we, Ee), this.checkExpiry(we, Ee), this.events.emit(v.created, { target: we, expiration: Ee });
+      const ve = this.formatTarget(me), Ee = { target: ve, expiry: be };
+      this.expirations.set(ve, Ee), this.checkExpiry(ve, Ee), this.events.emit(v.created, { target: ve, expiration: Ee });
     }, this.get = (me) => {
       this.isInitialized();
       const be = this.formatTarget(me);
       return this.getExpiration(be);
     }, this.del = (me) => {
       if (this.isInitialized(), this.has(me)) {
-        const be = this.formatTarget(me), we = this.getExpiration(be);
-        this.expirations.delete(be), this.events.emit(v.deleted, { target: be, expiration: we });
+        const be = this.formatTarget(me), ve = this.getExpiration(be);
+        this.expirations.delete(be), this.events.emit(v.deleted, { target: be, expiration: ve });
       }
     }, this.on = (me, be) => {
       this.events.on(me, be);
@@ -29196,15 +28969,15 @@ class Vt extends y$1 {
       this.verifyUrl !== be && this.removeIframe(), this.verifyUrl = be;
       try {
         await this.createIframe();
-      } catch (we) {
-        this.logger.info(`Verify iframe failed to load: ${this.verifyUrl}`), this.logger.info(we);
+      } catch (ve) {
+        this.logger.info(`Verify iframe failed to load: ${this.verifyUrl}`), this.logger.info(ve);
       }
       if (!this.initialized) {
         this.removeIframe(), this.verifyUrl = ee;
         try {
           await this.createIframe();
-        } catch (we) {
-          this.logger.info(`Verify iframe failed to load: ${this.verifyUrl}`), this.logger.info(we), this.verifyDisabled = !0;
+        } catch (ve) {
+          this.logger.info(`Verify iframe failed to load: ${this.verifyUrl}`), this.logger.info(ve), this.verifyDisabled = !0;
         }
       }
     }, this.register = async (me) => {
@@ -29213,17 +28986,17 @@ class Vt extends y$1 {
       if (this.isDevEnv)
         return "";
       const be = this.getVerifyUrl(me == null ? void 0 : me.verifyUrl);
-      let we;
+      let ve;
       try {
-        we = await this.fetchAttestation(me.attestationId, be);
+        ve = await this.fetchAttestation(me.attestationId, be);
       } catch (Ee) {
-        this.logger.info(`failed to resolve attestation: ${me.attestationId} from url: ${be}`), this.logger.info(Ee), we = await this.fetchAttestation(me.attestationId, ee);
+        this.logger.info(`failed to resolve attestation: ${me.attestationId} from url: ${be}`), this.logger.info(Ee), ve = await this.fetchAttestation(me.attestationId, ee);
       }
-      return we;
+      return ve;
     }, this.fetchAttestation = async (me, be) => {
       this.logger.info(`resolving attestation: ${me} from url: ${be}`);
-      const we = this.startAbortTimer(cjs$4.ONE_SECOND * 2), Ee = await fetch(`${be}/attestation/${me}`, { signal: this.abortController.signal });
-      return clearTimeout(we), Ee.status === 200 ? await Ee.json() : void 0;
+      const ve = this.startAbortTimer(cjs$4.ONE_SECOND * 2), Ee = await fetch(`${be}/attestation/${me}`, { signal: this.abortController.signal });
+      return clearTimeout(ve), Ee.status === 200 ? await Ee.json() : void 0;
     }, this.addToQueue = (me) => {
       this.queue.push(me);
     }, this.processQueue = () => {
@@ -29238,16 +29011,16 @@ class Vt extends y$1 {
       }
     }, this.createIframe = async () => {
       let me;
-      const be = (we) => {
-        we.data === "verify_ready" && (this.initialized = !0, this.processQueue(), window.removeEventListener("message", be), me());
+      const be = (ve) => {
+        ve.data === "verify_ready" && (this.initialized = !0, this.processQueue(), window.removeEventListener("message", be), me());
       };
-      await Promise.race([new Promise((we) => {
+      await Promise.race([new Promise((ve) => {
         if (document.getElementById(Z))
-          return we();
+          return ve();
         window.addEventListener("message", be);
         const Ee = document.createElement("iframe");
-        Ee.id = Z, Ee.src = `${this.verifyUrl}/${this.projectId}`, Ee.style.display = "none", document.body.append(Ee), this.iframe = Ee, me = we;
-      }), new Promise((we, Ee) => setTimeout(() => {
+        Ee.id = Z, Ee.src = `${this.verifyUrl}/${this.projectId}`, Ee.style.display = "none", document.body.append(Ee), this.iframe = Ee, me = ve;
+      }), new Promise((ve, Ee) => setTimeout(() => {
         window.removeEventListener("message", be), Ee("verify iframe load timeout");
       }, cjs$4.toMiliseconds(cjs$4.FIVE_SECONDS)))]);
     }, this.removeIframe = () => {
@@ -29274,7 +29047,7 @@ var Or = Object.defineProperty, qt$1 = Object.getOwnPropertySymbols, Ar = Object
 };
 let te$1 = class ca extends n {
   constructor(e) {
-    super(e), this.protocol = le$1, this.version = Xe, this.name = Q$1, this.events = new eventsExports.EventEmitter(), this.initialized = !1, this.on = (me, be) => this.events.on(me, be), this.once = (me, be) => this.events.once(me, be), this.off = (me, be) => this.events.off(me, be), this.removeListener = (me, be) => this.events.removeListener(me, be), this.projectId = e == null ? void 0 : e.projectId, this.relayUrl = (e == null ? void 0 : e.relayUrl) || ge, this.customStoragePrefix = e != null && e.customStoragePrefix ? `:${e.customStoragePrefix}` : "";
+    super(e), this.protocol = le$1, this.version = Xe, this.name = Q$1, this.events = new EventEmitter$1(), this.initialized = !1, this.on = (me, be) => this.events.on(me, be), this.once = (me, be) => this.events.once(me, be), this.off = (me, be) => this.events.off(me, be), this.removeListener = (me, be) => this.events.removeListener(me, be), this.projectId = e == null ? void 0 : e.projectId, this.relayUrl = (e == null ? void 0 : e.relayUrl) || ge, this.customStoragePrefix = e != null && e.customStoragePrefix ? `:${e.customStoragePrefix}` : "";
     const ye = typeof (e == null ? void 0 : e.logger) < "u" && typeof (e == null ? void 0 : e.logger) != "string" ? e.logger : cjs$3.pino(cjs$3.getDefaultLoggerOptions({ level: (e == null ? void 0 : e.logger) || Qe$1.logger }));
     this.logger = cjs$3.generateChildLogger(ye, this.name), this.heartbeat = new cjs$5.HeartBeat(), this.crypto = new Tt(this, this.logger, e == null ? void 0 : e.keychain), this.history = new Kt$1(this, this.logger), this.expirer = new Bt$1(this, this.logger), this.storage = e != null && e.storage ? e.storage : new h$5(Gt$1(Gt$1({}, Ze$1), e == null ? void 0 : e.storageOptions)), this.relayer = new Ut({ core: this, logger: this.logger, relayUrl: this.relayUrl, projectId: this.projectId }), this.pairing = new kt(this, this.logger), this.verify = new Vt(this.projectId || "", this.logger);
   }
@@ -29339,13 +29112,13 @@ function O$1(fe, e) {
 }
 function at(fe = cjs$4.FIVE_MINUTES, e) {
   const ye = cjs$4.toMiliseconds(fe || cjs$4.FIVE_MINUTES);
-  let me, be, we;
+  let me, be, ve;
   return { resolve: (Ee) => {
-    we && me && (clearTimeout(we), me(Ee));
+    ve && me && (clearTimeout(ve), me(Ee));
   }, reject: (Ee) => {
-    we && be && (clearTimeout(we), be(Ee));
+    ve && be && (clearTimeout(ve), be(Ee));
   }, done: () => new Promise((Ee, Oe) => {
-    we = setTimeout(() => {
+    ve = setTimeout(() => {
       Oe(new Error(e));
     }, ye), me = Ee, be = Oe;
   }) };
@@ -29378,8 +29151,8 @@ async function ht({ id: fe, topic: e, wcDeepLink: ye }) {
     if (typeof be != "string")
       return;
     be.endsWith("/") && (be = be.slice(0, -1));
-    const we = `${be}/wc?requestId=${fe}&sessionTopic=${e}`, Ee = T();
-    Ee === m.browser ? we.startsWith("https://") ? window.open(we, "_blank", "noreferrer noopener") : window.open(we, "_self", "noreferrer noopener") : Ee === m.reactNative && typeof (global == null ? void 0 : global.Linking) < "u" && await global.Linking.openURL(we);
+    const ve = `${be}/wc?requestId=${fe}&sessionTopic=${e}`, Ee = T();
+    Ee === m.browser ? ve.startsWith("https://") ? window.open(ve, "_blank", "noreferrer noopener") : window.open(ve, "_self", "noreferrer noopener") : Ee === m.reactNative && typeof (global == null ? void 0 : global.Linking) < "u" && await global.Linking.openURL(ve);
   } catch (me) {
     console.error(me);
   }
@@ -29421,8 +29194,8 @@ function jt(fe, e) {
   if (ye)
     throw new Error(ye.message);
   const me = {};
-  for (const [be, we] of Object.entries(fe))
-    me[be] = { methods: we.methods, events: we.events, chains: we.accounts.map((Ee) => `${Ee.split(":")[0]}:${Ee.split(":")[1]}`) };
+  for (const [be, ve] of Object.entries(fe))
+    me[be] = { methods: ve.methods, events: ve.events, chains: ve.accounts.map((Ee) => `${Ee.split(":")[0]}:${Ee.split(":")[1]}`) };
   return me;
 }
 const en = { INVALID_METHOD: { message: "Invalid method.", code: 1001 }, INVALID_EVENT: { message: "Invalid event.", code: 1002 }, INVALID_UPDATE_REQUEST: { message: "Invalid update request.", code: 1003 }, INVALID_EXTEND_REQUEST: { message: "Invalid extend request.", code: 1004 }, INVALID_SESSION_SETTLE_REQUEST: { message: "Invalid session settle request.", code: 1005 }, UNAUTHORIZED_METHOD: { message: "Unauthorized method.", code: 3001 }, UNAUTHORIZED_EVENT: { message: "Unauthorized event.", code: 3002 }, UNAUTHORIZED_UPDATE_REQUEST: { message: "Unauthorized update request.", code: 3003 }, UNAUTHORIZED_EXTEND_REQUEST: { message: "Unauthorized extend request.", code: 3004 }, USER_REJECTED: { message: "User rejected.", code: 5e3 }, USER_REJECTED_CHAINS: { message: "User rejected chains.", code: 5001 }, USER_REJECTED_METHODS: { message: "User rejected methods.", code: 5002 }, USER_REJECTED_EVENTS: { message: "User rejected events.", code: 5003 }, UNSUPPORTED_CHAINS: { message: "Unsupported chains.", code: 5100 }, UNSUPPORTED_METHODS: { message: "Unsupported methods.", code: 5101 }, UNSUPPORTED_EVENTS: { message: "Unsupported events.", code: 5102 }, UNSUPPORTED_ACCOUNTS: { message: "Unsupported accounts.", code: 5103 }, UNSUPPORTED_NAMESPACE_KEY: { message: "Unsupported namespace key.", code: 5104 }, USER_DISCONNECTED: { message: "User disconnected.", code: 6e3 }, SESSION_SETTLEMENT_FAILED: { message: "Session settlement failed.", code: 7e3 }, WC_METHOD_UNSUPPORTED: { message: "Unsupported wc_ method.", code: 10001 } }, nn = { NOT_INITIALIZED: { message: "Not initialized.", code: 1 }, NO_MATCHING_KEY: { message: "No matching key.", code: 2 }, RESTORE_WILL_OVERRIDE: { message: "Restore will override.", code: 3 }, RESUBSCRIBED: { message: "Resubscribed.", code: 4 }, MISSING_OR_INVALID: { message: "Missing or invalid.", code: 5 }, EXPIRED: { message: "Expired.", code: 6 }, UNKNOWN_TYPE: { message: "Unknown type.", code: 7 }, MISMATCHED_TOPIC: { message: "Mismatched topic.", code: 8 }, NON_CONFORMING_NAMESPACES: { message: "Non conforming namespaces.", code: 9 } };
@@ -29451,11 +29224,11 @@ function G$1(fe, e) {
 }
 function Dt(fe, e) {
   const { requiredNamespaces: ye } = e, me = Object.keys(fe.namespaces), be = Object.keys(ye);
-  let we = !0;
+  let ve = !0;
   return O$1(be, me) ? (me.forEach((Ee) => {
-    const { accounts: Oe, methods: xe, events: gr } = fe.namespaces[Ee], ve = A$1(Oe), Se = ye[Ee];
-    (!O$1(L(Ee, Se), ve) || !O$1(Se.methods, xe) || !O$1(Se.events, gr)) && (we = !1);
-  }), we) : !1;
+    const { accounts: Oe, methods: xe, events: gr } = fe.namespaces[Ee], we = A$1(Oe), Se = ye[Ee];
+    (!O$1(L(Ee, Se), we) || !O$1(Se.methods, xe) || !O$1(Se.events, gr)) && (ve = !1);
+  }), ve) : !1;
 }
 function V$1(fe) {
   return h$1(fe, !1) && fe.includes(":") ? fe.split(":").length === 2 : !1;
@@ -29486,10 +29259,10 @@ function rn(fe, e, ye) {
 }
 function on(fe, e, ye) {
   let me = null;
-  return Object.entries(fe).forEach(([be, we]) => {
+  return Object.entries(fe).forEach(([be, ve]) => {
     if (me)
       return;
-    const Ee = rn(be, L(be, we), `${e} ${ye}`);
+    const Ee = rn(be, L(be, ve), `${e} ${ye}`);
     Ee && (me = Ee);
   }), me;
 }
@@ -29526,8 +29299,8 @@ function Lt(fe, e, ye) {
   if (fe && B(fe)) {
     const be = ce$1(fe, e);
     be && (me = be);
-    const we = on(fe, e, ye);
-    we && (me = we);
+    const ve = on(fe, e, ye);
+    ve && (me = ve);
   } else
     me = N$1("MISSING_OR_INVALID", `${e}, ${ye} should be an object with data`);
   return me;
@@ -29581,9 +29354,9 @@ function Jt(fe, e, ye) {
 }
 function dn(fe, e, ye) {
   let me = null;
-  const be = Qt(fe), we = Zt(e), Ee = Object.keys(be), Oe = Object.keys(we), xe = fn(Object.keys(fe)), gr = fn(Object.keys(e)), ve = xe.filter((Se) => !gr.includes(Se));
-  return ve.length && (me = N$1("NON_CONFORMING_NAMESPACES", `${ye} namespaces keys don't satisfy requiredNamespaces.
-      Required: ${ve.toString()}
+  const be = Qt(fe), ve = Zt(e), Ee = Object.keys(be), Oe = Object.keys(ve), xe = fn(Object.keys(fe)), gr = fn(Object.keys(e)), we = xe.filter((Se) => !gr.includes(Se));
+  return we.length && (me = N$1("NON_CONFORMING_NAMESPACES", `${ye} namespaces keys don't satisfy requiredNamespaces.
+      Required: ${we.toString()}
       Received: ${Object.keys(e).toString()}`)), O$1(Ee, Oe) || (me = N$1("NON_CONFORMING_NAMESPACES", `${ye} namespaces chains don't satisfy required namespaces.
       Required: ${Ee.toString()}
       Approved: ${Oe.toString()}`)), Object.keys(e).forEach((Se) => {
@@ -29594,7 +29367,7 @@ function dn(fe, e, ye) {
         Required: ${Se}
         Approved: ${$r.toString()}`));
   }), Ee.forEach((Se) => {
-    me || (O$1(be[Se].methods, we[Se].methods) ? O$1(be[Se].events, we[Se].events) || (me = N$1("NON_CONFORMING_NAMESPACES", `${ye} namespaces events don't satisfy namespace events for ${Se}`)) : me = N$1("NON_CONFORMING_NAMESPACES", `${ye} namespaces methods don't satisfy namespace methods for ${Se}`));
+    me || (O$1(be[Se].methods, ve[Se].methods) ? O$1(be[Se].events, ve[Se].events) || (me = N$1("NON_CONFORMING_NAMESPACES", `${ye} namespaces events don't satisfy namespace events for ${Se}`)) : me = N$1("NON_CONFORMING_NAMESPACES", `${ye} namespaces methods don't satisfy namespace methods for ${Se}`));
   }), me;
 }
 function Qt(fe) {
@@ -29617,7 +29390,7 @@ function Zt(fe) {
     else {
       const me = A$1(fe[ye].accounts);
       me == null || me.forEach((be) => {
-        e[be] = { accounts: fe[ye].accounts.filter((we) => we.includes(`${be}:`)), methods: fe[ye].methods, events: fe[ye].events };
+        e[be] = { accounts: fe[ye].accounts.filter((ve) => ve.includes(`${be}:`)), methods: fe[ye].methods, events: fe[ye].events };
       });
     }
   }), e;
@@ -29648,7 +29421,7 @@ var os = Object.defineProperty, as = Object.defineProperties, cs = Object.getOwn
 }, b = (fe, e) => as(fe, cs(e));
 class hs extends S {
   constructor(e) {
-    super(e), this.name = ce, this.events = new Ye$2(), this.initialized = !1, this.ignoredPayloadTypes = [_$1], this.requestQueue = { state: I.idle, queue: [] }, this.sessionRequestQueue = { state: I.idle, queue: [] }, this.requestQueueDelay = cjs$4.ONE_SECOND, this.init = async () => {
+    super(e), this.name = ce, this.events = new c$5(), this.initialized = !1, this.ignoredPayloadTypes = [_$1], this.requestQueue = { state: I.idle, queue: [] }, this.sessionRequestQueue = { state: I.idle, queue: [] }, this.requestQueueDelay = cjs$4.ONE_SECOND, this.init = async () => {
       this.initialized || (await this.cleanup(), this.registerRelayerEvents(), this.registerExpirerEvents(), this.registerPairingEvents(), this.client.core.pairing.register({ methods: Object.keys(V) }), this.initialized = !0, setTimeout(() => {
         this.sessionRequestQueue.queue = this.getPendingSessionRequests(), this.processSessionRequestQueue();
       }, cjs$4.toMiliseconds(this.requestQueueDelay)));
@@ -29656,13 +29429,13 @@ class hs extends S {
       await this.isInitialized();
       const me = b(g({}, ye), { requiredNamespaces: ye.requiredNamespaces || {}, optionalNamespaces: ye.optionalNamespaces || {} });
       await this.isValidConnect(me);
-      const { pairingTopic: be, requiredNamespaces: we, optionalNamespaces: Ee, sessionProperties: Oe, relays: xe } = me;
-      let gr = be, ve, Se = !1;
+      const { pairingTopic: be, requiredNamespaces: ve, optionalNamespaces: Ee, sessionProperties: Oe, relays: xe } = me;
+      let gr = be, we, Se = !1;
       if (gr && (Se = this.client.core.pairing.pairings.get(gr).active), !gr || !Se) {
         const { topic: qr, uri: Hr } = await this.client.core.pairing.create();
-        gr = qr, ve = Hr;
+        gr = qr, we = Hr;
       }
-      const $r = await this.client.core.crypto.generateKeyPair(), Fr = g({ requiredNamespaces: we, optionalNamespaces: Ee, relays: xe ?? [{ protocol: ht$1 }], proposer: { publicKey: $r, metadata: this.client.metadata } }, Oe && { sessionProperties: Oe }), { reject: Br, resolve: Vr, done: oo } = at(cjs$4.FIVE_MINUTES, oe);
+      const $r = await this.client.core.crypto.generateKeyPair(), Fr = g({ requiredNamespaces: ve, optionalNamespaces: Ee, relays: xe ?? [{ protocol: ht$1 }], proposer: { publicKey: $r, metadata: this.client.metadata } }, Oe && { sessionProperties: Oe }), { reject: Br, resolve: Vr, done: oo } = at(cjs$4.FIVE_MINUTES, oe);
       if (this.events.once(yt("session_connect"), async ({ error: qr, session: Hr }) => {
         if (qr)
           Br(qr);
@@ -29676,63 +29449,63 @@ class hs extends S {
         throw new Error(qr);
       }
       const so = await this.sendRequest({ topic: gr, method: "wc_sessionPropose", params: Fr }), kr = pt(cjs$4.FIVE_MINUTES);
-      return await this.setProposal(so, g({ id: so, expiry: kr }, Fr)), { uri: ve, approval: oo };
+      return await this.setProposal(so, g({ id: so, expiry: kr }, Fr)), { uri: we, approval: oo };
     }, this.pair = async (ye) => (await this.isInitialized(), await this.client.core.pairing.pair(ye)), this.approve = async (ye) => {
       await this.isInitialized(), await this.isValidApprove(ye);
-      const { id: me, relayProtocol: be, namespaces: we, sessionProperties: Ee } = ye, Oe = this.client.proposal.get(me);
-      let { pairingTopic: xe, proposer: gr, requiredNamespaces: ve, optionalNamespaces: Se } = Oe;
-      xe = xe || "", B(ve) || (ve = jt(we, "approve()"));
+      const { id: me, relayProtocol: be, namespaces: ve, sessionProperties: Ee } = ye, Oe = this.client.proposal.get(me);
+      let { pairingTopic: xe, proposer: gr, requiredNamespaces: we, optionalNamespaces: Se } = Oe;
+      xe = xe || "", B(we) || (we = jt(ve, "approve()"));
       const $r = await this.client.core.crypto.generateKeyPair(), Fr = gr.publicKey, Br = await this.client.core.crypto.generateSharedKey($r, Fr);
       xe && me && (await this.client.core.pairing.updateMetadata({ topic: xe, metadata: gr.metadata }), await this.sendResult({ id: me, topic: xe, result: { relay: { protocol: be ?? "irn" }, responderPublicKey: $r } }), await this.client.proposal.delete(me, U$1("USER_DISCONNECTED")), await this.client.core.pairing.activate({ topic: xe }));
-      const Vr = g({ relay: { protocol: be ?? "irn" }, namespaces: we, requiredNamespaces: ve, optionalNamespaces: Se, pairingTopic: xe, controller: { publicKey: $r, metadata: this.client.metadata }, expiry: pt(A) }, Ee && { sessionProperties: Ee });
+      const Vr = g({ relay: { protocol: be ?? "irn" }, namespaces: ve, requiredNamespaces: we, optionalNamespaces: Se, pairingTopic: xe, controller: { publicKey: $r, metadata: this.client.metadata }, expiry: pt(A) }, Ee && { sessionProperties: Ee });
       await this.client.core.relayer.subscribe(Br), await this.sendRequest({ topic: Br, method: "wc_sessionSettle", params: Vr, throwOnFailedPublish: !0 });
       const oo = b(g({}, Vr), { topic: Br, pairingTopic: xe, acknowledged: !1, self: Vr.controller, peer: { publicKey: gr.publicKey, metadata: gr.metadata }, controller: $r });
       return await this.client.session.set(Br, oo), await this.setExpiry(Br, pt(A)), { topic: Br, acknowledged: () => new Promise((so) => setTimeout(() => so(this.client.session.get(Br)), 500)) };
     }, this.reject = async (ye) => {
       await this.isInitialized(), await this.isValidReject(ye);
-      const { id: me, reason: be } = ye, { pairingTopic: we } = this.client.proposal.get(me);
-      we && (await this.sendError(me, we, be), await this.client.proposal.delete(me, U$1("USER_DISCONNECTED")));
+      const { id: me, reason: be } = ye, { pairingTopic: ve } = this.client.proposal.get(me);
+      ve && (await this.sendError(me, ve, be), await this.client.proposal.delete(me, U$1("USER_DISCONNECTED")));
     }, this.update = async (ye) => {
       await this.isInitialized(), await this.isValidUpdate(ye);
-      const { topic: me, namespaces: be } = ye, we = await this.sendRequest({ topic: me, method: "wc_sessionUpdate", params: { namespaces: be } }), { done: Ee, resolve: Oe, reject: xe } = at();
-      return this.events.once(yt("session_update", we), ({ error: gr }) => {
+      const { topic: me, namespaces: be } = ye, ve = await this.sendRequest({ topic: me, method: "wc_sessionUpdate", params: { namespaces: be } }), { done: Ee, resolve: Oe, reject: xe } = at();
+      return this.events.once(yt("session_update", ve), ({ error: gr }) => {
         gr ? xe(gr) : Oe();
       }), await this.client.session.update(me, { namespaces: be }), { acknowledged: Ee };
     }, this.extend = async (ye) => {
       await this.isInitialized(), await this.isValidExtend(ye);
-      const { topic: me } = ye, be = await this.sendRequest({ topic: me, method: "wc_sessionExtend", params: {} }), { done: we, resolve: Ee, reject: Oe } = at();
+      const { topic: me } = ye, be = await this.sendRequest({ topic: me, method: "wc_sessionExtend", params: {} }), { done: ve, resolve: Ee, reject: Oe } = at();
       return this.events.once(yt("session_extend", be), ({ error: xe }) => {
         xe ? Oe(xe) : Ee();
-      }), await this.setExpiry(me, pt(A)), { acknowledged: we };
+      }), await this.setExpiry(me, pt(A)), { acknowledged: ve };
     }, this.request = async (ye) => {
       await this.isInitialized(), await this.isValidRequest(ye);
-      const { chainId: me, request: be, topic: we, expiry: Ee } = ye, Oe = payloadId(), { done: xe, resolve: gr, reject: ve } = at(Ee, "Request expired. Please try again.");
+      const { chainId: me, request: be, topic: ve, expiry: Ee } = ye, Oe = payloadId(), { done: xe, resolve: gr, reject: we } = at(Ee, "Request expired. Please try again.");
       return this.events.once(yt("session_request", Oe), ({ error: Se, result: $r }) => {
-        Se ? ve(Se) : gr($r);
+        Se ? we(Se) : gr($r);
       }), await Promise.all([new Promise(async (Se) => {
-        await this.sendRequest({ clientRpcId: Oe, topic: we, method: "wc_sessionRequest", params: { request: be, chainId: me }, expiry: Ee, throwOnFailedPublish: !0 }).catch(($r) => ve($r)), this.client.events.emit("session_request_sent", { topic: we, request: be, chainId: me, id: Oe }), Se();
+        await this.sendRequest({ clientRpcId: Oe, topic: ve, method: "wc_sessionRequest", params: { request: be, chainId: me }, expiry: Ee, throwOnFailedPublish: !0 }).catch(($r) => we($r)), this.client.events.emit("session_request_sent", { topic: ve, request: be, chainId: me, id: Oe }), Se();
       }), new Promise(async (Se) => {
         const $r = await gt(this.client.core.storage, W);
-        ht({ id: Oe, topic: we, wcDeepLink: $r }), Se();
+        ht({ id: Oe, topic: ve, wcDeepLink: $r }), Se();
       }), xe()]).then((Se) => Se[2]);
     }, this.respond = async (ye) => {
       await this.isInitialized(), await this.isValidRespond(ye);
-      const { topic: me, response: be } = ye, { id: we } = be;
-      isJsonRpcResult(be) ? await this.sendResult({ id: we, topic: me, result: be.result, throwOnFailedPublish: !0 }) : isJsonRpcError(be) && await this.sendError(we, me, be.error), this.cleanupAfterResponse(ye);
+      const { topic: me, response: be } = ye, { id: ve } = be;
+      isJsonRpcResult(be) ? await this.sendResult({ id: ve, topic: me, result: be.result, throwOnFailedPublish: !0 }) : isJsonRpcError(be) && await this.sendError(ve, me, be.error), this.cleanupAfterResponse(ye);
     }, this.ping = async (ye) => {
       await this.isInitialized(), await this.isValidPing(ye);
       const { topic: me } = ye;
       if (this.client.session.keys.includes(me)) {
-        const be = await this.sendRequest({ topic: me, method: "wc_sessionPing", params: {} }), { done: we, resolve: Ee, reject: Oe } = at();
+        const be = await this.sendRequest({ topic: me, method: "wc_sessionPing", params: {} }), { done: ve, resolve: Ee, reject: Oe } = at();
         this.events.once(yt("session_ping", be), ({ error: xe }) => {
           xe ? Oe(xe) : Ee();
-        }), await we();
+        }), await ve();
       } else
         this.client.core.pairing.pairings.keys.includes(me) && await this.client.core.pairing.ping({ topic: me });
     }, this.emit = async (ye) => {
       await this.isInitialized(), await this.isValidEmit(ye);
-      const { topic: me, event: be, chainId: we } = ye;
-      await this.sendRequest({ topic: me, method: "wc_sessionEvent", params: { event: be, chainId: we } });
+      const { topic: me, event: be, chainId: ve } = ye;
+      await this.sendRequest({ topic: me, method: "wc_sessionEvent", params: { event: be, chainId: ve } });
     }, this.disconnect = async (ye) => {
       await this.isInitialized(), await this.isValidDisconnect(ye);
       const { topic: me } = ye;
@@ -29740,44 +29513,44 @@ class hs extends S {
     }, this.find = (ye) => (this.isInitialized(), this.client.session.getAll().filter((me) => Dt(me, ye))), this.getPendingSessionRequests = () => (this.isInitialized(), this.client.pendingRequest.getAll()), this.cleanupDuplicatePairings = async (ye) => {
       if (ye.pairingTopic)
         try {
-          const me = this.client.core.pairing.pairings.get(ye.pairingTopic), be = this.client.core.pairing.pairings.getAll().filter((we) => {
+          const me = this.client.core.pairing.pairings.get(ye.pairingTopic), be = this.client.core.pairing.pairings.getAll().filter((ve) => {
             var Ee, Oe;
-            return ((Ee = we.peerMetadata) == null ? void 0 : Ee.url) && ((Oe = we.peerMetadata) == null ? void 0 : Oe.url) === ye.peer.metadata.url && we.topic && we.topic !== me.topic;
+            return ((Ee = ve.peerMetadata) == null ? void 0 : Ee.url) && ((Oe = ve.peerMetadata) == null ? void 0 : Oe.url) === ye.peer.metadata.url && ve.topic && ve.topic !== me.topic;
           });
           if (be.length === 0)
             return;
-          this.client.logger.info(`Cleaning up ${be.length} duplicate pairing(s)`), await Promise.all(be.map((we) => this.client.core.pairing.disconnect({ topic: we.topic }))), this.client.logger.info("Duplicate pairings clean up finished");
+          this.client.logger.info(`Cleaning up ${be.length} duplicate pairing(s)`), await Promise.all(be.map((ve) => this.client.core.pairing.disconnect({ topic: ve.topic }))), this.client.logger.info("Duplicate pairings clean up finished");
         } catch (me) {
           this.client.logger.error(me);
         }
     }, this.deleteSession = async (ye, me) => {
       const { self: be } = this.client.session.get(ye);
-      await this.client.core.relayer.unsubscribe(ye), this.client.session.delete(ye, U$1("USER_DISCONNECTED")), this.client.core.crypto.keychain.has(be.publicKey) && await this.client.core.crypto.deleteKeyPair(be.publicKey), this.client.core.crypto.keychain.has(ye) && await this.client.core.crypto.deleteSymKey(ye), me || this.client.core.expirer.del(ye), this.client.core.storage.removeItem(W).catch((we) => this.client.logger.warn(we));
+      await this.client.core.relayer.unsubscribe(ye), this.client.session.delete(ye, U$1("USER_DISCONNECTED")), this.client.core.crypto.keychain.has(be.publicKey) && await this.client.core.crypto.deleteKeyPair(be.publicKey), this.client.core.crypto.keychain.has(ye) && await this.client.core.crypto.deleteSymKey(ye), me || this.client.core.expirer.del(ye), this.client.core.storage.removeItem(W).catch((ve) => this.client.logger.warn(ve));
     }, this.deleteProposal = async (ye, me) => {
       await Promise.all([this.client.proposal.delete(ye, U$1("USER_DISCONNECTED")), me ? Promise.resolve() : this.client.core.expirer.del(ye)]);
     }, this.deletePendingSessionRequest = async (ye, me, be = !1) => {
-      await Promise.all([this.client.pendingRequest.delete(ye, me), be ? Promise.resolve() : this.client.core.expirer.del(ye)]), this.sessionRequestQueue.queue = this.sessionRequestQueue.queue.filter((we) => we.id !== ye), be && (this.sessionRequestQueue.state = I.idle);
+      await Promise.all([this.client.pendingRequest.delete(ye, me), be ? Promise.resolve() : this.client.core.expirer.del(ye)]), this.sessionRequestQueue.queue = this.sessionRequestQueue.queue.filter((ve) => ve.id !== ye), be && (this.sessionRequestQueue.state = I.idle);
     }, this.setExpiry = async (ye, me) => {
       this.client.session.keys.includes(ye) && await this.client.session.update(ye, { expiry: me }), this.client.core.expirer.set(ye, me);
     }, this.setProposal = async (ye, me) => {
       await this.client.proposal.set(ye, me), this.client.core.expirer.set(ye, me.expiry);
     }, this.setPendingSessionRequest = async (ye) => {
-      const me = V.wc_sessionRequest.req.ttl, { id: be, topic: we, params: Ee, verifyContext: Oe } = ye;
-      await this.client.pendingRequest.set(be, { id: be, topic: we, params: Ee, verifyContext: Oe }), me && this.client.core.expirer.set(be, pt(me));
+      const me = V.wc_sessionRequest.req.ttl, { id: be, topic: ve, params: Ee, verifyContext: Oe } = ye;
+      await this.client.pendingRequest.set(be, { id: be, topic: ve, params: Ee, verifyContext: Oe }), me && this.client.core.expirer.set(be, pt(me));
     }, this.sendRequest = async (ye) => {
-      const { topic: me, method: be, params: we, expiry: Ee, relayRpcId: Oe, clientRpcId: xe, throwOnFailedPublish: gr } = ye, ve = formatJsonRpcRequest(be, we, xe);
+      const { topic: me, method: be, params: ve, expiry: Ee, relayRpcId: Oe, clientRpcId: xe, throwOnFailedPublish: gr } = ye, we = formatJsonRpcRequest(be, ve, xe);
       if (D$1() && pe.includes(be)) {
-        const Fr = Ln(JSON.stringify(ve));
+        const Fr = Ln(JSON.stringify(we));
         this.client.core.verify.register({ attestationId: Fr });
       }
-      const Se = await this.client.core.crypto.encode(me, ve), $r = V[be].req;
-      return Ee && ($r.ttl = Ee), Oe && ($r.id = Oe), this.client.core.history.set(me, ve), gr ? ($r.internal = b(g({}, $r.internal), { throwOnFailedPublish: !0 }), await this.client.core.relayer.publish(me, Se, $r)) : this.client.core.relayer.publish(me, Se, $r).catch((Fr) => this.client.logger.error(Fr)), ve.id;
+      const Se = await this.client.core.crypto.encode(me, we), $r = V[be].req;
+      return Ee && ($r.ttl = Ee), Oe && ($r.id = Oe), this.client.core.history.set(me, we), gr ? ($r.internal = b(g({}, $r.internal), { throwOnFailedPublish: !0 }), await this.client.core.relayer.publish(me, Se, $r)) : this.client.core.relayer.publish(me, Se, $r).catch((Fr) => this.client.logger.error(Fr)), we.id;
     }, this.sendResult = async (ye) => {
-      const { id: me, topic: be, result: we, throwOnFailedPublish: Ee } = ye, Oe = formatJsonRpcResult(me, we), xe = await this.client.core.crypto.encode(be, Oe), gr = await this.client.core.history.get(be, me), ve = V[gr.request.method].res;
-      Ee ? (ve.internal = b(g({}, ve.internal), { throwOnFailedPublish: !0 }), await this.client.core.relayer.publish(be, xe, ve)) : this.client.core.relayer.publish(be, xe, ve).catch((Se) => this.client.logger.error(Se)), await this.client.core.history.resolve(Oe);
+      const { id: me, topic: be, result: ve, throwOnFailedPublish: Ee } = ye, Oe = formatJsonRpcResult(me, ve), xe = await this.client.core.crypto.encode(be, Oe), gr = await this.client.core.history.get(be, me), we = V[gr.request.method].res;
+      Ee ? (we.internal = b(g({}, we.internal), { throwOnFailedPublish: !0 }), await this.client.core.relayer.publish(be, xe, we)) : this.client.core.relayer.publish(be, xe, we).catch((Se) => this.client.logger.error(Se)), await this.client.core.history.resolve(Oe);
     }, this.sendError = async (ye, me, be) => {
-      const we = formatJsonRpcError(ye, be), Ee = await this.client.core.crypto.encode(me, we), Oe = await this.client.core.history.get(me, ye), xe = V[Oe.request.method].res;
-      this.client.core.relayer.publish(me, Ee, xe), await this.client.core.history.resolve(we);
+      const ve = formatJsonRpcError(ye, be), Ee = await this.client.core.crypto.encode(me, ve), Oe = await this.client.core.history.get(me, ye), xe = V[Oe.request.method].res;
+      this.client.core.relayer.publish(me, Ee, xe), await this.client.core.history.resolve(ve);
     }, this.cleanup = async () => {
       const ye = [], me = [];
       this.client.session.getAll().forEach((be) => {
@@ -29804,8 +29577,8 @@ class hs extends S {
       }
       this.requestQueue.state = I.idle;
     }, this.processRequest = (ye) => {
-      const { topic: me, payload: be } = ye, we = be.method;
-      switch (we) {
+      const { topic: me, payload: be } = ye, ve = be.method;
+      switch (ve) {
         case "wc_sessionPropose":
           return this.onSessionProposeRequest(me, be);
         case "wc_sessionSettle":
@@ -29823,11 +29596,11 @@ class hs extends S {
         case "wc_sessionEvent":
           return this.onSessionEventRequest(me, be);
         default:
-          return this.client.logger.info(`Unsupported request method ${we}`);
+          return this.client.logger.info(`Unsupported request method ${ve}`);
       }
     }, this.onRelayEventResponse = async (ye) => {
-      const { topic: me, payload: be } = ye, we = (await this.client.core.history.get(me, be.id)).request.method;
-      switch (we) {
+      const { topic: me, payload: be } = ye, ve = (await this.client.core.history.get(me, be.id)).request.method;
+      switch (ve) {
         case "wc_sessionPropose":
           return this.onSessionProposeResponse(me, be);
         case "wc_sessionSettle":
@@ -29841,44 +29614,44 @@ class hs extends S {
         case "wc_sessionRequest":
           return this.onSessionRequestResponse(me, be);
         default:
-          return this.client.logger.info(`Unsupported response method ${we}`);
+          return this.client.logger.info(`Unsupported response method ${ve}`);
       }
     }, this.onRelayEventUnknownPayload = (ye) => {
       const { topic: me } = ye, { message: be } = N$1("MISSING_OR_INVALID", `Decoded payload on topic ${me} is not identifiable as a JSON-RPC request or a response.`);
       throw new Error(be);
     }, this.onSessionProposeRequest = async (ye, me) => {
-      const { params: be, id: we } = me;
+      const { params: be, id: ve } = me;
       try {
         this.isValidConnect(g({}, me.params));
-        const Ee = pt(cjs$4.FIVE_MINUTES), Oe = g({ id: we, pairingTopic: ye, expiry: Ee }, be);
-        await this.setProposal(we, Oe);
+        const Ee = pt(cjs$4.FIVE_MINUTES), Oe = g({ id: ve, pairingTopic: ye, expiry: Ee }, be);
+        await this.setProposal(ve, Oe);
         const xe = Ln(JSON.stringify(me)), gr = await this.getVerifyContext(xe, Oe.proposer.metadata);
-        this.client.events.emit("session_proposal", { id: we, params: Oe, verifyContext: gr });
+        this.client.events.emit("session_proposal", { id: ve, params: Oe, verifyContext: gr });
       } catch (Ee) {
-        await this.sendError(we, ye, Ee), this.client.logger.error(Ee);
+        await this.sendError(ve, ye, Ee), this.client.logger.error(Ee);
       }
     }, this.onSessionProposeResponse = async (ye, me) => {
       const { id: be } = me;
       if (isJsonRpcResult(me)) {
-        const { result: we } = me;
-        this.client.logger.trace({ type: "method", method: "onSessionProposeResponse", result: we });
+        const { result: ve } = me;
+        this.client.logger.trace({ type: "method", method: "onSessionProposeResponse", result: ve });
         const Ee = this.client.proposal.get(be);
         this.client.logger.trace({ type: "method", method: "onSessionProposeResponse", proposal: Ee });
         const Oe = Ee.proposer.publicKey;
         this.client.logger.trace({ type: "method", method: "onSessionProposeResponse", selfPublicKey: Oe });
-        const xe = we.responderPublicKey;
+        const xe = ve.responderPublicKey;
         this.client.logger.trace({ type: "method", method: "onSessionProposeResponse", peerPublicKey: xe });
         const gr = await this.client.core.crypto.generateSharedKey(Oe, xe);
         this.client.logger.trace({ type: "method", method: "onSessionProposeResponse", sessionTopic: gr });
-        const ve = await this.client.core.relayer.subscribe(gr);
-        this.client.logger.trace({ type: "method", method: "onSessionProposeResponse", subscriptionId: ve }), await this.client.core.pairing.activate({ topic: ye });
+        const we = await this.client.core.relayer.subscribe(gr);
+        this.client.logger.trace({ type: "method", method: "onSessionProposeResponse", subscriptionId: we }), await this.client.core.pairing.activate({ topic: ye });
       } else
         isJsonRpcError(me) && (await this.client.proposal.delete(be, U$1("USER_DISCONNECTED")), this.events.emit(yt("session_connect"), { error: me.error }));
     }, this.onSessionSettleRequest = async (ye, me) => {
-      const { id: be, params: we } = me;
+      const { id: be, params: ve } = me;
       try {
-        this.isValidSessionSettleRequest(we);
-        const { relay: Ee, controller: Oe, expiry: xe, namespaces: gr, requiredNamespaces: ve, optionalNamespaces: Se, sessionProperties: $r, pairingTopic: Fr } = me.params, Br = g({ topic: ye, relay: Ee, expiry: xe, namespaces: gr, acknowledged: !0, pairingTopic: Fr, requiredNamespaces: ve, optionalNamespaces: Se, controller: Oe.publicKey, self: { publicKey: "", metadata: this.client.metadata }, peer: { publicKey: Oe.publicKey, metadata: Oe.metadata } }, $r && { sessionProperties: $r });
+        this.isValidSessionSettleRequest(ve);
+        const { relay: Ee, controller: Oe, expiry: xe, namespaces: gr, requiredNamespaces: we, optionalNamespaces: Se, sessionProperties: $r, pairingTopic: Fr } = me.params, Br = g({ topic: ye, relay: Ee, expiry: xe, namespaces: gr, acknowledged: !0, pairingTopic: Fr, requiredNamespaces: we, optionalNamespaces: Se, controller: Oe.publicKey, self: { publicKey: "", metadata: this.client.metadata }, peer: { publicKey: Oe.publicKey, metadata: Oe.metadata } }, $r && { sessionProperties: $r });
         await this.sendResult({ id: me.id, topic: ye, result: !0 }), this.events.emit(yt("session_connect"), { session: Br }), this.cleanupDuplicatePairings(Br);
       } catch (Ee) {
         await this.sendError(be, ye, Ee), this.client.logger.error(Ee);
@@ -29887,16 +29660,16 @@ class hs extends S {
       const { id: be } = me;
       isJsonRpcResult(me) ? (await this.client.session.update(ye, { acknowledged: !0 }), this.events.emit(yt("session_approve", be), {})) : isJsonRpcError(me) && (await this.client.session.delete(ye, U$1("USER_DISCONNECTED")), this.events.emit(yt("session_approve", be), { error: me.error }));
     }, this.onSessionUpdateRequest = async (ye, me) => {
-      const { params: be, id: we } = me;
+      const { params: be, id: ve } = me;
       try {
         const Ee = `${ye}_session_update`, Oe = tr.get(Ee);
-        if (Oe && this.isRequestOutOfSync(Oe, we)) {
-          this.client.logger.info(`Discarding out of sync request - ${we}`);
+        if (Oe && this.isRequestOutOfSync(Oe, ve)) {
+          this.client.logger.info(`Discarding out of sync request - ${ve}`);
           return;
         }
-        this.isValidUpdate(g({ topic: ye }, be)), await this.client.session.update(ye, { namespaces: be.namespaces }), await this.sendResult({ id: we, topic: ye, result: !0 }), this.client.events.emit("session_update", { id: we, topic: ye, params: be }), tr.set(Ee, we);
+        this.isValidUpdate(g({ topic: ye }, be)), await this.client.session.update(ye, { namespaces: be.namespaces }), await this.sendResult({ id: ve, topic: ye, result: !0 }), this.client.events.emit("session_update", { id: ve, topic: ye, params: be }), tr.set(Ee, ve);
       } catch (Ee) {
-        await this.sendError(we, ye, Ee), this.client.logger.error(Ee);
+        await this.sendError(ve, ye, Ee), this.client.logger.error(Ee);
       }
     }, this.isRequestOutOfSync = (ye, me) => parseInt(me.toString().slice(0, -3)) <= parseInt(ye.toString().slice(0, -3)), this.onSessionUpdateResponse = (ye, me) => {
       const { id: be } = me;
@@ -29905,8 +29678,8 @@ class hs extends S {
       const { id: be } = me;
       try {
         this.isValidExtend({ topic: ye }), await this.setExpiry(ye, pt(A)), await this.sendResult({ id: be, topic: ye, result: !0 }), this.client.events.emit("session_extend", { id: be, topic: ye });
-      } catch (we) {
-        await this.sendError(be, ye, we), this.client.logger.error(we);
+      } catch (ve) {
+        await this.sendError(be, ye, ve), this.client.logger.error(ve);
       }
     }, this.onSessionExtendResponse = (ye, me) => {
       const { id: be } = me;
@@ -29915,8 +29688,8 @@ class hs extends S {
       const { id: be } = me;
       try {
         this.isValidPing({ topic: ye }), await this.sendResult({ id: be, topic: ye, result: !0 }), this.client.events.emit("session_ping", { id: be, topic: ye });
-      } catch (we) {
-        await this.sendError(be, ye, we), this.client.logger.error(we);
+      } catch (ve) {
+        await this.sendError(be, ye, ve), this.client.logger.error(ve);
       }
     }, this.onSessionPingResponse = (ye, me) => {
       const { id: be } = me;
@@ -29926,19 +29699,19 @@ class hs extends S {
     }, this.onSessionDeleteRequest = async (ye, me) => {
       const { id: be } = me;
       try {
-        this.isValidDisconnect({ topic: ye, reason: me.params }), await Promise.all([new Promise((we) => {
+        this.isValidDisconnect({ topic: ye, reason: me.params }), await Promise.all([new Promise((ve) => {
           this.client.core.relayer.once(D$2.publish, async () => {
-            we(await this.deleteSession(ye));
+            ve(await this.deleteSession(ye));
           });
         }), this.sendResult({ id: be, topic: ye, result: !0 })]), this.client.events.emit("session_delete", { id: be, topic: ye });
-      } catch (we) {
-        this.client.logger.error(we);
+      } catch (ve) {
+        this.client.logger.error(ve);
       }
     }, this.onSessionRequest = async (ye, me) => {
-      const { id: be, params: we } = me;
+      const { id: be, params: ve } = me;
       try {
-        this.isValidRequest(g({ topic: ye }, we));
-        const Ee = Ln(JSON.stringify(formatJsonRpcRequest("wc_sessionRequest", we, be))), Oe = this.client.session.get(ye), xe = await this.getVerifyContext(Ee, Oe.peer.metadata), gr = { id: be, topic: ye, params: we, verifyContext: xe };
+        this.isValidRequest(g({ topic: ye }, ve));
+        const Ee = Ln(JSON.stringify(formatJsonRpcRequest("wc_sessionRequest", ve, be))), Oe = this.client.session.get(ye), xe = await this.getVerifyContext(Ee, Oe.peer.metadata), gr = { id: be, topic: ye, params: ve, verifyContext: xe };
         await this.setPendingSessionRequest(gr), this.addSessionRequestToSessionRequestQueue(gr), this.processSessionRequestQueue();
       } catch (Ee) {
         await this.sendError(be, ye, Ee), this.client.logger.error(Ee);
@@ -29947,14 +29720,14 @@ class hs extends S {
       const { id: be } = me;
       isJsonRpcResult(me) ? this.events.emit(yt("session_request", be), { result: me.result }) : isJsonRpcError(me) && this.events.emit(yt("session_request", be), { error: me.error });
     }, this.onSessionEventRequest = async (ye, me) => {
-      const { id: be, params: we } = me;
+      const { id: be, params: ve } = me;
       try {
-        const Ee = `${ye}_session_event_${we.event.name}`, Oe = tr.get(Ee);
+        const Ee = `${ye}_session_event_${ve.event.name}`, Oe = tr.get(Ee);
         if (Oe && this.isRequestOutOfSync(Oe, be)) {
           this.client.logger.info(`Discarding out of sync request - ${be}`);
           return;
         }
-        this.isValidEmit(g({ topic: ye }, we)), this.client.events.emit("session_event", { id: be, topic: ye, params: we }), tr.set(Ee, be);
+        this.isValidEmit(g({ topic: ye }, ve)), this.client.events.emit("session_event", { id: be, topic: ye, params: ve }), tr.set(Ee, be);
       } catch (Ee) {
         await this.sendError(be, ye, Ee), this.client.logger.error(Ee);
       }
@@ -29989,12 +29762,12 @@ class hs extends S {
         const { message: xe } = N$1("MISSING_OR_INVALID", `connect() params: ${JSON.stringify(ye)}`);
         throw new Error(xe);
       }
-      const { pairingTopic: me, requiredNamespaces: be, optionalNamespaces: we, sessionProperties: Ee, relays: Oe } = ye;
+      const { pairingTopic: me, requiredNamespaces: be, optionalNamespaces: ve, sessionProperties: Ee, relays: Oe } = ye;
       if (w(me) || await this.isValidPairingTopic(me), !xt(Oe, !0)) {
         const { message: xe } = N$1("MISSING_OR_INVALID", `connect() relays: ${Oe}`);
         throw new Error(xe);
       }
-      !w(be) && B(be) !== 0 && this.validateNamespaces(be, "requiredNamespaces"), !w(we) && B(we) !== 0 && this.validateNamespaces(we, "optionalNamespaces"), w(Ee) || this.validateSessionProps(Ee, "sessionProperties");
+      !w(be) && B(be) !== 0 && this.validateNamespaces(be, "requiredNamespaces"), !w(ve) && B(ve) !== 0 && this.validateNamespaces(ve, "optionalNamespaces"), w(Ee) || this.validateSessionProps(Ee, "sessionProperties");
     }, this.validateNamespaces = (ye, me) => {
       const be = Lt(ye, "connect()", me);
       if (be)
@@ -30002,7 +29775,7 @@ class hs extends S {
     }, this.isValidApprove = async (ye) => {
       if (!Ht(ye))
         throw new Error(N$1("MISSING_OR_INVALID", `approve() params: ${ye}`).message);
-      const { id: me, namespaces: be, relayProtocol: we, sessionProperties: Ee } = ye;
+      const { id: me, namespaces: be, relayProtocol: ve, sessionProperties: Ee } = ye;
       await this.isValidProposalId(me);
       const Oe = this.client.proposal.get(me), xe = un(be, "approve()");
       if (xe)
@@ -30010,27 +29783,27 @@ class hs extends S {
       const gr = dn(Oe.requiredNamespaces, be, "approve()");
       if (gr)
         throw new Error(gr.message);
-      if (!h$1(we, !0)) {
-        const { message: ve } = N$1("MISSING_OR_INVALID", `approve() relayProtocol: ${we}`);
-        throw new Error(ve);
+      if (!h$1(ve, !0)) {
+        const { message: we } = N$1("MISSING_OR_INVALID", `approve() relayProtocol: ${ve}`);
+        throw new Error(we);
       }
       w(Ee) || this.validateSessionProps(Ee, "sessionProperties");
     }, this.isValidReject = async (ye) => {
       if (!Ht(ye)) {
-        const { message: we } = N$1("MISSING_OR_INVALID", `reject() params: ${ye}`);
-        throw new Error(we);
+        const { message: ve } = N$1("MISSING_OR_INVALID", `reject() params: ${ye}`);
+        throw new Error(ve);
       }
       const { id: me, reason: be } = ye;
       if (await this.isValidProposalId(me), !qt(be)) {
-        const { message: we } = N$1("MISSING_OR_INVALID", `reject() reason: ${JSON.stringify(be)}`);
-        throw new Error(we);
+        const { message: ve } = N$1("MISSING_OR_INVALID", `reject() reason: ${JSON.stringify(be)}`);
+        throw new Error(ve);
       }
     }, this.isValidSessionSettleRequest = (ye) => {
       if (!Ht(ye)) {
         const { message: gr } = N$1("MISSING_OR_INVALID", `onSessionSettleRequest() params: ${ye}`);
         throw new Error(gr);
       }
-      const { relay: me, controller: be, namespaces: we, expiry: Ee } = ye;
+      const { relay: me, controller: be, namespaces: ve, expiry: Ee } = ye;
       if (!ln(me)) {
         const { message: gr } = N$1("MISSING_OR_INVALID", "onSessionSettleRequest() relay protocol should be a string");
         throw new Error(gr);
@@ -30038,7 +29811,7 @@ class hs extends S {
       const Oe = Kt(be, "onSessionSettleRequest()");
       if (Oe)
         throw new Error(Oe.message);
-      const xe = un(we, "onSessionSettleRequest()");
+      const xe = un(ve, "onSessionSettleRequest()");
       if (xe)
         throw new Error(xe.message);
       if (mt(Ee)) {
@@ -30052,10 +29825,10 @@ class hs extends S {
       }
       const { topic: me, namespaces: be } = ye;
       await this.isValidSessionTopic(me);
-      const we = this.client.session.get(me), Ee = un(be, "update()");
+      const ve = this.client.session.get(me), Ee = un(be, "update()");
       if (Ee)
         throw new Error(Ee.message);
-      const Oe = dn(we.requiredNamespaces, be, "update()");
+      const Oe = dn(ve.requiredNamespaces, be, "update()");
       if (Oe)
         throw new Error(Oe.message);
     }, this.isValidExtend = async (ye) => {
@@ -30070,18 +29843,18 @@ class hs extends S {
         const { message: xe } = N$1("MISSING_OR_INVALID", `request() params: ${ye}`);
         throw new Error(xe);
       }
-      const { topic: me, request: be, chainId: we, expiry: Ee } = ye;
+      const { topic: me, request: be, chainId: ve, expiry: Ee } = ye;
       await this.isValidSessionTopic(me);
       const { namespaces: Oe } = this.client.session.get(me);
-      if (!zt(Oe, we)) {
-        const { message: xe } = N$1("MISSING_OR_INVALID", `request() chainId: ${we}`);
+      if (!zt(Oe, ve)) {
+        const { message: xe } = N$1("MISSING_OR_INVALID", `request() chainId: ${ve}`);
         throw new Error(xe);
       }
       if (!Bt(be)) {
         const { message: xe } = N$1("MISSING_OR_INVALID", `request() ${JSON.stringify(be)}`);
         throw new Error(xe);
       }
-      if (!Yt(Oe, we, be.method)) {
+      if (!Yt(Oe, ve, be.method)) {
         const { message: xe } = N$1("MISSING_OR_INVALID", `request() method: ${be.method}`);
         throw new Error(xe);
       }
@@ -30091,13 +29864,13 @@ class hs extends S {
       }
     }, this.isValidRespond = async (ye) => {
       if (!Ht(ye)) {
-        const { message: we } = N$1("MISSING_OR_INVALID", `respond() params: ${ye}`);
-        throw new Error(we);
+        const { message: ve } = N$1("MISSING_OR_INVALID", `respond() params: ${ye}`);
+        throw new Error(ve);
       }
       const { topic: me, response: be } = ye;
       if (await this.isValidSessionTopic(me), !Gt(be)) {
-        const { message: we } = N$1("MISSING_OR_INVALID", `respond() response: ${JSON.stringify(be)}`);
-        throw new Error(we);
+        const { message: ve } = N$1("MISSING_OR_INVALID", `respond() response: ${JSON.stringify(be)}`);
+        throw new Error(ve);
       }
     }, this.isValidPing = async (ye) => {
       if (!Ht(ye)) {
@@ -30111,18 +29884,18 @@ class hs extends S {
         const { message: Oe } = N$1("MISSING_OR_INVALID", `emit() params: ${ye}`);
         throw new Error(Oe);
       }
-      const { topic: me, event: be, chainId: we } = ye;
+      const { topic: me, event: be, chainId: ve } = ye;
       await this.isValidSessionTopic(me);
       const { namespaces: Ee } = this.client.session.get(me);
-      if (!zt(Ee, we)) {
-        const { message: Oe } = N$1("MISSING_OR_INVALID", `emit() chainId: ${we}`);
+      if (!zt(Ee, ve)) {
+        const { message: Oe } = N$1("MISSING_OR_INVALID", `emit() chainId: ${ve}`);
         throw new Error(Oe);
       }
       if (!Wt(be)) {
         const { message: Oe } = N$1("MISSING_OR_INVALID", `emit() event: ${JSON.stringify(be)}`);
         throw new Error(Oe);
       }
-      if (!Jt(Ee, we, be.name)) {
+      if (!Jt(Ee, ve, be.name)) {
         const { message: Oe } = N$1("MISSING_OR_INVALID", `emit() event: ${JSON.stringify(be)}`);
         throw new Error(Oe);
       }
@@ -30136,17 +29909,17 @@ class hs extends S {
     }, this.getVerifyContext = async (ye, me) => {
       const be = { verified: { verifyUrl: me.verifyUrl || $, validation: "UNKNOWN", origin: me.url || "" } };
       try {
-        const we = await this.client.core.verify.resolve({ attestationId: ye, verifyUrl: me.verifyUrl });
-        we && (be.verified.origin = we.origin, be.verified.isScam = we.isScam, be.verified.validation = we.origin === new URL(me.url).origin ? "VALID" : "INVALID");
-      } catch (we) {
-        this.client.logger.info(we);
+        const ve = await this.client.core.verify.resolve({ attestationId: ye, verifyUrl: me.verifyUrl });
+        ve && (be.verified.origin = ve.origin, be.verified.isScam = ve.isScam, be.verified.validation = ve.origin === new URL(me.url).origin ? "VALID" : "INVALID");
+      } catch (ve) {
+        this.client.logger.info(ve);
       }
       return this.client.logger.info(`Verify context: ${JSON.stringify(be)}`), be;
     }, this.validateSessionProps = (ye, me) => {
       Object.values(ye).forEach((be) => {
         if (!h$1(be, !1)) {
-          const { message: we } = N$1("MISSING_OR_INVALID", `${me} must be in Record<string, string> format. Received: ${JSON.stringify(be)}`);
-          throw new Error(we);
+          const { message: ve } = N$1("MISSING_OR_INVALID", `${me} must be in Record<string, string> format. Received: ${JSON.stringify(be)}`);
+          throw new Error(ve);
         }
       });
     };
@@ -30166,8 +29939,8 @@ class hs extends S {
       const be = await this.client.core.crypto.decode(ye, me);
       try {
         isJsonRpcRequest(be) ? (this.client.core.history.set(ye, be), this.onRelayEventRequest({ topic: ye, payload: be })) : isJsonRpcResponse(be) ? (await this.client.core.history.resolve(be), await this.onRelayEventResponse({ topic: ye, payload: be }), this.client.core.history.delete(ye, be.id)) : this.onRelayEventUnknownPayload({ topic: ye, payload: be });
-      } catch (we) {
-        this.client.logger.error(we);
+      } catch (ve) {
+        this.client.logger.error(ve);
       }
     });
   }
@@ -30257,7 +30030,7 @@ class gs extends Mt {
 }
 class Q extends b$1 {
   constructor(e) {
-    super(e), this.protocol = X, this.version = F, this.name = M.name, this.events = new eventsExports.EventEmitter(), this.on = (me, be) => this.events.on(me, be), this.once = (me, be) => this.events.once(me, be), this.off = (me, be) => this.events.off(me, be), this.removeListener = (me, be) => this.events.removeListener(me, be), this.removeAllListeners = (me) => this.events.removeAllListeners(me), this.connect = async (me) => {
+    super(e), this.protocol = X, this.version = F, this.name = M.name, this.events = new EventEmitter$1(), this.on = (me, be) => this.events.on(me, be), this.once = (me, be) => this.events.once(me, be), this.off = (me, be) => this.events.off(me, be), this.removeListener = (me, be) => this.events.removeListener(me, be), this.removeAllListeners = (me) => this.events.removeAllListeners(me), this.connect = async (me) => {
       try {
         return await this.engine.connect(me);
       } catch (be) {
@@ -30366,8 +30139,8 @@ var z = (fe = {}) => {
     return !(typeof await get(ye(be), me) > "u");
   }, async getItem(be) {
     return await get(ye(be), me) ?? null;
-  }, setItem(be, we) {
-    return set(ye(be), we, me);
+  }, setItem(be, ve) {
+    return set(ye(be), ve, me);
   }, removeItem(be) {
     return del(ye(be), me);
   }, getKeys() {
@@ -30453,14 +30226,14 @@ const N = "wc_storage_version", y = 1, O = async (fe, e, ye) => {
     ye(e);
     return;
   }
-  const we = await fe.getKeys();
-  if (!we.length) {
+  const ve = await fe.getKeys();
+  if (!ve.length) {
     ye(e);
     return;
   }
   const Ee = [];
-  for (; we.length; ) {
-    const Oe = we.shift();
+  for (; ve.length; ) {
+    const Oe = ve.shift();
     if (!Oe)
       continue;
     const xe = Oe.toLowerCase();
@@ -30536,12 +30309,12 @@ class NodeWalletConnectKoinos {
     });
     (ye == null ? void 0 : ye.autoDisconnect) === !1 || me.on(
       "session_delete",
-      (we) => this.onSessionDelete(we)
+      (ve) => this.onSessionDelete(ve)
     ), this.signClient = me;
   }
   async close() {
-    var e, ye, me, be, we, Ee, Oe, xe, gr;
-    (e = this.signClient) == null || e.core.events.removeAllListeners(), (ye = this.signClient) == null || ye.core.relayer.events.removeAllListeners(), (me = this.signClient) == null || me.core.heartbeat.stop(), (be = this.signClient) == null || be.core.relayer.provider.events.removeAllListeners(), (we = this.signClient) == null || we.core.relayer.subscriber.events.removeAllListeners(), (Ee = this.signClient) == null || Ee.core.relayer.provider.connection.events.removeAllListeners(), (Oe = this.signClient) == null || Oe.events.removeAllListeners("session_delete"), (xe = this.signClient) != null && xe.core.relayer.connected && await ((gr = this.signClient) == null ? void 0 : gr.core.relayer.transportClose()), this.signClient = void 0;
+    var e, ye, me, be, ve, Ee, Oe, xe, gr;
+    (e = this.signClient) == null || e.core.events.removeAllListeners(), (ye = this.signClient) == null || ye.core.relayer.events.removeAllListeners(), (me = this.signClient) == null || me.core.heartbeat.stop(), (be = this.signClient) == null || be.core.relayer.provider.events.removeAllListeners(), (ve = this.signClient) == null || ve.core.relayer.subscriber.events.removeAllListeners(), (Ee = this.signClient) == null || Ee.core.relayer.provider.connection.events.removeAllListeners(), (Oe = this.signClient) == null || Oe.events.removeAllListeners("session_delete"), (xe = this.signClient) != null && xe.core.relayer.connected && await ((gr = this.signClient) == null ? void 0 : gr.core.relayer.transportClose()), this.signClient = void 0;
   }
   async onSessionDelete(e) {
     this.options.logLevel === LogLevel.debug && console.log("onSessionDelete", e), this.accounts = [], this.topic = "", this.chainId = void 0;
@@ -30567,16 +30340,16 @@ class NodeWalletConnectKoinos {
       });
       if (!Oe)
         throw new Error("Could not generate WalletConnect URI");
-      console.log(`Please copy the followinf WalletConnect Pairing URI into your wallet: ${Oe}`), be = await xe();
+      console.log("Please copy the following WalletConnect Pairing URI into your wallet:"), console.log(Oe), be = await xe();
     }
     if (!be)
       return [];
     this.topic = be.topic, ((Ee = be.namespaces.koinos.chains) == null ? void 0 : Ee.length) === 1 && (this.chainId = be.namespaces.koinos.chains[0]);
-    const we = be.namespaces.koinos.accounts.reduce((Oe, xe) => {
-      const [gr, ve, Se] = xe.split(":");
+    const ve = be.namespaces.koinos.accounts.reduce((Oe, xe) => {
+      const [gr, we, Se] = xe.split(":");
       return Oe.includes(Se) || Oe.push(Se), Oe;
     }, []);
-    return this.accounts = we, we;
+    return this.accounts = ve, ve;
   }
   async disconnect() {
     this.checkIfInitialized();
@@ -30628,7 +30401,7 @@ export {
   LogLevel as L,
   Methods as M,
   NodeWalletConnectKoinos as N,
-  R$4 as R,
+  R$3 as R,
   T$3 as T,
   WebWalletConnectKoinos as W,
   a$4 as a,

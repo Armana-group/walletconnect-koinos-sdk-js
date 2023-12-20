@@ -1,6 +1,6 @@
 {
   "name": "@armana/walletconnect-koinos-sdk-js",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "MIT",
   "files": [
     "dist"
@@ -12,6 +12,7 @@
     "dev": "vite | vite build --watch",
     "build:watch": "vite build --watch",
     "build": "tsc && vite build",
+    "node_test": "yarn build && yarn tsx ./test/node_test.ts",
     "preview": "vite preview --port 3000",
     "lint": "eslint src/*",
     "prepublishOnly": "yarn lint && yarn build"

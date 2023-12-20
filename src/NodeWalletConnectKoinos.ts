@@ -97,7 +97,8 @@ export class NodeWalletConnectKoinos {
       if (!uri) {
         throw new Error('Could not generate WalletConnect URI')
       }
-      console.log(`Please copy the followinf WalletConnect Pairing URI into your wallet: ${uri}`)
+      console.log(`Please copy the following WalletConnect Pairing URI into your wallet:`)
+      console.log(uri)
 
       session = await approval()
     }

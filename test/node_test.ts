@@ -1,4 +1,4 @@
-import { ChainIds, Methods, NodeWalletConnectKoinos } from '../src'
+import { ChainIds, Methods, NodeWalletConnectKoinos } from '../'
 require('dotenv').config({ path: __dirname + '/../.env.local' })
 
 async function main(): Promise<void> {
