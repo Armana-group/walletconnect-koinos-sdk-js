@@ -1,3 +1,4 @@
+import { IKeyValueStorage } from '@walletconnect/keyvaluestorage';
 export { WebWalletConnectKoinos } from './WebWalletConnectKoinos';
 export { NodeWalletConnectKoinos } from './NodeWalletConnectKoinos';
 export declare enum ChainIds {
@@ -32,4 +33,5 @@ export declare enum LogLevel {
 export type Options = {
     logLevel?: LogLevel;
     autoDisconnect?: boolean;
+    nodeStorage?: IKeyValueStorage;
 };

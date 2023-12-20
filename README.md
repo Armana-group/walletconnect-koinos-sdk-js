@@ -278,21 +278,30 @@ import { Contract, utils } from "koilib";
 ### Using NodeJS
 
 ```ts
-import { ChainIds, Methods, NodeWalletConnectKoinos } from '@armana/walletconnect-koinos-sdk-js'
+import { ChainIds, Methods, NodeWalletConnectKoinos } from '../'
+import { KeyValueStorage } from '@walletconnect/keyvaluestorage'
 require('dotenv').config({ path: __dirname + '/../.env.local' })
 
 async function main(): Promise<void> {
   const nodeWalletConnectKoinos = new NodeWalletConnectKoinos()
   try {
-    await nodeWalletConnectKoinos.init({
-      projectId: process.env.VITE_WALLET_CONNECT_PROJECT_ID,
-      metadata: {
-        name: 'Web3Modal',
-        description: 'Web3Modal',
-        url: 'web3modal.com',
-        icons: ['https://walletconnect.com/_next/static/media/logo_mark.84dd8525.svg']
+    await nodeWalletConnectKoinos.init(
+      {
+        projectId: process.env.VITE_WALLET_CONNECT_PROJECT_ID,
+        metadata: {
+          name: 'Web3Modal',
+          description: 'Web3Modal',
+          url: 'web3modal.com',
+          icons: ['https://walletconnect.com/_next/static/media/logo_mark.84dd8525.svg']
+        }
+      },
+      {
+        // if want to store the connections info to be able reuse them
+        nodeStorage: new KeyValueStorage({
+          database: './WC_V2_DB'
+        })
       }
-    })
+    )
 
     const accounts = await nodeWalletConnectKoinos.connect(
       [ChainIds.Harbinger],
@@ -317,4 +326,5 @@ async function main(): Promise<void> {
 }
 
 main().catch((error) => console.log(error))
+
 ```

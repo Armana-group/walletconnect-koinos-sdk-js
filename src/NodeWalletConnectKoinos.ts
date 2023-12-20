@@ -5,7 +5,6 @@ import { Provider, Signer } from 'koilib'
 import { Options, LogLevel, ChainIds, Methods } from '.'
 import { generateProvider } from './provider'
 import { generateSigner } from './signer'
-import { KeyValueStorage } from '@walletconnect/keyvaluestorage'
 
 export class NodeWalletConnectKoinos {
   public signClient?: Client
@@ -27,9 +26,7 @@ export class NodeWalletConnectKoinos {
       metadata: {
         ...signClientOptions.metadata
       },
-      storage: new KeyValueStorage({
-        database: 'WALLET_CONNECT_V2.db'
-      })
+      ...(options?.nodeStorage && { storage: options?.nodeStorage })
     })
 
     const doNotAutoDisconnect = options?.autoDisconnect === false
