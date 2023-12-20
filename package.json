@@ -29,6 +29,7 @@
     "vite": "^4.3.9"
   },
   "dependencies": {
+    "@armana/walletconnect-koinos-sdk-js": "^0.1.1",
     "@walletconnect/modal-sign-html": "^2.6.2",
     "@walletconnect/utils": "^2.10.4",
     "koilib": "^5.5.6",

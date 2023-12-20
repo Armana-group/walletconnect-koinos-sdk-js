@@ -1,5 +1,10 @@
 import { Contract, Provider, utils } from 'koilib'
-import { ChainIds, LogLevel, Methods, WalletConnectKoinos } from '../src'
+import {
+  ChainIds,
+  LogLevel,
+  Methods,
+  WebWalletConnectKoinos
+} from '@armana/walletconnect-koinos-sdk-js'
 
 const connectButton = document.getElementById('connect-button') as HTMLButtonElement
 
@@ -28,7 +33,7 @@ if (!projectId) {
   throw new Error('You need to provide VITE_WALLET_CONNECT_PROJECT_ID env variable')
 }
 
-const walletConnectKoinos = new WalletConnectKoinos(
+const webWalletConnectKoinos = new WebWalletConnectKoinos(
   {
     projectId,
     metadata: {
@@ -53,7 +58,7 @@ let accounts: string[] = []
 async function onConnect(): Promise<void> {
   try {
     connectButton.disabled = true
-    accounts = await walletConnectKoinos.connect(
+    accounts = await webWalletConnectKoinos.connect(
       [getNetworkSelection()],
       [Methods.SignMessage, Methods.SignTransaction]
     )
@@ -70,7 +75,7 @@ async function onConnect(): Promise<void> {
 async function onDisconnect(): Promise<void> {
   try {
     disconnectButton.disabled = true
-    await walletConnectKoinos.disconnect()
+    await webWalletConnectKoinos.disconnect()
   } catch (err) {
     console.error(err)
     alert((err as Error).message)
@@ -93,7 +98,7 @@ async function onSignMessage(): Promise<void> {
     signMessageButton.disabled = true
     const network = getNetworkSelection()
 
-    const signer = walletConnectKoinos.getSigner(accounts[0], undefined, network)
+    const signer = webWalletConnectKoinos.getSigner(accounts[0], undefined, network)
     const signature = await signer.signMessage(messageInput.value)
     messageSignatureInput.value = utils.encodeBase64url(signature)
   } catch (err) {
@@ -112,7 +117,7 @@ async function onSignTransaction(): Promise<void> {
       network === ChainIds.Harbinger ? 'https://harbinger-api.koinos.io' : 'https://api.koinos.io'
 
     const provider = new Provider(jsonRPCUrl)
-    const signer = walletConnectKoinos.getSigner(accounts[0], provider, network)
+    const signer = webWalletConnectKoinos.getSigner(accounts[0], provider, network)
 
     const koinContractId =
       network === ChainIds.Harbinger
