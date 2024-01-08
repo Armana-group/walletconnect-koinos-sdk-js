@@ -392,7 +392,7 @@ let d$2 = class {
   }
   async initUi() {
     if (typeof window < "u") {
-      await import("./index-628d3f4d.mjs");
+      await import("./index-cda027c6.mjs");
       const e = document.createElement("wcm-modal");
       document.body.insertAdjacentElement("beforeend", e), p$6.setIsUiLoaded(!0);
     }
@@ -10314,7 +10314,13 @@ Reader$1.prototype.bytes = function fe() {
   var e = this.uint32(), ye = this.pos, me = this.pos + e;
   if (me > this.len)
     throw indexOutOfRange(this, e);
-  return this.pos += e, Array.isArray(this.buf) ? this.buf.slice(ye, me) : ye === me ? new this.buf.constructor(0) : this._slice.call(this.buf, ye, me);
+  if (this.pos += e, Array.isArray(this.buf))
+    return this.buf.slice(ye, me);
+  if (ye === me) {
+    var be = util$6.Buffer;
+    return be ? be.alloc(0) : new this.buf.constructor(0);
+  }
+  return this._slice.call(this.buf, ye, me);
 };
 Reader$1.prototype.string = function fe() {
   var e = this.bytes();
@@ -11945,7 +11951,7 @@ function requireUtil() {
   }, fe.setProperty = function(gr, we, Se) {
     function $r(Fr, Br, Vr) {
       var oo = Br.shift();
-      if (oo === "__proto__")
+      if (oo === "__proto__" || oo === "prototype")
         return Fr;
       if (Br.length > 0)
         Fr[oo] = $r(Fr[oo] || {}, Br, Vr);
@@ -12227,7 +12233,7 @@ function tokenize$1(fe, e) {
 `).trim(), Ee[be] = Mr, ve = be;
   }
   function Fr(Hr) {
-    var Yr = Br(Hr), Ur = fe.substring(Hr, Yr), Mr = /^\s*\/{1,2}/.test(Ur);
+    var Yr = Br(Hr), Ur = fe.substring(Hr, Yr), Mr = /^\s*\/\//.test(Ur);
     return Mr;
   }
   function Br(Hr) {
@@ -12254,7 +12260,7 @@ function tokenize$1(fe, e) {
           throw gr("comment");
         if (Se(ye) === "/")
           if (e) {
-            if (Mr = ye, Lr = !1, Fr(ye)) {
+            if (Mr = ye, Lr = !1, Fr(ye - 1)) {
               Lr = !0;
               do
                 if (ye = Br(ye), ye === me || (ye++, !no))
@@ -12657,6 +12663,8 @@ function parse(fe, e, ye) {
       for (var Zr = {}; !xe("}", !0); ) {
         if (!nameRe.test(co = ve()))
           throw kr(co, "name");
+        if (co === null)
+          throw kr(co, "end of input");
         var wo, Eo = co;
         if (xe(":", !0), Oe() === "{")
           wo = Oo(Qr, jr + "." + co);

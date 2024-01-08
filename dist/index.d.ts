@@ -1,4 +1,4 @@
-import { IKeyValueStorage } from '@walletconnect/keyvaluestorage';
+import { type IKeyValueStorage } from '@walletconnect/keyvaluestorage';
 export { WebWalletConnectKoinos } from './WebWalletConnectKoinos';
 export { NodeWalletConnectKoinos } from './NodeWalletConnectKoinos';
 export declare enum ChainIds {
