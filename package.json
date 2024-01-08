@@ -26,13 +26,11 @@
     "eslint-plugin-prettier": "^4.2.1",
     "prettier": "^2.8.8",
     "typescript": "^5.0.2",
-    "vite": "^4.3.9"
+    "vite": "^4.3.9",
+    "vite-plugin-dts": "^2.3.0"
   },
   "dependencies": {
-    "@armana/walletconnect-koinos-sdk-js": "^0.1.1",
-    "@walletconnect/modal-sign-html": "^2.6.2",
-    "@walletconnect/utils": "^2.10.4",
-    "koilib": "^5.5.6",
-    "vite-plugin-dts": "^2.3.0"
+    "@armana/walletconnect-koinos-sdk-js": "^0.1.3",
+    "koilib": "^5.5.6"
   }
 }

@@ -2,17 +2,16 @@
 # yarn lockfile v1
 
 
-"@armana/walletconnect-koinos-sdk-js@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@armana/walletconnect-koinos-sdk-js/-/walletconnect-koinos-sdk-js-0.1.1.tgz#3f4ddc6d55c8512975dc25ab5d0ea6be446f18db"
-  integrity sha512-y6id3TyHpHowXdImZX7SCMKVEYrbdzLhWnjLEs5v+H80hql4HSX/ntQAaIsalrZq0hQAjagB5gA0SdVUdEcm9w==
+"@armana/walletconnect-koinos-sdk-js@^0.1.3":
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/@armana/walletconnect-koinos-sdk-js/-/walletconnect-koinos-sdk-js-0.1.3.tgz#7fb0fb6266ad5a7366cc0a845182d9de050c4aab"
+  integrity sha512-PgtEIjd/H5uwIYk7+Ak9ofxlJ9G2PadC9eOyLwB0jgTHswesCQa96zGI1D61Xo1qAwECdmZV9LP+v2dPORG+wQ==
   dependencies:
     "@walletconnect/keyvaluestorage" "^1.1.1"
     "@walletconnect/modal-sign-html" "^2.6.2"
     "@walletconnect/sign-client" "^2.10.6"
     "@walletconnect/utils" "^2.10.4"
     koilib "^5.5.6"
-    vite-plugin-dts "^2.3.0"
 
 "@babel/parser@^7.21.4":
   version "7.22.5"
