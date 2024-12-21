@@ -312,6 +312,7 @@ export function generateProvider(
         request: {
           method: Methods.ReadContract,
           params: {
+            _: '',
             operation
           }
         }

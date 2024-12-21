@@ -1,4 +1,4 @@
-import { C as t, L as n, M as i, N as l, W as r } from "./index-54a8b7be.mjs";
+import { d as t, L as n, e as i, N as l, W as d } from "./index-e0c9e2dc.mjs";
 import "events";
 import "crypto";
 export {
@@ -6,5 +6,5 @@ export {
   n as LogLevel,
   i as Methods,
   l as NodeWalletConnectKoinos,
-  r as WebWalletConnectKoinos
+  d as WebWalletConnectKoinos
 };

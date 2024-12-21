@@ -2,26 +2,31 @@ import { Contract, Provider, utils } from 'koilib'
 import { ChainIds, LogLevel, Methods, WebWalletConnectKoinos } from '../src'
 
 const connectButton = document.getElementById('connect-button') as HTMLButtonElement
-
 const disconnectButton = document.getElementById('disconnect-button') as HTMLButtonElement
-
 const accountsInfo = document.getElementById('accounts-info') as HTMLTextAreaElement
 
 const signMessageButton = document.getElementById('sign-message-button') as HTMLButtonElement
-
 const messageInput = document.getElementById('message') as HTMLInputElement
-
 const messageSignatureInput = document.getElementById('message-signature') as HTMLInputElement
 
 const amountInput = document.getElementById('amount') as HTMLInputElement
-
 const toInput = document.getElementById('to') as HTMLInputElement
-
 const signTransactionButton = document.getElementById(
   'sign-transaction-button'
 ) as HTMLButtonElement
-
 const signedTransaction = document.getElementById('signed-transaction') as HTMLTextAreaElement
+
+const checkKoinBalanceButton = document.getElementById(
+  'check-koin-balance-button'
+) as HTMLButtonElement
+const accountBalanceInput = document.getElementById('account-balance') as HTMLInputElement
+const koinBalanceInput = document.getElementById('koin-balance') as HTMLInputElement
+
+const checkManaBalanceButton = document.getElementById(
+  'check-mana-balance-button'
+) as HTMLButtonElement
+const accountManaInput = document.getElementById('account-mana') as HTMLInputElement
+const manaBalanceInput = document.getElementById('mana-balance') as HTMLInputElement
 
 const projectId = import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID
 if (!projectId) {
@@ -65,9 +70,10 @@ let accounts: string[] = []
 async function onConnect(): Promise<void> {
   try {
     connectButton.disabled = true
+    const network = getNetworkSelection()
     accounts = await walletConnectKoinos.connect(
-      [ChainIds.Harbinger, ChainIds.Mainnet],
-      [Methods.SignMessage, Methods.SignTransaction]
+      [network],
+      [Methods.SignMessage, Methods.SignTransaction, Methods.ReadContract, Methods.GetAccountRc]
     )
     console.info(accounts)
     accountsInfo.value = JSON.stringify(accounts, null, 2)
@@ -95,7 +101,6 @@ function getNetworkSelection(): ChainIds {
   const networkSelection = (
     document.querySelector('input[name="network"]:checked') as HTMLInputElement
   )?.value
-  console.log(networkSelection)
 
   return networkSelection === 'testnet' ? ChainIds.Harbinger : ChainIds.Mainnet
 }
@@ -158,7 +163,68 @@ async function onSignTransaction(): Promise<void> {
   }
 }
 
+async function checkKoinBalance(): Promise<void> {
+  try {
+    checkKoinBalanceButton.disabled = true
+    const network = getNetworkSelection()
+
+    const provider = walletConnectKoinos.getProvider()
+
+    const koinContractId =
+      network === ChainIds.Harbinger
+        ? '1FaSvLjQJsCJKq5ybmGsMMQs8RQYyVv8ju'
+        : '15DJN4a8SgrbGhhGksSBASiSYjGnMU8dGL'
+
+    // get Koin balance
+    const koin = new Contract({
+      id: koinContractId,
+      abi: utils.tokenAbi,
+      provider
+    })
+
+    // Get balance
+    const { result } = await koin.functions.balanceOf({
+      owner: accountBalanceInput.value
+    })
+
+    console.info(
+      `Balance of account ${accountBalanceInput.value} is ${utils.formatUnits(
+        result?.value,
+        8
+      )} Koin`
+    )
+
+    koinBalanceInput.value = utils.formatUnits(result?.value, 8)
+  } catch (err) {
+    console.error(err)
+    alert((err as Error).message)
+  } finally {
+    checkKoinBalanceButton.disabled = false
+  }
+}
+
+async function checkManaBalance(): Promise<void> {
+  try {
+    checkManaBalanceButton.disabled = true
+
+    const provider = walletConnectKoinos.getProvider()
+
+    const mana = await provider.getAccountRc(accountManaInput.value)
+
+    console.info(`Mana of account ${accountBalanceInput.value} is ${utils.formatUnits(mana, 8)}`)
+
+    manaBalanceInput.value = utils.formatUnits(mana, 8)
+  } catch (err) {
+    console.error(err)
+    alert((err as Error).message)
+  } finally {
+    checkManaBalanceButton.disabled = false
+  }
+}
+
 connectButton.addEventListener('click', onConnect)
 disconnectButton.addEventListener('click', onDisconnect)
 signMessageButton.addEventListener('click', onSignMessage)
 signTransactionButton.addEventListener('click', onSignTransaction)
+checkKoinBalanceButton.addEventListener('click', checkKoinBalance)
+checkManaBalanceButton.addEventListener('click', checkManaBalance)
