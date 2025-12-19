@@ -171,7 +171,6 @@ export class NodeWalletConnectKoinos {
         'You must provide a chain id because none or several are present in this session.'
       )
     }
-    //@ts-expect-error compatible
     return generateSigner(address, finalChainId, this.topic, this.signClient!, provider)
   }
 
@@ -182,7 +181,6 @@ export class NodeWalletConnectKoinos {
         'You must provide a chain id because none or several are present in this session.'
       )
     }
-    //@ts-expect-error compatible
     return generateProvider(finalChainId, this.topic, this.signClient!)
   }
 }

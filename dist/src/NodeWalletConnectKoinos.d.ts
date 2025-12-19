@@ -1,4 +1,4 @@
-import Client from '@walletconnect/sign-client';
+import { default as Client } from '@walletconnect/sign-client';
 import { SignClientTypes } from '@walletconnect/types';
 import { Provider, Signer } from 'koilib';
 import { Options, ChainIds, Methods } from '.';
